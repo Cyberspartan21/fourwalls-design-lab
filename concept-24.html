@@ -165,6 +165,20 @@ body{margin:0}
   .obj .buehne{min-height:56vh;order:-1}
   .vh > .fl{width:51%}
 }
+
+/* --- Portal-Sucheinstieg --- */
+.portalsuche{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-top:clamp(16px,2.2vw,28px);}
+.portalsuche .pst2{display:flex;border:1px solid #F6F0E6}
+.portalsuche .pst2 a{padding:.62em 1em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#F6F0E6;opacity:.7}
+.portalsuche .pst2 a.an{background:#F6F0E6;color:#241C16;opacity:1}
+.portalsuche input{flex:1 1 180px;max-width:290px;background:transparent;border:1px solid #F6F0E6;
+  padding:.62em .9em;font:inherit;font-size:.85rem;color:#F6F0E6}
+.portalsuche input::placeholder{color:#F6F0E6;opacity:.55}
+.portalsuche button{border:1px solid #D9B872;background:#D9B872;color:#241C16;font:inherit;cursor:pointer;
+  padding:.62em 1.25em;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.portalsuche .psalle{align-self:center;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:#F6F0E6;opacity:.7;text-decoration:underline;text-underline-offset:3px;margin-left:4px}
+
 </style>
 
 <!-- ===== Intro: Doppelflügel ===== -->
@@ -176,7 +190,7 @@ body{margin:0}
 
 <header class="kopf">
   <a href="#" class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></a>
-  <nav><a href="#objekte">Objekte</a><a href="#verkaufen">Verkaufen</a><a href="#verwalten">Verwalten</a></nav>
+  <nav><a href="portal-24.html">Immobilien</a><a href="#verkaufen">Verkaufen</a><a href="#verwalten">Verwalten</a><a href="portal-24.html#neu">Inserieren</a></nav>
   <div class="gt" role="group" aria-label="Erscheinung">
     <button id="gtHell" aria-pressed="true" title="Tag">T</button>
     <button id="gtDunkel" aria-pressed="false" title="Nacht">N</button>
@@ -190,6 +204,12 @@ body{margin:0}
     <div class="kick">Fourwalls · Schweiz</div>
     <h1>Der Vorhang geht auf.<br>Dahinter steht <em>Ihr Haus.</em></h1>
     <div class="fakten" id="heroFakten"></div>
+<form class="portalsuche" id="portalSuche">
+      <div class="pst2"><a class="an" data-t="buy" href="portal-24.html">Kaufen</a><a data-t="rent" href="portal-24.html?trans=rent">Mieten</a></div>
+      <input type="text" id="psOrt" placeholder="Ort, PLZ oder Kanton" aria-label="Ort">
+      <button type="submit">Suchen</button>
+      <a class="psalle" href="portal-24.html">Alle 230+ Inserate</a>
+    </form>
   </div>
   <div class="fl l"></div><div class="fl r"></div>
 </section>
@@ -774,6 +794,26 @@ window.FW = (function () {
   document.getElementById("heroFakten").innerHTML =
     ["Montagnola · Tessin", FW.roomsLabel(hp,L), hp.livingArea + " m²", FW.priceLabel(hp,L)]
     .map(x => "<span>" + esc(x) + "</span>").join("");
+
+
+  /* ---- Portal-Sucheinstieg ---- */
+  (function(){
+    const ps = document.getElementById("portalSuche");
+    if (!ps) return;
+    let psTrans = "buy";
+    ps.querySelectorAll(".pst2 a").forEach(a2 => a2.addEventListener("click", e => {
+      e.preventDefault(); psTrans = a2.dataset.t;
+      ps.querySelectorAll(".pst2 a").forEach(x => x.classList.toggle("an", x === a2));
+    }));
+    ps.addEventListener("submit", e => {
+      e.preventDefault();
+      const o = document.getElementById("psOrt").value.trim();
+      const q = new URLSearchParams();
+      if (psTrans !== "buy") q.set("trans", psTrans);
+      if (o) q.set("ort", o);
+      location.href = "portal-24.html" + (q.toString() ? "?" + q.toString() : "");
+    });
+  })();
 
   /* ---- Objektliste + Bühne ---- */
   const buehne = document.getElementById("buehne");

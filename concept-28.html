@@ -113,6 +113,24 @@ body{margin:0}
 .wahl button::after{content:"";position:absolute;left:50%;right:50%;bottom:0;height:1px;
   background:var(--licht);transition:left .4s cubic-bezier(.22,1,.36,1),right .4s cubic-bezier(.22,1,.36,1)}
 .wahl button[aria-pressed="true"]::after{left:.9em;right:.9em}
+/* --- Portal-Sucheinstieg im Hero --- */
+.portalsuche{margin-top:clamp(16px,2vw,26px);display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.portalsuche .t2{display:flex;border:1px solid rgba(242,239,231,.34)}
+.portalsuche .t2 a{padding:.62em 1em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,239,231,.65)}
+.portalsuche .t2 a.an{background:#F2EFE7;color:#0A0F14}
+.portalsuche input{flex:1 1 190px;max-width:300px;background:rgba(5,8,11,.55);border:1px solid rgba(242,239,231,.34);
+  padding:.62em .9em;font-size:.85rem;color:#F2EFE7;backdrop-filter:blur(6px)}
+.portalsuche input::placeholder{color:rgba(242,239,231,.55)}
+.portalsuche button{border:1px solid var(--licht);background:var(--licht);color:#0A0F14;
+  padding:.62em 1.3em;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.portalsuche .alle{align-self:center;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(242,239,231,.66);text-decoration:underline;text-underline-offset:3px;margin-left:6px}
+#w[data-mode="hell"] .portalsuche input{background:rgba(238,241,242,.6);color:#0E1317;border-color:rgba(14,19,23,.3)}
+#w[data-mode="hell"] .portalsuche input::placeholder{color:rgba(14,19,23,.5)}
+#w[data-mode="hell"] .portalsuche .t2{border-color:rgba(14,19,23,.3)}
+#w[data-mode="hell"] .portalsuche .t2 a{color:rgba(14,19,23,.6)}
+#w[data-mode="hell"] .portalsuche .t2 a.an{background:#0E1317;color:#EEF1F2}
+#w[data-mode="hell"] .portalsuche .alle{color:rgba(14,19,23,.6)}
 .hinweis{position:absolute;z-index:3;left:clamp(16px,3vw,44px);top:calc(50% + 30px);
   font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(242,239,231,.4);
   pointer-events:none;opacity:0;transition:opacity 1s ease 1.4s}
@@ -194,7 +212,7 @@ body{margin:0}
 
 <header class="kopf">
   <a href="#" class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></a>
-  <nav><a href="#verz">Objekte</a><a href="#dienste">Verkaufen</a><a href="#dienste">Verwalten</a></nav>
+  <nav><a href="portal-28.html">Immobilien</a><a href="portal-28.html#karte">Karte</a><a href="#dienste">Verkaufen</a><a href="#dienste">Verwalten</a><a href="portal-28.html#neu">Inserieren</a></nav>
   <div class="gt" role="group" aria-label="Erscheinung">
     <button id="gtHell" aria-pressed="false" title="Tag">T</button>
     <button id="gtDunkel" aria-pressed="true" title="Nacht">N</button>
@@ -212,6 +230,12 @@ body{margin:0}
       <div class="fakten" id="heroF"></div>
       <div class="wahl" id="wahl"></div>
     </div>
+    <form class="portalsuche" id="portalSuche">
+      <div class="t2"><a class="an" data-t="buy" href="portal-28.html">Kaufen</a><a data-t="rent" href="portal-28.html?trans=rent">Mieten</a></div>
+      <input type="text" id="psOrt" placeholder="Ort, PLZ oder Kanton" aria-label="Ort">
+      <button type="submit">Suchen</button>
+      <a class="alle" href="portal-28.html">Alle 230+ Inserate</a>
+    </form>
   </div>
 </section>
 
@@ -1000,6 +1024,22 @@ void main(){
     }
     zeige(0, false);
   })();
+
+  /* ---- Portal-Sucheinstieg ---- */
+  const ps = document.getElementById("portalSuche");
+  let psTrans = "buy";
+  ps.querySelectorAll(".t2 a").forEach(a2 => a2.addEventListener("click", e => {
+    e.preventDefault(); psTrans = a2.dataset.t;
+    ps.querySelectorAll(".t2 a").forEach(x => x.classList.toggle("an", x === a2));
+  }));
+  ps.addEventListener("submit", e => {
+    e.preventDefault();
+    const o = document.getElementById("psOrt").value.trim();
+    const q = new URLSearchParams();
+    if (psTrans !== "buy") q.set("trans", psTrans);
+    if (o) q.set("ort", o);
+    location.href = "portal-28.html" + (q.toString() ? "?" + q.toString() : "");
+  });
 
   /* ---- Verzeichnis ---- */
   const liste = document.getElementById("verzListe");

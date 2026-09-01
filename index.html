@@ -36,6 +36,12 @@
     color:var(--mid);line-height:1.5}
   .meta dt{min-width:74px;color:rgba(140,145,139,.7);flex:0 0 74px}
   .meta dd{margin:0;color:var(--ink)}
+  .portal{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+  .portal .pk{font-family:'Chivo Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--clay)}
+  .portal .pl{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+  .portal .pl a{font-family:'Chivo Mono',monospace;font-size:.64rem;letter-spacing:.06em;color:var(--mid);
+    border:1px solid var(--line);border-radius:5px;padding:.4em .65em;transition:color .2s,border-color .2s}
+  .portal .pl a:hover{color:var(--clay);border-color:var(--clay)}
   .modes{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
   .modes a{flex:1;text-align:center;font-family:'Chivo Mono',monospace;font-size:.66rem;letter-spacing:.16em;
     text-transform:uppercase;border:1px solid var(--line);border-radius:6px;padding:.9em .5em;
@@ -59,9 +65,9 @@
 <div class="wrap">
   <header>
     <span class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></span>
-    <div class="kicker">Design-Turnier · Runde 6 · Awwwards-Niveau</div>
-    <h1>Sechs Welten. Zwei davon frisch.</h1>
-    <p class="lede"><b>01 SPIEGEL</b> und <b>05 NÄHE</b> sind neu und ersetzen Sequenz und Band. Beide gehen technisch weiter als alles bisherige: ein selbst gerechneter Wasser-Shader und eine durchgehende Zoomfahrt durch fünf Massstäbe. Jede Seite öffnet mit einem animierten Logo-Intro und setzt Ihr Logo zusätzlich als Gestaltungselement ein. Jede Welt hat eine helle und eine dunkle Ausprägung.</p>
+    <div class="kicker">Design-Turnier · Runde 7 · Portal-Ausbau</div>
+    <h1>Sechs Welten — jetzt mit echtem Portal.</h1>
+    <p class="lede">Jede Welt hat jetzt eine zweite Ebene: <b>ein vollwertiges Suchportal mit 238 Demo-Inseraten</b> — Suche mit Filtern und Suchabo, Karte mit Clustern und Preis-Pins, Objektdetail für Fourwalls-Mandate und externe Inserate, kostenloses Inserieren in 9 Schritten mit automatischem Entwurf, und ein Konto mit Merkliste. Die Startseiten bleiben unverändert kinoreif; die Portal-Ebene übernimmt Schriften, Farben und Haltung der jeweiligen Welt.</p>
   </header>
 
   <div class="grid">
@@ -74,7 +80,17 @@
         <div><dt>Technik</dt><dd>Handgeschriebener WebGL-Shader</dd></div>
         <div><dt>Farbe</dt><dd>Nachtblau ↔ silbriger Morgen · Lampenlicht</dd></div>
       </dl>
-      <div class="modes">
+            <div class="portal">
+        <div class="pk">Portal-Ebene — neu</div>
+        <div class="pl">
+          <a href="portal-28.html">Suche</a>
+          <a href="portal-28.html#karte">Karte</a>
+          <a href="portal-28.html?ort=Z%C3%BCrich&zi=3.5">Beispiel-Suche</a>
+          <a href="portal-28.html#neu">Inserieren</a>
+          <a href="portal-28.html#konto">Konto</a>
+        </div>
+      </div>
+<div class="modes">
         <a class="light" href="concept-28.html#hell">Hell</a>
         <a class="dark" href="concept-28.html#dunkel">Dunkel</a>
       </div>
@@ -88,7 +104,17 @@
         <div><dt>Logo</dt><dd>Monogramm als Fenster zur Fotografie</dd></div>
         <div><dt>Farbe</dt><dd>Vanille ↔ Waldgrün</dd></div>
       </dl>
-      <div class="modes">
+            <div class="portal">
+        <div class="pk">Portal-Ebene — neu</div>
+        <div class="pl">
+          <a href="portal-23.html">Suche</a>
+          <a href="portal-23.html#karte">Karte</a>
+          <a href="portal-23.html?ort=Z%C3%BCrich&zi=3.5">Beispiel-Suche</a>
+          <a href="portal-23.html#neu">Inserieren</a>
+          <a href="portal-23.html#konto">Konto</a>
+        </div>
+      </div>
+<div class="modes">
         <a class="light" href="concept-23.html#hell">Hell</a>
         <a class="dark" href="concept-23.html#dunkel">Dunkel</a>
       </div>
@@ -102,7 +128,17 @@
         <div><dt>Logo</dt><dd>Signatur auf der Bühne, Wortmarke im Fuss</dd></div>
         <div><dt>Farbe</dt><dd>Vanille ↔ Ochsenblut · Gold</dd></div>
       </dl>
-      <div class="modes">
+            <div class="portal">
+        <div class="pk">Portal-Ebene — neu</div>
+        <div class="pl">
+          <a href="portal-24.html">Suche</a>
+          <a href="portal-24.html#karte">Karte</a>
+          <a href="portal-24.html?ort=Z%C3%BCrich&zi=3.5">Beispiel-Suche</a>
+          <a href="portal-24.html#neu">Inserieren</a>
+          <a href="portal-24.html#konto">Konto</a>
+        </div>
+      </div>
+<div class="modes">
         <a class="light" href="concept-24.html#hell">Hell</a>
         <a class="dark" href="concept-24.html#dunkel">Dunkel</a>
       </div>
@@ -116,7 +152,17 @@
         <div><dt>Logo</dt><dd>Monogramm als Sektionsmarke</dd></div>
         <div><dt>Farbe</dt><dd>Papier ↔ Kohle, monochrom</dd></div>
       </dl>
-      <div class="modes">
+            <div class="portal">
+        <div class="pk">Portal-Ebene — neu</div>
+        <div class="pl">
+          <a href="portal-25.html">Suche</a>
+          <a href="portal-25.html#karte">Karte</a>
+          <a href="portal-25.html?ort=Z%C3%BCrich&zi=3.5">Beispiel-Suche</a>
+          <a href="portal-25.html#neu">Inserieren</a>
+          <a href="portal-25.html#konto">Konto</a>
+        </div>
+      </div>
+<div class="modes">
         <a class="light" href="concept-25.html#hell">Hell</a>
         <a class="dark" href="concept-25.html#dunkel">Dunkel</a>
       </div>
@@ -130,7 +176,17 @@
         <div><dt>Technik</dt><dd>Scrollgetriebene Massstabsfahrt</dd></div>
         <div><dt>Farbe</dt><dd>Kühler Stein ↔ warmes Dunkelbraun · Zinnober</dd></div>
       </dl>
-      <div class="modes">
+            <div class="portal">
+        <div class="pk">Portal-Ebene — neu</div>
+        <div class="pl">
+          <a href="portal-29.html">Suche</a>
+          <a href="portal-29.html#karte">Karte</a>
+          <a href="portal-29.html?ort=Z%C3%BCrich&zi=3.5">Beispiel-Suche</a>
+          <a href="portal-29.html#neu">Inserieren</a>
+          <a href="portal-29.html#konto">Konto</a>
+        </div>
+      </div>
+<div class="modes">
         <a class="light" href="concept-29.html#hell">Hell</a>
         <a class="dark" href="concept-29.html#dunkel">Dunkel</a>
       </div>
@@ -144,7 +200,17 @@
         <div><dt>Logo</dt><dd>Signatur auf jedem Geschoss</dd></div>
         <div><dt>Farbe</dt><dd>Kühles Graphit, ohne Akzent</dd></div>
       </dl>
-      <div class="modes">
+            <div class="portal">
+        <div class="pk">Portal-Ebene — neu</div>
+        <div class="pl">
+          <a href="portal-27.html">Suche</a>
+          <a href="portal-27.html#karte">Karte</a>
+          <a href="portal-27.html?ort=Z%C3%BCrich&zi=3.5">Beispiel-Suche</a>
+          <a href="portal-27.html#neu">Inserieren</a>
+          <a href="portal-27.html#konto">Konto</a>
+        </div>
+      </div>
+<div class="modes">
         <a class="light" href="concept-27.html#hell">Hell</a>
         <a class="dark" href="concept-27.html#dunkel">Dunkel</a>
       </div>

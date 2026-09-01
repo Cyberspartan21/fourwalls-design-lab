@@ -131,6 +131,20 @@ body{margin:0}
   .stufe .marke{display:none}
   .danach .paar{grid-template-columns:1fr}
 }
+
+/* --- Portal-Sucheinstieg --- */
+.portalsuche{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-top:clamp(16px,2.2vw,28px);}
+.portalsuche .pst2{display:flex;border:1px solid var(--ink)}
+.portalsuche .pst2 a{padding:.62em 1em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:.7}
+.portalsuche .pst2 a.an{background:var(--ink);color:var(--gr);opacity:1}
+.portalsuche input{flex:1 1 180px;max-width:290px;background:transparent;border:1px solid var(--ink);
+  padding:.62em .9em;font:inherit;font-size:.85rem;color:var(--ink)}
+.portalsuche input::placeholder{color:var(--ink);opacity:.55}
+.portalsuche button{border:1px solid var(--ink);background:var(--ink);color:var(--gr);font:inherit;cursor:pointer;
+  padding:.62em 1.25em;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.portalsuche .psalle{align-self:center;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink);opacity:.7;text-decoration:underline;text-underline-offset:3px;margin-left:4px}
+
 </style>
 
 <div id="pre">
@@ -142,7 +156,7 @@ body{margin:0}
 
 <header class="kopf">
   <a href="#" class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></a>
-  <nav><a href="#danach">Verkaufen</a><a href="#danach">Verwalten</a><a href="#fuss">Kontakt</a></nav>
+  <nav><a href="portal-27.html">Immobilien</a><a href="#danach">Verkaufen</a><a href="#danach">Verwalten</a><a href="portal-27.html#neu">Inserieren</a></nav>
   <div class="gt" role="group" aria-label="Erscheinung">
     <button id="gtHell" aria-pressed="false" title="Hell">H</button>
     <button id="gtDunkel" aria-pressed="true" title="Dunkel">D</button>
@@ -155,6 +169,12 @@ body{margin:0}
   <div class="kopfz">
     <div class="kick">Fourwalls · Dienstleistungen</div>
     <h2>Unter jedem Objekt liegt dieselbe Arbeit.</h2>
+<form class="portalsuche" id="portalSuche">
+      <div class="pst2"><a class="an" data-t="buy" href="portal-27.html">Kaufen</a><a data-t="rent" href="portal-27.html?trans=rent">Mieten</a></div>
+      <input type="text" id="psOrt" placeholder="Ort, PLZ oder Kanton" aria-label="Ort">
+      <button type="submit">Suchen</button>
+      <a class="psalle" href="portal-27.html">Alle 230+ Inserate</a>
+    </form>
   </div>
   <div class="paar">
     <div>
@@ -730,6 +750,26 @@ window.FW = (function () {
       </div>
     </div></section>`;
   }).join("");
+
+
+  /* ---- Portal-Sucheinstieg ---- */
+  (function(){
+    const ps = document.getElementById("portalSuche");
+    if (!ps) return;
+    let psTrans = "buy";
+    ps.querySelectorAll(".pst2 a").forEach(a2 => a2.addEventListener("click", e => {
+      e.preventDefault(); psTrans = a2.dataset.t;
+      ps.querySelectorAll(".pst2 a").forEach(x => x.classList.toggle("an", x === a2));
+    }));
+    ps.addEventListener("submit", e => {
+      e.preventDefault();
+      const o = document.getElementById("psOrt").value.trim();
+      const q = new URLSearchParams();
+      if (psTrans !== "buy") q.set("trans", psTrans);
+      if (o) q.set("ort", o);
+      location.href = "portal-27.html" + (q.toString() ? "?" + q.toString() : "");
+    });
+  })();
 
   /* ---- Stapel-Bewegung: die untere Platte weicht zurück ---- */
   const stufen = [...document.querySelectorAll(".stufe")];

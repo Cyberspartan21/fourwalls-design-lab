@@ -172,6 +172,20 @@ body{margin:0}
   .zeile .zi{display:none}
   .blende{width:92vw}
 }
+
+/* --- Portal-Sucheinstieg --- */
+.portalsuche{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-top:clamp(16px,2.2vw,28px);}
+.portalsuche .pst2{display:flex;border:1px solid #F1EDE3}
+.portalsuche .pst2 a{padding:.62em 1em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#F1EDE3;opacity:.7}
+.portalsuche .pst2 a.an{background:#F1EDE3;color:#101F1A;opacity:1}
+.portalsuche input{flex:1 1 180px;max-width:290px;background:transparent;border:1px solid #F1EDE3;
+  padding:.62em .9em;font:inherit;font-size:.85rem;color:#F1EDE3}
+.portalsuche input::placeholder{color:#F1EDE3;opacity:.55}
+.portalsuche button{border:1px solid #C9A227;background:#C9A227;color:#101F1A;font:inherit;cursor:pointer;
+  padding:.62em 1.25em;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.portalsuche .psalle{align-self:center;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:#F1EDE3;opacity:.7;text-decoration:underline;text-underline-offset:3px;margin-left:4px}
+
 </style>
 
 <!-- ===== Intro ===== -->
@@ -185,7 +199,7 @@ body{margin:0}
 
 <header class="kopf">
   <a href="#" class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></a>
-  <nav><a href="#verz">Objekte</a><a href="#dienste">Verkaufen</a><a href="#dienste">Verwalten</a></nav>
+  <nav><a href="portal-23.html">Immobilien</a><a href="#dienste">Verkaufen</a><a href="#dienste">Verwalten</a><a href="portal-23.html#neu">Inserieren</a></nav>
   <div class="gt" role="group" aria-label="Erscheinung">
     <button id="gtHell" aria-pressed="true" title="Tag">T</button>
     <button id="gtDunkel" aria-pressed="false" title="Nacht">N</button>
@@ -198,6 +212,12 @@ body{margin:0}
   <div class="inhalt">
     <h1 id="heroH">Ein Haus beginnt<br>dort, wo man <em>eintritt.</em></h1>
     <div class="unten" id="heroU"></div>
+<form class="portalsuche" id="portalSuche">
+      <div class="pst2"><a class="an" data-t="buy" href="portal-23.html">Kaufen</a><a data-t="rent" href="portal-23.html?trans=rent">Mieten</a></div>
+      <input type="text" id="psOrt" placeholder="Ort, PLZ oder Kanton" aria-label="Ort">
+      <button type="submit">Suchen</button>
+      <a class="psalle" href="portal-23.html">Alle 230+ Inserate</a>
+    </form>
   </div>
 </section>
 
@@ -778,6 +798,26 @@ window.FW = (function () {
   document.getElementById("heroU").innerHTML =
     ["Quarten · St. Gallen", FW.roomsLabel(hp,L), hp.livingArea + " m²", FW.priceLabel(hp,L)]
     .map(x => "<span>" + esc(x) + "</span>").join("");
+
+
+  /* ---- Portal-Sucheinstieg ---- */
+  (function(){
+    const ps = document.getElementById("portalSuche");
+    if (!ps) return;
+    let psTrans = "buy";
+    ps.querySelectorAll(".pst2 a").forEach(a2 => a2.addEventListener("click", e => {
+      e.preventDefault(); psTrans = a2.dataset.t;
+      ps.querySelectorAll(".pst2 a").forEach(x => x.classList.toggle("an", x === a2));
+    }));
+    ps.addEventListener("submit", e => {
+      e.preventDefault();
+      const o = document.getElementById("psOrt").value.trim();
+      const q = new URLSearchParams();
+      if (psTrans !== "buy") q.set("trans", psTrans);
+      if (o) q.set("ort", o);
+      location.href = "portal-23.html" + (q.toString() ? "?" + q.toString() : "");
+    });
+  })();
 
   /* ---- Blende: das Monogramm als Fenster ---- */
   const blende = document.getElementById("blende"), wahl = document.getElementById("wahl");

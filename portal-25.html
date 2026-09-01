@@ -1352,6 +1352,19 @@ window.FWP = (function () {
     $("mehrKnopf").style.display = ergebnis.length > teil.length ? "block" : "none";
     $("mehrKnopf").textContent = "Weitere anzeigen (" + (ergebnis.length - teil.length) + ")";
     $("leer").classList.toggle("an", ergebnis.length === 0);
+    if (ergebnis.length === 0){
+      /* Lockerungen quantifizieren (Erkenntnis aus der Portal-Recherche) */
+      if (F.ort && !F.ort.startsWith("kt:")){
+        const l0 = FWL.listings.find(x => x.city.toLowerCase() === F.ort.toLowerCase());
+        if (l0){
+          const nK = FWP.filtern(Object.assign({}, F, { ort: "kt:" + l0.canton })).length;
+          $("leerKanton").textContent = "Im Kanton " + (FWP.KANTON_NAME[l0.canton]||l0.canton) + " suchen · " + nK + " Treffer";
+          $("leerKanton").style.display = nK ? "" : "none";
+        } else $("leerKanton").style.display = "none";
+      } else $("leerKanton").style.display = "none";
+      const nR = FWP.filtern({ trans: F.trans, ort: F.ort }).length;
+      $("leerReset").textContent = "Filter zurücksetzen · " + nR + " Treffer";
+    }
     verdrahteKarten($("gitter"));
   }
   function verdrahteKarten(wurzel){

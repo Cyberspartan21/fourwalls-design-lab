@@ -1362,8 +1362,15 @@ window.FWP = (function () {
           $("leerKanton").style.display = nK ? "" : "none";
         } else $("leerKanton").style.display = "none";
       } else $("leerKanton").style.display = "none";
-      const nR = FWP.filtern({ trans: F.trans, ort: F.ort }).length;
-      $("leerReset").textContent = "Filter zurücksetzen · " + nR + " Treffer";
+      let nR = FWP.filtern({ trans: F.trans, ort: F.ort }).length;
+      if (nR > 0){
+        $("leerReset").textContent = "Filter zurücksetzen · " + nR + " Treffer";
+        $("leerReset").dataset.ganz = "";
+      } else {
+        nR = FWP.filtern({ trans: F.trans }).length;
+        $("leerReset").textContent = "In der ganzen Schweiz suchen · " + nR + " Treffer";
+        $("leerReset").dataset.ganz = "1";
+      }
     }
     verdrahteKarten($("gitter"));
   }
@@ -1470,7 +1477,10 @@ window.FWP = (function () {
   });
   $("mehrKnopf").addEventListener("click", () => { seite++; malListe(); });
 
-  $("leerReset").addEventListener("click", () => $("filterReset").click());
+  $("leerReset").addEventListener("click", () => {
+    if ($("leerReset").dataset.ganz){ F.ort = ""; $("ortInput").value = ""; }
+    $("filterReset").click();
+  });
   $("leerKanton").addEventListener("click", () => {
     if (F.ort && !F.ort.startsWith("kt:")){
       const l = FWL.listings.find(x => x.city === F.ort);

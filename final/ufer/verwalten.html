@@ -14,10 +14,11 @@
 .held{position:relative;min-height:min(72svh,640px);display:grid;align-items:end;background:var(--tief);color:#EEF1F2;overflow:hidden}
 .held .bild-hinter{position:absolute;inset:0}
 .held .bild-hinter::after{background:var(--gr)}
-.held .bild-hinter img{filter:saturate(.7) brightness(.85)}
-.held .flor{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,12,18,.9),rgba(7,12,18,.3) 55%,rgba(7,12,18,.62))}
+.held .bild-hinter img{filter:saturate(1.02) brightness(1.04)}
+.held::before{content:"";position:absolute;left:0;right:0;top:0;height:130px;z-index:1;pointer-events:none;background:linear-gradient(to bottom,rgba(7,12,18,.55),rgba(7,12,18,0))}
+.held .flor{position:absolute;left:0;right:0;bottom:0;top:14%;background:linear-gradient(to top,rgba(7,12,18,.94),rgba(7,12,18,.72) 34%,rgba(7,12,18,.22) 70%,rgba(7,12,18,0))}
 .held .txt{position:relative;z-index:2;padding:clamp(120px,18vh,180px) var(--pad) clamp(36px,5vw,60px);max-width:1000px}
-.held h1{font-family:var(--d);font-weight:200;font-size:clamp(2.2rem,5vw,4.4rem);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
+.held h1{font-family:var(--d);font-weight:200;font-size:clamp(2.2rem,5vw,4.4rem);line-height:1.02;letter-spacing:-.025em;max-width:18ch;text-shadow:0 2px 34px rgba(7,12,18,.75)}
 .held p{margin-top:18px;font-size:1rem;line-height:1.7;max-width:56ch;color:rgba(238,241,242,.82)}
 .held .cta{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
 .held .cta .knopf{border-color:rgba(238,241,242,.4);color:#EEF1F2}
@@ -64,7 +65,7 @@
 @media(max-width:600px){.ressorts{grid-template-columns:1fr}.ressorts div{border-right:0}.kachel .balken div{grid-template-columns:90px 1fr 56px}}
 </style>
 </head>
-<body data-mode="dunkel">
+<body data-mode="hell">
 <div class="blatt" id="blatt" role="dialog" aria-label="Menü"></div>
 <header class="kopf schwebt"></header>
 <main>

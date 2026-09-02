@@ -270,12 +270,12 @@
 .licht .lk .knopf{border-color:rgba(238,241,242,.4);color:#EEF1F2}
 
 /* ======================= EXCLUSIVE: die Premiere ======================= */
-.exheld{position:relative;height:min(92svh,880px);min-height:520px;overflow:hidden;background:var(--tief);color:#EEF1F2}
+.exheld{position:relative;height:min(92svh,880px);min-height:520px;overflow:hidden;background:#070C12;color:#EEF1F2}
 .exheld .voll{position:absolute;inset:0}
 .exheld .voll img{width:100%;height:100%;object-fit:cover;filter:saturate(.86);animation:atmen 26s ease-in-out infinite alternate}
 @keyframes atmen{from{transform:scale(1)}to{transform:scale(1.05)}}
 /* das Fenster: zuerst sieht man das Haus nur durch das Monogramm, dann öffnet sich die Wand */
-.exheld .wand{position:absolute;inset:0;background:var(--gr);display:grid;place-items:center;z-index:3}
+.exheld .wand{position:absolute;inset:0;background:#0B121B;display:grid;place-items:center;z-index:3}
 .exheld .wand .fenster{width:min(420px,60vw);-webkit-mask-size:var(--ms,contain);mask-size:var(--ms,contain)}
 .exheld .wand.aus{display:none}
 .exheld .flor{position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(7,12,18,.36),rgba(7,12,18,0) 35%,rgba(7,12,18,.1) 60%,rgba(7,12,18,.86))}
@@ -400,7 +400,7 @@
 }
 </style>
 </head>
-<body data-mode="dunkel">
+<body data-mode="hell">
 
 <div class="blatt" id="blatt" role="dialog" aria-label="Menü"></div>
 <header class="kopf"></header>

@@ -24,11 +24,11 @@
 }
 [data-mode="hell"]{
   /* Hell = Morgen am Wasser: silbriges Tageslicht, weiche Architekturweiss, tiefblaue Schrift */
-  --gr:#EEF1F2; --gr2:#E3E8EB; --gr3:#D6DDE2; --gr4:#C6D0D7;
+  --gr:#F5F8F9; --gr2:#EAEFF2; --gr3:#DCE4EA; --gr4:#C8D3DA;
   --ink:#0F1B2A; --leise:#5A6A78; --linie:rgba(15,27,42,.15); --linie2:rgba(15,27,42,.32);
   --licht:#A8702F; --licht2:#C58A45; --wasser:#8FA7B9; --wasser2:#5E7B92; --tief:#C9D3DA;
   --gut:#4E7A49; --warn:#9A4A54;
-  --glas:rgba(238,241,242,.86);
+  --glas:rgba(245,248,249,.88);
   color-scheme:light;
 }
 
@@ -82,6 +82,9 @@ h1,h2,h3{text-wrap:balance}
 .kopf{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:clamp(12px,1.8vw,28px);padding:10px var(--pad);
   background:var(--glas);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--linie);transition:background .5s ease,border-color .5s ease}
 .kopf.schwebt{position:fixed;left:0;right:0;background:transparent;border-bottom-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;--lg:#EEF1F2;--lga:#F0C58A;color:#EEF1F2}
+/* Über einem hellen Sommerbild schreibt der Kopf dunkel — kein Schleier nötig */
+.kopf.schwebt.aufhell{--lg:var(--ink);--lga:var(--licht);color:var(--ink)}
+[data-mode="dunkel"] .kopf.schwebt.aufhell{--lg:#EEF1F2;--lga:#F0C58A;color:#EEF1F2}
 .kopf.schwebt.gescrollt{background:var(--glas);border-bottom-color:var(--linie);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);--lg:var(--ink);--lga:var(--licht);color:var(--ink)}
 .kopf .fw{width:72px;flex:0 0 auto}
 .kopf nav.haupt{display:flex;gap:4px}
@@ -115,6 +118,13 @@ h1,h2,h3{text-wrap:balance}
 .gt button[aria-pressed="true"]{background:var(--ink);color:var(--gr);opacity:1}
 .kopf.schwebt:not(.gescrollt) .gt button[aria-pressed="true"]{background:#EEF1F2;color:#0B121B}
 .kopf.schwebt:not(.gescrollt) .knopf:not(.voll){border-color:rgba(238,241,242,.4)}
+.kopf.schwebt.aufhell:not(.gescrollt) .gt button[aria-pressed="true"]{background:#0F1B2A;color:#EEF1F2}
+.kopf.schwebt.aufhell:not(.gescrollt) .knopf:not(.voll){border-color:rgba(15,27,42,.32);background:rgba(255,255,255,.5)}
+.kopf.schwebt.aufhell:not(.gescrollt) .gt{border-color:rgba(15,27,42,.32);background:rgba(255,255,255,.5)}
+.kopf.schwebt.aufhell:not(.gescrollt) nav.haupt>div>a{text-shadow:0 1px 12px rgba(255,255,255,.9)}
+[data-mode="dunkel"] .kopf.schwebt.aufhell:not(.gescrollt) .gt button[aria-pressed="true"]{background:#EEF1F2;color:#0B121B}
+[data-mode="dunkel"] .kopf.schwebt.aufhell:not(.gescrollt) .knopf:not(.voll),[data-mode="dunkel"] .kopf.schwebt.aufhell:not(.gescrollt) .gt{border-color:rgba(238,241,242,.4);background:transparent}
+[data-mode="dunkel"] .kopf.schwebt.aufhell:not(.gescrollt) nav.haupt>div>a{text-shadow:0 1px 12px rgba(7,12,18,.8)}
 .burger{display:none;width:40px;height:38px;place-items:center;border:1px solid var(--linie2);border-radius:var(--r)}
 .burger i{display:block;width:16px;height:1px;background:currentColor;box-shadow:0 -5px 0 currentColor,0 5px 0 currentColor}
 

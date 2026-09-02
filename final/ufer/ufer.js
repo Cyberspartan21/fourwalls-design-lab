@@ -103,7 +103,7 @@ window.UFER = (function () {
     hooks.modus.forEach(f => f(m));
   }
   function startModus() {
-    let start = "dunkel";
+    let start = "hell";
     const qm = new URLSearchParams(location.search).get("mode"), h0 = (location.hash || "").replace("#", "");
     if (qm === "hell" || qm === "dunkel") start = qm;
     else if (h0 === "hell" || h0 === "dunkel") start = h0;

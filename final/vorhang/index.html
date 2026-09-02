@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Fourwalls: Schweizer Immobilienportal, Verkauf mit Mandat und Bewirtschaftung — eine Marke.">
+<title>Fourwalls — Immobilien kaufen, mieten, verkaufen, verwalten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<script src="../properties.js"></script>
+<div id="w" data-mode="hell">
+
+<style>
+/* ============ VORHANG · Tokens ============
+   Hell = Vanille, Dunkel = Ochsenblut. Ein Akzent: Gold. */
+body{margin:0}
+#w{min-height:100vh;
+  --gr:#F4EDE1; --gr2:#E9DFCC; --ink:#241C16; --leise:#6E6357;
+  --linie:rgba(36,28,22,.20); --gold:#A87A2E; --tief:#241C16;
+  --d:'Petrona',Georgia,serif; --t:'Manrope',system-ui,sans-serif;
+  background:var(--gr); color:var(--ink);
+  font-family:var(--t); font-weight:300; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+#w[data-mode="dunkel"]{
+  --gr:#2A1013; --gr2:#351A1C; --ink:#F0E6D8; --leise:#AD9389;
+  --linie:rgba(240,230,216,.22); --gold:#C9974A; --tief:#1B0A0C;
+}
+#w *,#w *::before,#w *::after{box-sizing:border-box}
+:where(#w) :where(h1,h2,h3,p,figure,ul,dl,dd){margin:0;padding:0}
+:where(#w) :where(ul){list-style:none}
+:where(#w) :where(button){font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:where(#w) :where(a){color:inherit;text-decoration:none}
+@media (prefers-reduced-motion:reduce){#w *,#w *::before,#w *::after{transition:none!important;animation:none!important}}
+
+/* ============ Logo ============ */
+.fw{display:block;position:relative;aspect-ratio:730/507}
+.fw i{position:absolute;inset:0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%}
+.fw .k{background:var(--lg,var(--ink));-webkit-mask-image:url(../img/logo-ink.png);mask-image:url(../img/logo-ink.png)}
+.fw .s{background:var(--lga,var(--gold));-webkit-mask-image:url(../img/logo-sub.png);mask-image:url(../img/logo-sub.png)}
+
+/* ============ Der Vorhang — Grundbewegung der ganzen Seite ============ */
+.vh{position:relative;overflow:hidden}
+.vh > .fl{position:absolute;top:0;bottom:0;width:50.5%;background:var(--gr);z-index:4;
+  transition:transform 1.15s cubic-bezier(.72,0,.16,1)}
+.vh > .fl.l{left:0}
+.vh > .fl.r{right:0}
+.vh.auf > .fl.l{transform:translateX(-100%)}
+.vh.auf > .fl.r{transform:translateX(100%)}
+.vh .zoom{transform:scale(1.16);transition:transform 1.7s cubic-bezier(.22,1,.36,1)}
+.vh.auf .zoom{transform:scale(1)}
+
+/* ============ Intro P4 ============ */
+#pre{position:fixed;inset:0;z-index:300}
+#pre .fl{position:absolute;top:0;bottom:0;width:50.5%;background:var(--gr);z-index:4;
+  display:grid;place-items:center;overflow:hidden;
+  transition:transform 1.2s cubic-bezier(.72,0,.16,1)}
+#pre .fl.l{left:0}#pre .fl.r{right:0}
+#pre.weg .fl.l{transform:translateX(-100%)}
+#pre.weg .fl.r{transform:translateX(100%)}
+#pre .halb{width:min(520px,68vw);aspect-ratio:730/507;position:absolute;top:50%;translate:0 -50%;
+  opacity:0;transition:opacity .85s ease .25s}
+#pre.los .halb{opacity:1}
+#pre .fl.l .halb{right:0;transform:translateX(50%)}
+#pre .fl.r .halb{left:0;transform:translateX(-50%)}
+#pre .naht{position:absolute;top:50%;left:50%;translate:-50% -50%;width:1px;height:0;background:var(--gold);
+  z-index:6;transition:height 1s cubic-bezier(.72,0,.16,1) .15s}
+#pre.los .naht{height:min(300px,44vh)}
+#pre.weg .naht{height:0;transition:height .5s ease}
+#pre.aus{opacity:0;pointer-events:none;transition:opacity .4s ease}
+
+/* ============ Kopf ============ */
+.kopf{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+  justify-content:space-between;padding:20px clamp(18px,3vw,44px);
+  opacity:0;transition:opacity .8s ease .3s}
+#w.bereit .kopf{opacity:1}
+.kopf .fw{width:92px;--lg:#F4EDE1;--lga:#C9974A}
+.kopf nav{display:flex;gap:24px;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,237,225,.86)}
+.kopf nav a:hover{color:#fff}
+.gt{display:flex;gap:2px;border:1px solid rgba(244,237,225,.36);border-radius:999px;padding:3px}
+.gt button{width:26px;height:26px;padding:0;border-radius:999px;font-size:.55rem;color:rgba(244,237,225,.86);
+  display:grid;place-items:center;transition:background .25s,color .25s}
+.gt button[aria-pressed="true"]{background:#F4EDE1;color:#241C16}
+/* nach dem Hero wird der Kopf dunkel gesetzt */
+#w.gescrollt .kopf .fw{--lg:var(--ink);--lga:var(--gold)}
+#w.gescrollt .kopf nav{color:var(--leise)}
+#w.gescrollt .kopf nav a:hover{color:var(--ink)}
+#w.gescrollt .gt{border-color:var(--linie)}
+#w.gescrollt .gt button{color:var(--leise)}
+#w.gescrollt .gt button[aria-pressed="true"]{background:var(--ink);color:var(--gr)}
+
+/* ============ Hero ============ */
+.hero{height:100svh;min-height:580px;background:var(--tief)}
+.hero .bild{position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(.88)}
+.hero .schleier{position:absolute;inset:0;z-index:2;
+  background:linear-gradient(105deg,rgba(27,10,12,.76),rgba(27,10,12,.24) 52%,rgba(27,10,12,.6))}
+.hero .txt{position:absolute;z-index:3;left:0;bottom:0;padding:0 clamp(18px,3vw,44px) clamp(32px,4.6vw,64px);
+  color:#F6F0E6;max-width:min(94vw,1020px)}
+.hero .kick{font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:#D9B872;margin-bottom:18px}
+.hero h1{font-family:var(--d);font-weight:200;font-size:clamp(2.1rem,5.2vw,4.5rem);line-height:1.04;
+  letter-spacing:-.02em;max-width:19ch}
+.hero h1 em{font-style:italic}
+.hero .fakten{margin-top:clamp(22px,3vw,38px);display:flex;flex-wrap:wrap;gap:8px 32px;
+  border-top:1px solid rgba(246,240,230,.3);padding-top:16px;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,240,230,.82)}
+
+/* ============ Doppelseite: Bild | Text ============ */
+.dop{display:grid;grid-template-columns:1fr 1fr;min-height:min(84vh,760px)}
+.dop.gedreht{direction:rtl}
+.dop.gedreht > *{direction:ltr}
+.dop .seite-b{position:relative;background:var(--gr2)}
+.dop .seite-b .bild{position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(.88)}
+.dop .seite-t{display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(40px,6vw,96px) clamp(20px,4.4vw,80px)}
+.dop .num{font-family:var(--d);font-weight:200;font-size:clamp(2.6rem,5vw,4.6rem);line-height:1;
+  color:var(--gold);opacity:.5}
+.dop h2{margin-top:14px;font-family:var(--d);font-weight:200;font-size:clamp(1.7rem,3.4vw,2.9rem);
+  line-height:1.1;letter-spacing:-.015em;max-width:16ch}
+.dop p{margin-top:20px;color:var(--leise);font-size:.95rem;max-width:40ch;line-height:1.78}
+.dop .liste{margin-top:28px;max-width:42ch}
+.dop .liste li{display:flex;justify-content:space-between;gap:16px;padding:11px 0;
+  border-bottom:1px solid var(--linie);font-size:.82rem}
+.dop .liste li span{color:var(--leise)}
+.dop .liste li b{font-weight:400}
+
+/* ============ Objekte: Liste links, Bühne rechts ============ */
+.obj{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;
+  border-top:1px solid var(--linie)}
+.obj .links{padding:clamp(40px,5vw,80px) clamp(20px,3.4vw,56px)}
+.obj .kopfz{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.obj .kopfz h2{font-family:var(--d);font-weight:200;font-size:clamp(1.6rem,3vw,2.5rem);letter-spacing:-.015em}
+.obj .kopfz span{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leise)}
+.obj .row{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:baseline;width:100%;
+  padding:clamp(15px,1.7vw,22px) 0;border-bottom:1px solid var(--linie);text-align:left;
+  transition:padding-left .45s cubic-bezier(.22,1,.36,1),color .3s;color:var(--leise)}
+.obj .row .n{font-size:.66rem;letter-spacing:.12em}
+.obj .row .t{font-family:var(--d);font-weight:300;font-size:clamp(1.05rem,1.9vw,1.5rem);
+  letter-spacing:-.01em;color:var(--ink);line-height:1.2}
+.obj .row .t small{display:block;font-family:var(--t);font-size:.68rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--leise);margin-top:6px;font-weight:300}
+.obj .row .p{font-size:.8rem;white-space:nowrap;color:var(--ink)}
+.obj .row:hover,.obj .row[aria-current="true"]{padding-left:14px;color:var(--ink)}
+.obj .row[aria-current="true"] .n{color:var(--gold)}
+.obj .buehne{position:relative;overflow:hidden;background:var(--tief);min-height:min(76vh,700px)}
+.obj .buehne .lage{position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;transform:scale(1.07);filter:saturate(.88);
+  transition:opacity .8s ease,transform 5.5s ease}
+.obj .buehne .lage.an{opacity:1;transform:scale(1)}
+.obj .buehne .marke{position:absolute;right:clamp(16px,2vw,30px);bottom:clamp(16px,2vw,30px);z-index:3;
+  width:clamp(80px,9vw,132px);--lg:rgba(246,240,230,.9);--lga:#D9B872}
+
+/* ============ Fuss ============ */
+.fuss{padding:clamp(54px,7vw,104px) clamp(18px,3vw,44px) clamp(26px,3vw,44px);background:var(--gr2)}
+.fuss .band{width:100%;max-width:1200px;margin:0 auto}
+.fuss .kon{max-width:1200px;margin:clamp(30px,4vw,54px) auto 0;display:flex;flex-wrap:wrap;
+  gap:12px 40px;justify-content:space-between;font-size:.8rem;color:var(--leise);
+  border-top:1px solid var(--linie);padding-top:22px}
+.fuss .fein{max-width:1200px;margin:24px auto 0;font-size:.62rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--leise)}
+
+@media (max-width:860px){
+  .kopf nav{display:none}
+  .kopf{padding:14px 18px}
+  .kopf .fw{width:76px}
+  .dop{grid-template-columns:1fr}
+  .dop.gedreht{direction:ltr}
+  .dop .seite-b{min-height:56vh}
+  .obj{grid-template-columns:1fr}
+  .obj .buehne{min-height:56vh;order:-1}
+  .vh > .fl{width:51%}
+}
+
+/* --- Portal-Sucheinstieg --- */
+.portalsuche{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-top:clamp(16px,2.2vw,28px);}
+.portalsuche .pst2{display:flex;border:1px solid #F6F0E6}
+.portalsuche .pst2 a{padding:.62em 1em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#F6F0E6;opacity:.7}
+.portalsuche .pst2 a.an{background:#F6F0E6;color:#241C16;opacity:1}
+.portalsuche input{flex:1 1 180px;max-width:290px;background:transparent;border:1px solid #F6F0E6;
+  padding:.62em .9em;font:inherit;font-size:.85rem;color:#F6F0E6}
+.portalsuche input::placeholder{color:#F6F0E6;opacity:.55}
+.portalsuche button{border:1px solid #D9B872;background:#D9B872;color:#241C16;font:inherit;cursor:pointer;
+  padding:.62em 1.25em;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.portalsuche .psalle{align-self:center;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:#F6F0E6;opacity:.7;text-decoration:underline;text-underline-offset:3px;margin-left:4px}
+
+/* --- Vier Wege --- */
+.wege{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--gold);background:var(--gr);counter-reset:weg}
+.wege a{padding:22px clamp(16px,2.4vw,32px);border-right:1px solid var(--linie);display:flex;flex-direction:column;gap:4px;transition:background .25s;counter-increment:weg;position:relative}
+.wege a::before{content:counter(weg,upper-roman);font-family:var(--d);font-weight:200;font-size:1.6rem;color:var(--gold);opacity:.6;line-height:1;margin-bottom:6px}
+.wege a:last-child{border-right:0}
+.wege a:hover{background:var(--gr2)}
+.wege b{font-family:var(--d);font-weight:300;font-size:clamp(1.15rem,1.7vw,1.5rem);line-height:1.15}
+.wege span{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--leise);font-weight:500}
+@media(max-width:860px){.wege{grid-template-columns:1fr 1fr}.wege a{border-bottom:1px solid var(--linie)}.wege a:nth-child(2n){border-right:0}}
+/* kompakt, kein Überlauf */
+@media(max-width:600px){
+  .kopf{padding:8px 12px;gap:8px}
+  .kopf .fw{width:56px}
+  .kopf .rechts{gap:5px}
+  .kopf .knopf{padding:.5em .6em;font-size:.58rem;letter-spacing:.06em;min-height:34px}
+  .kopf .knopf [data-i="gemerkt"]{display:none}
+  .kopf .gt{padding:1px}.kopf .gt button{width:21px;height:21px}
+}
+</style>
+
+<!-- ===== Intro: Doppelflügel ===== -->
+<div id="pre">
+  <div class="fl l"><span class="halb fw"><i class="k"></i><i class="s"></i></span></div>
+  <div class="fl r"><span class="halb fw"><i class="k"></i><i class="s"></i></span></div>
+  <span class="naht"></span>
+</div>
+
+<header class="kopf">
+  <a href="#" class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></a>
+  <nav><a href="portal.html">Immobilien</a><a href="verkaufen.html">Verkaufen</a><a href="verwalten.html">Verwalten</a><a href="portal.html#neu">Inserieren</a></nav>
+  <div class="gt" role="group" aria-label="Erscheinung">
+    <button id="gtHell" aria-pressed="true" title="Tag">T</button>
+    <button id="gtDunkel" aria-pressed="false" title="Nacht">N</button>
+  </div>
+</header>
+
+<section class="hero vh" id="hero">
+  <div class="bild zoom" id="heroBild"></div>
+  <div class="schleier"></div>
+  <div class="txt">
+    <div class="kick">Fourwalls · Schweiz</div>
+    <h1>Der Vorhang geht auf.<br>Dahinter steht <em>Ihr Haus.</em></h1>
+    <div class="fakten" id="heroFakten"></div>
+<form class="portalsuche" id="portalSuche">
+      <div class="pst2"><a class="an" data-t="buy" href="portal.html">Kaufen</a><a data-t="rent" href="portal.html?trans=rent">Mieten</a></div>
+      <input type="text" id="psOrt" placeholder="Ort, PLZ oder Kanton" aria-label="Ort">
+      <button type="submit">Suchen</button>
+      <a class="psalle" href="portal.html">Alle 230+ Inserate</a>
+    </form>
+  </div>
+  <div class="fl l"></div><div class="fl r"></div>
+</section>
+<nav class="wege" aria-label="Was Sie hier tun können">
+  <a href="portal.html"><b>Immobilien suchen</b><span>Kaufen und mieten, schweizweit</span></a>
+  <a href="portal.html#neu"><b>Gratis inserieren</b><span>Selbst verkaufen oder vermieten</span></a>
+  <a href="verkaufen.html"><b>Mit Fourwalls verkaufen</b><span>Mandat, Bewertung in 48 Std.</span></a>
+  <a href="verwalten.html"><b>Immobilien verwalten</b><span>Bewirtschaftung für Eigentümer</span></a>
+</nav>
+
+<section class="dop" id="verkaufen">
+  <div class="seite-b vh"><div class="bild zoom" id="bildVerkauf"></div><div class="fl l"></div><div class="fl r"></div></div>
+  <div class="seite-t">
+    <div class="num">01</div>
+    <h2>Verkaufen heisst inszenieren — nicht inserieren.</h2>
+    <p>Wir bewerten hedonisch und im Marktvergleich, innert 48 Stunden. Danach entsteht ein Auftritt: Fotografie am richtigen Licht, ein Dossier, das man behalten will, und eine Käuferliste, die wir seit Jahren pflegen.</p>
+    <ul class="liste">
+      <li><span>Bewertung</span><b>48 Stunden</b></li>
+      <li><span>Honorar</span><b>2.0 – 2.9 %</b></li>
+      <li><span>Vermarktungsdauer ⌀</span><b>67 Tage</b></li>
+      <li><span>Mitgliedschaft</span><b>SVIT Schweiz</b></li>
+    </ul>
+  </div>
+</section>
+
+<section class="dop gedreht" id="verwalten">
+  <div class="seite-b vh"><div class="bild zoom" id="bildVerwalt"></div><div class="fl l"></div><div class="fl r"></div></div>
+  <div class="seite-t">
+    <div class="num">02</div>
+    <h2>Verwalten heisst: Sie hören nur, wenn es zählt.</h2>
+    <p>Mietzinsinkasso, Nebenkostenabrechnung, Handwerkerkoordination, Erstvermietung. Jeder Beleg online, jede Abrechnung nachvollziehbar, ein Dashboard je Liegenschaft.</p>
+    <ul class="liste">
+      <li><span>Renditeliegenschaften</span><b>ab 3.9 % NME</b></li>
+      <li><span>Stockwerkeigentum</span><b>ab CHF 320 / Einheit</b></li>
+      <li><span>Verwaltete Einheiten</span><b>2'840</b></li>
+      <li><span>Leerstand Portfolio</span><b>1.4 %</b></li>
+    </ul>
+  </div>
+</section>
+
+<section class="obj" id="objekte">
+  <div class="links">
+    <div class="kopfz"><h2>Im Angebot</h2><span id="objAnz"></span></div>
+    <div id="objListe"></div>
+  </div>
+  <div class="buehne vh" id="buehne">
+    <span class="marke fw"><i class="k"></i><i class="s"></i></span>
+    <div class="fl l"></div><div class="fl r"></div>
+  </div>
+</section>
+
+<footer class="fuss">
+  <span class="fw band" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></span>
+  <div class="kon">
+    <span>Löwenstrasse 12 · 8001 Zürich</span>
+    <span>+41 44 555 01 01</span>
+    <span>hallo@fourwalls.example</span>
+    <span>Zürich · Bern · Genf · Lugano</span>
+  </div>
+  <div class="fein">Richtung 03 — Vorhang · Design-Prototyp · fiktive Demo-Daten · © 2026 Fourwalls</div>
+</footer>
+
+<script>
+
+
+(function(){
+  const W = document.getElementById("w"), L = "de";
+  const qs = new URLSearchParams(location.search);
+  const _nur = qs.get("nur");
+  if (_nur) W.querySelectorAll(":scope > section, :scope > footer")
+    .forEach(s => { if (!s.matches(_nur)) s.style.display = "none"; });
+
+  const P = s => FW.properties.find(p => p.slug === s);
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const IMG = {
+    "villa-collina-doro":"../img/ticino-villa-1-1600.jpg",
+    "seehaus-walensee":"../img/lakeside-villa-1-1600.jpg",
+    "penthouse-zuerichberg":"../img/penthouse-1-1600.jpg",
+    "champel-geneve":"../img/geneva-facade-1-1600.jpg",
+    "neubau-zug":"../img/condo-modern-1-1600.jpg",
+    "chalet-anniviers":"../img/chalet-2-1600.jpg"
+  };
+  const REIHE = Object.keys(IMG);
+
+  document.getElementById("heroBild").style.backgroundImage = "url(" + IMG["villa-collina-doro"] + ")";
+  document.getElementById("bildVerkauf").style.backgroundImage = "url(../img/interior-bright-1-1600.jpg)";
+  document.getElementById("bildVerwalt").style.backgroundImage = "url(../img/mfh-winterthur-1-1600.jpg)";
+
+  const hp = P("villa-collina-doro");
+  document.getElementById("heroFakten").innerHTML =
+    ["Montagnola · Tessin", FW.roomsLabel(hp,L), hp.livingArea + " m²", FW.priceLabel(hp,L)]
+    .map(x => "<span>" + esc(x) + "</span>").join("");
+
+
+  /* ---- Portal-Sucheinstieg ---- */
+  (function(){
+    const ps = document.getElementById("portalSuche");
+    if (!ps) return;
+    let psTrans = "buy";
+    ps.querySelectorAll(".pst2 a").forEach(a2 => a2.addEventListener("click", e => {
+      e.preventDefault(); psTrans = a2.dataset.t;
+      ps.querySelectorAll(".pst2 a").forEach(x => x.classList.toggle("an", x === a2));
+    }));
+    ps.addEventListener("submit", e => {
+      e.preventDefault();
+      const o = document.getElementById("psOrt").value.trim();
+      const q = new URLSearchParams();
+      if (psTrans !== "buy") q.set("trans", psTrans);
+      if (o) q.set("ort", o);
+      location.href = "portal.html" + (q.toString() ? "?" + q.toString() : "");
+    });
+  })();
+
+  /* ---- Objektliste + Bühne ---- */
+  const buehne = document.getElementById("buehne");
+  const liste = document.getElementById("objListe");
+  document.getElementById("objAnz").textContent = REIHE.length + " Objekte";
+  REIHE.forEach((slug,i) => {
+    const d = document.createElement("div");
+    d.className = "lage" + (i===0?" an":"");
+    d.style.backgroundImage = "url(" + IMG[slug] + ")";
+    buehne.insertBefore(d, buehne.firstChild);
+  });
+  const lagen = [...buehne.querySelectorAll(".lage")];
+  liste.innerHTML = REIHE.map((slug,i) => {
+    const p = P(slug);
+    return `<button class="row" data-i="${i}" aria-current="${i===0}">
+      <span class="n">${String(i+1).padStart(2,"0")}</span>
+      <span class="t">${esc(p.title[L])}<small>${esc(p.city)} · ${esc(p.canton)} · ${esc(FW.roomsLabel(p,L))}</small></span>
+      <span class="p">${esc(FW.priceLabel(p,L))}</span>
+    </button>`;
+  }).join("");
+  const rows = [...liste.querySelectorAll(".row")];
+  function waehle(i){
+    lagen.forEach((el,j) => el.classList.toggle("an", i===j));
+    rows.forEach((el,j) => el.setAttribute("aria-current", i===j ? "true":"false"));
+  }
+  rows.forEach(r => {
+    r.addEventListener("mouseenter", () => waehle(+r.dataset.i));
+    r.addEventListener("focus", () => waehle(+r.dataset.i));
+    r.addEventListener("click", () => waehle(+r.dataset.i));
+  });
+
+  /* ---- Vorhang öffnet sich beim Scrollen ---- */
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add("auf"); io.unobserve(e.target); }
+  }), {threshold:.22});
+  document.querySelectorAll(".vh").forEach(el => io.observe(el));
+
+  /* ---- Kopf wechselt nach dem Hero ---- */
+  const hero = document.getElementById("hero");
+  if (hero){
+    const io2 = new IntersectionObserver(es => es.forEach(e => {
+      W.classList.toggle("gescrollt", !e.isIntersecting);
+    }), {rootMargin:"-70px 0px 0px 0px", threshold:0});
+    io2.observe(hero);
+  } else { W.classList.add("gescrollt"); }
+
+  /* ---- Erscheinung ---- */
+  const bH = document.getElementById("gtHell"), bD = document.getElementById("gtDunkel");
+  function setz(m,merken){
+    W.dataset.mode = m;
+    bH.setAttribute("aria-pressed", m==="hell"); bD.setAttribute("aria-pressed", m==="dunkel");
+    if(merken){ try{ localStorage.setItem("fw-vorhang", m); }catch(e){} }
+  }
+  bH.addEventListener("click",()=>setz("hell",true));
+  bD.addEventListener("click",()=>setz("dunkel",true));
+  let start="hell"; const h=(location.hash||"").replace("#","");
+  if(h==="hell"||h==="dunkel") start=h; else { try{const v=localStorage.getItem("fw-vorhang"); if(v) start=v;}catch(e){} }
+  setz(start,false);
+
+  /* ---- Intro ---- */
+  const pre = document.getElementById("pre");
+  const kurz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (qs.get("intro") === "0"){
+    pre.remove(); W.classList.add("bereit");
+    document.querySelectorAll(".vh").forEach(el => el.classList.add("auf"));
+    return;
+  }
+  requestAnimationFrame(()=>pre.classList.add("los"));
+  setTimeout(()=>{
+    pre.classList.add("weg");
+    W.classList.add("bereit");
+    if (hero) hero.classList.add("auf");
+    setTimeout(()=>{ pre.classList.add("aus"); setTimeout(()=>pre.remove(),450); }, kurz?60:1250);
+  }, kurz ? 220 : 1900);
+})();
+</script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Immobilien suchen — Fourwalls</title>
+<meta name="description" content="Fourwalls Immobilienportal: Kaufen und Mieten in der ganzen Schweiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ================= VORHANG · Portal (Bühnenhaus) =================
+   Programmzettel links, Bühne rechts. Der Doppelflügel ist die Bewegung der ganzen Welt. */
+:root{
+  --gr:#F4EDE1; --gr2:#ECE2D0; --gr3:#E2D5BE; --ink:#241C16; --leise:#6E6357;
+  --linie:rgba(36,28,22,.2); --gold:#A87A2E; --tief:#241C16; --gut:#4E7A49; --warn:#9A4A54;
+  --d:'Petrona',Georgia,serif; --t:'Manrope',system-ui,sans-serif; --r:0px;
+}
+[data-mode="dunkel"]{
+  --gr:#2A1013; --gr2:#351A1C; --gr3:#402226; --ink:#F0E6D8; --leise:#AD9389;
+  --linie:rgba(240,230,216,.2); --gold:#C9974A; --tief:#1B0A0C; --gut:#8FB08A; --warn:#D08A93;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:light dark}
+body{margin:0;background:var(--gr);color:var(--ink);font-family:var(--t);font-weight:300;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+:where(h1,h2,h3,h4,p,figure,ul,ol,dl,dd){margin:0;padding:0}
+:where(ul,ol){list-style:none}
+:where(button){font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:where(a){color:inherit;text-decoration:none}
+:where(input,select,textarea){font:inherit;color:inherit}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+img{display:block;max-width:100%}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+.fw{display:block;position:relative;aspect-ratio:730/507}
+.fw i{position:absolute;inset:0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:100% 100%;mask-size:100% 100%}
+.fw .k{background:var(--lg,var(--ink));-webkit-mask-image:url(../img/logo-ink.png);mask-image:url(../img/logo-ink.png)}
+.fw .s{background:var(--lga,var(--gold));-webkit-mask-image:url(../img/logo-sub.png);mask-image:url(../img/logo-sub.png)}
+.mark{display:block;aspect-ratio:432/317;background:var(--lg,var(--ink));-webkit-mask-image:url(../img/logo-mono.png);mask-image:url(../img/logo-mono.png);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+
+/* ---- Kopf: Rampe ---- */
+.kopf{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:clamp(12px,1.8vw,26px);padding:11px clamp(14px,2.4vw,32px);background:var(--gr);border-bottom:1px solid var(--gold)}
+.kopf .fw{width:72px;flex:0 0 auto}
+.kopf nav{display:flex;gap:20px;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise);font-weight:500}
+.kopf nav a{padding:8px 0;border-bottom:1px solid transparent}
+.kopf nav a:hover{color:var(--ink)}
+.kopf nav a[aria-current="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.kopf .rechts{margin-left:auto;display:flex;align-items:center;gap:8px}
+.knopf{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);padding:.6em 1em;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;transition:background .2s,color .2s,border-color .2s;white-space:nowrap;min-height:38px}
+.knopf:hover{background:var(--ink);color:var(--gr)}
+.knopf.voll{background:var(--gold);border-color:var(--gold);color:#fff}
+.knopf.voll:hover{background:var(--ink);border-color:var(--ink)}
+.knopf.leise{border-color:var(--linie);color:var(--leise)}
+.zaehl{display:inline-grid;place-items:center;min-width:17px;height:17px;border-radius:999px;background:var(--gold);color:#fff;font-size:.58rem;font-weight:700;padding:0 4px}
+.sprache{display:flex;gap:2px;font-size:.6rem;letter-spacing:.08em;font-weight:500}
+.sprache button{padding:6px 5px;color:var(--leise);border-bottom:1px solid transparent}
+.sprache button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.gt{display:flex;gap:2px;border:1px solid var(--linie);padding:2px}
+.gt button{width:24px;height:24px;padding:0;font-size:.52rem;color:var(--leise);display:grid;place-items:center}
+.gt button[aria-pressed="true"]{background:var(--ink);color:var(--gr)}
+.ansicht{display:none}.ansicht.an{display:block}
+
+/* ---- Bühnenhaus ---- */
+.haus{display:grid;grid-template-columns:minmax(380px,44%) 1fr;height:calc(100svh - 61px)}
+.programm{overflow-y:auto;border-right:1px solid var(--linie);display:flex;flex-direction:column}
+.zettel{padding:16px clamp(14px,2vw,26px) 10px;border-bottom:1px solid var(--linie);display:flex;flex-direction:column;gap:8px;background:var(--gr);position:sticky;top:0;z-index:20}
+.zettel .reihe{display:flex;gap:8px;flex-wrap:wrap}
+.tab2{display:flex;border:1px solid var(--ink)}
+.tab2 button{padding:.55em 1em;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;color:var(--leise);min-height:38px}
+.tab2 button[aria-pressed="true"]{background:var(--ink);color:var(--gr)}
+.feld{background:transparent;border:1px solid var(--linie);border-bottom-color:var(--ink);padding:.55em .7em;font-size:.84rem;min-height:38px;color:var(--ink);flex:1 1 120px}
+.feld::placeholder{color:var(--leise)}
+select.feld{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--leise) 50%),linear-gradient(135deg,var(--leise) 50%,transparent 50%);background-position:calc(100% - 14px) 55%,calc(100% - 9px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:1.6em}
+.ortfeld{position:relative;flex:1 1 180px}
+.ortfeld .feld{width:100%}
+.vorschlaege{position:absolute;left:0;right:0;top:calc(100% + 2px);background:var(--gr);border:1px solid var(--ink);z-index:60;display:none;max-height:300px;overflow:auto}
+.vorschlaege.an{display:block}
+.vorschlaege button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:.7em .9em;font-size:.82rem;border-bottom:1px solid var(--linie)}
+.vorschlaege button:hover,.vorschlaege button:focus-visible{background:var(--gr2);outline-offset:-2px}
+.vorschlaege small{color:var(--leise);font-size:.66rem;white-space:nowrap}
+.vorschlaege .art{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-right:8px;font-weight:600}
+.preisspanne{display:flex;align-items:center;gap:2px;border:1px solid var(--linie);border-bottom-color:var(--ink);flex:1 1 200px}
+.preisspanne input{flex:1;min-width:0;background:none;border:0;padding:.55em .6em;font-size:.82rem;min-height:36px;text-align:right}
+.preisspanne input::placeholder{color:var(--leise)}
+.preisspanne span{color:var(--gold);font-size:.7rem}
+.mehrfilter{position:relative}
+.filterfeld{position:absolute;left:0;top:calc(100% + 6px);width:min(420px,92vw);background:var(--gr);border:1px solid var(--ink);padding:18px;z-index:80;display:none;box-shadow:12px 12px 0 var(--gr3)}
+.filterfeld.an{display:block}
+.filterfeld h4{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:14px 0 8px}
+.filterfeld h4:first-child{margin-top:0}
+.chipwahl{display:flex;flex-wrap:wrap;gap:6px}
+.chipwahl button{border:1px solid var(--linie);padding:.4em .7em;font-size:.68rem;color:var(--leise);min-height:32px}
+.chipwahl button[aria-pressed="true"]{border-color:var(--gold);color:var(--ink);background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.filterfeld .aktionen{display:flex;justify-content:space-between;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--linie)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips:empty{display:none}
+.chips button{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--linie);padding:.3em .6em;font-size:.66rem;color:var(--leise);min-height:28px}
+.chips button b{font-weight:500;color:var(--ink)}
+.chips button::after{content:"×";color:var(--gold)}
+.zkopf{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.zkopf h1{font-family:var(--d);font-weight:300;font-size:1.35rem;letter-spacing:-.01em}
+.zkopf .n{color:var(--leise);font-size:.74rem}
+.zkopf select{margin-left:auto;flex:0 0 auto;min-height:32px;padding:.3em 1.5em .3em .5em;font-size:.72rem;border-color:transparent;border-bottom-color:var(--linie)}
+
+/* ---- Programmzeilen ---- */
+.zeilen{padding:6px 0 30px}
+.zeile{display:grid;grid-template-columns:34px 88px 1fr auto;gap:12px;align-items:center;padding:10px clamp(14px,2vw,26px);border-bottom:1px solid var(--linie);position:relative;transition:background .2s}
+.zeile:hover,.zeile:focus-visible,.zeile.aktiv{background:var(--gr2);outline-offset:-2px}
+.zeile.aktiv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold)}
+.zeile .nr{font-family:var(--d);font-size:1rem;color:var(--gold);font-variant-numeric:tabular-nums}
+.zeile .thumb{aspect-ratio:3/2;overflow:hidden;background:var(--gr3)}
+.zeile .thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.88)}
+.zeile .tx{min-width:0;padding-right:30px}
+.zeile .tx>span{display:block}
+.zeile .tx>span.fk{display:flex}
+.zeile .tit{font-family:var(--d);font-weight:400;font-size:1rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zeile .ort{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);margin-top:3px}
+.zeile .fk{font-size:.68rem;color:var(--leise);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.zeile .fk .q{color:var(--gold);font-weight:500}
+.zeile .pr{text-align:right;white-space:nowrap}
+.zeile .pr b{display:block;font-family:var(--d);font-weight:400;font-size:1.05rem}
+.zeile .pr small{color:var(--leise);font-size:.62rem}
+.zeile .merk{position:absolute;right:clamp(10px,2vw,22px);top:10px;width:26px;height:26px;display:grid;place-items:center;color:var(--leise)}
+.zeile .merk[aria-pressed="true"]{color:var(--gold)}
+.zeile .merk svg{width:14px;height:14px}
+.mehrknopf{margin:16px auto 0;display:flex}
+.leer{padding:40px clamp(14px,2vw,26px);text-align:center;display:none}
+.leer.an{display:block}
+.leer .mark{width:56px;margin:0 auto 14px;opacity:.4}
+.leer h2{font-family:var(--d);font-weight:300;font-size:1.5rem}
+.leer p{margin-top:8px;color:var(--leise);font-size:.86rem}
+.leer .vorschl{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+
+/* ---- Bühne ---- */
+.buehne{position:relative;background:var(--tief);overflow:hidden}
+.buehne .modus{position:absolute;right:14px;top:14px;z-index:30;display:flex;border:1px solid rgba(244,237,225,.5);background:rgba(27,10,12,.5);backdrop-filter:blur(6px)}
+.buehne .modus button{padding:.5em .9em;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:rgba(244,237,225,.8);min-height:34px}
+.buehne .modus button[aria-pressed="true"]{background:#F4EDE1;color:#241C16}
+.szene{position:absolute;inset:0}
+.szene .bild{position:absolute;inset:0}
+.szene .bild img{width:100%;height:100%;object-fit:cover;filter:saturate(.88);transform:scale(1.06);transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
+.szene.auf .bild img{transform:scale(1)}
+.szene .schleier{position:absolute;inset:0;background:linear-gradient(to top,rgba(27,10,12,.86) 0%,rgba(27,10,12,.2) 45%,rgba(27,10,12,.15) 100%)}
+.szene .fl{position:absolute;top:0;bottom:0;width:50.5%;background:var(--gr);z-index:5;transition:transform .55s cubic-bezier(.72,0,.16,1)}
+.szene .fl.l{left:0}.szene .fl.r{right:0}
+.szene.auf .fl.l{transform:translateX(-100%)}.szene.auf .fl.r{transform:translateX(100%)}
+.szene .naht{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--gold);z-index:6;opacity:0;transition:opacity .3s}
+.szene:not(.auf) .naht{opacity:.8}
+.szene .txt{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 clamp(18px,3vw,44px) clamp(22px,3.4vw,40px);color:#F6F0E6}
+.szene .kick{display:flex;gap:12px;align-items:center;font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:#D9B872;font-weight:600}
+.szene .kick .gn{font-family:var(--d);font-size:1.4rem;letter-spacing:0;font-weight:300}
+.szene h2{margin-top:10px;font-family:var(--d);font-weight:300;font-size:clamp(1.6rem,3vw,2.8rem);line-height:1.04;max-width:18ch}
+.szene .zl{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(246,240,230,.8);border-top:1px solid rgba(246,240,230,.3);padding-top:12px}
+.szene .zl b{font-family:var(--d);font-size:1.3rem;letter-spacing:0;text-transform:none;font-weight:400;color:#F6F0E6}
+.szene .zl small{font-size:.6rem;color:rgba(246,240,230,.6);letter-spacing:.08em;text-transform:none}
+.szene .cta{margin-top:14px;display:flex;gap:8px}
+.szene .cta .knopf{border-color:rgba(246,240,230,.5);color:#F6F0E6}
+.szene .cta .knopf.voll{background:#D9B872;border-color:#D9B872;color:#241C16}
+.szene .leerb{position:absolute;inset:0;display:grid;place-items:center;color:rgba(246,240,230,.5);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+#kmap{position:absolute;inset:0;width:100%;height:100%;display:none;cursor:grab}
+.buehne.karte #kmap{display:block}
+.buehne.karte .szene{display:none}
+#kmap.zieht{cursor:grabbing}
+.kartensteuer{position:absolute;right:14px;bottom:14px;display:none;flex-direction:column;gap:6px;z-index:30}
+.buehne.karte .kartensteuer{display:flex}
+.kartensteuer button{width:36px;height:36px;display:grid;place-items:center;font-size:1rem;background:var(--gr);border:1px solid var(--ink)}
+.hierSuchen{position:absolute;left:50%;top:14px;translate:-50% 0;z-index:30;background:var(--gr);display:none}
+.buehne.karte .hierSuchen.an{display:inline-flex}
+.kartehinweis{position:absolute;left:14px;bottom:14px;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,240,230,.55);display:none;z-index:30}
+.buehne.karte .kartehinweis{display:block}
+
+/* ---- Detail: Akt ---- */
+.akt{position:fixed;inset:0;z-index:300;display:none;background:var(--gr);overflow-y:auto}
+.akt.an{display:block}
+.akt .fl{position:fixed;top:0;bottom:0;width:50.5%;background:var(--gr3);z-index:320;transition:transform .7s cubic-bezier(.72,0,.16,1);pointer-events:none}
+.akt .fl.l{left:0}.akt .fl.r{right:0}
+.akt.auf .fl.l{transform:translateX(-100%)}.akt.auf .fl.r{transform:translateX(100%)}
+.dkopf{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px clamp(14px,2.4vw,32px);background:var(--gr);border-bottom:1px solid var(--gold)}
+.dkopf .z{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise);font-weight:500}
+.dkopf .aktionen{display:flex;gap:6px;flex-wrap:wrap}
+.dop{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100svh - 58px)}
+.dop .bilder{display:flex;flex-direction:column;gap:4px;background:var(--gr3)}
+.dop .bilder figure{position:relative;aspect-ratio:4/3;overflow:hidden}
+.dop .bilder img{width:100%;height:100%;object-fit:cover;filter:saturate(.88)}
+.dop .bilder figcaption{position:absolute;left:12px;bottom:10px;font-family:var(--d);color:#F6F0E6;font-size:1.1rem}
+.dop .text{padding:clamp(24px,4vw,56px) clamp(20px,4vw,64px);position:sticky;top:58px;align-self:start;max-height:calc(100svh - 58px);overflow-y:auto}
+.dop .gn{font-family:var(--d);font-size:clamp(2.4rem,5vw,4rem);line-height:1;color:var(--gold);opacity:.6}
+.dop h2{margin-top:10px;font-family:var(--d);font-weight:300;font-size:clamp(1.7rem,3.2vw,2.8rem);line-height:1.08}
+.dop .dpreis{margin-top:14px;font-family:var(--d);font-size:clamp(1.4rem,2.4vw,2rem)}
+.dop .dpreis small{display:block;font-family:var(--t);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--leise)}
+.dfakten{margin-top:18px;border-top:1px solid var(--ink)}
+.dfakten div{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.82rem}
+.dfakten dt{color:var(--leise)}
+.dabschnitt{margin-top:22px}
+.dabschnitt h3{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px}
+.dtext{color:var(--leise);font-size:.92rem;line-height:1.75;max-width:60ch}
+[data-mode="dunkel"] .dtext{color:#CDBBAF}
+.dfeat{display:flex;flex-wrap:wrap;gap:6px}
+.dfeat span{border:1px solid var(--linie);padding:.35em .7em;font-size:.68rem;color:var(--leise)}
+.minikarte{height:180px;background:var(--tief);position:relative;overflow:hidden}
+.minikarte canvas{position:absolute;inset:0;width:100%;height:100%}
+.doks a{display:flex;justify-content:space-between;border-bottom:1px solid var(--linie);padding:9px 0;font-size:.78rem}
+.doks a span{color:var(--leise);font-size:.64rem}
+.anbieter{border:1px solid var(--ink);padding:14px 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.anbieter .mark{width:36px;flex:0 0 auto}
+.anbieter .wer b{display:block;font-weight:600;font-size:.88rem}
+.anbieter .wer span{font-size:.68rem;color:var(--leise);display:block;margin-top:2px}
+.anbieter .cta{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.dform{margin-top:12px;border:1px solid var(--linie);padding:14px;display:none}
+.dform.an{display:block}
+.dform .paar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dform input,.dform textarea{width:100%;background:transparent;border:1px solid var(--linie);border-bottom-color:var(--ink);padding:.65em .8em;font-size:.85rem;margin-bottom:10px}
+.dform textarea{min-height:90px;resize:vertical}
+.dform .ok{color:var(--gut);font-size:.82rem;display:none}
+.dform label.ab{display:flex;gap:8px;align-items:center;font-size:.76rem;color:var(--leise);margin-bottom:10px}
+.dform label.ab input{width:auto;margin:0}
+.dmelde{margin-top:12px;text-align:right}
+.dmelde button{font-size:.62rem;color:var(--leise);letter-spacing:.1em;text-decoration:underline;padding:6px}
+
+/* ---- Exclusive: Fünf Akte ---- */
+.exheld{position:relative;height:min(90svh,820px);min-height:500px;overflow:hidden;background:var(--tief)}
+.exheld img{width:100%;height:100%;object-fit:cover;filter:saturate(.88)}
+.exheld .schleier{position:absolute;inset:0;background:linear-gradient(105deg,rgba(27,10,12,.76),rgba(27,10,12,.2) 52%,rgba(27,10,12,.55))}
+.exheld .txt{position:absolute;left:0;bottom:0;z-index:3;padding:0 clamp(18px,4vw,60px) clamp(26px,5vw,60px);color:#F6F0E6;max-width:min(94vw,1000px)}
+.exheld .kick{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:#D9B872;font-weight:600;margin-bottom:14px}
+.exheld h1{font-family:var(--d);font-weight:200;font-size:clamp(2.2rem,6vw,5.2rem);line-height:1.02;max-width:16ch}
+.exheld .tag{margin-top:14px;font-family:var(--d);font-style:italic;font-size:clamp(1rem,1.5vw,1.25rem);color:rgba(246,240,230,.85);max-width:44ch}
+.exrail{position:sticky;top:58px;z-index:6;background:var(--gr);border-bottom:1px solid var(--gold);display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;padding:12px clamp(18px,4vw,60px);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--leise);font-weight:500}
+.exrail b{font-family:var(--d);font-size:1.35rem;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:400}
+.exrail .cta{margin-left:auto;display:flex;gap:8px}
+.exakt{display:grid;grid-template-columns:1fr 1fr;min-height:min(84vh,720px)}
+.exakt.gedreht{direction:rtl}.exakt.gedreht>*{direction:ltr}
+.exakt .sb{position:relative;background:var(--gr3);overflow:hidden}
+.exakt .sb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.88)}
+.exakt .st{display:flex;flex-direction:column;justify-content:center;padding:clamp(36px,6vw,90px) clamp(20px,4.4vw,80px)}
+.exakt .gn{font-family:var(--d);font-weight:200;font-size:clamp(2.6rem,5vw,4.6rem);line-height:1;color:var(--gold);opacity:.55}
+.exakt h2{margin-top:12px;font-family:var(--d);font-weight:200;font-size:clamp(1.6rem,3.2vw,2.8rem);line-height:1.1;max-width:18ch}
+.exakt p{margin-top:18px;color:var(--leise);font-size:.96rem;line-height:1.8;max-width:44ch}
+.exakt ul.hl{margin-top:22px;max-width:44ch;border-top:1px solid var(--ink)}
+.exakt ul.hl li{padding:10px 0;border-bottom:1px solid var(--linie);font-size:.86rem;display:flex;gap:12px}
+.exakt ul.hl li::before{content:"—";color:var(--gold)}
+.raeume{max-width:52ch}
+.raeume div{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--linie);font-size:.86rem}
+.raeume div i{font-family:var(--d);color:var(--gold);font-style:normal}
+.raeume div b{font-family:var(--d);font-weight:400}
+.exgal{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--gr3);padding:4px}
+.exgal figure{position:relative;aspect-ratio:4/3;overflow:hidden}
+.exgal img{width:100%;height:100%;object-fit:cover;filter:saturate(.88);transition:transform 1.4s cubic-bezier(.22,1,.36,1)}
+.exgal figure:hover img{transform:scale(1.04)}
+.exgal figcaption{position:absolute;left:14px;bottom:12px;font-family:var(--d);color:#F6F0E6;font-size:1.2rem}
+.exgal figcaption i{font-style:normal;color:#D9B872;margin-right:8px}
+.exmakler{display:flex;gap:14px;align-items:center;margin-top:18px;font-size:.85rem;color:var(--leise)}
+.exmakler .mark{width:44px;--lg:var(--gold)}
+
+/* ---- Inserieren ---- */
+.weiche{max-width:1060px;margin:0 auto;padding:clamp(30px,5vw,60px) clamp(14px,2.4vw,32px) 20px}
+.weiche .kick{font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.weiche h1{font-family:var(--d);font-weight:200;font-size:clamp(1.9rem,3.8vw,3.2rem);margin-top:10px;max-width:22ch;line-height:1.06}
+.weiche .zwei{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--ink)}
+.weiche .weg{padding:26px 24px 20px;display:flex;flex-direction:column;gap:10px;text-align:left;transition:background .25s}
+.weiche .weg + .weg{border-left:1px solid var(--ink)}
+.weiche .weg:hover{background:var(--gr2)}
+.weiche .weg .w1{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.weiche .weg .gn{font-family:var(--d);font-size:2.4rem;line-height:1;color:var(--gold);opacity:.5}
+.weiche .weg b{font-family:var(--d);font-weight:300;font-size:1.55rem;line-height:1.12}
+.weiche .weg p{color:var(--leise);font-size:.88rem;line-height:1.6}
+.weiche .weg ul{display:flex;flex-direction:column;gap:5px;font-size:.8rem;margin-top:4px}
+.weiche .weg li::before{content:"— ";color:var(--gold)}
+.weiche .weg .cta{margin-top:auto;padding-top:12px}
+.weiche .beide{margin-top:14px;font-size:.8rem;color:var(--leise);max-width:70ch}
+.wiz{max-width:660px;margin:0 auto;padding:clamp(20px,3vw,36px) clamp(14px,2.4vw,32px) 70px;display:none}
+.wiz.an{display:block}
+.wiz .fort{display:flex;gap:4px;margin-bottom:22px}
+.wiz .fort i{flex:1;height:3px;background:var(--linie)}
+.wiz .fort i.voll{background:var(--gold)}
+.wiz .schrittz{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.wiz h2{font-family:var(--d);font-weight:200;font-size:clamp(1.6rem,3vw,2.4rem);margin-top:8px}
+.wiz .fld{margin-top:18px}
+.wiz label{display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);font-weight:500;margin-bottom:7px}
+.wiz input[type="text"],.wiz input[type="number"],.wiz input[type="email"],.wiz textarea,.wiz select{width:100%;background:transparent;border:1px solid var(--linie);border-bottom-color:var(--ink);padding:.72em .9em;font-size:.9rem;min-height:44px}
+.wiz textarea{min-height:120px;resize:vertical}
+.wiz .fehler{color:var(--warn);font-size:.76rem;margin-top:6px;display:none}
+.wiz .fehler.an{display:block}
+.grosswahl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grosswahl.dreier{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.grosswahl button{border:1px solid var(--linie);padding:1em;text-align:left;min-height:56px}
+.grosswahl button b{display:block;font-family:var(--d);font-weight:300;font-size:1.25rem}
+.grosswahl button span{font-size:.72rem;color:var(--leise)}
+.grosswahl button[aria-pressed="true"]{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.bildwahl{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.bildwahl button{position:relative;aspect-ratio:3/2;overflow:hidden;border:1px solid var(--linie);padding:0;background:var(--gr3)}
+.bildwahl img{width:100%;height:100%;object-fit:cover}
+.bildwahl button[aria-pressed="true"]{border-color:var(--gold);outline:2px solid var(--gold);outline-offset:-2px}
+.wiz .nav2{display:flex;justify-content:space-between;margin-top:28px;padding-top:16px;border-top:1px solid var(--ink)}
+.hinweisbox{margin-top:16px;border-left:2px solid var(--gold);padding:10px 14px;background:var(--gr2);font-size:.8rem;color:var(--leise)}
+.vorschau{border:1px solid var(--ink);margin-top:16px}
+.vorschau .kz{padding:8px 12px;border-bottom:1px solid var(--linie);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.vorschau .zeile{grid-template-columns:34px 120px 1fr auto}
+.wizfertig{text-align:center;padding:50px 0;display:none}
+.wizfertig.an{display:block}
+.wizfertig .mark{width:66px;margin:0 auto 16px;--lg:var(--gold)}
+.wizfertig h2{font-family:var(--d);font-weight:200;font-size:2rem}
+.wizfertig p{margin-top:12px;color:var(--leise);max-width:44ch;margin-inline:auto;font-size:.9rem}
+
+/* ---- Konto ---- */
+.konto{max-width:1040px;margin:0 auto;padding:clamp(24px,4vw,48px) clamp(14px,2.4vw,32px) 70px}
+.konto h1{font-family:var(--d);font-weight:200;font-size:clamp(1.8rem,3.4vw,2.8rem)}
+.kontotabs{display:flex;border-bottom:1px solid var(--ink);margin-top:18px;overflow-x:auto}
+.kontotabs button{padding:.8em 1.1em;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:var(--leise);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;min-height:44px}
+.kontotabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.kontoteil{display:none;padding-top:16px}
+.kontoteil.an{display:block}
+.kontoteil .leerhin{color:var(--leise);font-size:.88rem;padding:26px 0}
+.kontoteil .zeilen{padding:0}
+.aboliste{display:flex;flex-direction:column;gap:0}
+.abo{border-bottom:1px solid var(--linie);padding:14px 4px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.abo b{font-family:var(--d);font-weight:400;font-size:1.05rem}
+.abo span{font-size:.72rem;color:var(--leise)}
+.abo .rechtsab{margin-left:auto;display:flex;gap:8px}
+.abo .status{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:.3em .6em;font-weight:600}
+
+.fuss{border-top:1px solid var(--gold);padding:26px clamp(14px,2.4vw,32px) 24px;display:flex;flex-wrap:wrap;gap:12px 36px;align-items:center;color:var(--leise);font-size:.72rem}
+.fuss .fw{width:66px}
+.fuss .fein{margin-left:auto;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+
+/* ---- Mobil: das Bühnenhaus klappt ---- */
+.mfilter{display:none}
+.mkarte{display:none}
+@media(max-width:1000px){
+  .kopf nav,.sprache{display:none}
+  .haus{display:block;height:auto}
+  .programm{border-right:0;overflow:visible}
+  .zettel{position:sticky;top:53px}
+  .buehne{display:none}
+  .buehne.karte{display:block;position:fixed;inset:0;top:53px;z-index:150}
+  .buehne.karte .modus{display:flex}
+  .mkarte{display:inline-flex}
+  .zettel select.feld,.preisspanne,#filterAuf{display:none}
+  .mfilter{display:inline-flex}
+  .mehrfilter{position:static}
+  .filterfeld{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;max-height:80svh;overflow-y:auto;box-shadow:0 -1px 0 var(--gold)}
+  .filterfeld .aktionen{position:sticky;bottom:-18px;background:var(--gr);padding-bottom:6px}
+  .zeile{grid-template-columns:96px 1fr;grid-template-rows:auto auto;row-gap:4px;padding:10px 14px 12px}
+  .zeile .nr{display:none}
+  .zeile .thumb{grid-row:1/span 2}
+  .zeile .tit{white-space:normal;font-size:1.02rem}
+  .zeile .pr{text-align:left;grid-column:2}
+  .zeile .pr b{display:inline;margin-right:8px}
+  .dop{grid-template-columns:1fr}
+  .dop .text{position:static;max-height:none}
+  .dop .bilder{flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory}
+  .dop .bilder figure{flex:0 0 86%;scroll-snap-align:start}
+  .dop .bilder figure:only-child{flex-basis:100%}
+  .dform .paar,.grosswahl,.weiche .zwei{grid-template-columns:1fr}
+  .weiche .weg + .weg{border-left:0;border-top:1px solid var(--ink)}
+  .grosswahl.dreier{grid-template-columns:1fr 1fr}
+  .exakt,.exakt.gedreht{grid-template-columns:1fr;direction:ltr}
+  .exakt .sb{min-height:52vh}
+  .exgal{grid-template-columns:1fr}
+  .exrail .cta{margin-left:0;width:100%}
+}
+/* kompakt, kein Überlauf */
+@media(max-width:600px){
+  .kopf{padding:8px 12px;gap:8px}
+  .kopf .fw{width:56px}
+  .kopf .rechts{gap:5px}
+  .kopf .knopf{padding:.5em .6em;font-size:.58rem;letter-spacing:.06em;min-height:34px}
+  .kopf .knopf [data-i="gemerkt"]{display:none}
+  .kopf .gt{padding:1px}.kopf .gt button{width:21px;height:21px}
+}
+</style>
+</head>
+<body data-mode="hell">
+
+<header class="kopf">
+  <a href="index.html" class="fw" aria-label="Fourwalls Startseite"><i class="k"></i><i class="s"></i></a>
+  <nav><a href="#suche" data-nav="suche" data-i="immobilien">Immobilien</a><a href="#karte" data-nav="karte" data-i="karte">Karte</a><a href="verkaufen.html" data-i="verkaufen">Verkaufen</a><a href="verwalten.html" data-i="verwalten">Verwalten</a></nav>
+  <div class="rechts">
+    <div class="sprache" role="group" aria-label="Sprache"><button data-l="de" aria-pressed="true">DE</button><button data-l="fr" aria-pressed="false">FR</button><button data-l="it" aria-pressed="false">IT</button><button data-l="en" aria-pressed="false">EN</button></div>
+    <a class="knopf leise" href="#konto"><span data-i="gemerkt">Gemerkt</span> <span class="zaehl" id="favZahl">0</span></a>
+    <a class="knopf voll" href="#neu" data-i="inserieren">Gratis inserieren</a>
+    <div class="gt" role="group" aria-label="Erscheinung"><button id="gtHell" aria-pressed="true" title="Tag">T</button><button id="gtDunkel" aria-pressed="false" title="Nacht">N</button></div>
+  </div>
+</header>
+
+<!-- ============ SUCHE = BÜHNENHAUS ============ -->
+<section class="ansicht an" id="a-suche">
+<div class="haus">
+  <div class="programm">
+    <div class="zettel">
+      <div class="reihe">
+        <div class="tab2" role="group"><button id="tKauf" aria-pressed="true" data-i="kaufen">Kaufen</button><button id="tMiete" aria-pressed="false" data-i="mieten">Mieten</button></div>
+        <div class="ortfeld"><input class="feld" id="ortInput" type="text" placeholder="Ort, PLZ, Kanton oder Region" autocomplete="off" aria-label="Ort" data-ph="ort"><div class="vorschlaege" id="ortVor"></div></div>
+      </div>
+      <div class="reihe">
+        <select class="feld" id="typSel" aria-label="Objekttyp"></select>
+        <select class="feld" id="ziSel" aria-label="Zimmer ab"></select>
+      </div>
+      <div class="reihe">
+        <div class="preisspanne" aria-label="Preisspanne"><input id="pMinIn" inputmode="numeric" placeholder="Preis von" aria-label="Preis von" data-ph="preisVon"><span>—</span><input id="pMaxIn" inputmode="numeric" placeholder="Preis bis" aria-label="Preis bis" data-ph="preisBis"></div>
+        <div class="mehrfilter">
+          <button class="knopf mfilter" id="mFilterAuf">Filter <span class="zaehl" id="filterZahlM">0</span></button>
+          <button class="knopf leise" id="filterAuf"><span data-i="mehrFilter">Mehr Filter</span> <span class="zaehl" id="filterZahl">0</span></button>
+          <div class="filterfeld" id="filterFeld" role="dialog" aria-label="Weitere Filter">
+            <h4 data-i="preisChf">Preis (CHF)</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="feld" type="number" id="fPMin" placeholder="von" min="0" step="10000"><input class="feld" type="number" id="fPMax" placeholder="bis" min="0" step="10000"></div>
+            <h4 data-i="wohnflaeche">Wohnfläche ab (m²)</h4><input class="feld" type="number" id="fFl" placeholder="z.B. 100" min="0" step="10" style="width:100%">
+            <h4 data-i="anbieter">Anbieter</h4><div class="chipwahl" id="fQuelle"></div>
+            <h4 data-i="ausstattung">Ausstattung</h4><div class="chipwahl" id="fFeat"></div>
+            <div class="aktionen"><button class="knopf leise" id="filterReset" data-i="zuruecksetzen">Zurücksetzen</button><button class="knopf voll" id="filterAnwenden"><span data-i="anwenden">Anwenden</span> · <span id="filterTreffer">0</span></button></div>
+          </div>
+        </div>
+        <button class="knopf leise mkarte" id="mKarte" data-i="karte">Karte</button>
+        <button class="knopf leise" id="sucheSpeichern" data-i="sucheSpeichern">Suche speichern</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="zkopf"><h1 id="resultTitel">Kaufen</h1><span class="n" id="resultN"></span><select class="feld" id="sortSel" aria-label="Sortierung"></select></div>
+    </div>
+    <div class="zeilen" id="zeilen"></div>
+    <button class="knopf leise mehrknopf" id="mehrKnopf">Weitere anzeigen</button>
+    <div class="leer" id="leer"><span class="mark"></span><h2>Der Vorhang bleibt zu.</h2><p id="leerText"></p><div class="vorschl"><button class="knopf leise" id="leerReset"></button><button class="knopf leise" id="leerKanton"></button><button class="knopf voll" id="leerAbo" data-i="suchabo">Suchabo anlegen</button></div></div>
+  </div>
+  <div class="buehne" id="buehne">
+    <div class="modus" role="group" aria-label="Bühne oder Karte"><button id="mBuehne" aria-pressed="true" data-i="buehne">Bühne</button><button id="mKarteB" aria-pressed="false" data-i="karte">Karte</button></div>
+    <div class="szene" id="szene"><div class="leerb">Fahren Sie über ein Objekt</div><div class="fl l"></div><div class="fl r"></div><div class="naht"></div></div>
+    <canvas id="kmap" role="img" aria-label="Karte der Inserate — der Programmzettel links ist die zugängliche Alternative"></canvas>
+    <button class="knopf hierSuchen" id="hierSuchen">In diesem Ausschnitt suchen</button>
+    <div class="kartensteuer"><button id="zoomPlus" aria-label="Vergrössern">+</button><button id="zoomMinus" aria-label="Verkleinern">−</button><button id="zoomReset" aria-label="Ganze Schweiz">◻</button></div>
+    <div class="kartehinweis">Fiktive Demo-Daten · Kartenbild: Fourwalls</div>
+  </div>
+</div>
+</section>
+
+<!-- ============ INSERIEREN ============ -->
+<section class="ansicht" id="a-neu">
+  <div class="weiche" id="weiche">
+    <div class="kick">Für Eigentümerinnen und Eigentümer</div>
+    <h1>Zwei Wege zum Verkauf. Sie wählen den Akt.</h1>
+    <div class="zwei">
+      <button class="weg" id="wegSelbst"><span class="gn">I</span><span class="w1">Selbst inserieren · kostenlos</span><b>Ich erstelle und betreue das Inserat selbst.</b><p>Sie schreiben den Text, wählen die Bilder, beantworten Anfragen und führen Besichtigungen. Fourwalls stellt die Reichweite.</p><ul><li>Kostenlos, ohne Konto zum Start</li><li>9 kurze Schritte, jederzeit unterbrechbar</li><li>Anfragen gehen direkt an Sie</li></ul><span class="cta knopf">Jetzt kostenlos inserieren</span></button>
+      <a class="weg" href="verkaufen.html"><span class="gn">II</span><span class="w1">Mit Fourwalls verkaufen · Mandat</span><b>Fourwalls übernimmt den Verkauf professionell.</b><p>Bewertung, Strategie, Fotografie, Käuferqualifikation, Besichtigungen, Verhandlung, Notariat — eine Ansprechperson bis zur Übergabe.</p><ul><li>Hedonische Bewertung in 48 Stunden</li><li>Honorar 2.0 – 2.9 %, nur bei Erfolg</li><li>Fourwalls-Exclusive-Inszenierung</li></ul><span class="cta knopf voll">Verkauf mit Fourwalls kennenlernen</span></a>
+    </div>
+    <p class="beide">Beides ist ehrlich gemeint: Wer selbst inserieren will, bekommt dafür das beste Werkzeug. Wer es abgeben will, den besten Service. Sie können jederzeit wechseln.</p>
+  </div>
+  <div class="wiz" id="wizBox"><div class="fort" id="wizFort"></div><div class="schrittz" id="wizSchritt"></div><h2 id="wizTitel"></h2><div id="wizInhalt"></div><div class="nav2"><button class="knopf leise" id="wizZurueck" data-i="zurueck">Zurück</button><button class="knopf voll" id="wizWeiter">Weiter</button></div><div class="hinweisbox">Ihr Entwurf wird automatisch gespeichert — Sie können jederzeit unterbrechen und später weiterfahren. Inserieren ist kostenlos.</div></div>
+  <div class="wizfertig" id="wizFertig"><span class="mark"></span><h2>Ihr Inserat ist eingereicht.</h2><p>Wir prüfen jedes Inserat kurz, bevor es erscheint — in der Regel innert weniger Stunden. Sie finden es unter «Meine Inserate».</p><p style="margin-top:18px"><a class="knopf voll" href="#konto">Zu meinen Inseraten</a></p></div>
+</section>
+
+<!-- ============ KONTO ============ -->
+<section class="ansicht" id="a-konto">
+  <div class="konto"><h1 data-i="konto">Ihr Bereich</h1>
+    <div class="kontotabs" role="tablist"><button aria-pressed="true" data-kt="merk" data-i="merkliste">Gemerkte Objekte</button><button aria-pressed="false" data-kt="abos" data-i="suchabos">Suchabos</button><button aria-pressed="false" data-kt="meine" data-i="meine">Meine Inserate</button></div>
+    <div class="kontoteil an" id="kt-merk"><div class="zeilen" id="merkZeilen"></div><div class="leerhin" id="merkLeer">Noch nichts gemerkt. Tippen Sie auf das Herz in einer Zeile.</div></div>
+    <div class="kontoteil" id="kt-abos"><div class="aboliste" id="aboListe"></div><div class="leerhin" id="aboLeer">Noch kein Suchabo. Speichern Sie eine Suche — wir benachrichtigen Sie bei neuen Treffern.</div></div>
+    <div class="kontoteil" id="kt-meine"><div class="aboliste" id="meineListe"></div><div class="leerhin" id="meineLeer">Noch kein eigenes Inserat. <a href="#neu" style="text-decoration:underline">Jetzt kostenlos inserieren.</a></div></div>
+  </div>
+</section>
+
+<div class="akt" id="akt" role="dialog" aria-modal="true" aria-label="Objektdetail"><div class="fl l"></div><div class="fl r"></div><div id="aktInhalt"></div></div>
+
+<footer class="fuss"><span class="fw"><i class="k"></i><i class="s"></i></span><span>Fourwalls AG · Löwenstrasse 12 · 8001 Zürich</span><span class="fein">Grand Final «Vorhang» · fiktive Demo-Daten · © 2026</span></footer>
+
+<script src="../listings.js"></script>
+<script src="../properties.js"></script>
+<script src="../core.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const { esc, t } = FWP;
+  const HERZ = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.6-9.2-8.8C1.2 8 3 5 6.2 5c2 0 3.3 1 4.3 2.4h3c1-1.4 2.3-2.4 4.3-2.4 3.2 0 5 3 3.4 6.2C19 15.4 12 20 12 20Z"/></svg>';
+  let F = Object.assign({ trans:"buy", ort:"", typ:"", pMin:null, pMax:null, ziMin:null, flMin:null, feat:[], quelle:"", sort:"neu" }, FWP.ausURL());
+  let ergebnis = [], seite = 1; const PRO_SEITE = 30;
+  const zahl = s => { const n = parseInt(String(s).replace(/[^\d]/g,""),10); return isNaN(n) ? null : n; };
+  const fmtIn = n => n == null ? "" : String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"’");
+  const nr2 = i => String(i+1).padStart(2,"0");
+
+  function uebersetze(){
+    document.querySelectorAll("[data-i]").forEach(el => el.textContent = t(el.dataset.i));
+    document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = t(el.dataset.ph));
+    document.querySelectorAll(".sprache button").forEach(b => b.setAttribute("aria-pressed", b.dataset.l === FWP.lang));
+    $("sortSel").innerHTML = [["neu","neuste"],["preis-auf","preisAuf"],["preis-ab","preisAb"],["flaeche","flaeche"],["zimmer","zimmer"]].map(([v,k]) => `<option value="${v}">${t(k)}</option>`).join(""); $("sortSel").value = F.sort;
+    $("typSel").innerHTML = `<option value="">${t("typ")}</option>` + Object.entries(FWL.typen).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""); $("typSel").value = F.typ || "";
+    $("ziSel").innerHTML = `<option value="">${t("zimmerAb")}</option>` + ["1.5","2.5","3.5","4.5","5.5"].map(z => `<option value="${z}">${z}+</option>`).join(""); $("ziSel").value = F.ziMin != null ? String(F.ziMin) : "";
+    $("mehrKnopf").textContent = t("weitere"); $("wizWeiter").textContent = t("weiter"); document.documentElement.lang = FWP.lang;
+  }
+  document.querySelectorAll(".sprache button").forEach(b => b.addEventListener("click", () => { FWP.sprache(b.dataset.l); uebersetze(); such(); }));
+
+  /* ---- Routing ---- */
+  const ANS = { suche:"a-suche", karte:"a-suche", neu:"a-neu", konto:"a-konto" };
+  let letzte = "suche";
+  function route(){
+    const h = (location.hash||"").replace("#",""), kopf = h.split("/")[0];
+    if (kopf === "hell" || kopf === "dunkel"){ setzModus(kopf,true); location.hash = "suche"; return; }
+    if (kopf === "objekt" || kopf === "exclusive"){ oeffneAkt(h.split("/")[1]||""); return; }
+    schliesseAkt();
+    const n = ANS[kopf] ? kopf : "suche"; letzte = n;
+    Object.entries(ANS).forEach(([k,id]) => $(id).classList.toggle("an", id === ANS[n]));
+    document.querySelectorAll("[data-nav]").forEach(a => a.setAttribute("aria-current", a.dataset.nav===n));
+    setzeBuehneModus(n === "karte" ? "karte" : "buehne");
+    if (n === "konto") malKonto();
+    if (n === "neu"){ $("weiche").style.display = wizAktiv ? "none" : ""; $("wizBox").classList.toggle("an", wizAktiv); if (wizAktiv) malWizard(); }
+  }
+  window.addEventListener("hashchange", route);
+
+  /* ---- Steuerung ---- */
+  Object.entries(FWL.quellen).forEach(([k,v]) => { const b = document.createElement("button"); b.textContent = v; b.dataset.q = k; b.setAttribute("aria-pressed","false"); b.addEventListener("click", () => { const an = b.getAttribute("aria-pressed")==="true"; $("fQuelle").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); if(!an) b.setAttribute("aria-pressed","true"); vorschauTreffer(); }); $("fQuelle").appendChild(b); });
+  Object.entries(FWP.FEAT_DE).forEach(([k,v]) => { const b = document.createElement("button"); b.textContent = v; b.dataset.f = k; b.setAttribute("aria-pressed","false"); b.addEventListener("click", () => { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); vorschauTreffer(); }); $("fFeat").appendChild(b); });
+  function syncSteuer(){
+    $("ortInput").value = FWP.ortLabel(F.ort); $("typSel").value = F.typ || ""; $("ziSel").value = F.ziMin != null ? String(F.ziMin) : "";
+    $("pMinIn").value = fmtIn(F.pMin); $("pMaxIn").value = fmtIn(F.pMax);
+    $("tKauf").setAttribute("aria-pressed", F.trans==="buy"); $("tMiete").setAttribute("aria-pressed", F.trans==="rent"); $("sortSel").value = F.sort || "neu";
+    $("fPMin").value = F.pMin ?? ""; $("fPMax").value = F.pMax ?? ""; $("fFl").value = F.flMin ?? "";
+    $("fQuelle").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.q===F.quelle));
+    $("fFeat").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", F.feat.includes(b.dataset.f))); vorschauTreffer();
+  }
+  $("tKauf").addEventListener("click", () => { F.trans = "buy"; F.pMin = F.pMax = null; syncSteuer(); such(); });
+  $("tMiete").addEventListener("click", () => { F.trans = "rent"; F.pMin = F.pMax = null; syncSteuer(); such(); });
+  let ortTimer;
+  $("ortInput").addEventListener("input", () => { clearTimeout(ortTimer); ortTimer = setTimeout(() => { const v = FWP.vorschlaege($("ortInput").value); $("ortVor").innerHTML = v.map(s => `<button data-wert="${esc(s.wert)}"><span><span class="art">${esc(s.art)}</span>${esc(s.label)}</span><small>${esc(s.sub)}</small></button>`).join(""); $("ortVor").classList.toggle("an", v.length>0); $("ortVor").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { F.ort = b.dataset.wert; $("ortInput").value = FWP.ortLabel(F.ort); $("ortVor").classList.remove("an"); such(); })); if ($("ortInput").value.trim()==="" && F.ort){ F.ort=""; such(); } }, 140); });
+  $("ortInput").addEventListener("keydown", e => { if (e.key==="Enter"){ const b = $("ortVor").querySelector("button"); if (b) b.click(); } if (e.key==="ArrowDown"){ const b = $("ortVor").querySelector("button"); if (b) b.focus(); } });
+  document.addEventListener("click", e => { if (!e.target.closest(".ortfeld")) $("ortVor").classList.remove("an"); if (!e.target.closest(".mehrfilter")) $("filterFeld").classList.remove("an"); });
+  $("typSel").addEventListener("change", () => { F.typ = $("typSel").value; such(); });
+  $("ziSel").addEventListener("change", () => { F.ziMin = $("ziSel").value ? +$("ziSel").value : null; such(); });
+  $("sortSel").addEventListener("change", () => { F.sort = $("sortSel").value; such(); });
+  let preisTimer; ["pMinIn","pMaxIn"].forEach(id => { $(id).addEventListener("input", () => { clearTimeout(preisTimer); preisTimer = setTimeout(() => { F.pMin = zahl($("pMinIn").value); F.pMax = zahl($("pMaxIn").value); such(); }, 350); }); $(id).addEventListener("blur", () => { $(id).value = fmtIn(zahl($(id).value)); }); });
+  function leseFilterFeld(){ const f = Object.assign({}, F); f.pMin = $("fPMin").value ? +$("fPMin").value : null; f.pMax = $("fPMax").value ? +$("fPMax").value : null; f.flMin = $("fFl").value ? +$("fFl").value : null; const q = $("fQuelle").querySelector('[aria-pressed="true"]'); f.quelle = q ? q.dataset.q : ""; f.feat = [...$("fFeat").querySelectorAll('[aria-pressed="true"]')].map(b => b.dataset.f); return f; }
+  function vorschauTreffer(){ $("filterTreffer").textContent = FWP.filtern(leseFilterFeld()).length + " " + t("treffer"); }
+  ["fPMin","fPMax","fFl"].forEach(i => $(i).addEventListener("input", vorschauTreffer));
+  const filterUmschalt = () => { $("filterFeld").classList.toggle("an"); vorschauTreffer(); if ($("filterFeld").classList.contains("an")) $("fPMin").focus(); };
+  $("filterAuf").addEventListener("click", filterUmschalt); $("mFilterAuf").addEventListener("click", filterUmschalt);
+  document.addEventListener("keydown", e => { if (e.key==="Escape"){ $("filterFeld").classList.remove("an"); if ($("akt").classList.contains("an")) location.hash = letzte; } });
+  $("filterAnwenden").addEventListener("click", () => { F = leseFilterFeld(); $("filterFeld").classList.remove("an"); syncSteuer(); such(); });
+  $("filterReset").addEventListener("click", () => { F = Object.assign({}, F, { typ:"", pMin:null, pMax:null, ziMin:null, flMin:null, feat:[], quelle:"" }); syncSteuer(); such(); });
+  $("mehrKnopf").addEventListener("click", () => { seite++; malListe(true); });
+  $("mKarte").addEventListener("click", () => location.hash = "karte");
+  $("mBuehne").addEventListener("click", () => location.hash = "suche");
+  $("mKarteB").addEventListener("click", () => location.hash = "karte");
+  const aboAnlegen = () => { FWP.suchen.speichern(F, FWP.beschreibeSuche(F)); $("sucheSpeichern").textContent = t("gemerktOk"); setTimeout(() => $("sucheSpeichern").textContent = t("sucheSpeichern"), 1800); };
+  $("sucheSpeichern").addEventListener("click", aboAnlegen); $("leerAbo").addEventListener("click", aboAnlegen);
+  $("leerReset").addEventListener("click", () => { if ($("leerReset").dataset.ganz) F.ort = ""; $("filterReset").click(); });
+  $("leerKanton").addEventListener("click", () => { if ($("leerKanton").dataset.ort){ F.ort = $("leerKanton").dataset.ort; syncSteuer(); such(); } });
+
+  /* ---- Suche ---- */
+  function such(){
+    ergebnis = FWP.filtern(F); seite = 1; FWP.inURL(F); malListe(); malChips();
+    $("resultTitel").textContent = (F.trans==="rent" ? t("mieten") : t("kaufen")) + (F.ort ? " · " + FWP.ortLabel(F.ort) : "");
+    $("resultN").textContent = ergebnis.length + " " + t("inserate");
+    const n = FWP.aktiveFilterZahl(F); $("filterZahl").textContent = n; $("filterZahlM").textContent = n;
+    if (ergebnis[0]) zeigeSzene(ergebnis[0], true); else zeigeSzene(null);
+    if ($("buehne").classList.contains("karte")) zeichneKarte();
+  }
+  function zeileHTML(l, i){
+    const fav = FWP.favs.hat(l.id), m2 = FWP.proM2(l);
+    const ziel = (l.listingTier==="exclusive" && l.fw ? "#exclusive/" : "#objekt/") + l.slug;
+    const fk = [l.rooms ? l.rooms+" Zi." : null, l.livingArea ? l.livingArea+" m²" : (l.plotArea ? l.plotArea+" m² Land" : null), FWL.typen[l.propertyType]].filter(Boolean).map(esc);
+    return `<a class="zeile" href="${ziel}" data-slug="${l.slug}" aria-label="${esc(l.title)}, ${esc(FWP.preis(l))}, ${esc(l.city)}">
+      <span class="nr">${nr2(i)}</span>
+      <span class="thumb">${FWP.pic(l.img,{alt:"",sizes:"120px",eager:i<12})}</span>
+      <span class="tx"><span class="tit">${esc(l.title)}</span><span class="ort">${esc(l.postalCode+" "+l.city)} · ${esc(l.canton)}</span><span class="fk"><span>${fk.join("</span><span>")}</span><span class="q">${esc(FWP.quelleLabel(l))}${l.neu?" · "+t("neu"):""}</span></span></span>
+      <span class="pr"><b>${esc(FWP.preis(l))}</b><small>${l.transactionType==="rent" ? t("nk") : m2 ? fmtIn(m2)+" "+t("proM2") : ""}</small></span>
+      <button class="merk" data-fav="${l.id}" aria-pressed="${fav}" aria-label="${t("merken")}">${HERZ}</button></a>`;
+  }
+  function malListe(anhaengen){
+    const start = anhaengen ? (seite-1)*PRO_SEITE : 0; const teil = ergebnis.slice(start, seite*PRO_SEITE);
+    const html = teil.map((l,i) => zeileHTML(l, start+i)).join("");
+    if (anhaengen) $("zeilen").insertAdjacentHTML("beforeend", html); else $("zeilen").innerHTML = html;
+    const gezeigt = Math.min(ergebnis.length, seite*PRO_SEITE);
+    $("mehrKnopf").style.display = ergebnis.length > gezeigt ? "flex" : "none"; $("mehrKnopf").textContent = t("weitere") + " (" + (ergebnis.length-gezeigt) + ")";
+    $("leer").classList.toggle("an", ergebnis.length===0); if (!ergebnis.length) malLeer();
+    verdrahte($("zeilen"));
+  }
+  function malLeer(){
+    $("leerText").textContent = t("keineTreffer");
+    let nR = FWP.filtern({ trans:F.trans, ort:F.ort }).length;
+    if (nR > 0){ $("leerReset").textContent = t("zuruecksetzen") + " · " + nR; $("leerReset").dataset.ganz = ""; } else { nR = FWP.filtern({ trans:F.trans }).length; $("leerReset").textContent = "Ganze Schweiz · " + nR; $("leerReset").dataset.ganz = "1"; }
+    let alt = null;
+    if (F.ort && !F.ort.startsWith("kt:") && !F.ort.startsWith("rg:")){ const l0 = FWP.alle().find(x => x.city.toLowerCase()===F.ort.toLowerCase()); if (l0) alt = "kt:"+l0.canton; }
+    else if (F.ort && F.ort.startsWith("kt:")){ const rg = Object.entries(FWP.REGIONEN).find(([k,r]) => r.kantone.includes(F.ort.slice(3))); if (rg) alt = "rg:"+rg[0]; }
+    if (alt){ const n = FWP.filtern(Object.assign({}, F, { ort:alt })).length; $("leerKanton").textContent = FWP.ortLabel(alt) + " · " + n; $("leerKanton").dataset.ort = alt; $("leerKanton").style.display = n ? "" : "none"; } else $("leerKanton").style.display = "none";
+  }
+  function verdrahte(w){
+    w.querySelectorAll(".merk").forEach(b => b.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); b.setAttribute("aria-pressed", FWP.favs.kippen(b.dataset.fav)); malFav(); }));
+    w.querySelectorAll(".zeile").forEach(z => { const l = FWP.finde(z.dataset.slug); z.addEventListener("mouseenter", () => zeigeSzene(l)); z.addEventListener("focus", () => zeigeSzene(l)); });
+  }
+  function malFav(){ $("favZahl").textContent = FWP.favs.alle().length; }
+  function malChips(){
+    const c = []; if (F.typ) c.push(["typ", FWL.typen[F.typ]]); if (F.pMin != null) c.push(["pMin","≥ "+FWP.chf(F.pMin)]); if (F.pMax != null) c.push(["pMax","≤ "+FWP.chf(F.pMax)]); if (F.ziMin != null) c.push(["ziMin",F.ziMin+"+ Zi."]); if (F.flMin != null) c.push(["flMin","≥ "+F.flMin+" m²"]); if (F.quelle) c.push(["quelle",FWL.quellen[F.quelle]]); F.feat.forEach(f => c.push(["feat:"+f, FWP.FEAT_DE[f]]));
+    $("chips").innerHTML = c.map(([k,v]) => `<button data-chip="${k}" aria-label="Filter entfernen: ${esc(v)}"><b>${esc(v)}</b></button>`).join("");
+    $("chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { const k = b.dataset.chip; if (k.startsWith("feat:")) F.feat = F.feat.filter(x => x!==k.slice(5)); else if (k==="typ") F.typ=""; else if (k==="quelle") F.quelle=""; else F[k]=null; syncSteuer(); such(); }));
+  }
+
+  /* ---- Bühne: der Vorhang wechselt die Szene ---- */
+  let szeneAktiv = null, szeneTimer = null;
+  function zeigeSzene(l, sofort){
+    const sz = $("szene");
+    document.querySelectorAll(".zeile.aktiv").forEach(z => z.classList.remove("aktiv"));
+    if (!l){ sz.classList.remove("auf"); sz.innerHTML = '<div class="leerb">Kein Objekt</div><div class="fl l"></div><div class="fl r"></div><div class="naht"></div>'; szeneAktiv = null; return; }
+    if (szeneAktiv === l.slug) return; szeneAktiv = l.slug;
+    const z = $("zeilen").querySelector(`.zeile[data-slug="${l.slug}"]`); if (z) z.classList.add("aktiv");
+    const bau = () => {
+      const m2 = FWP.proM2(l); const idx = ergebnis.indexOf(l);
+      const ziel = (l.listingTier==="exclusive" && l.fw ? "#exclusive/" : "#objekt/") + l.slug;
+      sz.innerHTML = `<div class="bild">${FWP.pic(l.img,{alt:l.title,sizes:"56vw",eager:true})}</div><div class="schleier"></div>
+        <div class="txt"><div class="kick"><span class="gn">${idx>=0?nr2(idx):""}</span><span>${esc(FWP.quelleLabel(l))}${l.verificationStatus==="verified"&&l.listingSource!=="fourwalls"?" · "+t("geprueft"):""}</span></div>
+        <h2>${esc(l.title)}</h2>
+        <div class="zl"><b>${esc(FWP.preis(l))}</b>${l.transactionType==="rent"?`<small>${t("nk")}</small>`:m2?`<small>${fmtIn(m2)} ${t("proM2")}</small>`:""}${l.rooms?`<span>${l.rooms} Zi.</span>`:""}${l.livingArea?`<span>${l.livingArea} m²</span>`:""}<span>${esc(l.postalCode+" "+l.city)}</span></div>
+        <div class="cta"><a class="knopf voll" href="${ziel}">Öffnen</a></div></div>
+        <div class="fl l"></div><div class="fl r"></div><div class="naht"></div>`;
+      setTimeout(() => sz.classList.add("auf"), 30);
+    };
+    clearTimeout(szeneTimer);
+    if (sofort || !sz.classList.contains("auf")){ bau(); return; }
+    sz.classList.remove("auf"); szeneTimer = setTimeout(bau, 300);
+  }
+  function setzeBuehneModus(m){
+    $("buehne").classList.toggle("karte", m==="karte");
+    $("mBuehne").setAttribute("aria-pressed", m!=="karte"); $("mKarteB").setAttribute("aria-pressed", m==="karte");
+    if (m==="karte") requestAnimationFrame(zeichneKarte);
+  }
+
+  /* ---- Karte ---- */
+  const kmap = $("kmap"); let kZoom = 1, kCx = 0, kCy = 0, kBewegt = false;
+  const stil = n => getComputedStyle(document.body).getPropertyValue(n).trim();
+  function zeichneKarte(){
+    if (!$("buehne").classList.contains("karte")) return;
+    const box = $("buehne").getBoundingClientRect(); const dpr = Math.min(devicePixelRatio||1,2);
+    kmap.width = box.width*dpr; kmap.height = box.height*dpr; const ctx = kmap.getContext("2d"); ctx.scale(dpr,dpr);
+    const w = box.width, h = box.height; if (!kCx){ kCx = w/2; kCy = h/2; }
+    const cGold = stil("--gold"), cTief = stil("--tief");
+    ctx.fillStyle = cTief; ctx.fillRect(0,0,w,h);
+    /* Vorhang-Karte: feine vertikale Streifen wie Stoffbahnen */
+    ctx.strokeStyle = "rgba(244,237,225,.06)"; for (let gx = 0; gx < w; gx += 24){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
+    const staedte = [["Zürich",47.3769,8.5417],["Bern",46.948,7.4474],["Genf",46.2044,6.1432],["Basel",47.5596,7.5886],["Lugano",46.0037,8.9511],["Chur",46.8508,9.532],["Luzern",47.0502,8.3093],["St. Gallen",47.4245,9.3767],["Sitten",46.2331,7.3606],["Lausanne",46.5197,6.6323]];
+    ctx.font = "italic 12px 'Petrona',serif"; ctx.fillStyle = "rgba(244,237,225,.55)";
+    for (const [nm,la,ln] of staedte){ const p = FWP.projekt(la,ln,w,h); const x = (p.x-kCx)*kZoom+w/2, y = (p.y-kCy)*kZoom+h/2; if (x<-20||x>w+20||y<-20||y>h+20) continue; ctx.fillText(nm, x+7, y+4); ctx.fillRect(x-1,y-1,2,2); }
+    const grp = FWP.cluster(ergebnis, w, h, kZoom<2.2?42:30, kZoom, kCx, kCy); kmap._grp = grp;
+    for (const g of grp){
+      if (g.punkte.length > 1){ const r = Math.min(24, 11+g.punkte.length*.6); ctx.beginPath(); ctx.arc(g.x,g.y,r,0,7); ctx.fillStyle = "rgba(201,151,74,.16)"; ctx.fill(); ctx.strokeStyle = cGold; ctx.lineWidth = 1; ctx.stroke(); ctx.fillStyle = "#F4EDE1"; ctx.textAlign = "center"; ctx.font = "300 13px 'Petrona',serif"; ctx.fillText(String(g.punkte.length), g.x, g.y+5); ctx.textAlign = "left"; }
+      else { const l = g.punkte[0].l, label = FWP.preisKurz(l); ctx.font = "500 10px 'Manrope',sans-serif"; const bw = ctx.measureText(label).width+14; const aktiv = szeneAktiv===l.slug;
+        ctx.fillStyle = aktiv ? cGold : "#F4EDE1"; ctx.fillRect(g.x-bw/2, g.y-22, bw, 18); ctx.fillStyle = aktiv ? "#fff" : "#241C16"; ctx.textAlign = "center"; ctx.fillText(label, g.x, g.y-9); ctx.textAlign = "left";
+        ctx.strokeStyle = cGold; ctx.beginPath(); ctx.moveTo(g.x, g.y-4); ctx.lineTo(g.x, g.y+4); ctx.stroke(); }
+    }
+    $("hierSuchen").classList.toggle("an", kBewegt);
+  }
+  $("zoomPlus").addEventListener("click", () => { kZoom = Math.min(9,kZoom*1.6); kBewegt = true; zeichneKarte(); });
+  $("zoomMinus").addEventListener("click", () => { kZoom = Math.max(1,kZoom/1.6); kBewegt = kZoom>1; zeichneKarte(); });
+  $("zoomReset").addEventListener("click", () => { kZoom = 1; kCx = 0; kCy = 0; kBewegt = false; zeichneKarte(); });
+  $("hierSuchen").addEventListener("click", () => { ergebnis = (kmap._grp||[]).flatMap(g => g.punkte.map(p => p.l)); seite = 1; malListe(); $("resultN").textContent = ergebnis.length + " " + t("inserate") + " · Ausschnitt"; kBewegt = false; zeichneKarte(); });
+  let zieh = null;
+  kmap.addEventListener("pointerdown", e => { zieh = { x:e.clientX, y:e.clientY, cx:kCx, cy:kCy }; kmap.classList.add("zieht"); kmap.setPointerCapture(e.pointerId); });
+  kmap.addEventListener("pointermove", e => { if (!zieh) return; kCx = zieh.cx-(e.clientX-zieh.x)/kZoom; kCy = zieh.cy-(e.clientY-zieh.y)/kZoom; zeichneKarte(); });
+  kmap.addEventListener("pointerup", e => { const bewegt = zieh && (Math.abs(e.clientX-zieh.x)+Math.abs(e.clientY-zieh.y)>6); zieh = null; kmap.classList.remove("zieht"); if (bewegt){ kBewegt = true; zeichneKarte(); return; }
+    const b = kmap.getBoundingClientRect(), mx = e.clientX-b.left, my = e.clientY-b.top;
+    for (const g of (kmap._grp||[])){ const dx = g.x-mx, dy = g.y-my; if (dx*dx+dy*dy < 26*26){ if (g.punkte.length>1){ kCx = (g.x-b.width/2)/kZoom+kCx; kCy = (g.y-b.height/2)/kZoom+kCy; kZoom = Math.min(9,kZoom*2.1); kBewegt = true; zeichneKarte(); } else { const l = g.punkte[0].l; location.hash = (l.listingTier==="exclusive"&&l.fw?"#exclusive/":"#objekt/")+l.slug; } return; } } });
+  window.addEventListener("resize", zeichneKarte);
+  document.addEventListener("mouseover", e => { const z = e.target.closest(".zeile"); if (z && $("buehne").classList.contains("karte")) zeichneKarte(); });
+
+  /* ---- Akt (Detail + Exclusive) ---- */
+  function schliesseAkt(){ $("akt").classList.remove("an","auf"); document.body.style.overflow = ""; }
+  function minikarte(cv, l){ const b = cv.parentElement.getBoundingClientRect(); const dpr = Math.min(devicePixelRatio||1,2); cv.width = b.width*dpr; cv.height = b.height*dpr; const c = cv.getContext("2d"); c.scale(dpr,dpr); c.fillStyle = stil("--tief"); c.fillRect(0,0,b.width,b.height); c.strokeStyle = "rgba(244,237,225,.07)"; for (let x=0;x<b.width;x+=24){ c.beginPath(); c.moveTo(x,0); c.lineTo(x,b.height); c.stroke(); }
+    const z = 4.5, p = FWP.projekt(l.lat,l.lng,b.width,b.height); for (const o of FWP.alle()){ if (o===l) continue; const q = FWP.projekt(o.lat,o.lng,b.width,b.height); const x = (q.x-p.x)*z+b.width/2, y = (q.y-p.y)*z+b.height/2; if (x<0||x>b.width||y<0||y>b.height) continue; c.fillStyle = "rgba(244,237,225,.35)"; c.fillRect(x-1.5,y-1.5,3,3); }
+    c.fillStyle = stil("--gold"); c.fillRect(b.width/2-5,b.height/2-5,10,10); c.fillStyle = "#F4EDE1"; c.font = "italic 12px 'Petrona',serif"; c.fillText(l.postalCode+" "+l.city, b.width/2+16, b.height/2+4); }
+  function oeffneAkt(slug){
+    const l = FWP.finde(slug); if (!l){ location.hash = "suche"; return; }
+    const ex = l.listingTier==="exclusive" && l.fw;
+    const fav = FWP.favs.hat(l.id), m2 = FWP.proM2(l), bilder = l.bilder || [l.img];
+    const makler = ex ? (FW.brokers||[]).find(x => x.id===l.broker) : null;
+    const fakten = [["Preis",FWP.preis(l)], l.rooms?["Zimmer",l.rooms]:null, l.livingArea?["Wohnfläche",l.livingArea+" m²"]:null, l.plotArea?["Grundstück",l.plotArea+" m²"]:null, m2?[t("proM2"),fmtIn(m2)]:null, l.yearBuilt?["Baujahr",l.yearBuilt]:null, l.floor!=null?["Etage",l.floor===0?"EG":l.floor+". OG"]:null, ["Referenz",l.id]].filter(Boolean);
+    const kopf = `<div class="dkopf"><span class="z">${ex ? t("exclusive") : esc(FWL.typen[l.propertyType])} · ${esc(l.postalCode+" "+l.city)}</span><div class="aktionen"><button class="knopf leise" id="dMerken" aria-pressed="${fav}">${fav?t("gemerktOk"):t("merken")}</button><button class="knopf leise" id="dTeilen">${t("teilen")}</button><button class="knopf" id="dZu">${t("schliessen")} ×</button></div></div>`;
+    const kontakt = `<div class="anbieter">${l.listingSource==="fourwalls"?'<span class="mark"></span>':""}<div class="wer"><b>${esc(l.publisher)}${ex?" — Exclusive-Mandat":""}</b><span>${ex ? "Wir vermarkten dieses Objekt im Auftrag der Eigentümerschaft. Ihre Anfrage geht direkt an " + (makler?esc(makler.name):"unser Team") + "." : esc(FWP.quelleLabel(l)) + (l.verificationStatus==="verified"?" · "+t("geprueft"):"") + " — Ihre Anfrage geht direkt an diese Anbieterin / diesen Anbieter, nicht an Dritte."}</span></div><div class="cta">${l.contactOptions.includes("call")?'<a class="knopf leise" href="#" onclick="return false">+41 44 555 01 01</a>':""}<button class="knopf voll" id="dAnfrage">${t("anfrage")}</button></div></div>
+      <div class="dform" id="dForm"><div class="paar"><input type="text" placeholder="Name" id="dfName" aria-label="Name"><input type="email" placeholder="E-Mail" id="dfMail" aria-label="E-Mail"></div><textarea aria-label="Nachricht">Guten Tag\nIch interessiere mich für dieses Objekt und würde es gerne besichtigen.</textarea><label class="ab"><input type="checkbox" checked> Ähnliche Objekte per Suchabo erhalten</label><button class="knopf voll" id="dfSenden">Anfrage senden</button><p class="ok" id="dfOk">Gesendet — ${esc(l.publisher)} meldet sich bei Ihnen.</p></div>
+      <div class="dmelde"><button id="dMelden">${t("melden")}</button></div>`;
+    let html;
+    if (!ex){
+      html = kopf + `<div class="dop"><div class="bilder">${bilder.slice(0,4).map((b,i) => `<figure>${FWP.pic(b,{alt:l.title+" "+(i+1),sizes:"(max-width:1000px) 86vw, 50vw",eager:i===0})}<figcaption>${nr2(i)}</figcaption></figure>`).join("")}</div>
+        <div class="text"><div class="gn">${nr2(Math.max(0,ergebnis.indexOf(l)))}</div><h2>${esc(l.title)}</h2><div class="dpreis">${esc(FWP.preis(l))}<small>${l.transactionType==="rent"?`+ CHF ${l.rentNK} NK`:m2?`${fmtIn(m2)} ${t("proM2")}`:esc(FWL.typen[l.propertyType])}</small></div>
+        <dl class="dfakten">${fakten.map(([k,v]) => `<div><dt>${esc(k)}</dt><dd>${esc(String(v))}</dd></div>`).join("")}</dl>
+        <div class="dabschnitt"><h3>${t("beschreibung")}</h3><p class="dtext">${esc(l.text||l.beschreibung)}</p></div>
+        ${l.features.length?`<div class="dabschnitt"><h3>${t("ausstattung")}</h3><div class="dfeat">${l.features.map(f => `<span>${esc(FWP.FEAT_DE[f]||f)}</span>`).join("")}</div></div>`:""}
+        <div class="dabschnitt"><h3>${t("lage")}</h3><div class="minikarte"><canvas id="miniKarte"></canvas></div></div>
+        <div class="dabschnitt"><h3>${t("dokumente")}</h3><div class="doks"><a href="#" onclick="return false">Factsheet <span>PDF · 1 S.</span></a><a href="#" onclick="return false">Grundriss <span>auf Anfrage</span></a></div></div>
+        <div class="dabschnitt"><h3>${t("kontakt")}</h3>${kontakt}</div></div></div>`;
+    } else {
+      const raeume = l.raeume||[];
+      html = kopf + `<section class="exheld">${FWP.pic(bilder[0],{alt:l.title,sizes:"100vw",eager:true})}<div class="schleier"></div><div class="txt"><div class="kick">${t("exclusive")} · ${esc(l.postalCode+" "+l.city)}</div><h1>${esc(l.title)}</h1><p class="tag">${esc(l.tagline)}</p></div></section>
+        <div class="exrail"><b>${esc(FWP.preis(l))}</b>${l.rooms?`<span>${l.rooms} Zimmer</span>`:""}${l.livingArea?`<span>${l.livingArea} m²</span>`:""}${l.plotArea?`<span>${l.plotArea} m² Land</span>`:""}<div class="cta"><a class="knopf voll" href="#xanfrage">${t("anfrage")}</a></div></div>
+        <section class="exakt"><div class="sb">${FWP.pic(bilder[1]||bilder[0],{alt:"",sizes:"50vw"})}</div><div class="st"><div class="gn">I</div><h2>${esc(l.beschreibung)}</h2><p>${esc(l.text)}</p><ul class="hl">${(l.highlights||[]).map(h => `<li>${esc(h)}</li>`).join("")}</ul></div></section>
+        ${raeume.length?`<section class="exakt gedreht"><div class="sb">${FWP.pic(bilder[2]||bilder[0],{alt:"",sizes:"50vw"})}</div><div class="st"><div class="gn">II</div><h2>${l.livingArea} m², Raum für Raum.</h2><div class="raeume" style="margin-top:18px">${raeume.map(([n,q],i) => `<div><i>${nr2(i)}</i><span>${esc(n)}</span><b>${q} m²</b></div>`).join("")}</div></div></section>`:""}
+        <section class="exgal">${bilder.slice(0,4).map((b,i) => `<figure>${FWP.pic(b,{alt:l.title+" "+(i+1),sizes:"(max-width:1000px) 100vw, 50vw"})}<figcaption><i>${["I","II","III","IV"][i]}</i>${["Aussen","Wohnen","Küche","Licht"][i]||""}</figcaption></figure>`).join("")}</section>
+        <section class="exakt" id="xanfrage"><div class="st"><div class="gn">III</div><h2>Fakten und Kontakt.</h2><dl class="dfakten">${fakten.map(([k,v]) => `<div><dt>${esc(k)}</dt><dd>${esc(String(v))}</dd></div>`).join("")}</dl>${makler?`<div class="exmakler"><span class="mark"></span><div><b>${esc(makler.name)}</b><br>${esc(makler.role.de)} · ${esc(makler.phone)}</div></div>`:""}</div><div class="st">${kontakt}</div></section>`;
+    }
+    $("aktInhalt").innerHTML = html;
+    const A = $("akt"); A.classList.add("an"); A.scrollTop = 0; document.body.style.overflow = "hidden";
+    setTimeout(() => A.classList.add("auf"), 30);
+    $("dZu").addEventListener("click", () => location.hash = letzte); $("dZu").focus();
+    $("dMerken").addEventListener("click", () => { const an = FWP.favs.kippen(l.id); $("dMerken").textContent = an?t("gemerktOk"):t("merken"); $("dMerken").setAttribute("aria-pressed", an); malFav(); });
+    $("dTeilen").addEventListener("click", () => { try{ navigator.clipboard.writeText(location.href); }catch(e){} $("dTeilen").textContent = "Link kopiert ✓"; });
+    $("dAnfrage").addEventListener("click", () => { $("dForm").classList.add("an"); $("dfName").focus(); });
+    $("dfSenden").addEventListener("click", () => { if (!$("dfName").value || !$("dfMail").value.includes("@")){ $("dfName").style.borderColor = "var(--warn)"; $("dfName").focus(); return; } $("dfOk").style.display = "block"; $("dfSenden").disabled = true; $("dfSenden").style.opacity = .5; });
+    $("dMelden").addEventListener("click", () => { $("dMelden").textContent = "Gemeldet — danke, wir prüfen das."; $("dMelden").disabled = true; });
+    const mk = $("miniKarte"); if (mk) requestAnimationFrame(() => minikarte(mk, l));
+  }
+
+  /* ---- Wizard ---- */
+  let wizI = 0, wizD = FWP.entwurf.laden() || {}, wizAktiv = false;
+  $("wegSelbst").addEventListener("click", () => { wizAktiv = true; $("weiche").style.display = "none"; $("wizBox").classList.add("an"); malWizard(); });
+  function malWizard(){
+    $("wizFertig").classList.remove("an"); $("wizBox").classList.add("an"); const S = FWP.WIZARD[wizI];
+    $("wizFort").innerHTML = FWP.WIZARD.map((_,i) => `<i class="${i<=wizI?"voll":""}"></i>`).join("");
+    $("wizSchritt").textContent = "Akt " + (wizI+1) + " von " + FWP.WIZARD.length + (wizD.trans?" · "+(wizD.trans==="rent"?"Vermieten":"Verkaufen"):"");
+    $("wizTitel").textContent = S.titel; $("wizZurueck").style.visibility = wizI===0?"hidden":"visible"; $("wizWeiter").textContent = S.key==="pruefen"?t("veroeffentlichen"):t("weiter");
+    let h = "";
+    if (S.key==="absicht") h = `<div class="fld"><div class="grosswahl"><button data-w="sell" aria-pressed="${wizD.trans==="sell"}"><b>Verkaufen</b><span>Sie möchten Ihr Objekt verkaufen.</span></button><button data-w="rent" aria-pressed="${wizD.trans==="rent"}"><b>Vermieten</b><span>Sie suchen Mieterinnen oder Mieter.</span></button></div><p class="fehler" id="feTrans"></p></div>`;
+    else if (S.key==="typ") h = `<div class="fld"><div class="grosswahl dreier">${Object.entries(FWL.typen).map(([k,v]) => `<button data-w="${k}" aria-pressed="${wizD.typ===k}"><b style="font-family:var(--t);font-size:.95rem;font-weight:500">${esc(v)}</b></button>`).join("")}</div><p class="fehler" id="feTyp"></p></div>`;
+    else if (S.key==="ort") h = `<div class="fld"><label for="wStrasse">Strasse und Nr. (optional — wird erst nach Kontakt sichtbar)</label><input type="text" id="wStrasse" value="${esc(wizD.strasse||"")}"></div><div class="fld" style="display:grid;grid-template-columns:110px 1fr;gap:10px"><div><label for="wPlz">PLZ</label><input type="text" id="wPlz" inputmode="numeric" maxlength="4" value="${esc(wizD.plz||"")}"><p class="fehler" id="fePlz"></p></div><div><label for="wStadt">Ort</label><input type="text" id="wStadt" value="${esc(wizD.stadt||"")}"><p class="fehler" id="feStadt"></p></div></div>`;
+    else if (S.key==="fakten"){ const zz = !["grundstueck","parkplatz","gewerbe","mfh"].includes(wizD.typ); h = (zz?`<div class="fld"><label for="wZi">Zimmer</label><select id="wZi">${["","1.5","2.5","3.5","4.5","5.5","6.5","7.5+"].map(z => `<option ${wizD.zimmer===z?"selected":""}>${z}</option>`).join("")}</select></div>`:"")+`<div class="fld"><label for="wFl">${wizD.typ==="grundstueck"?"Grundstücksfläche":"Wohnfläche"} (m²)</label><input type="number" id="wFl" min="0" value="${esc(wizD.flaeche||"")}"><p class="fehler" id="feFlaeche"></p></div><div class="fld"><label for="wJahr">Baujahr (optional)</label><input type="number" id="wJahr" min="1800" max="2030" value="${esc(wizD.jahr||"")}"></div>`; }
+    else if (S.key==="preis") h = `<div class="fld"><label for="wPreis">${wizD.trans==="rent"?"Nettomiete pro Monat (CHF)":"Kaufpreis (CHF)"}</label><input type="number" id="wPreis" min="0" value="${esc(wizD.preis||"")}"><p class="fehler" id="fePreis"></p></div><div class="fld"><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--ink)"><input type="checkbox" id="wPaA" ${wizD.preisAufAnfrage?"checked":""} style="width:auto;min-height:0"> Preis auf Anfrage</label></div><div class="hinweisbox">Unsicher beim Preis? Fourwalls erstellt Ihnen kostenlos eine hedonische Bewertung innert 48 Stunden — unverbindlich, auch wenn Sie selbst inserieren.</div>`;
+    else if (S.key==="text") h = `<div class="fld"><label for="wTitel">Titel</label><input type="text" id="wTitel" maxlength="70" placeholder="z.B. Helle 3.5-Zi.-Wohnung mit Balkon" value="${esc(wizD.titel||"")}"><p class="fehler" id="feTitel"></p></div><div class="fld"><label for="wBeschr">Beschreibung</label><textarea id="wBeschr" placeholder="Lage, Zustand, Besonderheiten …">${esc(wizD.beschreibung||"")}</textarea><p class="fehler" id="feBeschreibung"></p></div>`;
+    else if (S.key==="bilder"){ const a = wizD.bilder||[]; h = `<p style="color:var(--leise);font-size:.86rem">Prototyp: Beispielbilder auswählen. Produktion: Drag &amp; Drop, das erste Bild ist das Titelbild, Reihenfolge per Ziehen.</p><div class="fld"><div class="bildwahl">${["condo-modern-1","interior-bright-1","kitchen-1","family-house-1","zurich-altbau-1","chalet-2"].map(k => `<button data-b="${k}" aria-pressed="${a.includes(k)}" aria-label="Bild ${k}">${FWP.pic(k,{sizes:"120px"})}</button>`).join("")}</div></div>`; }
+    else if (S.key==="kontakt") h = `<div class="fld"><label for="wName">Name</label><input type="text" id="wName" value="${esc(wizD.name||"")}"><p class="fehler" id="feName"></p></div><div class="fld"><label for="wMail">E-Mail</label><input type="email" id="wMail" value="${esc(wizD.email||"")}"><p class="fehler" id="feEmail"></p></div><div class="fld"><label for="wTel">Telefon (optional)</label><input type="text" id="wTel" value="${esc(wizD.telefon||"")}"></div>`;
+    else if (S.key==="pruefen"){ const b0 = (wizD.bilder||[])[0]; h = `<div class="vorschau"><div class="kz">Vorschau Ihrer Programmzeile</div><div class="zeile" style="border:0"><span class="nr">01</span><span class="thumb">${b0?FWP.pic(b0,{sizes:"120px"}):""}</span><span class="tx"><span class="tit">${esc(wizD.titel||"")}</span><span class="ort">${esc((wizD.plz||"")+" "+(wizD.stadt||""))}</span><span class="fk"><span>${esc(wizD.zimmer?wizD.zimmer+" Zi.":"")}</span><span>${esc(wizD.flaeche?wizD.flaeche+" m²":"")}</span><span class="q">${t("privat")}</span></span></span><span class="pr"><b>${wizD.preisAufAnfrage?t("aufAnfrage"):wizD.preis?FWP.chf(+wizD.preis)+(wizD.trans==="rent"?".– "+t("proMonat"):".–"):"—"}</b></span></div></div><div class="hinweisbox">Mit dem Veröffentlichen bestätigen Sie, dass Sie zur Vermarktung dieses Objekts berechtigt sind. Wir prüfen jedes Inserat, bevor es erscheint.</div>`; }
+    $("wizInhalt").innerHTML = h;
+    $("wizInhalt").querySelectorAll(".grosswahl button").forEach(b => b.addEventListener("click", () => { b.closest(".grosswahl").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); if (S.key==="absicht") wizD.trans = b.dataset.w; if (S.key==="typ") wizD.typ = b.dataset.w; FWP.entwurf.speichern(wizD); }));
+    $("wizInhalt").querySelectorAll(".bildwahl button").forEach(b => b.addEventListener("click", () => { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); wizD.bilder = [...$("wizInhalt").querySelectorAll('.bildwahl [aria-pressed="true"]')].map(x => x.dataset.b); FWP.entwurf.speichern(wizD); }));
+    const f1 = $("wizInhalt").querySelector("input,select,textarea,button"); if (f1) f1.focus();
+  }
+  function wizLese(){ const g = id => { const e = document.getElementById(id); return e ? e.value : undefined; }; ["strasse:wStrasse","plz:wPlz","stadt:wStadt","zimmer:wZi","flaeche:wFl","jahr:wJahr","preis:wPreis","titel:wTitel","beschreibung:wBeschr","name:wName","email:wMail","telefon:wTel"].forEach(p => { const [k,id] = p.split(":"); if (g(id)!==undefined) wizD[k] = g(id); }); const paa = document.getElementById("wPaA"); if (paa) wizD.preisAufAnfrage = paa.checked; }
+  $("wizWeiter").addEventListener("click", () => { wizLese(); const S = FWP.WIZARD[wizI]; const fe = FWP.wizardPruefen(S.key, wizD); $("wizInhalt").querySelectorAll(".fehler").forEach(f => f.classList.remove("an")); if (Object.keys(fe).length){ Object.entries(fe).forEach(([k,v]) => { const el = document.getElementById("fe"+k.charAt(0).toUpperCase()+k.slice(1)); if (el){ el.textContent = v; el.classList.add("an"); } }); return; } FWP.entwurf.speichern(wizD); if (S.key==="pruefen"){ FWP.entwurf.veroeffentlichen(wizD); wizI = 0; wizD = {}; wizAktiv = false; $("wizBox").classList.remove("an"); $("wizFertig").classList.add("an"); return; } wizI++; malWizard(); window.scrollTo({top:0,behavior:"smooth"}); });
+  $("wizZurueck").addEventListener("click", () => { wizLese(); FWP.entwurf.speichern(wizD); if (wizI>0){ wizI--; malWizard(); } });
+
+  /* ---- Konto ---- */
+  document.querySelectorAll(".kontotabs button").forEach(b => b.addEventListener("click", () => { document.querySelectorAll(".kontotabs button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); document.querySelectorAll(".kontoteil").forEach(x => x.classList.remove("an")); $("kt-"+b.dataset.kt).classList.add("an"); }));
+  function malKonto(){
+    const ids = FWP.favs.alle(); const objs = FWP.alle().filter(l => ids.includes(l.id));
+    $("merkZeilen").innerHTML = objs.map((l,i) => zeileHTML(l,i)).join(""); $("merkLeer").style.display = objs.length?"none":"block"; verdrahte($("merkZeilen"));
+    const abos = FWP.suchen.alle();
+    $("aboListe").innerHTML = abos.map(a => `<div class="abo"><div><b>${esc(a.name||"Suche")}</b><br><span>angelegt ${esc(a.erstellt)} · Benachrichtigung bei neuen Treffern</span></div><div class="rechtsab"><button class="knopf leise" data-open="${a.id}">Öffnen</button><button class="knopf leise" data-del="${a.id}">Löschen</button></div></div>`).join("");
+    $("aboLeer").style.display = abos.length?"none":"block";
+    $("aboListe").querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => { FWP.suchen.loeschen(b.dataset.del); malKonto(); }));
+    $("aboListe").querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => { const a = abos.find(x => x.id===b.dataset.open); if (a){ F = Object.assign({}, F, a.filter); syncSteuer(); location.hash = "suche"; such(); } }));
+    const meine = FWP.entwurf.veroeffentlichte(), entw = FWP.entwurf.laden();
+    let mh = meine.map(m => `<div class="abo"><div><b>${esc(m.titel||"(ohne Titel)")}</b><br><span>${esc((m.plz||"")+" "+(m.stadt||""))} · eingereicht ${esc(m.publiziert)} · 0 Anfragen</span></div><span class="status">${esc(m.status)}</span></div>`).join("");
+    if (entw && Object.keys(entw).length) mh += `<div class="abo"><div><b>${esc(entw.titel||"Entwurf")}</b><br><span>Noch nicht eingereicht</span></div><div class="rechtsab"><button class="knopf leise" id="entwWeiter">Weiterbearbeiten</button></div></div>`;
+    $("meineListe").innerHTML = mh; $("meineLeer").style.display = mh?"none":"block";
+    const ew = $("entwWeiter"); if (ew) ew.addEventListener("click", () => { wizAktiv = true; location.hash = "neu"; });
+  }
+
+  /* ---- Modus ---- */
+  function setzModus(m, merken){ document.body.dataset.mode = m; $("gtHell").setAttribute("aria-pressed", m==="hell"); $("gtDunkel").setAttribute("aria-pressed", m==="dunkel"); if (merken){ try{ localStorage.setItem("fw-vorhang", m); }catch(e){} } zeichneKarte(); }
+  $("gtHell").addEventListener("click", () => setzModus("hell",true)); $("gtDunkel").addEventListener("click", () => setzModus("dunkel",true));
+  let start = "hell"; const qm = new URLSearchParams(location.search).get("mode"), h0 = (location.hash||"").replace("#","");
+  if (qm==="hell"||qm==="dunkel") start = qm; else if (h0==="hell"||h0==="dunkel") start = h0; else { try{ const v = localStorage.getItem("fw-vorhang"); if (v) start = v; }catch(e){} }
+  setzModus(start,false);
+
+  uebersetze(); syncSteuer(); malFav(); such(); route();
+})();
+</script>
+</body>
+</html>

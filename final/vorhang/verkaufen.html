@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mit Fourwalls verkaufen — Mandat</title>
+<meta name="description" content="Verkauf mit Fourwalls: Bewertung in 48 Stunden, Exclusive-Inszenierung, ein Ansprechpartner bis zur Übergabe.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gr:#F4EDE1;--gr2:#ECE2D0;--gr3:#E2D5BE;--ink:#241C16;--leise:#6E6357;--linie:rgba(36,28,22,.2);--gold:#A87A2E;--tief:#241C16;--gut:#4E7A49;--d:'Petrona',Georgia,serif;--t:'Manrope',system-ui,sans-serif}
+[data-mode="dunkel"]{--gr:#2A1013;--gr2:#351A1C;--gr3:#402226;--ink:#F0E6D8;--leise:#AD9389;--linie:rgba(240,230,216,.2);--gold:#C9974A;--tief:#1B0A0C;--gut:#8FB08A}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--gr);color:var(--ink);font-family:var(--t);font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+:where(h1,h2,h3,p,ul,ol,dl,dd,figure){margin:0;padding:0}:where(ul,ol){list-style:none}:where(button){font:inherit;color:inherit;background:none;border:0;cursor:pointer}:where(a){color:inherit;text-decoration:none}:where(input){font:inherit;color:inherit}
+:where(a,button,input):focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+img{display:block;max-width:100%}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+.fw{display:block;position:relative;aspect-ratio:730/507}.fw i{position:absolute;inset:0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:100% 100%;mask-size:100% 100%}
+.fw .k{background:var(--lg,var(--ink));-webkit-mask-image:url(../img/logo-ink.png);mask-image:url(../img/logo-ink.png)}.fw .s{background:var(--lga,var(--gold));-webkit-mask-image:url(../img/logo-sub.png);mask-image:url(../img/logo-sub.png)}
+.mark{display:block;aspect-ratio:432/317;background:var(--lg,var(--ink));-webkit-mask-image:url(../img/logo-mono.png);mask-image:url(../img/logo-mono.png);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+.kopf{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:clamp(12px,1.8vw,26px);padding:11px clamp(14px,2.4vw,32px);background:var(--gr);border-bottom:1px solid var(--gold)}
+.kopf .fw{width:72px;flex:0 0 auto}.kopf nav{display:flex;gap:20px;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise);font-weight:500}.kopf nav a{padding:8px 0;border-bottom:1px solid transparent}.kopf nav a:hover{color:var(--ink)}.kopf nav a[aria-current="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.kopf .rechts{margin-left:auto;display:flex;align-items:center;gap:8px}
+.knopf{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);padding:.6em 1em;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;transition:background .2s,color .2s;white-space:nowrap;min-height:38px}
+.knopf:hover{background:var(--ink);color:var(--gr)}.knopf.voll{background:var(--gold);border-color:var(--gold);color:#fff}.knopf.voll:hover{background:var(--ink);border-color:var(--ink)}.knopf.leise{border-color:var(--linie);color:var(--leise)}
+.gt{display:flex;gap:2px;border:1px solid var(--linie);padding:2px}.gt button{width:24px;height:24px;padding:0;font-size:.52rem;color:var(--leise);display:grid;place-items:center}.gt button[aria-pressed="true"]{background:var(--ink);color:var(--gr)}
+/* Vorhang-Hero: Doppelflügel gibt das Bild frei */
+.vh{position:relative;overflow:hidden}
+.vh>.fl{position:absolute;top:0;bottom:0;width:50.5%;background:var(--gr);z-index:4;transition:transform 1.1s cubic-bezier(.72,0,.16,1)}
+.vh>.fl.l{left:0}.vh>.fl.r{right:0}.vh.auf>.fl.l{transform:translateX(-100%)}.vh.auf>.fl.r{transform:translateX(100%)}
+.held{min-height:min(78svh,720px);display:grid;align-items:end;background:var(--tief)}
+.held img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.88);transform:scale(1.14);transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
+.vh.auf .held img,.held.auf img{transform:scale(1)}
+.held .schleier{position:absolute;inset:0;z-index:2;background:linear-gradient(105deg,rgba(27,10,12,.78),rgba(27,10,12,.22) 52%,rgba(27,10,12,.6))}
+.held .txt{position:relative;z-index:3;padding:clamp(40px,7vw,90px) clamp(16px,3vw,44px) clamp(30px,4vw,56px);color:#F6F0E6;max-width:1100px}
+.kick{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#D9B872;font-weight:600}
+.held h1{margin-top:12px;font-family:var(--d);font-weight:200;font-size:clamp(2.2rem,5.6vw,5rem);line-height:1.02;max-width:18ch}
+.held h1 em{font-style:italic}
+.held p{margin-top:16px;max-width:52ch;color:rgba(246,240,230,.84);font-size:1.02rem}
+.held .cta{margin-top:24px;display:flex;gap:8px;flex-wrap:wrap}.held .cta .knopf{border-color:rgba(246,240,230,.5);color:#F6F0E6}.held .cta .knopf.voll{background:#D9B872;border-color:#D9B872;color:#241C16}
+.zahlen{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--gold)}
+.zahlen div{padding:22px clamp(16px,2.4vw,32px);border-right:1px solid var(--linie)}.zahlen div:last-child{border-right:0}
+.zahlen b{display:block;font-family:var(--d);font-weight:200;font-size:clamp(1.6rem,3vw,2.6rem);line-height:1}
+.zahlen span{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);font-weight:500}
+/* Doppelseiten: die Grammatik der Welt */
+.dop{display:grid;grid-template-columns:1fr 1fr;min-height:min(80vh,700px);border-bottom:1px solid var(--linie)}
+.dop.gedreht{direction:rtl}.dop.gedreht>*{direction:ltr}
+.dop .sb{position:relative;background:var(--gr3);overflow:hidden}
+.dop .sb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.88)}
+.dop .st{display:flex;flex-direction:column;justify-content:center;padding:clamp(36px,6vw,90px) clamp(20px,4.4vw,80px)}
+.gn{font-family:var(--d);font-weight:200;font-size:clamp(2.6rem,5vw,4.6rem);line-height:1;color:var(--gold);opacity:.55}
+h2.t{margin-top:12px;font-family:var(--d);font-weight:200;font-size:clamp(1.7rem,3.2vw,2.9rem);line-height:1.08;max-width:18ch}
+.dop p{margin-top:18px;color:var(--leise);font-size:.96rem;line-height:1.8;max-width:44ch}
+.weg{margin-top:20px;border:1px solid var(--ink);padding:18px 20px}
+.weg+.weg{border-top:0}
+.weg .w1{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.weg b{display:block;margin-top:6px;font-family:var(--d);font-weight:300;font-size:1.35rem;line-height:1.15}
+.weg p{margin-top:6px;font-size:.86rem}
+.weg .cta{margin-top:12px}
+.etappen{max-width:1200px;margin:0 auto;padding:clamp(48px,7vw,100px) clamp(16px,3vw,44px)}
+.etappen ol{margin-top:26px;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--ink)}
+.etappen li{padding:18px 16px 22px 0;border-bottom:1px solid var(--linie);border-right:1px solid var(--linie);padding-left:16px}
+.etappen li:nth-child(5n){border-right:0}
+.etappen .n{font-family:var(--d);font-weight:200;font-size:1.9rem;color:var(--gold);line-height:1}
+.etappen b{display:block;margin-top:8px;font-family:var(--d);font-weight:400;font-size:1.1rem}
+.etappen p{margin-top:4px;color:var(--leise);font-size:.8rem;line-height:1.55}
+.bewertung{border:1px solid var(--ink);padding:clamp(22px,3vw,40px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,44px);margin-top:26px;box-shadow:12px 12px 0 var(--gr3)}
+.bewertung h3{font-family:var(--d);font-weight:200;font-size:1.9rem}
+.bewertung p{margin-top:10px;color:var(--leise);font-size:.9rem;max-width:40ch}
+.bewertung form{display:flex;flex-direction:column;gap:8px}
+.bewertung input{background:transparent;border:1px solid var(--linie);border-bottom-color:var(--ink);padding:.7em .9em;font-size:.9rem;min-height:44px}
+.bewertung input::placeholder{color:var(--leise)}
+.bewertung .ok{color:var(--gut);font-size:.85rem;display:none}
+.fuss{border-top:1px solid var(--gold);padding:26px clamp(14px,2.4vw,32px) 24px;display:flex;flex-wrap:wrap;gap:12px 36px;align-items:center;color:var(--leise);font-size:.72rem}
+.fuss .fw{width:66px}.fuss .fein{margin-left:auto;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+@media(max-width:860px){.kopf nav{display:none}.zahlen{grid-template-columns:1fr 1fr}.zahlen div:nth-child(2n){border-right:0}.zahlen div{border-bottom:1px solid var(--linie)}.dop,.dop.gedreht{grid-template-columns:1fr;direction:ltr}.dop .sb{min-height:50vh}.etappen ol{grid-template-columns:1fr 1fr}.etappen li:nth-child(5n){border-right:1px solid var(--linie)}.etappen li:nth-child(2n){border-right:0}.bewertung{grid-template-columns:1fr;box-shadow:none}}
+/* kompakt, kein Überlauf */
+@media(max-width:600px){
+  .kopf{padding:8px 12px;gap:8px}
+  .kopf .fw{width:56px}
+  .kopf .rechts{gap:5px}
+  .kopf .knopf{padding:.5em .6em;font-size:.58rem;letter-spacing:.06em;min-height:34px}
+  .kopf .knopf [data-i="gemerkt"]{display:none}
+  .kopf .gt{padding:1px}.kopf .gt button{width:21px;height:21px}
+}
+</style>
+</head>
+<body data-mode="hell">
+<header class="kopf">
+  <a href="index.html" class="fw" aria-label="Fourwalls Startseite"><i class="k"></i><i class="s"></i></a>
+  <nav><a href="portal.html">Immobilien</a><a href="portal.html#karte">Karte</a><a href="verkaufen.html" aria-current="true">Verkaufen</a><a href="verwalten.html">Verwalten</a></nav>
+  <div class="rechts"><a class="knopf leise" href="portal.html#konto">Gemerkt</a><a class="knopf voll" href="portal.html#neu">Gratis inserieren</a><div class="gt" role="group" aria-label="Erscheinung"><button id="gtHell" aria-pressed="true" title="Tag">T</button><button id="gtDunkel" aria-pressed="false" title="Nacht">N</button></div></div>
+</header>
+
+<section class="held vh" id="held">
+  <picture><source type="image/webp" srcset="../img/ticino-villa-2-960.webp 960w, ../img/ticino-villa-2-1600.webp 1600w" sizes="100vw"><img src="../img/ticino-villa-2-1600.jpg" alt="" fetchpriority="high"></picture>
+  <div class="schleier"></div>
+  <div class="txt"><div class="kick">Mit Fourwalls verkaufen · Mandat</div><h1>Wenn der Vorhang aufgeht, muss das Haus <em>bereit</em> sein.</h1>
+    <p>Verkaufen ist Inszenierung mit Substanz: Bewertung in 48 Stunden, Fotografie zur richtigen Stunde, qualifizierte Käufer — und eine Person, die von der ersten Zahl bis zur Schlüsselübergabe für Sie da ist.</p>
+    <div class="cta"><a class="knopf voll" href="#bewertung">Kostenlose Bewertung in 48 Std.</a><a class="knopf" href="portal.html#neu">Lieber selbst inserieren?</a></div></div>
+  <div class="fl l"></div><div class="fl r"></div>
+</section>
+<div class="zahlen"><div><b>48 Std.</b><span>Hedonische Bewertung</span></div><div><b>2.0 – 2.9 %</b><span>Honorar, nur bei Erfolg</span></div><div><b>67 Tage</b><span>Vermarktungsdauer ⌀</span></div><div><b>SVIT</b><span>Mitglied Schweiz</span></div></div>
+
+<section class="dop">
+  <div class="sb vh"><picture><source type="image/webp" srcset="../img/interior-bright-1-960.webp 960w, ../img/interior-bright-1-1600.webp 1600w" sizes="50vw"><img src="../img/interior-bright-1-960.jpg" alt="" loading="lazy"></picture><div class="fl l"></div><div class="fl r"></div></div>
+  <div class="st"><div class="gn">I</div><h2 class="t">Zwei Wege. Beide ehrlich gemeint.</h2>
+    <div class="weg"><span class="w1">Selbst inserieren · kostenlos</span><b>Sie führen. Wir liefern die Reichweite.</b><p>Text, Bilder, Anfragen und Besichtigungen in Ihrer Hand — in neun kurzen Schritten, ohne Konto zum Start.</p><div class="cta"><a class="knopf leise" href="portal.html#neu">Gratis inserieren</a></div></div>
+    <div class="weg"><span class="w1">Mit Fourwalls verkaufen · Mandat</span><b>Wir führen. Sie entscheiden.</b><p>Bewertung, Strategie, Medien, Käuferqualifikation, Verhandlung, Notariat, Übergabe — als Fourwalls-Exclusive-Mandat mit eigener Inszenierung.</p><div class="cta"><a class="knopf voll" href="#bewertung">Bewertung anfordern</a></div></div>
+  </div>
+</section>
+
+<section class="etappen">
+  <div class="kick">Der Weg</div><h2 class="t">Zehn Etappen. Eine Ansprechperson.</h2>
+  <ol>
+    <li><span class="n">I</span><b>Bewertung</b><p>Hedonisch und im Marktvergleich, innert 48 Stunden, schriftlich.</p></li>
+    <li><span class="n">II</span><b>Strategie</b><p>Zielgruppe, Zeitpunkt, Preisband, diskret oder öffentlich.</p></li>
+    <li><span class="n">III</span><b>Positionierung</b><p>Was das Objekt einzigartig macht — und für wen.</p></li>
+    <li><span class="n">IV</span><b>Medien</b><p>Fotografie zur richtigen Stunde, Drohne, Grundrisse, Film.</p></li>
+    <li><span class="n">V</span><b>Vermarktung</b><p>Exclusive-Inszenierung, Käuferliste, Portale.</p></li>
+    <li><span class="n">VI</span><b>Qualifikation</b><p>Finanzierung geklärt, bevor jemand die Schwelle übertritt.</p></li>
+    <li><span class="n">VII</span><b>Besichtigungen</b><p>Wenige, gut vorbereitete Termine statt offener Türen.</p></li>
+    <li><span class="n">VIII</span><b>Verhandlung</b><p>Wir verhandeln — Sie entscheiden, mit klarer Empfehlung.</p></li>
+    <li><span class="n">IX</span><b>Notariat</b><p>Vertragsentwurf, Prüfung, Beurkundungstermin.</p></li>
+    <li><span class="n">X</span><b>Übergabe</b><p>Protokoll, Schlüssel, Nachbetreuung.</p></li>
+  </ol>
+</section>
+
+<section class="dop gedreht">
+  <div class="sb vh"><picture><source type="image/webp" srcset="../img/ticino-villa-1-960.webp 960w, ../img/ticino-villa-1-1600.webp 1600w" sizes="50vw"><img src="../img/ticino-villa-1-960.jpg" alt="Villa Collina d'Oro, Fourwalls Exclusive" loading="lazy"></picture><div class="fl l"></div><div class="fl r"></div></div>
+  <div class="st"><div class="gn">II</div><h2 class="t">So sieht ein Mandat bei uns aus.</h2><p>Exclusive-Objekte bekommen im Portal ihre eigenen Akte: Bühnenbilder, Raumprogramm, Lage-Erzählung — und stehen in der Suche trotzdem ehrlich neben allen anderen. Höchstens drei Exclusive-Plätze stehen oben; Reihung lässt sich bei uns nicht kaufen.</p><p style="margin-top:18px"><a class="knopf" href="portal.html#exclusive/villa-collina-doro">Beispiel öffnen: Villa Collina d'Oro</a></p></div>
+</section>
+
+<section class="etappen" id="bewertung" style="padding-top:clamp(40px,6vw,80px)">
+  <div class="bewertung"><div><div class="kick">Kostenlos · unverbindlich</div><h3>Was ist Ihr Objekt wert?</h3><p>Sie erhalten innert 48 Stunden eine schriftliche hedonische Bewertung mit Marktvergleich — auch dann, wenn Sie danach selbst inserieren.</p></div>
+    <form id="bwForm"><input type="text" placeholder="Strasse und Nr." aria-label="Adresse" required><input type="text" placeholder="PLZ Ort" aria-label="PLZ Ort" required><input type="email" placeholder="E-Mail" aria-label="E-Mail" required><button class="knopf voll" type="submit">Bewertung anfordern</button><p class="ok" id="bwOk">Danke — Sie hören innert 48 Stunden von uns.</p></form></div>
+</section>
+
+<footer class="fuss"><span class="fw"><i class="k"></i><i class="s"></i></span><span>Fourwalls AG · Löwenstrasse 12 · 8001 Zürich · +41 44 555 01 01</span><span class="fein">Grand Final «Vorhang» · fiktive Demo-Daten · © 2026</span></footer>
+<script>
+(function(){ const b=document.body, H=document.getElementById("gtHell"), D=document.getElementById("gtDunkel");
+  function setz(m,merk){ b.dataset.mode=m; H.setAttribute("aria-pressed",m==="hell"); D.setAttribute("aria-pressed",m==="dunkel"); if(merk){try{localStorage.setItem("fw-vorhang",m)}catch(e){}} }
+  H.addEventListener("click",()=>setz("hell",true)); D.addEventListener("click",()=>setz("dunkel",true));
+  let s="hell"; const qm=new URLSearchParams(location.search).get("mode"); if(qm==="hell"||qm==="dunkel") s=qm; else { try{ const v=localStorage.getItem("fw-vorhang"); if(v) s=v; }catch(e){} } setz(s,false);
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("auf"); io.unobserve(e.target);} }),{threshold:.2});
+  document.querySelectorAll(".vh").forEach(el=>io.observe(el));
+  document.getElementById("bwForm").addEventListener("submit",e=>{ e.preventDefault(); document.getElementById("bwOk").style.display="block"; });
+})();
+</script>
+</body>
+</html>

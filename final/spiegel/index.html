@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Fourwalls: Schweizer Immobilienportal, Verkauf mit Mandat und Bewirtschaftung — eine Marke.">
+<title>Fourwalls — Immobilien kaufen, mieten, verkaufen, verwalten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Host+Grotesk:ital,wght@0,300..500;1,300..400&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<script src="../properties.js"></script>
+<div id="w" data-mode="dunkel">
+
+<style>
+/* ============ SPIEGEL · Tokens ============
+   Tiefe Nachtblau-Schwärze, ein einziger Akzent: warmes Lampenlicht. */
+body{margin:0}
+#w{min-height:100vh;overflow-x:hidden;
+  --gr:#080C11; --gr2:#0E141B; --ink:#ECE8DF; --leise:#7E8894;
+  --linie:rgba(236,232,223,.17); --licht:#D9A05B; --tief:#05080B;
+  --d:'Italiana',Didot,'Times New Roman',serif;
+  --t:'Host Grotesk','Helvetica Neue',system-ui,sans-serif;
+  background:var(--gr); color:var(--ink);
+  font-family:var(--t); font-weight:300; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+#w[data-mode="hell"]{
+  --gr:#E7E9EA; --gr2:#D9DDDF; --ink:#101519; --leise:#5A646E;
+  --linie:rgba(16,21,25,.20); --licht:#9A6B2C; --tief:#C9D0D4;
+}
+#w *,#w *::before,#w *::after{box-sizing:border-box}
+:where(#w) :where(h1,h2,h3,p,figure,ul,dl,dd){margin:0;padding:0}
+:where(#w) :where(ul){list-style:none}
+:where(#w) :where(button){font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:where(#w) :where(a){color:inherit;text-decoration:none}
+:where(#w) :where(a,button):focus-visible{outline:2px solid var(--licht);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){#w *,#w *::before,#w *::after{transition:none!important;animation:none!important}}
+
+/* ============ Logo ============ */
+.fw{display:block;position:relative;aspect-ratio:730/507}
+.fw i{position:absolute;inset:0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%}
+.fw .k{background:var(--lg,var(--ink));-webkit-mask-image:url(../img/logo-ink.png);mask-image:url(../img/logo-ink.png)}
+.fw .s{background:var(--lga,var(--licht));-webkit-mask-image:url(../img/logo-sub.png);mask-image:url(../img/logo-sub.png)}
+
+/* ============ Intro: die Wortmarke über ihrem eigenen Spiegelbild ============ */
+#pre{position:fixed;inset:0;z-index:300;background:var(--gr);display:grid;place-items:center;
+  transition:opacity .8s ease}
+#pre.aus{opacity:0;pointer-events:none}
+#pre .becken{width:min(420px,64vw);position:relative}
+#pre .fw{opacity:0;transform:translateY(12px);
+  transition:opacity 1s ease .1s,transform 1.3s cubic-bezier(.22,1,.36,1) .1s}
+#pre.los .fw{opacity:1;transform:none}
+/* Spiegelbild */
+#pre .sp{position:absolute;left:0;right:0;top:calc(100% + 10px);aspect-ratio:730/507;
+  transform:scaleY(-1);opacity:0;transition:opacity 1.1s ease .5s;
+  -webkit-mask-image:linear-gradient(to top,transparent 6%,rgba(0,0,0,.75) 78%);
+  mask-image:linear-gradient(to top,transparent 6%,rgba(0,0,0,.75) 78%);
+  filter:blur(1.1px)}
+#pre.los .sp{opacity:.4;animation:zittern 5.5s ease-in-out infinite}
+@keyframes zittern{
+  0%,100%{transform:scaleY(-1) skewX(0deg)}
+  33%{transform:scaleY(-1) skewX(.5deg)}
+  66%{transform:scaleY(-1) skewX(-.4deg)}
+}
+/* Wasserlinie */
+#pre .linie{position:absolute;left:50%;translate:-50% 0;top:calc(100% + 4px);height:1px;width:0;
+  background:linear-gradient(to right,transparent,var(--licht),transparent);
+  transition:width 1.4s cubic-bezier(.62,0,.18,1) .35s}
+#pre.los .linie{width:118%}
+
+/* ============ Kopf ============ */
+.kopf{position:fixed;top:0;left:0;right:0;z-index:150;display:flex;align-items:center;
+  justify-content:space-between;padding:20px clamp(16px,3vw,44px);
+  opacity:0;transition:opacity .9s ease .2s}
+#w.bereit .kopf{opacity:1}
+.kopf .fw{width:96px;--lg:#EFEBE2;--lga:#D9A05B}
+.kopf nav{display:flex;gap:26px;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(239,235,226,.72)}
+.kopf nav a:hover{color:#fff}
+.gt{display:flex;gap:2px;border:1px solid rgba(239,235,226,.34);border-radius:999px;padding:3px}
+.gt button{width:26px;height:26px;padding:0;border-radius:999px;font-size:.55rem;
+  color:rgba(239,235,226,.8);display:grid;place-items:center;transition:background .25s,color .25s}
+.gt button[aria-pressed="true"]{background:#EFEBE2;color:#080C11}
+#w[data-mode="hell"] .kopf .fw{--lg:#101519;--lga:#9A6B2C}
+#w[data-mode="hell"] .kopf nav{color:rgba(16,21,25,.72)}
+#w[data-mode="hell"] .kopf nav a:hover{color:#000}
+#w[data-mode="hell"] .gt{border-color:rgba(16,21,25,.3)}
+#w[data-mode="hell"] .gt button{color:rgba(16,21,25,.75)}
+#w[data-mode="hell"] .gt button[aria-pressed="true"]{background:#101519;color:#E7E9EA}
+
+/* ============ Hero: das Wasserbecken ============ */
+.becken{position:relative;height:100svh;min-height:600px;overflow:hidden;background:var(--tief)}
+.becken canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
+  opacity:0;transition:opacity 1.2s ease}
+#w.bereit .becken canvas{opacity:1}
+.becken .ersatz{position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;transition:opacity .8s ease}
+.becken.kein-gl .ersatz{opacity:1}
+.becken.kein-gl canvas{display:none}
+.becken .flor{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(5,8,11,.56) 0%,rgba(5,8,11,.05) 30%,
+    rgba(5,8,11,.10) 60%,rgba(5,8,11,.52) 78%,rgba(5,8,11,.88) 100%)}
+.becken .txt{position:absolute;z-index:3;left:0;right:0;bottom:0;
+  padding:0 clamp(16px,3vw,44px) clamp(26px,4vw,56px);color:#F2EFE7}
+.becken h1{font-family:var(--d);font-weight:400;font-size:clamp(2.6rem,7.4vw,6.6rem);line-height:.98;
+  letter-spacing:.005em;max-width:16ch}
+.becken .unter{margin-top:clamp(18px,2.4vw,32px);display:flex;flex-wrap:wrap;
+  justify-content:space-between;align-items:flex-end;gap:20px 40px;
+  border-top:1px solid rgba(242,239,231,.26);padding-top:16px}
+.becken .fakten{display:flex;flex-wrap:wrap;gap:8px 30px;font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(242,239,231,.82)}
+/* Objektwahl */
+.wahl{display:flex;flex-wrap:wrap;gap:0 4px}
+.wahl button{position:relative;padding:.6em .9em;font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(242,239,231,.55);transition:color .3s}
+.wahl button:hover{color:rgba(242,239,231,.9)}
+.wahl button[aria-pressed="true"]{color:var(--licht)}
+.wahl button::after{content:"";position:absolute;left:50%;right:50%;bottom:0;height:1px;
+  background:var(--licht);transition:left .4s cubic-bezier(.22,1,.36,1),right .4s cubic-bezier(.22,1,.36,1)}
+.wahl button[aria-pressed="true"]::after{left:.9em;right:.9em}
+/* --- Portal-Sucheinstieg im Hero --- */
+.portalsuche{margin-top:clamp(16px,2vw,26px);display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.portalsuche .t2{display:flex;border:1px solid rgba(242,239,231,.34)}
+.portalsuche .t2 a{padding:.62em 1em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,239,231,.65)}
+.portalsuche .t2 a.an{background:#F2EFE7;color:#0A0F14}
+.portalsuche input{flex:1 1 190px;max-width:300px;background:rgba(5,8,11,.55);border:1px solid rgba(242,239,231,.34);
+  padding:.62em .9em;font-size:.85rem;color:#F2EFE7;backdrop-filter:blur(6px)}
+.portalsuche input::placeholder{color:rgba(242,239,231,.55)}
+.portalsuche button{border:1px solid var(--licht);background:var(--licht);color:#0A0F14;
+  padding:.62em 1.3em;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.portalsuche .alle{align-self:center;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(242,239,231,.66);text-decoration:underline;text-underline-offset:3px;margin-left:6px}
+#w[data-mode="hell"] .portalsuche input{background:rgba(238,241,242,.6);color:#0E1317;border-color:rgba(14,19,23,.3)}
+#w[data-mode="hell"] .portalsuche input::placeholder{color:rgba(14,19,23,.5)}
+#w[data-mode="hell"] .portalsuche .t2{border-color:rgba(14,19,23,.3)}
+#w[data-mode="hell"] .portalsuche .t2 a{color:rgba(14,19,23,.6)}
+#w[data-mode="hell"] .portalsuche .t2 a.an{background:#0E1317;color:#EEF1F2}
+#w[data-mode="hell"] .portalsuche .alle{color:rgba(14,19,23,.6)}
+.hinweis{position:absolute;z-index:3;left:clamp(16px,3vw,44px);top:calc(50% + 30px);
+  font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(242,239,231,.4);
+  pointer-events:none;opacity:0;transition:opacity 1s ease 1.4s}
+#w.bereit .hinweis{opacity:1}
+
+/* --- Hero im Hellmodus: heller Schleier, dunkle Schrift --- */
+#w[data-mode="hell"] .becken .flor{
+  background:linear-gradient(to bottom,rgba(238,241,242,.42) 0%,rgba(238,241,242,.04) 30%,
+    rgba(238,241,242,.10) 60%,rgba(238,241,242,.58) 80%,rgba(238,241,242,.93) 100%)}
+#w[data-mode="hell"] .becken .txt{color:#0E1317}
+#w[data-mode="hell"] .becken .unter{border-top-color:rgba(14,19,23,.28)}
+#w[data-mode="hell"] .becken .fakten{color:rgba(14,19,23,.78)}
+#w[data-mode="hell"] .wahl button{color:rgba(14,19,23,.5)}
+#w[data-mode="hell"] .wahl button:hover{color:rgba(14,19,23,.88)}
+#w[data-mode="hell"] .wahl button[aria-pressed="true"]{color:var(--licht)}
+#w[data-mode="hell"] .hinweis{color:rgba(14,19,23,.42)}
+
+/* ============ Verzeichnis ============ */
+.verz{padding:clamp(56px,8vw,120px) clamp(16px,3vw,44px)}
+.verz .kz{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid var(--linie);padding-bottom:16px}
+.verz .kz h2{font-family:var(--d);font-weight:400;font-size:clamp(1.7rem,3.4vw,2.8rem);letter-spacing:.01em}
+.verz .kz span{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leise)}
+.zeile{display:grid;grid-template-columns:auto 1fr auto auto;gap:clamp(14px,2.4vw,40px);
+  align-items:center;padding:clamp(18px,2.2vw,26px) 0;border-bottom:1px solid var(--linie);
+  transition:padding-left .45s cubic-bezier(.22,1,.36,1),background .4s}
+.zeile:hover{padding-left:14px}
+.zeile .n{font-size:.66rem;letter-spacing:.12em;color:var(--leise)}
+.zeile .t{font-family:var(--d);font-weight:400;font-size:clamp(1.15rem,2.1vw,1.75rem);
+  letter-spacing:.01em;line-height:1.2}
+.zeile .t small{display:block;font-family:var(--t);font-size:.66rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--leise);margin-top:7px;font-weight:300}
+.zeile .m{font-size:.78rem;color:var(--leise);white-space:nowrap}
+.zeile .p{font-size:.82rem;white-space:nowrap}
+
+/* ============ Dienste ============ */
+.dienste{padding:clamp(50px,7vw,110px) clamp(16px,3vw,44px);background:var(--gr2)}
+.dienste .paar{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.6vw,84px);
+  max-width:1200px;margin:0 auto}
+.dienste .kick{font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;color:var(--licht)}
+.dienste h3{margin-top:14px;font-family:var(--d);font-weight:400;font-size:clamp(1.6rem,3.1vw,2.5rem);
+  line-height:1.08;letter-spacing:.01em;max-width:15ch}
+.dienste p{margin-top:16px;color:var(--leise);font-size:.93rem;line-height:1.8;max-width:38ch}
+.dienste ul{margin-top:24px}
+.dienste li{display:flex;justify-content:space-between;gap:16px;padding:11px 0;
+  border-bottom:1px solid var(--linie);font-size:.81rem}
+.dienste li span{color:var(--leise)}
+
+/* ============ Fuss ============ */
+.fuss{padding:clamp(48px,6vw,96px) clamp(16px,3vw,44px) clamp(26px,3vw,44px)}
+.fuss .band{width:100%;max-width:1200px;margin:0 auto}
+.fuss .kon{max-width:1200px;margin:clamp(28px,4vw,52px) auto 0;display:flex;flex-wrap:wrap;
+  gap:12px 40px;justify-content:space-between;font-size:.8rem;color:var(--leise);
+  border-top:1px solid var(--linie);padding-top:20px}
+.fuss .fein{max-width:1200px;margin:22px auto 0;font-size:.62rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--leise)}
+
+.rv{opacity:0;transform:translateY(22px);transition:opacity .9s ease,transform .9s cubic-bezier(.22,1,.36,1)}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:860px){
+  .kopf nav{display:none}
+  .kopf .fw{width:78px}
+  .hinweis{display:none}
+  .becken .unter{flex-direction:column;align-items:flex-start}
+  .dienste .paar{grid-template-columns:1fr}
+  .zeile{grid-template-columns:1fr auto;row-gap:6px}
+  .zeile .n,.zeile .m{display:none}
+}
+/* --- Vier Wege --- */
+.wege{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--linie);border-bottom:1px solid var(--linie);background:var(--gr)}
+.wege a{padding:22px clamp(16px,2.4vw,32px);border-right:1px solid var(--linie);display:flex;flex-direction:column;gap:4px;transition:background .25s}
+.wege a:last-child{border-right:0}
+.wege a:hover{background:var(--gr2)}
+.wege b{font-family:var(--d);font-weight:400;font-size:clamp(1.15rem,1.7vw,1.5rem);letter-spacing:.005em}
+.wege span{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--leise)}
+.wege a:nth-child(3) b{color:var(--licht)}
+@media(max-width:860px){.wege{grid-template-columns:1fr 1fr}.wege a{border-bottom:1px solid var(--linie)}.wege a:nth-child(2n){border-right:0}}
+/* kompakt, kein Überlauf */
+@media(max-width:600px){
+  .kopf{padding:8px 12px;gap:8px}
+  .kopf .fw{width:56px}
+  .kopf .rechts{gap:5px}
+  .kopf .knopf{padding:.5em .6em;font-size:.58rem;letter-spacing:.06em;min-height:34px}
+  .kopf .knopf [data-i="gemerkt"]{display:none}
+  .kopf .gt{padding:1px}.kopf .gt button{width:21px;height:21px}
+}
+</style>
+
+<div id="pre">
+  <div class="becken">
+    <span class="fw"><i class="k"></i><i class="s"></i></span>
+    <span class="linie"></span>
+    <span class="fw sp" aria-hidden="true"><i class="k"></i><i class="s"></i></span>
+  </div>
+</div>
+
+<header class="kopf">
+  <a href="#" class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></a>
+  <nav><a href="portal.html">Immobilien</a><a href="portal.html#karte">Karte</a><a href="verkaufen.html">Verkaufen</a><a href="verkaufen.html">Verwalten</a><a href="portal.html#neu">Inserieren</a></nav>
+  <div class="gt" role="group" aria-label="Erscheinung">
+    <button id="gtHell" aria-pressed="false" title="Tag">T</button>
+    <button id="gtDunkel" aria-pressed="true" title="Nacht">N</button>
+  </div>
+</header>
+
+<section class="becken" id="hero">
+  <canvas id="gl"></canvas>
+  <div class="ersatz" id="ersatz"></div>
+  <div class="flor"></div>
+  <div class="hinweis">Bewegen Sie den Zeiger über das Wasser</div>
+  <div class="txt">
+    <h1 id="heroH">Häuser, die sich<br>im Wasser wiederholen.</h1>
+    <div class="unter">
+      <div class="fakten" id="heroF"></div>
+      <div class="wahl" id="wahl"></div>
+    </div>
+    <form class="portalsuche" id="portalSuche">
+      <div class="t2"><a class="an" data-t="buy" href="portal.html">Kaufen</a><a data-t="rent" href="portal.html?trans=rent">Mieten</a></div>
+      <input type="text" id="psOrt" placeholder="Ort, PLZ oder Kanton" aria-label="Ort">
+      <button type="submit">Suchen</button>
+      <a class="alle" href="portal.html">Alle 230+ Inserate</a>
+    </form>
+  </div>
+</section>
+<nav class="wege" aria-label="Was Sie hier tun können">
+  <a href="portal.html"><b>Immobilien suchen</b><span>Kaufen und mieten, schweizweit</span></a>
+  <a href="portal.html#neu"><b>Gratis inserieren</b><span>Selbst verkaufen oder vermieten</span></a>
+  <a href="verkaufen.html"><b>Mit Fourwalls verkaufen</b><span>Mandat, Bewertung in 48 Std.</span></a>
+  <a href="verwalten.html"><b>Immobilien verwalten</b><span>Bewirtschaftung für Eigentümer</span></a>
+</nav>
+
+<section class="verz" id="verz">
+  <div class="kz rv"><h2>Am Wasser</h2><span id="verzAnz"></span></div>
+  <div id="verzListe"></div>
+</section>
+
+<section class="dienste" id="dienste">
+  <div class="paar">
+    <div class="rv">
+      <div class="kick">Für Eigentümer</div>
+      <h3>Verkaufen, wenn das Licht stimmt.</h3>
+      <p>Hedonische Bewertung und Marktvergleich innert 48 Stunden. Danach Fotografie zur richtigen Tageszeit, ein Dossier, das man behalten will, und eine Käuferliste, die wir seit Jahren pflegen.</p>
+      <ul>
+        <li><span>Bewertung</span><b>48 Stunden</b></li>
+        <li><span>Honorar</span><b>2.0 – 2.9 %</b></li>
+        <li><span>Vermarktungsdauer ⌀</span><b>67 Tage</b></li>
+        <li><span>Mitgliedschaft</span><b>SVIT Schweiz</b></li>
+      </ul>
+    </div>
+    <div class="rv">
+      <div class="kick">Für Investoren</div>
+      <h3>Verwalten, ohne Wellen zu schlagen.</h3>
+      <p>Mietzinsinkasso, Nebenkostenabrechnung, Handwerkerkoordination und Erstvermietung. Jeder Beleg online, jede Abrechnung nachvollziehbar, ein Dashboard je Liegenschaft.</p>
+      <ul>
+        <li><span>Renditeliegenschaften</span><b>ab 3.9 % NME</b></li>
+        <li><span>Stockwerkeigentum</span><b>ab CHF 320 / Einheit</b></li>
+        <li><span>Verwaltete Einheiten</span><b>2'840</b></li>
+        <li><span>Leerstand Portfolio</span><b>1.4 %</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="fuss">
+  <span class="fw band rv" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></span>
+  <div class="kon">
+    <span>Löwenstrasse 12 · 8001 Zürich</span>
+    <span>+41 44 555 01 01</span>
+    <span>hallo@fourwalls.example</span>
+    <span>Zürich · Bern · Genf · Lugano</span>
+  </div>
+  <div class="fein">Richtung 01 — Spiegel · Design-Prototyp · fiktive Demo-Daten · © 2026 Fourwalls</div>
+</footer>
+
+<script>
+
+
+(function(){
+  const W = document.getElementById("w"), L = "de";
+  const qs = new URLSearchParams(location.search);
+  const _nur = qs.get("nur");
+  if (_nur) W.querySelectorAll(":scope > section, :scope > footer")
+    .forEach(s => { if (!s.matches(_nur)) s.style.display = "none"; });
+
+  const P = s => FW.properties.find(p => p.slug === s);
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const IMG = {
+    "seehaus-walensee":"../img/lakeside-villa-1-1600.jpg",
+    "seeblick-luzern":"../img/aerial-lake-1-1600.jpg",
+    "ouchy-lausanne":"../img/condo-modern-2-1600.jpg",
+    "villa-collina-doro":"../img/ticino-villa-1-1600.jpg"
+  };
+  const REIHE = Object.keys(IMG);
+  const SATZ = {
+    "seehaus-walensee":"Häuser, die sich<br>im Wasser wiederholen.",
+    "seeblick-luzern":"Der See beginnt<br>hinter der Scheibe.",
+    "ouchy-lausanne":"Abends verdoppelt<br>sich die Aussicht.",
+    "villa-collina-doro":"Süden, zweimal:<br>oben und unten."
+  };
+
+  /* =====================================================================
+     WebGL — Spiegelung mit Wellen. Handgeschrieben, ohne Bibliothek.
+     ===================================================================== */
+  const cvs = document.getElementById("gl");
+  const hero = document.getElementById("hero");
+  const ersatz = document.getElementById("ersatz");
+  let gl = null, prog = null, uni = {}, tex = null, texAR = 1.5, laeuft = false;
+
+  const VS = `attribute vec2 a;void main(){gl_Position=vec4(a,0.0,1.0);}`;
+  const FS = `
+precision highp float;
+uniform sampler2D uTex;
+uniform vec2  uRes;
+uniform float uTexAR;
+uniform float uTime;
+uniform vec2  uMaus;
+uniform float uAmp;
+uniform vec3  uWasser;
+uniform float uHell;
+
+const float H = 0.56;          // Wasserlinie
+const float SPIEGEL = 0.72;    // Stauchung der Spiegelung
+
+vec2 deckung(vec2 uv, float ar, float ai){
+  vec2 s = ar > ai ? vec2(1.0, ai/ar) : vec2(ar/ai, 1.0);
+  return (uv - 0.5) * s + 0.5;
+}
+
+void main(){
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec2 p  = vec2(uv.x, 1.0 - uv.y);       // Ursprung oben links
+  float ar = uRes.x / uRes.y;
+
+  // Zeiger-Ring
+  vec2 mp = vec2(uMaus.x, uMaus.y);
+  float md = distance(vec2(p.x*ar, p.y), vec2(mp.x*ar, mp.y));
+  float ring = sin(md*34.0 - uTime*4.4) * exp(-md*5.5) * uAmp;
+
+  vec3 col;
+
+  if (p.y < H){
+    // ---- Über Wasser: das Objekt ----
+    vec2 q = vec2(p.x, p.y / H);
+    vec2 cuv = deckung(q, ar / H, uTexAR);
+    cuv.x += ring * 0.004;
+    cuv.y += ring * 0.002;
+    col = texture2D(uTex, clamp(cuv, 0.001, 0.999)).rgb;
+  } else {
+    // ---- Unter Wasser: die Spiegelung ----
+    float d = (p.y - H) / (1.0 - H);        // 0 an der Linie, 1 unten
+    float yb = 1.0 - d * SPIEGEL;
+
+    float tief = 0.18 + d * 1.5;
+    float welle =
+        sin(p.x * 19.0 + uTime * 1.05 + d * 7.0)  * 0.0060 * tief
+      + sin(p.x * 37.0 - uTime * 1.55 + d * 13.0) * 0.0030 * tief
+      + sin(p.x * 71.0 + uTime * 2.30 + d * 21.0) * 0.0014 * tief;
+    welle += ring * 0.022 * (0.4 + d);
+
+    vec2 q = vec2(p.x + welle * 0.55, clamp(yb + welle, 0.001, 0.999));
+    vec2 cuv = deckung(q, ar / H, uTexAR);
+    col = texture2D(uTex, clamp(cuv, 0.001, 0.999)).rgb;
+
+    // Wasser färbt und schluckt
+    col = mix(col, uWasser, clamp(d * 0.60 + 0.05, 0.0, 0.88));
+    col *= (1.0 - d * 0.20);
+    // Glanzkante direkt an der Wasserlinie
+    col += vec3(1.0) * exp(-d * 46.0) * 0.16;
+  }
+
+  // Filmkorn
+  float korn = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898,78.233)) + uTime*0.05) * 43758.5453);
+  col += (korn - 0.5) * 0.022;
+
+  // Heller Modus: silbriger Morgen — anheben, Kontrast senken, kühl tönen
+  vec3 tag = col * 0.58 + vec3(0.40, 0.435, 0.455);
+  tag = mix(tag, vec3(dot(tag, vec3(0.299,0.587,0.114))), 0.22);
+  col = mix(col, tag, uHell);
+
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+  function shader(t, src){
+    const s = gl.createShader(t);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+
+  function startGL(){
+    gl = cvs.getContext("webgl", {antialias:false, alpha:false, powerPreference:"low-power"})
+      || cvs.getContext("experimental-webgl");
+    if (!gl) throw new Error("kein WebGL");
+    prog = gl.createProgram();
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, VS));
+    gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "a");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    ["uTex","uRes","uTexAR","uTime","uMaus","uAmp","uWasser","uHell"]
+      .forEach(n => uni[n] = gl.getUniformLocation(prog, n));
+
+    tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.uniform1i(uni.uTex, 0);
+  }
+
+  function laden(src){
+    return new Promise((ok, fehler) => {
+      const im = new Image();
+      im.onload = () => ok(im);
+      im.onerror = fehler;
+      im.src = src;
+    });
+  }
+
+  function setzeTextur(im){
+    texAR = im.naturalWidth / im.naturalHeight;
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im);
+  }
+
+  function messen(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const b = hero.getBoundingClientRect();
+    const w = Math.max(1, Math.round(b.width * dpr));
+    const h = Math.max(1, Math.round(b.height * dpr));
+    if (cvs.width !== w || cvs.height !== h){ cvs.width = w; cvs.height = h; }
+    gl.viewport(0, 0, cvs.width, cvs.height);
+  }
+
+  let maus = {x:.5, y:.4}, amp = 0, t0 = null, sichtbar = true;
+  function bild(ts){
+    if (!laeuft) return;
+    if (t0 === null) t0 = ts;
+    const t = (ts - t0) / 1000;
+    messen();
+    amp *= 0.955;
+    gl.uniform2f(uni.uRes, cvs.width, cvs.height);
+    gl.uniform1f(uni.uTexAR, texAR);
+    gl.uniform1f(uni.uTime, t);
+    gl.uniform2f(uni.uMaus, maus.x, maus.y);
+    gl.uniform1f(uni.uAmp, amp);
+    const hell = W.dataset.mode === "hell";
+    gl.uniform3f(uni.uWasser, hell ? 0.62 : 0.035, hell ? 0.66 : 0.062, hell ? 0.68 : 0.086);
+    gl.uniform1f(uni.uHell, hell ? 1 : 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(bild);
+  }
+
+  hero.addEventListener("pointermove", e => {
+    const b = hero.getBoundingClientRect();
+    maus.x = (e.clientX - b.left) / b.width;
+    maus.y = (e.clientY - b.top) / b.height;
+    amp = Math.min(1.0, amp + 0.16);
+  });
+
+  let aktiv = 0;
+  async function zeige(i, weich){
+    aktiv = i;
+    const slug = REIHE[i];
+    document.getElementById("heroH").innerHTML = SATZ[slug];
+    const p = P(slug);
+    document.getElementById("heroF").innerHTML =
+      [p.city + " · " + p.canton, FW.roomsLabel(p,L), (p.livingArea||"—") + " m²", FW.priceLabel(p,L)]
+      .map(x => "<span>" + esc(x) + "</span>").join("");
+    [...wahlBox.children].forEach((b,j) => b.setAttribute("aria-pressed", j===i ? "true":"false"));
+    ersatz.style.backgroundImage = "url(" + IMG[slug] + ")";
+    if (!gl) return;
+    if (weich){ cvs.style.opacity = "0"; await new Promise(r => setTimeout(r, 420)); }
+    try { setzeTextur(await laden(IMG[slug])); } catch(e){}
+    amp = Math.max(amp, 0.55);
+    cvs.style.opacity = "1";
+  }
+
+  const wahlBox = document.getElementById("wahl");
+  REIHE.forEach((slug,i) => {
+    const b = document.createElement("button");
+    b.textContent = P(slug).city;
+    b.setAttribute("aria-pressed", i===0 ? "true":"false");
+    b.addEventListener("click", () => zeige(i, true));
+    wahlBox.appendChild(b);
+  });
+
+  /* Rendern nur, wenn der Hero im Bild ist */
+  const ioHero = new IntersectionObserver(es => {
+    sichtbar = es[0].isIntersecting;
+    if (sichtbar && gl && !laeuft){ laeuft = true; requestAnimationFrame(bild); }
+    else if (!sichtbar) laeuft = false;
+  }, {threshold:0});
+  ioHero.observe(hero);
+
+  (async function wasser(){
+    const sparsam = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    try {
+      if (sparsam) throw new Error("reduzierte Bewegung");
+      startGL();
+      setzeTextur(await laden(IMG[REIHE[0]]));
+      laeuft = true;
+      requestAnimationFrame(bild);
+    } catch(e){
+      hero.classList.add("kein-gl");
+    }
+    zeige(0, false);
+  })();
+
+  /* ---- Portal-Sucheinstieg ---- */
+  const ps = document.getElementById("portalSuche");
+  let psTrans = "buy";
+  ps.querySelectorAll(".t2 a").forEach(a2 => a2.addEventListener("click", e => {
+    e.preventDefault(); psTrans = a2.dataset.t;
+    ps.querySelectorAll(".t2 a").forEach(x => x.classList.toggle("an", x === a2));
+  }));
+  ps.addEventListener("submit", e => {
+    e.preventDefault();
+    const o = document.getElementById("psOrt").value.trim();
+    const q = new URLSearchParams();
+    if (psTrans !== "buy") q.set("trans", psTrans);
+    if (o) q.set("ort", o);
+    location.href = "portal.html" + (q.toString() ? "?" + q.toString() : "");
+  });
+
+  /* ---- Verzeichnis ---- */
+  const liste = document.getElementById("verzListe");
+  const ALLE = ["seehaus-walensee","seeblick-luzern","ouchy-lausanne","villa-collina-doro",
+                "penthouse-zuerichberg","champel-geneve"];
+  document.getElementById("verzAnz").textContent = ALLE.length + " Objekte · Schweizweit";
+  liste.innerHTML = ALLE.map((slug,i) => {
+    const p = P(slug);
+    return `<div class="zeile rv">
+      <span class="n">${String(i+1).padStart(2,"0")}</span>
+      <span class="t">${esc(p.title[L])}<small>${esc(p.city)} · ${esc(p.canton)}</small></span>
+      <span class="m">${esc(FW.roomsLabel(p,L))} · ${p.livingArea||"—"} m²</span>
+      <span class="p">${esc(FW.priceLabel(p,L))}</span>
+    </div>`;
+  }).join("");
+
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+  }), {threshold:.12});
+  document.querySelectorAll(".rv").forEach(el => io.observe(el));
+
+  /* ---- Erscheinung ---- */
+  const bH = document.getElementById("gtHell"), bD = document.getElementById("gtDunkel");
+  function setz(m,merken){
+    W.dataset.mode = m;
+    bH.setAttribute("aria-pressed", m==="hell"); bD.setAttribute("aria-pressed", m==="dunkel");
+    if(merken){ try{ localStorage.setItem("fw-spiegel", m); }catch(e){} }
+  }
+  bH.addEventListener("click",()=>setz("hell",true));
+  bD.addEventListener("click",()=>setz("dunkel",true));
+  let start="dunkel";
+  const h=(location.hash||"").replace("#",""), qm=qs.get("mode");
+  if(qm==="hell"||qm==="dunkel") start=qm;
+  else if(h==="hell"||h==="dunkel") start=h;
+  else { try{const v=localStorage.getItem("fw-spiegel"); if(v) start=v;}catch(e){} }
+  setz(start,false);
+  // Hash kann auch nach dem Laden gesetzt werden (Deep-Links aus dem Lab)
+  window.addEventListener("hashchange",()=>{
+    const x=(location.hash||"").replace("#","");
+    if(x==="hell"||x==="dunkel") setz(x,true);
+  });
+
+  /* ---- Intro ---- */
+  const pre = document.getElementById("pre");
+  const kurz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (qs.get("intro") === "0"){
+    pre.remove(); W.classList.add("bereit");
+    document.querySelectorAll(".rv").forEach(e => e.classList.add("in"));
+    return;
+  }
+  requestAnimationFrame(()=>pre.classList.add("los"));
+  setTimeout(()=>{
+    W.classList.add("bereit");
+    pre.classList.add("aus");
+    setTimeout(()=>pre.remove(), 900);
+  }, kurz ? 240 : 2350);
+})();
+</script>
+</div>
+
+</body>
+</html>

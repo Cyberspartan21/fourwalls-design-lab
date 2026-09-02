@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FOURWALLS Grand Final</title>
+<meta name="description" content="Zwei Finalisten, ein Produkt: Spiegel gegen Vorhang — jede Seite direkt vergleichbar.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Chivo+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#101110;--card:#171918;--ink:#EAE6DC;--mid:#8C918B;--line:rgba(234,230,220,.15);--clay:#C08A6B;--sp:#D9A05B;--vh:#C9974A}
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Familjen Grotesk',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  :where(a,button,select):focus-visible{outline:2px solid var(--clay);outline-offset:2px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+  header{padding:44px 0 26px}
+  .fw{display:block;position:relative;aspect-ratio:730/507;width:110px}
+  .fw i{position:absolute;inset:0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:100% 100%;mask-size:100% 100%}
+  .fw .k{background:var(--ink);-webkit-mask-image:url(img/logo-ink.png);mask-image:url(img/logo-ink.png)}
+  .fw .s{background:var(--clay);-webkit-mask-image:url(img/logo-sub.png);mask-image:url(img/logo-sub.png)}
+  .kicker{font-family:'Chivo Mono',monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--clay);margin-top:26px}
+  h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:600;letter-spacing:-.022em;line-height:1.05;margin:.28em 0 .34em;max-width:22ch}
+  .lede{color:var(--mid);max-width:66ch;font-size:1rem}
+  .lede b{color:var(--ink);font-weight:500}
+  /* Zwei Finalisten */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+  .fin{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px;display:flex;flex-direction:column}
+  .fin .nr{font-family:'Chivo Mono',monospace;font-size:.66rem;letter-spacing:.18em;color:var(--mid)}
+  .fin h2{font-size:1.9rem;font-weight:600;letter-spacing:-.012em;margin:8px 0 6px}
+  .fin.sp h2{color:var(--sp)}.fin.vh h2{color:var(--vh)}
+  .fin .these{color:var(--mid);font-size:.92rem;line-height:1.55}
+  .fin .meta{margin-top:14px;display:grid;gap:5px;font-family:'Chivo Mono',monospace;font-size:.64rem;letter-spacing:.04em;color:var(--mid)}
+  .fin .meta b{color:var(--ink);font-weight:400}
+  .fin .seiten{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr auto auto;gap:6px 10px;align-items:center;font-size:.86rem}
+  .fin .seiten .n{color:var(--ink)}
+  .fin .seiten a.m{font-family:'Chivo Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);border-radius:5px;padding:.42em .6em;color:var(--mid);text-align:center}
+  .fin .seiten a.m.h{background:#EAE6DC;color:#101110;border-color:#EAE6DC}
+  .fin .seiten a.m:hover{border-color:var(--clay);color:var(--clay)}
+  .fin .seiten a.m.h:hover{color:#101110;background:#fff}
+  .fin .seiten .nur{grid-column:2/4;text-align:center}
+  /* Vergleich */
+  .vergleich{margin-top:34px;border-top:1px solid var(--line);padding-top:24px}
+  .vergleich h2{font-size:1.3rem;font-weight:600;letter-spacing:-.01em}
+  .steuer{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+  .steuer select,.steuer .seg{background:var(--card);border:1px solid var(--line);border-radius:6px;color:var(--ink);font:inherit;font-size:.82rem;padding:.5em .7em}
+  .seg{display:flex;padding:2px;gap:2px}
+  .seg button{padding:.42em .8em;border-radius:4px;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mid)}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+  .seg button.sp[aria-pressed="true"]{background:var(--sp);color:#101110}
+  .seg button.vh[aria-pressed="true"]{background:var(--vh);color:#101110}
+  .steuer .r{margin-left:auto;font-family:'Chivo Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid)}
+  .rahmen{margin-top:12px;display:grid;grid-template-columns:1fr;gap:10px}
+  .rahmen.beide{grid-template-columns:1fr 1fr}
+  .rahmen figure{margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#000;position:relative}
+  .rahmen figcaption{position:absolute;left:10px;top:8px;z-index:2;font-family:'Chivo Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;background:rgba(16,17,16,.8);padding:.35em .6em;border-radius:4px;color:var(--ink)}
+  .rahmen iframe{display:block;width:100%;height:min(78vh,820px);border:0;background:#111}
+  .rahmen .oeffnen{position:absolute;right:10px;top:8px;z-index:2;font-family:'Chivo Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;background:rgba(16,17,16,.8);padding:.35em .6em;border-radius:4px;color:var(--clay)}
+  .hinweis{margin-top:10px;color:var(--mid);font-size:.78rem;max-width:80ch}
+  .bericht{margin:34px 0 0;border-top:1px solid var(--line);padding:22px 0 60px;color:var(--mid);font-size:.84rem}
+  .bericht a{color:var(--clay);text-decoration:underline;text-underline-offset:3px}
+  footer{padding:0 0 48px;color:var(--mid);font-family:'Chivo Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase}
+  @media(max-width:820px){.duo{grid-template-columns:1fr}.rahmen.beide{grid-template-columns:1fr}.rahmen iframe{height:70vh}.fin .seiten{grid-template-columns:1fr auto auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></span>
+    <div class="kicker">Grand Final · zwei Finalisten · ein Produkt</div>
+    <h1>Spiegel oder Vorhang. Dieselbe Firma, zwei Seelen.</h1>
+    <p class="lede">Beide Systeme tragen jetzt das <b>gleiche Produkt</b> — 320 Demo-Inserate, freie Preiseingabe, Regionen, CHF/m², Karte, Standard- und Exclusive-Detail, Gratis-Inserieren mit Weiche, Verkaufen mit Mandat, Bewirtschaftung, Konto — aber mit <b>verschiedener Architektur</b>. Kein Bild ist mehr eingebettet, jede Karte ist per Tastatur erreichbar, jede Seite hat Tag und Nacht. Unten können Sie jede Seite direkt gegen ihr Gegenstück halten.</p>
+  </header>
+
+  <div class="duo">
+    <div class="fin sp">
+      <span class="nr">FINALIST A</span><h2>SPIEGEL</h2>
+      <p class="these">Nachtblau, Lampenlicht, Wasserlinie. Die Suche ist ein Raster leuchtender Karten mit Spiegellinie; Exclusive-Mandate spiegeln sich im Wasser.</p>
+      <div class="meta"><span>Resultat-Architektur · <b>Lichtkarten-Raster, 8 pro Bildschirm</b></span><span>Signatur im Portal · <b>Spiegellinie, Lampenlicht-Pins, zwei Lichtregien</b></span><span>Schrift · <b>Italiana + Host Grotesk</b></span></div>
+      <div class="seiten" id="sSp"></div>
+    </div>
+    <div class="fin vh">
+      <span class="nr">FINALIST B</span><h2>VORHANG</h2>
+      <p class="these">Vanille, Ochsenblut, Gold. Die Suche ist ein Bühnenhaus: Programmzettel links, Bühne oder Karte rechts — jeder Wechsel öffnet den Doppelflügel.</p>
+      <div class="meta"><span>Resultat-Architektur · <b>Programmzeilen + Bühne, 9 Zeilen pro Bildschirm</b></span><span>Signatur im Portal · <b>Doppelflügel, römische Akte, Goldnaht</b></span><span>Schrift · <b>Petrona + Manrope</b></span></div>
+      <div class="seiten" id="sVh"></div>
+    </div>
+  </div>
+
+  <section class="vergleich" id="vergleich">
+    <h2>Direkt vergleichen</h2>
+    <div class="steuer">
+      <select id="vSeite" aria-label="Seite"></select>
+      <div class="seg" role="group" aria-label="Finalist"><button class="sp" data-w="spiegel" aria-pressed="true">Spiegel</button><button class="vh" data-w="vorhang" aria-pressed="false">Vorhang</button><button data-w="beide" aria-pressed="false">Nebeneinander</button></div>
+      <div class="seg" role="group" aria-label="Modus"><button data-m="hell" aria-pressed="false">Hell</button><button data-m="dunkel" aria-pressed="false">Dunkel</button><button data-m="" aria-pressed="true">Eigen</button></div>
+      <span class="r" id="vInfo"></span>
+    </div>
+    <div class="rahmen" id="rahmen"></div>
+    <p class="hinweis">«Nebeneinander» zeigt beide in halber Breite — das ist absichtlich eine Tablet-Ansicht. Für den echten Desktop-Eindruck einzeln umschalten oder die Seite über «öffnen» im eigenen Tab betrachten. «Eigen» = der Standardmodus der jeweiligen Welt (Spiegel: Nacht, Vorhang: Tag).</p>
+  </section>
+
+  <div class="bericht">Audit-Bericht der Vorrunde (R8), Bauplan und Messwerte: <a href="../">Design Lab</a> · Baseline eingefroren als Tag <code>audit-freeze-r8</code>. Der Grand-Final-Bericht folgt nach der Qualitätsprüfung beider Systeme.</div>
+  <footer>Grand Final · fiktive Demo-Daten · Bilder: Canva-generierte KI-Fotografie · © 2026 Fourwalls</footer>
+</div>
+<script>
+(function(){
+  const SEITEN = [
+    ["Startseite","index.html?intro=0","Home"],["Suche","portal.html","Search"],["Karte","portal.html#karte","Map"],
+    ["Beispiel-Suche (Zentralschweiz, Haus ≤ 2 Mio.)","portal.html?ort=rg%3Azentralschweiz&typ=haus&pmax=2000000","Search+"],
+    ["Objektdetail (extern)","portal.html#objekt/wohnung-zrich-1","Detail"],["Fourwalls Exclusive","portal.html#exclusive/seehaus-walensee","Exclusive"],
+    ["Gratis inserieren (Weiche)","portal.html#neu","List"],["Mit Fourwalls verkaufen","verkaufen.html","Sell"],["Verwaltung","verwalten.html","Management"],["Konto","portal.html#konto","Account"]
+  ];
+  const $ = id => document.getElementById(id);
+  function url(welt, s, modus){ const u = welt + "/" + s[1]; if (!modus) return u; return u.includes("?") ? u.replace("?", "?mode=" + modus + "&") : u.replace(/(#|$)/, "?mode=" + modus + "$1"); }
+  function liste(id, welt){
+    $(id).innerHTML = SEITEN.map(s => `<span class="n">${s[0]}</span><a class="m h" href="${url(welt,s,"hell")}">Hell</a><a class="m" href="${url(welt,s,"dunkel")}">Dunkel</a>`).join("");
+  }
+  liste("sSp","spiegel"); liste("sVh","vorhang");
+  $("vSeite").innerHTML = SEITEN.map((s,i) => `<option value="${i}">${s[0]}</option>`).join("");
+  let welt = "spiegel", modus = "", idx = 1;
+  function mal(){
+    const s = SEITEN[idx]; const r = $("rahmen"); r.classList.toggle("beide", welt === "beide");
+    const f = w => `<figure><figcaption>${w}</figcaption><a class="oeffnen" href="${url(w,s,modus)}" target="_blank" rel="noopener">öffnen ↗</a><iframe src="${url(w,s,modus)}" title="${w} — ${s[0]}" loading="lazy"></iframe></figure>`;
+    r.innerHTML = welt === "beide" ? f("spiegel") + f("vorhang") : f(welt);
+    $("vInfo").textContent = s[2] + (modus ? " · " + modus : "");
+  }
+  $("vSeite").addEventListener("change", () => { idx = +$("vSeite").value; mal(); });
+  document.querySelectorAll("[data-w]").forEach(b => b.addEventListener("click", () => { welt = b.dataset.w; document.querySelectorAll("[data-w]").forEach(x => x.setAttribute("aria-pressed", x === b)); mal(); }));
+  document.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => { modus = b.dataset.m; document.querySelectorAll("[data-m]").forEach(x => x.setAttribute("aria-pressed", x === b)); mal(); }));
+  $("vSeite").value = idx; mal();
+})();
+</script>
+</body>
+</html>

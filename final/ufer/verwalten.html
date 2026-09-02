@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Immobilien verwalten — Bewirtschaftung mit Fourwalls</title>
+<meta name="description" content="Bewirtschaftung von Renditeliegenschaften und Stockwerkeigentum: Kontrolle, Entlastung, Transparenz, Werterhalt. Offerte in 48 Stunden.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ufer.css">
+<style>
+/* Verwaltung: Spiegels Ruhe. Weniger Theater, mehr Kontrolle. */
+.held{position:relative;min-height:min(72svh,640px);display:grid;align-items:end;background:var(--tief);color:#EEF1F2;overflow:hidden}
+.held .bild-hinter{position:absolute;inset:0}
+.held .bild-hinter::after{background:var(--gr)}
+.held .bild-hinter img{filter:saturate(.7) brightness(.85)}
+.held .flor{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,12,18,.9),rgba(7,12,18,.3) 55%,rgba(7,12,18,.62))}
+.held .txt{position:relative;z-index:2;padding:clamp(120px,18vh,180px) var(--pad) clamp(36px,5vw,60px);max-width:1000px}
+.held h1{font-family:var(--d);font-weight:200;font-size:clamp(2.2rem,5vw,4.4rem);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
+.held p{margin-top:18px;font-size:1rem;line-height:1.7;max-width:56ch;color:rgba(238,241,242,.82)}
+.held .cta{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
+.held .cta .knopf{border-color:rgba(238,241,242,.4);color:#EEF1F2}
+.held .cta .knopf.voll{color:#0B121B}
+.ressorts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--linie);border-bottom:1px solid var(--linie)}
+.ressorts div{padding:26px var(--pad);border-right:1px solid var(--linie)}
+.ressorts div:last-child{border-right:0}
+.ressorts b{display:block;font-family:var(--d);font-weight:300;font-size:clamp(1.3rem,2vw,1.7rem);letter-spacing:-.01em}
+.ressorts p{font-size:.8rem;color:var(--leise);margin-top:8px;line-height:1.55;max-width:30ch}
+.leist{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,4vw,64px)}
+.leist .zeile{grid-template-columns:auto 1fr auto}
+.leist .zeile .t{font-size:1.1rem}
+.leist .zeile .t small{margin-top:4px}
+/* Eigentümer-Report: die Kachel */
+.report{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(24px,5vw,80px);align-items:center}
+.kachel{border:1px solid var(--linie);border-radius:var(--r);background:var(--gr2);padding:clamp(16px,2.4vw,28px);display:grid;gap:16px}
+.kachel .kz{display:flex;justify-content:space-between;align-items:baseline;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise)}
+.kachel .kz b{font-family:var(--d);font-size:1.1rem;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:400}
+.kachel .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.kachel .kpi div{background:var(--gr);padding:12px 14px}
+.kachel .kpi dt{font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise)}
+.kachel .kpi dd{margin-top:4px;font-family:var(--d);font-size:1.3rem;font-weight:400}
+.kachel .kpi dd small{font-family:var(--t);font-size:.62rem;color:var(--gut);margin-left:6px}
+.kachel .balken{display:grid;gap:8px}
+.kachel .balken div{display:grid;grid-template-columns:120px 1fr 64px;align-items:center;gap:12px;font-size:.76rem;color:var(--leise)}
+.kachel .balken i{display:block;height:6px;background:linear-gradient(to right,var(--licht),color-mix(in srgb,var(--licht) 35%,transparent));border-radius:3px}
+.kachel .balken b{font-family:var(--d);font-weight:400;text-align:right;color:var(--ink);font-size:.9rem}
+.kachel .belege{font-size:.76rem;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kachel .belege b{color:var(--ink);font-weight:400}
+.preise{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.preis{border:1px solid var(--linie);border-radius:var(--r);padding:24px 22px;background:var(--gr2);display:flex;flex-direction:column;gap:10px}
+.preis .w1{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leise);font-weight:500}
+.preis b{font-family:var(--d);font-weight:300;font-size:1.9rem;letter-spacing:-.02em}
+.preis b small{font-family:var(--t);font-size:.66rem;color:var(--leise);letter-spacing:.06em;margin-left:6px}
+.preis ul{display:flex;flex-direction:column;gap:5px;font-size:.8rem;color:var(--leise)}
+.preis li::before{content:"— ";color:var(--licht)}
+.offerte{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,80px);align-items:start}
+.offerte form{border:1px solid var(--linie);border-radius:var(--r);padding:clamp(18px,2.6vw,30px);background:var(--gr2);display:grid;gap:14px}
+.offerte .paar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.offerte .feld{width:100%}
+.offerte .ok{display:none;border-left:2px solid var(--gut);padding:10px 14px;font-size:.86rem;color:var(--leise)}
+.offerte .ok.an{display:block}
+@media(max-width:960px){.ressorts{grid-template-columns:1fr 1fr}.ressorts div:nth-child(2n){border-right:0}.ressorts div{border-bottom:1px solid var(--linie)}.leist,.report,.offerte{grid-template-columns:1fr}.preise{grid-template-columns:1fr}.offerte .paar{grid-template-columns:1fr}.kachel .kpi{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.ressorts{grid-template-columns:1fr}.ressorts div{border-right:0}.kachel .balken div{grid-template-columns:90px 1fr 56px}}
+</style>
+</head>
+<body data-mode="dunkel">
+<div class="blatt" id="blatt" role="dialog" aria-label="Menü"></div>
+<header class="kopf schwebt"></header>
+<main>
+<section class="held" data-held>
+  <div class="bild-hinter"><img src="../img/mfh-winterthur-1-1600.jpg" srcset="../img/mfh-winterthur-1-960.jpg 960w, ../img/mfh-winterthur-1-1600.jpg 1600w" sizes="100vw" alt="Mehrfamilienhaus mit Eingang und Fahrrad" fetchpriority="high"></div>
+  <div class="flor"></div>
+  <div class="txt">
+    <div class="kick">Immobilien verwalten · Bewirtschaftung</div>
+    <h1 class="auf">Sie hören von uns, wenn es zählt. Sonst läuft es.</h1>
+    <p class="auf verzoegert-1">Kaufmännische und technische Bewirtschaftung von Renditeliegenschaften und Stockwerkeigentum. Jeder Beleg online, jede Abrechnung nachvollziehbar, ein Report je Liegenschaft — und eine Person, die Ihr Haus kennt.</p>
+    <div class="cta auf verzoegert-2"><a class="knopf voll gross" href="#offerte">Offerte in 48 Std.</a><a class="knopf gross" href="#leistungen">Leistungen ansehen</a></div>
+  </div>
+</section>
+<div class="ressorts">
+  <div class="auf"><b>Kontrolle</b><p>Jede Zahl, jeder Beleg, jederzeit einsehbar. Sie entscheiden, wir führen aus.</p></div>
+  <div class="auf verzoegert-1"><b>Entlastung</b><p>Mieter, Handwerker, Behörden — wir sprechen für Sie. Sie lesen den Report.</p></div>
+  <div class="auf verzoegert-2"><b>Transparenz</b><p>Keine Pauschalen ohne Beleg, keine Überraschungen in der Nebenkostenabrechnung.</p></div>
+  <div class="auf verzoegert-3"><b>Werterhalt</b><p>Unterhalt planen statt reagieren. Sanierungen, bevor sie teuer werden.</p></div>
+</div>
+
+<section class="abschnitt" id="leistungen">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Leistungen</div><h2 class="titel">Was wir für Ihre Liegenschaft tun.</h2></div></div>
+    <div class="leist">
+      <div class="zeilen">
+        <div class="zeile auf"><span class="n">01</span><span class="t">Mietzinsinkasso<small>Mahnwesen · Betreibung · Reporting</small></span><span class="p"></span></div>
+        <div class="zeile auf"><span class="n">02</span><span class="t">Nebenkostenabrechnung<small>Belegbasiert · jährlich · online einsehbar</small></span><span class="p"></span></div>
+        <div class="zeile auf"><span class="n">03</span><span class="t">Erstvermietung &amp; Wiedervermietung<small>Marktmiete · Bonität · Vertrag · Übergabe</small></span><span class="p"></span></div>
+        <div class="zeile auf"><span class="n">04</span><span class="t">Mieterkommunikation<small>Eine Nummer, eine Adresse, ein Protokoll</small></span><span class="p"></span></div>
+      </div>
+      <div class="zeilen">
+        <div class="zeile auf"><span class="n">05</span><span class="t">Handwerkerkoordination<small>Offerten · Vergabe · Abnahme · Garantie</small></span><span class="p"></span></div>
+        <div class="zeile auf"><span class="n">06</span><span class="t">Übergabe &amp; Abnahme<small>Digitales Protokoll mit Fotos und Zählerständen</small></span><span class="p"></span></div>
+        <div class="zeile auf"><span class="n">07</span><span class="t">Leerstandsmanagement<small>Ziel unter 1.5 % · Vorvermietung ab Kündigung</small></span><span class="p"></span></div>
+        <div class="zeile auf"><span class="n">08</span><span class="t">Werterhalt &amp; Sanierung<small>Zustandsanalyse · 10-Jahres-Plan · Bauleitung</small></span><span class="p"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt gr2" id="report">
+  <div class="innen report">
+    <div class="auf">
+      <div class="kick">Eigentümer-Report</div>
+      <h2 class="titel">Ihr Haus in einer Seite. Jeden Monat.</h2>
+      <p class="lauf" style="margin-top:16px">Mietzinseingang, Leerstand, offene Arbeiten, Belege, anstehende Entscheide. Nicht mehr — aber alles. In Ihrem Bereich, als PDF, oder als Anruf, wenn Sie lieber sprechen.</p>
+      <ul style="margin-top:22px;max-width:44ch">
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Verwaltete Einheiten</span><b style="font-weight:400">2’840</b></li>
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Leerstand Portfolio</span><b style="font-weight:400">1.4 %</b></li>
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Antwort auf Mieteranliegen ⌀</span><b style="font-weight:400">4 Stunden</b></li>
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Belege online</span><b style="font-weight:400">100 %</b></li>
+      </ul>
+    </div>
+    <div class="kachel auf verzoegert-1" aria-label="Beispiel-Report">
+      <div class="kz"><b>Mehrfamilienhaus Winterthur · 12 Einheiten</b><span>Report August 2026</span></div>
+      <dl class="kpi"><div><dt>Mietzinseingang</dt><dd>CHF 27’840<small>100 %</small></dd></div><div><dt>Leerstand</dt><dd>0 <small style="color:var(--leise)">von 12</small></dd></div><div><dt>Offene Arbeiten</dt><dd>2</dd></div></dl>
+      <div class="balken"><div><span>Mietzins netto</span><i style="width:100%"></i><b>27’840</b></div><div><span>Nebenkosten</span><i style="width:24%"></i><b>6’610</b></div><div><span>Unterhalt</span><i style="width:9%"></i><b>2’380</b></div><div><span>Verwaltung</span><i style="width:5%"></i><b>1’390</b></div></div>
+      <div class="belege"><span><b>14</b> Belege · alle online</span><span>Entscheid offen: <b>Heizungsersatz 2027</b></span><span>Nächste Abrechnung <b>31.12.</b></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt" id="erstvermietung">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Preise</div><h2 class="titel">Klar, bevor Sie fragen müssen.</h2></div><span class="rechts-link">Alle Preise exkl. MwSt.</span></div>
+    <div class="preise">
+      <div class="preis auf"><span class="w1">Renditeliegenschaften</span><b>ab 3.9 %<small>der Nettomieteinnahmen</small></b><ul><li>Kaufmännisch und technisch</li><li>Eigentümer-Report monatlich</li><li>Leerstandsmanagement inklusive</li></ul></div>
+      <div class="preis auf verzoegert-1"><span class="w1">Stockwerkeigentum</span><b>ab CHF 320<small>pro Einheit und Jahr</small></b><ul><li>Versammlung, Protokoll, Budget</li><li>Erneuerungsfonds-Führung</li><li>Handwerkerkoordination</li></ul></div>
+      <div class="preis auf verzoegert-2"><span class="w1">Erstvermietung</span><b>1 Monatsmiete<small>bei Vertragsabschluss</small></b><ul><li>Mietzinsempfehlung und Inserat</li><li>Besichtigungen und Bonitätsprüfung</li><li>Vertrag und Übergabeprotokoll</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt gr2" id="offerte">
+  <div class="innen offerte">
+    <div class="auf">
+      <div class="kick">Offerte · 48 Stunden</div>
+      <h2 class="titel">Sagen Sie uns, was Sie besitzen.</h2>
+      <p class="lauf" style="margin-top:16px">Innert 48 Stunden erhalten Sie eine schriftliche Offerte mit Leistungsumfang und Preis — und einen Vorschlag, wie die Übernahme von Ihrer bisherigen Verwaltung abläuft, ohne dass Mieterinnen und Mieter etwas davon merken.</p>
+      <ul class="schritte" style="margin-top:22px;max-width:44ch;font-size:.84rem;color:var(--leise);display:grid;gap:8px">
+        <li>1 · Sie schicken Eckdaten und, wenn vorhanden, die letzte Abrechnung.</li>
+        <li>2 · Wir schauen die Liegenschaft an — vor Ort oder per Unterlagen.</li>
+        <li>3 · Offerte, Übernahmeplan, Startdatum. Keine Kündigungsfristen bei uns.</li>
+      </ul>
+    </div>
+    <form class="auf verzoegert-1" id="ofForm">
+      <div><label class="et" for="ofArt">Liegenschaft</label><select class="feld" id="ofArt"><option>Mehrfamilienhaus</option><option>Stockwerkeigentum (Gemeinschaft)</option><option>Einzelne Eigentumswohnung</option><option>Gewerbe / gemischt</option><option>Portfolio (mehrere Liegenschaften)</option></select></div>
+      <div class="paar"><div><label class="et" for="ofEinh">Einheiten</label><input class="feld" id="ofEinh" type="number" min="1" placeholder="12"></div><div><label class="et" for="ofOrt">PLZ / Ort</label><input class="feld" id="ofOrt" placeholder="8400 Winterthur"></div></div>
+      <div class="paar"><div><label class="et" for="ofName">Name</label><input class="feld" id="ofName" placeholder="Vor- und Nachname"></div><div><label class="et" for="ofMail">E-Mail</label><input class="feld" id="ofMail" type="email" placeholder="name@beispiel.ch"></div></div>
+      <div><label class="et" for="ofText">Was ist Ihnen wichtig? (optional)</label><textarea class="feld" id="ofText" placeholder="z.B. Übernahme per 1. Januar, Heizungsersatz geplant …"></textarea></div>
+      <button class="knopf voll gross" type="submit">Offerte anfordern</button>
+      <p class="ok" id="ofOk">Danke. Sie erhalten innert 48 Stunden eine Offerte — und wir melden uns vorher, falls wir etwas nachfragen müssen.</p>
+    </form>
+  </div>
+</section>
+
+<section class="abschnitt eng" id="wissen">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Wissen · für Eigentümerinnen und Eigentümer</div><h2 class="titel">Werterhalt beginnt mit Wissen.</h2></div><a class="rechts-link" href="wissen.html">Alle Beiträge</a></div>
+    <div class="zeilen">
+      <a class="zeile auf" href="wissen.html#nebenkosten-abrechnung"><span class="n">Ratgeber</span><span class="t">Nebenkostenabrechnung: Was umlegbar ist — und was nicht<small>6 Min.</small></span><span class="m"></span><span class="p">→</span></a>
+      <a class="zeile auf verzoegert-1" href="wissen.html#sanierung"><span class="n">Ratgeber</span><span class="t">Sanieren oder verkaufen? Der 10-Jahres-Blick auf Ihre Liegenschaft<small>8 Min.</small></span><span class="m"></span><span class="p">→</span></a>
+      <a class="zeile auf verzoegert-2" href="wissen.html#checkliste-verwaltung"><span class="n">Checkliste</span><span class="t">Verwaltungswechsel: die 9 Dinge, die vor dem 1. Januar erledigt sein müssen<small>PDF</small></span><span class="m"></span><span class="p">→</span></a>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="fuss"></footer>
+<script src="../listings.js"></script>
+<script src="../properties.js"></script>
+<script src="../core.js"></script>
+<script src="ufer.js"></script>
+<script>
+(function(){
+  UFER.startModus(); UFER.montiere({ aktuell:"verwalten", seite:"Verwalten" });
+  const f = document.getElementById("ofForm");
+  f.addEventListener("submit", e => { e.preventDefault(); const n = document.getElementById("ofName"), m = document.getElementById("ofMail"); if (!n.value || !m.value.includes("@")){ (n.value ? m : n).style.borderColor = "var(--warn)"; (n.value ? m : n).focus(); return; } document.getElementById("ofOk").classList.add("an"); f.querySelector("button").disabled = true; f.querySelector("button").style.opacity = .5; });
+})();
+</script>
+</body>
+</html>

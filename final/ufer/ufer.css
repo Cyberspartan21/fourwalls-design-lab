@@ -1,0 +1,221 @@
+/* ============================================================
+   UFER — Designsystem (Grand Final III)
+   Farbe: Spiegel (Nachtblau / silbriger Morgen, ein warmer Lichtakzent)
+   Typografie: Vorhang (Petrona + Manrope)
+   Bewegung: Öffnen, Enthüllen, Maskieren — architektonisch, nie theatralisch
+   Prinzip: OBERFLÄCHE · TIEFE · SPIEGELUNG · ÖFFNUNG · RAUM · LICHT
+   ============================================================ */
+
+:root{
+  /* Dunkel = Blaue Stunde am Wasser (Grundstimmung der Marke) */
+  --gr:#0B121B; --gr2:#111B27; --gr3:#182433; --gr4:#22303F;
+  --ink:#E8ECEF; --leise:#8A98A7; --linie:rgba(232,236,239,.14); --linie2:rgba(232,236,239,.28);
+  --licht:#D9A05B; --licht2:#F0C58A; --wasser:#3E5A72; --wasser2:#7E98AD; --tief:#070C12;
+  --gut:#7FA97A; --warn:#C4838A;
+  --glas:rgba(11,18,27,.84);
+  --d:'Petrona',Georgia,'Times New Roman',serif;
+  --t:'Manrope','Helvetica Neue',system-ui,sans-serif;
+  --r:2px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease2:cubic-bezier(.72,0,.16,1);
+  --pad:clamp(16px,3vw,48px);
+  --lg:var(--ink); --lga:var(--licht);
+  color-scheme:dark;
+}
+[data-mode="hell"]{
+  /* Hell = Morgen am Wasser: silbriges Tageslicht, weiche Architekturweiss, tiefblaue Schrift */
+  --gr:#EEF1F2; --gr2:#E3E8EB; --gr3:#D6DDE2; --gr4:#C6D0D7;
+  --ink:#0F1B2A; --leise:#5A6A78; --linie:rgba(15,27,42,.15); --linie2:rgba(15,27,42,.32);
+  --licht:#A8702F; --licht2:#C58A45; --wasser:#8FA7B9; --wasser2:#5E7B92; --tief:#C9D3DA;
+  --gut:#4E7A49; --warn:#9A4A54;
+  --glas:rgba(238,241,242,.86);
+  color-scheme:light;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--gr);color:var(--ink);font-family:var(--t);font-weight:300;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .5s ease,color .5s ease}
+:where(h1,h2,h3,h4,p,figure,ul,ol,dl,dd){margin:0;padding:0}
+:where(ul,ol){list-style:none}
+:where(button){font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:where(a){color:inherit;text-decoration:none}
+:where(input,select,textarea){font:inherit;color:inherit}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--licht);outline-offset:3px;border-radius:1px}
+img{display:block;max-width:100%}
+picture{display:contents}
+h1,h2,h3{text-wrap:balance}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+
+/* ---------- Typografie ---------- */
+.d{font-family:var(--d);font-weight:300;letter-spacing:-.01em}
+.kick{font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--licht);font-weight:500}
+.leise{color:var(--leise)}
+.wasserlinie-t{position:relative;padding-bottom:14px}
+.wasserlinie-t::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:linear-gradient(to right,var(--licht) 0,var(--licht) 48px,var(--linie) 48px,var(--linie) 100%)}
+.titel{font-family:var(--d);font-weight:300;font-size:clamp(1.8rem,3.4vw,2.9rem);line-height:1.08;letter-spacing:-.015em}
+.titel em{font-style:italic;font-weight:300}
+.lauf{font-size:.95rem;line-height:1.75;color:var(--leise);max-width:60ch}
+[data-mode="hell"] .lauf{color:#3B4854}
+.zahl{font-variant-numeric:tabular-nums}
+
+/* ---------- Logo (Wortmarke) ---------- */
+.fw{display:block;position:relative;aspect-ratio:730/507}
+.fw i{position:absolute;inset:0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:100% 100%;mask-size:100% 100%}
+.fw .k{background:var(--lg);-webkit-mask-image:url(../img/logo-ink.png);mask-image:url(../img/logo-ink.png)}
+.fw .s{background:var(--lga);-webkit-mask-image:url(../img/logo-sub.png);mask-image:url(../img/logo-sub.png)}
+.mark{display:block;aspect-ratio:432/317;background:var(--lg);-webkit-mask-image:url(../img/logo-mono.png);mask-image:url(../img/logo-mono.png);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+
+/* ---------- Das Fenster: das Monogramm als Öffnung, dahinter bewegtes Bild ---------- */
+.fenster{position:relative;aspect-ratio:432/317;overflow:hidden;
+  -webkit-mask-image:url(../img/logo-mono.png);mask-image:url(../img/logo-mono.png);
+  -webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+.fenster .medien{position:absolute;inset:-12%;background-size:cover;background-position:center;
+  animation:treiben 26s ease-in-out infinite alternate;will-change:transform}
+.fenster .medien img{width:100%;height:100%;object-fit:cover}
+.fenster .lichtzug{position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,244,220,.22) 50%,transparent 70%);
+  transform:translateX(-120%);animation:lichtzug 14s ease-in-out infinite}
+@keyframes treiben{from{transform:translate3d(-2.5%,-1.5%,0) scale(1.02)}to{transform:translate3d(2.5%,1.5%,0) scale(1.08)}}
+@keyframes lichtzug{0%,55%{transform:translateX(-120%)}80%,100%{transform:translateX(120%)}}
+@media(prefers-reduced-motion:reduce){.fenster .medien,.fenster .lichtzug{animation:none}}
+
+/* ---------- Kopf ---------- */
+.kopf{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:clamp(12px,1.8vw,28px);padding:10px var(--pad);
+  background:var(--glas);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--linie);transition:background .5s ease,border-color .5s ease}
+.kopf.schwebt{position:fixed;left:0;right:0;background:transparent;border-bottom-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;--lg:#EEF1F2;--lga:#F0C58A;color:#EEF1F2}
+.kopf.schwebt.gescrollt{background:var(--glas);border-bottom-color:var(--linie);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);--lg:var(--ink);--lga:var(--licht);color:var(--ink)}
+.kopf .fw{width:72px;flex:0 0 auto}
+.kopf nav.haupt{display:flex;gap:4px}
+.kopf nav.haupt>div{position:relative}
+.kopf nav.haupt>div>a{display:block;padding:10px 12px;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;opacity:.78;transition:opacity .2s;border-bottom:1px solid transparent}
+.kopf nav.haupt>div>a:hover,.kopf nav.haupt>div>a[aria-expanded="true"]{opacity:1}
+.kopf nav.haupt>div>a[aria-current="true"]{opacity:1;border-bottom-color:var(--licht)}
+.tafel{position:absolute;left:0;top:calc(100% + 8px);min-width:280px;background:var(--gr2);border:1px solid var(--linie);border-radius:var(--r);padding:14px 6px;
+  box-shadow:0 30px 70px rgba(0,0,0,.35);display:none;color:var(--ink);z-index:210}
+.tafel.an{display:block;animation:tafelAuf .32s var(--ease)}
+@keyframes tafelAuf{from{opacity:0;clip-path:inset(0 0 100% 0)}to{opacity:1;clip-path:inset(0)}}
+.tafel a{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:9px 14px;font-size:.86rem;border-radius:var(--r);transition:background .15s}
+.tafel a:hover,.tafel a:focus-visible{background:var(--gr3)}
+.tafel a small{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--leise)}
+.tafel .tk{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--licht);padding:4px 14px 8px}
+.kopf .rechts{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sprache{display:flex;gap:2px;font-size:.6rem;letter-spacing:.08em}
+.sprache button{padding:6px 5px;opacity:.7;border-bottom:1px solid transparent}
+.sprache button[aria-pressed="true"]{opacity:1;border-bottom-color:var(--licht)}
+.knopf{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--linie2);border-radius:var(--r);padding:.62em 1.05em;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;
+  transition:border-color .2s,background .2s,color .2s,transform .2s;white-space:nowrap;min-height:38px;color:inherit}
+.knopf:hover{border-color:var(--licht);color:var(--licht)}
+.knopf.voll{background:var(--licht);border-color:var(--licht);color:#0B121B}
+.knopf.voll:hover{background:var(--licht2);border-color:var(--licht2);color:#0B121B}
+.knopf.leise{border-color:transparent;color:var(--leise)}
+.knopf.leise:hover{color:var(--licht)}
+.knopf.gross{padding:.9em 1.5em;font-size:.72rem;min-height:46px}
+.zaehl{display:inline-grid;place-items:center;min-width:17px;height:17px;border-radius:999px;background:var(--licht);color:#0B121B;font-size:.58rem;font-weight:700;padding:0 4px}
+.gt{display:flex;gap:2px;border:1px solid var(--linie2);border-radius:999px;padding:2px}
+.gt button{width:24px;height:24px;border-radius:999px;font-size:.52rem;opacity:.75;display:grid;place-items:center;transition:background .25s,color .25s}
+.gt button[aria-pressed="true"]{background:var(--ink);color:var(--gr);opacity:1}
+.kopf.schwebt:not(.gescrollt) .gt button[aria-pressed="true"]{background:#EEF1F2;color:#0B121B}
+.kopf.schwebt:not(.gescrollt) .knopf:not(.voll){border-color:rgba(238,241,242,.4)}
+.burger{display:none;width:40px;height:38px;place-items:center;border:1px solid var(--linie2);border-radius:var(--r)}
+.burger i{display:block;width:16px;height:1px;background:currentColor;box-shadow:0 -5px 0 currentColor,0 5px 0 currentColor}
+
+/* Mobiles Blatt */
+.blatt{position:fixed;inset:0;z-index:400;background:var(--gr);display:none;overflow-y:auto;padding:16px var(--pad) 40px}
+.blatt.an{display:block;animation:blattAuf .4s var(--ease)}
+@keyframes blattAuf{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+.blatt .bk{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.blatt .bk .fw{width:64px}
+.blatt .gruppe{border-top:1px solid var(--linie);padding:16px 0}
+.blatt .gruppe .tk{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--licht);margin-bottom:8px}
+.blatt .gruppe a{display:flex;justify-content:space-between;padding:10px 0;font-family:var(--d);font-size:1.25rem;font-weight:300}
+.blatt .gruppe a small{font-family:var(--t);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--leise);align-self:center}
+.blatt .unten{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+
+/* ---------- Blende: Inhalte öffnen sich wie Räume ---------- */
+.auf{opacity:0;transform:translateY(16px);transition:opacity .9s ease,transform 1s var(--ease)}
+.auf.in{opacity:1;transform:none}
+.blende{clip-path:inset(0 50% 0 50%);transition:clip-path 1.2s var(--ease2)}
+.blende.in{clip-path:inset(0 0 0 0)}
+.blende-v{clip-path:inset(50% 0 50% 0);transition:clip-path 1.2s var(--ease2)}
+.blende-v.in{clip-path:inset(0)}
+.bild-hinter{position:relative;overflow:hidden;background:var(--gr3)}
+.bild-hinter::after{content:"";position:absolute;inset:0;background:var(--gr2);transform:translateY(0);transition:transform 1.1s var(--ease2) .1s}
+.bild-hinter.in::after{transform:translateY(-101%)}
+.bild-hinter img{transform:scale(1.08);transition:transform 1.8s var(--ease)}
+.bild-hinter.in img{transform:scale(1)}
+.bild-hinter img{width:100%;height:100%;object-fit:cover;filter:saturate(.86)}
+.verzoegert-1{transition-delay:.12s}.verzoegert-2{transition-delay:.24s}.verzoegert-3{transition-delay:.36s}.verzoegert-4{transition-delay:.48s}
+
+/* ---------- Vier Wege (Startseite + Landeseiten) ---------- */
+.wege{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--linie);border-bottom:1px solid var(--linie);background:var(--gr)}
+.wege a{padding:24px var(--pad);border-right:1px solid var(--linie);display:flex;flex-direction:column;gap:6px;position:relative;transition:background .3s}
+.wege a:last-child{border-right:0}
+.wege a::after{content:"";position:absolute;left:var(--pad);right:var(--pad);bottom:0;height:1px;background:var(--licht);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.wege a:hover{background:var(--gr2)}
+.wege a:hover::after{transform:scaleX(1)}
+.wege b{font-family:var(--d);font-weight:300;font-size:clamp(1.2rem,1.7vw,1.55rem);line-height:1.15;letter-spacing:-.01em}
+.wege span{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--leise)}
+.wege a.warm b{color:var(--licht)}
+
+/* ---------- Abschnitte ---------- */
+.abschnitt{padding:clamp(56px,8vw,120px) var(--pad)}
+.abschnitt.eng{padding-top:clamp(40px,5vw,72px);padding-bottom:clamp(40px,5vw,72px)}
+.abschnitt.gr2{background:var(--gr2)}
+.innen{max-width:1280px;margin:0 auto}
+.kopfzeile{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 32px;margin-bottom:clamp(24px,3vw,44px)}
+.kopfzeile .kick{margin-bottom:12px}
+.kopfzeile .rechts-link{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);border-bottom:1px solid var(--linie2);padding-bottom:3px;transition:color .2s,border-color .2s}
+.kopfzeile .rechts-link:hover{color:var(--licht);border-color:var(--licht)}
+
+/* Zeilenliste (Spiegel-Disziplin) */
+.zeilen{border-top:1px solid var(--linie)}
+.zeile{display:grid;grid-template-columns:auto 1fr auto auto;gap:clamp(14px,2.4vw,40px);align-items:center;padding:clamp(16px,2vw,24px) 0;border-bottom:1px solid var(--linie);transition:padding-left .45s var(--ease)}
+.zeile:hover{padding-left:12px}
+.zeile .n{font-size:.62rem;letter-spacing:.14em;color:var(--leise)}
+.zeile .t{font-family:var(--d);font-weight:300;font-size:clamp(1.15rem,2vw,1.6rem);line-height:1.2}
+.zeile .t small{display:block;font-family:var(--t);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);margin-top:6px}
+.zeile .m{font-size:.78rem;color:var(--leise);white-space:nowrap}
+.zeile .p{font-family:var(--d);font-size:1.05rem;white-space:nowrap}
+
+/* ---------- Fuss ---------- */
+.fuss{border-top:1px solid var(--linie);padding:clamp(40px,6vw,88px) var(--pad) 28px;background:var(--gr)}
+.fuss .band{width:100%;max-width:1280px;margin:0 auto;--lg:var(--ink);--lga:var(--licht);opacity:.92}
+.fuss .spalten{max-width:1280px;margin:clamp(28px,4vw,52px) auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;font-size:.8rem;border-top:1px solid var(--linie);padding-top:24px}
+.fuss .spalten b{display:block;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--licht);margin-bottom:10px;font-weight:500}
+.fuss .spalten a,.fuss .spalten span{display:block;color:var(--leise);padding:3px 0}
+.fuss .spalten a:hover{color:var(--ink)}
+.fuss .fein{max-width:1280px;margin:28px auto 0;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+
+/* ---------- Formularelemente ---------- */
+.feld{background:var(--gr2);border:1px solid var(--linie2);border-radius:var(--r);padding:.6em .85em;font-size:.86rem;min-height:40px;color:var(--ink);transition:border-color .2s}
+.feld:focus{border-color:var(--licht);outline:0}
+.feld::placeholder{color:var(--leise)}
+select.feld{padding-right:1.8em;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--leise) 50%),linear-gradient(135deg,var(--leise) 50%,transparent 50%);background-position:calc(100% - 14px) 55%,calc(100% - 9px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+textarea.feld{min-height:110px;resize:vertical}
+label.et{display:block;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise);margin-bottom:6px}
+
+/* ---------- Hilfsklassen ---------- */
+.nurmobil{display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:960px){
+  .kopf nav.haupt,.sprache{display:none}
+  .burger{display:grid}
+  .wege{grid-template-columns:1fr 1fr}
+  .wege a{border-bottom:1px solid var(--linie)}
+  .wege a:nth-child(2n){border-right:0}
+  .fuss .spalten{grid-template-columns:1fr 1fr}
+  .zeile{grid-template-columns:1fr auto;row-gap:4px}
+  .zeile .n,.zeile .m{display:none}
+  .nurmobil{display:initial}
+}
+@media(max-width:600px){
+  .kopf{padding:8px 12px;gap:8px}
+  .kopf .fw{width:56px}
+  .kopf .rechts{gap:5px}
+  .kopf .knopf{padding:.5em .6em;font-size:.58rem;letter-spacing:.06em;min-height:34px}
+  .kopf .rechts>a.knopf:not(.voll){display:none}
+  .kopf .gt{padding:1px}.kopf .gt button{width:21px;height:21px}
+  .burger{width:34px;height:34px;flex:0 0 auto}
+  .wege{grid-template-columns:1fr}
+  .wege a{border-right:0;padding:16px 16px}
+  .fuss .spalten{grid-template-columns:1fr}
+}

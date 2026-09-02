@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verkaufen mit Fourwalls — Bewertung, Mandat, Übergabe</title>
+<meta name="description" content="Mit Fourwalls verkaufen: hedonische Bewertung in 48 Stunden, Mandat mit Erfolgshonorar, eine Ansprechperson bis zur Übergabe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ufer.css">
+<style>
+.held{position:relative;min-height:min(86svh,780px);display:grid;grid-template-columns:1fr 1fr;align-items:end;background:var(--tief);color:#EEF1F2;overflow:hidden}
+.held .bild-hinter{position:absolute;inset:0}
+.held .bild-hinter::after{background:var(--gr)}
+.held .flor{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,12,18,.86),rgba(7,12,18,.2) 55%,rgba(7,12,18,.35))}
+.held .txt{position:relative;z-index:2;padding:clamp(120px,18vh,180px) var(--pad) clamp(36px,5vw,64px);grid-column:1/-1;max-width:1100px}
+.held h1{font-family:var(--d);font-weight:200;font-size:clamp(2.4rem,5.6vw,5rem);line-height:1;letter-spacing:-.025em;max-width:16ch}
+.held h1 em{font-style:italic}
+.held p{margin-top:20px;font-size:1rem;line-height:1.7;max-width:56ch;color:rgba(238,241,242,.82)}
+.held .cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:10px}
+.held .cta .knopf{border-color:rgba(238,241,242,.4);color:#EEF1F2}
+.held .cta .knopf.voll{color:#0B121B}
+.zahlen{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--linie)}
+.zahlen div{padding:24px var(--pad);border-right:1px solid var(--linie)}
+.zahlen div:last-child{border-right:0}
+.zahlen b{display:block;font-family:var(--d);font-weight:300;font-size:clamp(1.6rem,2.6vw,2.3rem);line-height:1}
+.zahlen span{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise);display:block;margin-top:6px}
+/* Hub: Ich möchte … */
+.hub{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.hub a,.hub .weg{border:1px solid var(--linie);border-radius:var(--r);padding:24px 22px 20px;display:flex;flex-direction:column;gap:10px;background:var(--gr2);transition:border-color .25s;text-align:left}
+.hub a:hover{border-color:var(--licht)}
+.hub .w1{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leise);font-weight:500}
+.hub b{font-family:var(--d);font-weight:300;font-size:1.5rem;line-height:1.1;letter-spacing:-.015em}
+.hub p{color:var(--leise);font-size:.86rem;line-height:1.6}
+.hub ul{display:flex;flex-direction:column;gap:5px;font-size:.78rem;margin-top:2px}
+.hub li::before{content:"— ";color:var(--licht)}
+.hub .cta{margin-top:auto;padding-top:12px}
+.hub .mit{border-color:color-mix(in srgb,var(--licht) 55%,var(--linie))}
+/* Etappen: der Akt, in zehn Bildern */
+.etappen{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--linie);border-left:1px solid var(--linie)}
+.etappe{padding:22px 20px 24px;border-right:1px solid var(--linie);border-bottom:1px solid var(--linie);min-height:180px;display:flex;flex-direction:column;gap:8px;position:relative}
+.etappe .nr{font-family:var(--d);font-weight:200;font-size:1.6rem;color:var(--licht);line-height:1}
+.etappe b{font-family:var(--d);font-weight:300;font-size:1.15rem;line-height:1.15}
+.etappe p{font-size:.78rem;color:var(--leise);line-height:1.55}
+.etappe .dauer{margin-top:auto;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise)}
+/* Bewertung */
+.bewertung{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,80px);align-items:start}
+.bewertung form{border:1px solid var(--linie);border-radius:var(--r);padding:clamp(18px,2.6vw,30px);background:var(--gr2);display:grid;gap:14px}
+.bewertung .paar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bewertung .feld{width:100%}
+.bewertung .ok{display:none;border-left:2px solid var(--gut);padding:10px 14px;font-size:.86rem;color:var(--leise)}
+.bewertung .ok.an{display:block}
+.bewertung .ehrlich{font-size:.74rem;color:var(--leise);line-height:1.6}
+.premiere{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,5vw,80px);align-items:center}
+.premiere .fenster{width:100%;max-width:560px}
+.premiere .fenster .medien{background-image:url(../img/lakeside-villa-2-1600.jpg)}
+.faq details{border-bottom:1px solid var(--linie)}
+.faq summary{cursor:pointer;padding:14px 0;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;gap:16px;font-family:var(--d);font-size:1.15rem}
+.faq summary::after{content:"+";color:var(--licht)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 16px;color:var(--leise);font-size:.88rem;line-height:1.7;max-width:66ch}
+@media(max-width:960px){.zahlen{grid-template-columns:1fr 1fr}.zahlen div:nth-child(2n){border-right:0}.zahlen div{border-bottom:1px solid var(--linie)}.hub{grid-template-columns:1fr}.etappen{grid-template-columns:1fr 1fr}.bewertung,.premiere{grid-template-columns:1fr}.bewertung .paar{grid-template-columns:1fr}}
+@media(max-width:600px){.etappen{grid-template-columns:1fr}.etappe{min-height:0}}
+</style>
+</head>
+<body data-mode="dunkel">
+<div class="blatt" id="blatt" role="dialog" aria-label="Menü"></div>
+<header class="kopf schwebt"></header>
+<main>
+<section class="held" data-held>
+  <div class="bild-hinter"><img src="../img/lakeside-villa-2-1600.jpg" srcset="../img/lakeside-villa-2-960.jpg 960w, ../img/lakeside-villa-2-1600.jpg 1600w" sizes="100vw" alt="Haus am See am Abend" fetchpriority="high"></div>
+  <div class="flor"></div>
+  <div class="txt">
+    <div class="kick">Mit Fourwalls verkaufen · Mandat</div>
+    <h1 class="auf">Wir zeigen, was Ihr Haus wert ist — <em>und wem.</em></h1>
+    <p class="auf verzoegert-1">Verkaufen ist kein Inserat, sondern ein Ablauf: Bewertung, Strategie, Fotografie zur richtigen Stunde, qualifizierte Käuferschaft, Verhandlung, Notariat, Übergabe. Eine Ansprechperson, ein Honorar nur bei Erfolg.</p>
+    <div class="cta auf verzoegert-2"><a class="knopf voll gross" href="#bewertung">Kostenlose Bewertung in 48 Std.</a><a class="knopf gross" href="portal.html#neu">Lieber selbst inserieren</a></div>
+  </div>
+</section>
+<div class="zahlen"><div><b>48 Std.</b><span>Hedonische Bewertung</span></div><div><b>2.0 – 2.9 %</b><span>Honorar, nur bei Erfolg</span></div><div><b>67 Tage</b><span>Vermarktungsdauer ⌀</span></div><div><b>SVIT</b><span>Mitglied Schweiz</span></div></div>
+
+<section class="abschnitt" id="hub">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Für Eigentümerinnen und Eigentümer</div><h2 class="titel">Ich möchte …</h2></div></div>
+    <div class="hub">
+      <a class="mit auf" href="#bewertung"><span class="w1">Verkaufen · mit Mandat</span><b>… mein Objekt professionell verkaufen lassen.</b><p>Fourwalls übernimmt den ganzen Ablauf und vertritt Sie gegenüber der Käuferschaft.</p><ul><li>Bewertung in 48 Stunden</li><li>Fourwalls-Exclusive-Präsentation</li><li>Honorar nur bei Erfolg</li></ul><span class="cta knopf voll">Bewertung anfragen</span></a>
+      <a class="auf verzoegert-1" href="portal.html#neu"><span class="w1">Selbst inserieren · kostenlos</span><b>… mein Inserat selbst erstellen und betreuen.</b><p>Sie schreiben, wählen Bilder, beantworten Anfragen. Fourwalls stellt Reichweite und Werkzeug — kostenlos.</p><ul><li>9 kurze Schritte, jederzeit unterbrechbar</li><li>Ohne Konto zum Start</li><li>Anfragen gehen direkt an Sie</li></ul><span class="cta knopf">Gratis inserieren</span></a>
+      <a class="auf verzoegert-2" href="verwalten.html#erstvermietung"><span class="w1">Vermieten</span><b>… vermieten und mich um nichts kümmern.</b><p>Erstvermietung mit Marktmiete, Bonitätsprüfung, Vertrag und Übergabe — auf Wunsch anschliessend die Bewirtschaftung.</p><ul><li>Mietzinsempfehlung inklusive</li><li>Geprüfte Mieterschaft</li><li>Übergabeprotokoll digital</li></ul><span class="cta knopf">Erstvermietung ansehen</span></a>
+    </div>
+    <p class="lauf" style="margin-top:18px;font-size:.82rem">Beides ist ehrlich gemeint: Wer selbst inserieren will, bekommt das beste Werkzeug. Wer es abgeben will, den besten Service. Sie können jederzeit wechseln.</p>
+  </div>
+</section>
+
+<section class="abschnitt gr2" id="ablauf">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Der Ablauf</div><h2 class="titel">Zehn Etappen. Eine Ansprechperson.</h2></div><span class="rechts-link">Typisch 67 Tage</span></div>
+    <div class="etappen">
+      <div class="etappe auf"><span class="nr">I</span><b>Bewertung</b><p>Hedonisch und im Marktvergleich, innert 48 Stunden. Als Richtwert deklariert, im Gespräch verfeinert.</p><span class="dauer">Tag 1–2</span></div>
+      <div class="etappe auf verzoegert-1"><span class="nr">II</span><b>Strategie</b><p>Preis, Zielgruppe, Zeitpunkt. Stiller Verkauf an die Käuferliste oder offener Markt.</p><span class="dauer">Woche 1</span></div>
+      <div class="etappe auf verzoegert-2"><span class="nr">III</span><b>Positionierung</b><p>Was das Objekt besonders macht — und für wen. Daraus entsteht die Geschichte des Dossiers.</p><span class="dauer">Woche 1</span></div>
+      <div class="etappe auf verzoegert-3"><span class="nr">IV</span><b>Fotografie & Film</b><p>Zur richtigen Stunde. Grundrisse, Drohne, auf Wunsch Rundgang — die Exclusive-Präsentation.</p><span class="dauer">Woche 2</span></div>
+      <div class="etappe auf verzoegert-4"><span class="nr">V</span><b>Vermarktung</b><p>Fourwalls Exclusive, Käuferliste seit 2014, Portale, Suchabos. Jede Anfrage protokolliert.</p><span class="dauer">Woche 2–6</span></div>
+      <div class="etappe auf"><span class="nr">VI</span><b>Käuferqualifikation</b><p>Finanzierung geprüft, bevor jemand Ihr Wohnzimmer sieht. Keine Besichtigungstouristen.</p><span class="dauer">laufend</span></div>
+      <div class="etappe auf verzoegert-1"><span class="nr">VII</span><b>Besichtigungen</b><p>Geführt, terminiert, dokumentiert. Sie erhalten nach jeder Besichtigung ein kurzes Feedback.</p><span class="dauer">Woche 3–8</span></div>
+      <div class="etappe auf verzoegert-2"><span class="nr">VIII</span><b>Verhandlung</b><p>Angebote schriftlich, verglichen, empfohlen. Sie entscheiden — mit allen Zahlen auf dem Tisch.</p><span class="dauer">Woche 8–9</span></div>
+      <div class="etappe auf verzoegert-3"><span class="nr">IX</span><b>Notariat</b><p>Vertrag, Grundbuch, Termine. Wir koordinieren mit Notariat, Bank und Käuferschaft.</p><span class="dauer">Woche 10–12</span></div>
+      <div class="etappe auf verzoegert-4"><span class="nr">X</span><b>Übergabe</b><p>Protokoll, Schlüssel, Zählerstände — digital signiert. Danach: ein Anruf, falls Sie uns brauchen.</p><span class="dauer">Tag der Übergabe</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt" id="bewertung">
+  <div class="innen bewertung">
+    <div class="auf">
+      <div class="kick">Bewertung · kostenlos</div>
+      <h2 class="titel">Was ist Ihr Haus wert?</h2>
+      <p class="lauf" style="margin-top:16px">Innert 48 Stunden erhalten Sie eine hedonische Bewertung mit Preisspanne und Marktvergleich — als PDF und, wenn Sie wollen, im Gespräch erklärt.</p>
+      <p class="ehrlich" style="margin-top:16px">Ehrlich gesagt: Eine Online-Bewertung ist ein Richtwert, kein Verkaufspreis. Zustand, Ausbau und Aussicht sieht kein Modell. Deshalb gehört zu jeder Bewertung ein zweiter Schritt mit einem Menschen — kostenlos und unverbindlich, auch wenn Sie danach selbst inserieren.</p>
+      <ul style="margin-top:22px;max-width:44ch">
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Methode</span><b style="font-weight:400">hedonisch + Marktvergleich</b></li>
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Dauer</span><b style="font-weight:400">48 Stunden</b></li>
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Kosten</span><b style="font-weight:400">keine, keine Verpflichtung</b></li>
+        <li style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.84rem"><span class="leise">Ergebnis</span><b style="font-weight:400">PDF mit Spanne + Gespräch</b></li>
+      </ul>
+    </div>
+    <form class="auf verzoegert-1" id="bwForm">
+      <div><label class="et" for="bwTyp">Objekttyp</label><select class="feld" id="bwTyp"><option>Einfamilienhaus</option><option>Eigentumswohnung</option><option>Villa</option><option>Mehrfamilienhaus</option><option>Chalet</option><option>Bauland</option></select></div>
+      <div class="paar"><div><label class="et" for="bwPlz">PLZ</label><input class="feld" id="bwPlz" inputmode="numeric" maxlength="4" placeholder="8001"></div><div><label class="et" for="bwOrt">Ort</label><input class="feld" id="bwOrt" placeholder="Zürich"></div></div>
+      <div class="paar"><div><label class="et" for="bwFl">Wohnfläche (m²)</label><input class="feld" id="bwFl" type="number" min="10" placeholder="185"></div><div><label class="et" for="bwJahr">Baujahr</label><input class="feld" id="bwJahr" type="number" min="1800" max="2030" placeholder="1926"></div></div>
+      <div class="paar"><div><label class="et" for="bwName">Name</label><input class="feld" id="bwName" placeholder="Vor- und Nachname"></div><div><label class="et" for="bwMail">E-Mail</label><input class="feld" id="bwMail" type="email" placeholder="name@beispiel.ch"></div></div>
+      <div><label class="et" for="bwZiel">Was haben Sie vor?</label><select class="feld" id="bwZiel"><option>Verkaufen in den nächsten 6 Monaten</option><option>Verkaufen, Zeitpunkt offen</option><option>Nur den Wert kennen</option><option>Erbteilung / Scheidung / Übertragung</option></select></div>
+      <button class="knopf voll gross" type="submit">Bewertung anfordern</button>
+      <p class="ok" id="bwOk">Danke. Sie erhalten die Bewertung innert 48 Stunden per E-Mail — und einen Anruf, ob Sie ein Gespräch möchten.</p>
+      <p class="ehrlich">Keine Weitergabe an Dritte. Die Bewertung ist kostenlos und verpflichtet zu nichts.</p>
+    </form>
+  </div>
+</section>
+
+<section class="abschnitt gr2" id="exclusive">
+  <div class="innen premiere">
+    <div class="auf">
+      <div class="kick">Fourwalls Exclusive</div>
+      <h2 class="titel">So sieht Ihr Haus aus, wenn wir es zeigen.</h2>
+      <p class="lauf" style="margin-top:16px">Jedes Mandat erhält eine vollständige Objektseite: Geschichte, alle Bilder, Grundrisse, Lage, Finanzierung, Dokumente mit klaren Zugangsstufen. Käuferinnen und Käufer kommen vorbereitet zur Besichtigung — und Sie sehen in Ihrem Bereich, wer sich dafür interessiert.</p>
+      <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap"><a class="knopf voll" href="portal.html#exclusive/seehaus-walensee">Beispiel: Seehaus Walensee</a><a class="knopf" href="portal.html?quelle=fourwalls">Alle Mandate</a></div>
+    </div>
+    <a class="fenster blende-v" href="portal.html#exclusive/seehaus-walensee" aria-label="Seehaus Walensee öffnen"><div class="medien"></div><div class="lichtzug"></div></a>
+  </div>
+</section>
+
+<section class="abschnitt" id="fragen">
+  <div class="innen" style="max-width:860px">
+    <div class="kopfzeile auf"><div><div class="kick">Häufige Fragen</div><h2 class="titel">Bevor Sie unterschreiben.</h2></div></div>
+    <div class="faq auf">
+      <details><summary>Was kostet der Verkauf mit Fourwalls?</summary><p>2.0 bis 2.9 % des Verkaufspreises, abhängig von Objekt und Aufwand — und nur bei Erfolg. Fotografie, Film, Dossier und Inserate sind inbegriffen. Es gibt keine Vorauszahlung und keine Kosten, wenn nicht verkauft wird.</p></details>
+      <details><summary>Bin ich an eine Laufzeit gebunden?</summary><p>Das Mandat läuft sechs Monate und ist danach monatlich kündbar. Wenn Sie vorher verkaufen wollen, sprechen wir darüber — wir halten niemanden fest.</p></details>
+      <details><summary>Kann ich gleichzeitig selbst inserieren?</summary><p>Ja. Ein Fourwalls-Mandat ist kein Alleinverkaufsrecht gegenüber Ihnen selbst. Finden Sie die Käuferschaft selbst, reduziert sich das Honorar auf den Aufwand für Dossier und Notariat.</p></details>
+      <details><summary>Wie schnell verkauft sich mein Objekt?</summary><p>Im Durchschnitt 67 Tage von Mandat bis Vertrag. Preis und Lage entscheiden; eine ehrliche Bewertung am Anfang spart am Ende die meiste Zeit.</p></details>
+      <details><summary>Was passiert mit meinen Daten?</summary><p>Adresse und Dokumente sehen nur qualifizierte Interessenten nach Ihrer Freigabe. Öffentlich sind PLZ, Ort und das, was Sie zeigen wollen.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt gr2 eng" id="wissen">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Wissen · für Verkäuferinnen und Verkäufer</div><h2 class="titel">Bevor Sie entscheiden.</h2></div><a class="rechts-link" href="wissen.html">Alle Beiträge</a></div>
+    <div class="zeilen">
+      <a class="zeile auf" href="wissen.html#verkauf"><span class="n">Ratgeber</span><span class="t">Selbst verkaufen oder Mandat? Eine ehrliche Entscheidungshilfe<small>5 Min.</small></span><span class="m"></span><span class="p">→</span></a>
+      <a class="zeile auf verzoegert-1" href="wissen.html#steuern"><span class="n">Ratgeber</span><span class="t">Grundstückgewinnsteuer: Was beim Verkauf hängen bleibt<small>7 Min. · nach Kanton</small></span><span class="m"></span><span class="p">→</span></a>
+      <a class="zeile auf verzoegert-2" href="wissen.html#checkliste-verkauf"><span class="n">Checkliste</span><span class="t">Unterlagen für den Verkauf: die 14 Dokumente, die Sie brauchen<small>PDF</small></span><span class="m"></span><span class="p">→</span></a>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="fuss"></footer>
+<script src="../listings.js"></script>
+<script src="../properties.js"></script>
+<script src="../core.js"></script>
+<script src="ufer.js"></script>
+<script>
+(function(){
+  UFER.startModus(); UFER.montiere({ aktuell:"verkaufen", seite:"Verkaufen" });
+  const f = document.getElementById("bwForm");
+  f.addEventListener("submit", e => { e.preventDefault(); const n = document.getElementById("bwName"), m = document.getElementById("bwMail"); if (!n.value || !m.value.includes("@")){ (n.value ? m : n).style.borderColor = "var(--warn)"; (n.value ? m : n).focus(); return; } document.getElementById("bwOk").classList.add("an"); f.querySelector("button").disabled = true; f.querySelector("button").style.opacity = .5; });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wissen — Ratgeber, Rechner, Marktberichte · Fourwalls</title>
+<meta name="description" content="Fourwalls Wissen: Tragbarkeit und Kaufnebenkosten rechnen, Ratgeber zu Kauf, Verkauf und Bewirtschaftung, Marktberichte nach Region.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ufer.css">
+<style>
+.kopfbild{padding:clamp(48px,7vw,96px) var(--pad) clamp(28px,4vw,48px);max-width:1280px;margin:0 auto}
+.kopfbild h1{font-family:var(--d);font-weight:200;font-size:clamp(2.2rem,5vw,4.2rem);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
+.kopfbild p{margin-top:16px;max-width:58ch}
+.rollen{display:flex;gap:6px;flex-wrap:wrap;margin-top:24px}
+.rollen button{border:1px solid var(--linie2);border-radius:var(--r);padding:.55em .9em;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--leise);min-height:36px;font-weight:500}
+.rollen button[aria-pressed="true"]{border-color:var(--licht);color:var(--licht)}
+.werkzeuge{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,40px)}
+.werkzeug{border:1px solid var(--linie);border-radius:var(--r);padding:clamp(18px,2.6vw,30px);background:var(--gr2);scroll-margin-top:80px}
+.werkzeug h3{font-family:var(--d);font-weight:300;font-size:1.5rem;letter-spacing:-.015em}
+.werkzeug .hin{font-size:.8rem;color:var(--leise);margin-top:6px;line-height:1.6}
+.werkzeug .felder{display:grid;gap:12px;margin-top:18px}
+.werkzeug label.et{margin-bottom:5px}
+.werkzeug input[type="range"]{width:100%;accent-color:var(--licht)}
+.werkzeug .wert{display:flex;justify-content:space-between;font-size:.8rem;color:var(--leise)}
+.werkzeug .wert b{color:var(--ink);font-weight:400;font-family:var(--d);font-size:1rem}
+.werkzeug .feld{width:100%}
+.ausgabe{display:grid;grid-template-columns:1fr auto;gap:6px 16px;font-size:.82rem;margin-top:18px;border-top:1px solid var(--linie);padding-top:12px}
+.ausgabe span{color:var(--leise);padding:5px 0;border-bottom:1px solid var(--linie)}
+.ausgabe b{font-weight:400;text-align:right;padding:5px 0;border-bottom:1px solid var(--linie);font-family:var(--d);font-size:1rem}
+.ausgabe .total{font-size:1.5rem;color:var(--licht);border-bottom:0}
+.ausgabe .totalL{border-bottom:0}
+.ausgabe .gut{color:var(--gut)}.ausgabe .warn{color:var(--warn)}
+.werkzeug .fein{font-size:.68rem;color:var(--leise);line-height:1.6;margin-top:12px}
+.beitraege .zeile{grid-template-columns:auto 1fr auto auto}
+.markt{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,40px)}
+.markt .kachel{border:1px solid var(--linie);border-radius:var(--r);padding:clamp(18px,2.4vw,26px);background:var(--gr2)}
+.markt .kachel h3{font-family:var(--d);font-weight:300;font-size:1.3rem}
+.markt .kachel dl{display:grid;grid-template-columns:1fr auto;gap:0 16px;margin-top:12px;font-size:.82rem}
+.markt .kachel dt{color:var(--leise);padding:7px 0;border-bottom:1px solid var(--linie)}
+.markt .kachel dd{text-align:right;padding:7px 0;border-bottom:1px solid var(--linie);font-family:var(--d);font-size:1rem}
+.markt .kachel dd small{font-family:var(--t);font-size:.62rem;margin-left:6px}
+.check{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.check a{border:1px solid var(--linie);border-radius:var(--r);padding:20px;background:var(--gr2);display:flex;flex-direction:column;gap:8px;transition:border-color .25s}
+.check a:hover{border-color:var(--licht)}
+.check .w1{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--licht);font-weight:500}
+.check b{font-family:var(--d);font-weight:300;font-size:1.2rem;line-height:1.15}
+.check span{font-size:.72rem;color:var(--leise)}
+@media(max-width:960px){.werkzeuge,.markt{grid-template-columns:1fr}.check{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-mode="dunkel">
+<div class="blatt" id="blatt" role="dialog" aria-label="Menü"></div>
+<header class="kopf"></header>
+<main>
+<div class="kopfbild">
+  <div class="kick">Wissen</div>
+  <h1 class="auf">Kurz, geprüft, ohne Verkaufsdruck.</h1>
+  <p class="lauf auf verzoegert-1">Zwei Rechner, die Sie wirklich brauchen. Ratgeber für Kauf, Verkauf und Bewirtschaftung. Marktzahlen nach Region — vierteljährlich, ohne Prognosen, die niemand halten kann.</p>
+  <div class="rollen auf verzoegert-2" role="group" aria-label="Für wen"><button aria-pressed="true" data-rolle="alle">Alle</button><button aria-pressed="false" data-rolle="kauf">Kaufen</button><button aria-pressed="false" data-rolle="verkauf">Verkaufen</button><button aria-pressed="false" data-rolle="miete">Mieten &amp; Vermieten</button><button aria-pressed="false" data-rolle="eigentum">Eigentum &amp; Verwaltung</button></div>
+</div>
+
+<section class="abschnitt eng" id="rechner">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Rechner</div><h2 class="titel">Zwei Zahlen, bevor Sie weiterlesen.</h2></div></div>
+    <div class="werkzeuge">
+      <div class="werkzeug auf" id="tragbarkeit">
+        <h3>Tragbarkeit</h3>
+        <p class="hin">Was darf ein Objekt kosten, damit die Bank Ja sagt? Bankenpraxis: 5 % kalkulatorischer Zins, Amortisation der 2. Hypothek in 15 Jahren, Unterhalt 1 % — zusammen höchstens ein Drittel des Bruttoeinkommens.</p>
+        <div class="felder">
+          <div><label class="et" for="tEink">Haushaltseinkommen brutto / Jahr</label><input class="feld" id="tEink" type="number" step="5000" value="180000"></div>
+          <div><label class="et" for="tEk">Eigenmittel</label><input class="feld" id="tEk" type="number" step="10000" value="300000"></div>
+          <div><label class="et" for="tPreis">Objektpreis</label><input type="range" id="tPreis" min="300000" max="4000000" step="10000" value="1400000"><div class="wert"><span>Kaufpreis</span><b id="tPreisB"></b></div></div>
+        </div>
+        <div class="ausgabe"><span>Hypothek (Preis − Eigenmittel)</span><b id="tHyp"></b><span>Belehnung</span><b id="tBel"></b><span>Kalkulatorische Kosten / Jahr</span><b id="tKalk"></b><span>Anteil am Einkommen</span><b id="tAnt"></b><span class="totalL">Tragbar?</span><b class="total" id="tOk"></b><span>Maximaler Preis bei diesem Einkommen</span><b id="tMax"></b><span>Effektiv / Monat (1.9 % Festhypothek)</span><b id="tEff"></b></div>
+        <p class="fein">Richtwerte. Banken rechnen unterschiedlich (Pensionskassengelder, Alter, Lage). Verbindlich rechnet Ihre Bank oder unser Finanzierungspartner — kostenlos über jedes Objekt erreichbar.</p>
+      </div>
+      <div class="werkzeug auf verzoegert-1" id="nebenkosten">
+        <h3>Kaufnebenkosten</h3>
+        <p class="hin">Was neben dem Preis anfällt: Handänderungssteuer, Notariat, Grundbuch, Schuldbrief. Die Sätze unterscheiden sich stark nach Kanton — und werden teils zwischen Käufer- und Verkäuferschaft geteilt.</p>
+        <div class="felder">
+          <div><label class="et" for="nKt">Kanton</label><select class="feld" id="nKt"></select></div>
+          <div><label class="et" for="nPreis">Kaufpreis</label><input class="feld" id="nPreis" type="number" step="10000" value="1400000"></div>
+          <div><label class="et" for="nHyp">Neue Hypothek (Schuldbrief)</label><input class="feld" id="nHyp" type="number" step="10000" value="1120000"></div>
+        </div>
+        <div class="ausgabe"><span>Handänderungssteuer <small id="nHaeS"></small></span><b id="nHae"></b><span>Notariat &amp; Beurkundung</span><b id="nNot"></b><span>Grundbuch</span><b id="nGb"></b><span>Schuldbrief-Errichtung</span><b id="nSb"></b><span class="totalL">Total Nebenkosten (Käuferanteil)</span><b class="total" id="nTot"></b><span>In Prozent des Preises</span><b id="nProz"></b></div>
+        <p class="fein" id="nHin">Richtwerte 2026, gerundet. Einzelne Kantone kennen Freibeträge für Selbstnutzung oder teilen die Handänderungssteuer hälftig. Verbindlich ist die Auskunft des Notariats.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt gr2 eng beitraege" id="ratgeber">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Ratgeber</div><h2 class="titel">Lesen, was zur Entscheidung fehlt.</h2></div><span class="rechts-link" id="beitragN"></span></div>
+    <div class="zeilen" id="beitraege"></div>
+  </div>
+</section>
+
+<section class="abschnitt eng" id="markt">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Marktbericht · Q3 2026</div><h2 class="titel">Zahlen, keine Prognosen.</h2></div><span class="rechts-link">Quelle: Fourwalls-Transaktionen und Inserate · Demo</span></div>
+    <div class="markt">
+      <div class="kachel auf"><h3>Zentralschweiz</h3><dl><dt>Median Eigentumswohnung</dt><dd>11’800 <small>CHF/m²</small></dd><dt>Median Einfamilienhaus</dt><dd>CHF 1’640’000</dd><dt>Veränderung 12 Monate</dt><dd>+2.1 %</dd><dt>Inserate aktiv</dt><dd id="mkZs"></dd><dt>Vermarktungsdauer ⌀</dt><dd>58 Tage</dd></dl></div>
+      <div class="kachel auf verzoegert-1"><h3>Region Zürich</h3><dl><dt>Median Eigentumswohnung</dt><dd>14’900 <small>CHF/m²</small></dd><dt>Median Einfamilienhaus</dt><dd>CHF 2’180’000</dd><dt>Veränderung 12 Monate</dt><dd>+1.4 %</dd><dt>Inserate aktiv</dt><dd id="mkZh"></dd><dt>Vermarktungsdauer ⌀</dt><dd>71 Tage</dd></dl></div>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt gr2 eng" id="checklisten">
+  <div class="innen">
+    <div class="kopfzeile auf"><div><div class="kick">Checklisten</div><h2 class="titel">Zum Abhaken.</h2></div></div>
+    <div class="check">
+      <a class="auf" href="#" id="checkliste-verkauf" onclick="return false"><span class="w1">Verkaufen</span><b>Unterlagen für den Verkauf</b><span>14 Dokumente · PDF · 2 Seiten</span></a>
+      <a class="auf verzoegert-1" href="#" onclick="return false"><span class="w1">Kaufen</span><b>Besichtigung: 22 Fragen, die man vergisst</b><span>PDF · 1 Seite</span></a>
+      <a class="auf verzoegert-2" href="#" id="checkliste-verwaltung" onclick="return false"><span class="w1">Verwaltung</span><b>Verwaltungswechsel vor dem 1. Januar</b><span>9 Punkte · PDF · 1 Seite</span></a>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="fuss"></footer>
+<script src="../listings.js"></script>
+<script src="../properties.js"></script>
+<script src="../core.js"></script>
+<script src="ufer.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  UFER.startModus(); UFER.montiere({ aktuell:"wissen", seite:"Wissen" });
+  const chf = n => FWP.chf(Math.round(n/10)*10);
+  /* Tragbarkeit */
+  function trag(){
+    const e = +$("tEink").value||0, ek = +$("tEk").value||0, p = +$("tPreis").value;
+    const hyp = Math.max(0,p-ek), hyp2 = Math.max(0, hyp - p*.65), bel = p ? hyp/p : 0;
+    const kalk = hyp*.05 + hyp2/15 + p*.01, ant = e ? kalk/e : 1;
+    // maximaler Preis bei gegebenem Einkommen und Eigenmitteln (Bisektion)
+    let lo = 0, hi = 20e6; for (let i=0;i<40;i++){ const m=(lo+hi)/2; const h=Math.max(0,m-ek), h2=Math.max(0,h-m*.65); const k=h*.05+h2/15+m*.01; if (k/e <= .33 && h/m <= .8) lo=m; else hi=m; }
+    $("tPreisB").textContent = FWP.chf(p); $("tHyp").textContent = chf(hyp); $("tBel").textContent = Math.round(bel*100)+" %"; $("tKalk").textContent = chf(kalk); $("tAnt").textContent = Math.round(ant*100)+" %";
+    const ok = ant <= .33 && bel <= .8; $("tOk").textContent = ok ? "Ja" : (bel > .8 ? "Nein — Eigenmittel unter 20 %" : "Nein — über 33 %"); $("tOk").className = "total " + (ok ? "gut" : "warn");
+    $("tMax").textContent = chf(lo); $("tEff").textContent = chf((hyp*.019 + hyp2/15 + p*.01)/12) + " / Mt.";
+  }
+  ["tEink","tEk","tPreis"].forEach(i => $(i).addEventListener("input", trag)); trag();
+  /* Kaufnebenkosten — Richtwerte je Kanton (Handänderungssteuer in % des Preises, Käuferanteil; Notariat+Grundbuch pauschal) */
+  const KT = { ZH:[0,"keine Handänderungssteuer",.3,.15], BE:[1.8,"1.8 % Käuferschaft",.4,.2], LU:[1.5,"1.5 %, hälftig geteilt (Käuferanteil 0.75 %)",.35,.2], ZG:[0,"keine",.3,.15], SZ:[0,"keine",.3,.15], SG:[1.0,"1.0 %, hälftig (0.5 %)",.35,.2], AG:[0,"keine (Gebühren)",.4,.2], BS:[3.0,"3.0 % Käuferschaft",.35,.2], BL:[2.5,"2.5 %, hälftig (1.25 %)",.35,.2], GE:[3.0,"3.0 % Käuferschaft (droits d’enregistrement)",.4,.25], VD:[3.3,"3.3 % Käuferschaft",.4,.25], TI:[1.1,"1.1 %",.4,.2], VS:[1.3,"1.0–1.5 % nach Preisstufe",.4,.2], GR:[2.0,"bis 2.0 % (Gemeinde)",.35,.2], TG:[1.0,"1.0 %, hälftig (0.5 %)",.35,.2], SO:[2.2,"2.2 %, hälftig (1.1 %)",.35,.2], FR:[3.0,"3.0 % Käuferschaft",.4,.25], NE:[3.3,"3.3 % Käuferschaft",.4,.25] };
+  const HALB = ["LU","SG","BL","TG","SO"];
+  $("nKt").innerHTML = Object.keys(KT).sort((a,b) => (FWP.KANTON_NAME[a]||a).localeCompare(FWP.KANTON_NAME[b]||b)).map(k => `<option value="${k}">${FWP.KANTON_NAME[k]||k}</option>`).join(""); $("nKt").value = "ZH";
+  function neben(){
+    const k = $("nKt").value, [hae, txt, not, gb] = KT[k], p = +$("nPreis").value||0, h = +$("nHyp").value||0;
+    const haeB = p*hae/100*(HALB.includes(k)?.5:1), notB = p*not/100, gbB = p*gb/100, sbB = h*.25/100;
+    $("nHaeS").textContent = txt; $("nHae").textContent = chf(haeB); $("nNot").textContent = chf(notB); $("nGb").textContent = chf(gbB); $("nSb").textContent = chf(sbB);
+    const tot = haeB+notB+gbB+sbB; $("nTot").textContent = chf(tot); $("nProz").textContent = p ? (tot/p*100).toFixed(2)+" %" : "—";
+  }
+  ["nKt","nPreis","nHyp"].forEach(i => $(i).addEventListener("input", neben)); neben();
+  /* Ratgeber nach Rolle */
+  const B = [
+    ["nebenkosten","kauf","Ratgeber","Kaufnebenkosten in der Schweiz: Was neben dem Preis anfällt","Handänderung · Notariat · Grundbuch · nach Kanton","6 Min."],
+    ["hypothek","kauf","Ratgeber","Hypothek verstehen: SARON, Fest, Amortisation — in 10 Minuten","Ohne Bankdeutsch","10 Min."],
+    ["besichtigung","kauf","Ratgeber","Die Besichtigung: 22 Fragen, die man vor Ort vergisst","Mit Checkliste","5 Min."],
+    ["verkauf","verkauf","Ratgeber","Selbst verkaufen oder Mandat? Eine ehrliche Entscheidungshilfe","Für Eigentümerinnen und Eigentümer","5 Min."],
+    ["steuern","verkauf","Ratgeber","Grundstückgewinnsteuer: Was beim Verkauf hängen bleibt","Nach Kanton und Haltedauer","7 Min."],
+    ["fotografie","verkauf","Ratgeber","Warum die Stunde der Fotografie den Preis beeinflusst","Aus der Vermarktung","4 Min."],
+    ["mietrecht","miete","Ratgeber","Mietzins, Nebenkosten, Kündigung: die fünf Regeln, die man kennen muss","Für beide Seiten","6 Min."],
+    ["erstvermietung","miete","Ratgeber","Erstvermietung: Marktmiete finden, ohne Leerstand zu riskieren","Für Vermieterinnen und Vermieter","6 Min."],
+    ["nebenkosten-abrechnung","eigentum","Ratgeber","Nebenkostenabrechnung: Was umlegbar ist — und was nicht","Mit Beispielabrechnung","6 Min."],
+    ["sanierung","eigentum","Ratgeber","Sanieren oder verkaufen? Der 10-Jahres-Blick auf Ihre Liegenschaft","Werterhalt","8 Min."],
+    ["stwe","eigentum","Ratgeber","Stockwerkeigentum: Erneuerungsfonds, Versammlung, Entscheide","Grundlagen","7 Min."],
+    ["markt-zs","kauf","Markt","Zentralschweiz im Herbst 2026: Preise, Angebot, Tempo","Marktbericht · vierteljährlich","8 Min."]
+  ];
+  function mal(rolle){
+    const l = B.filter(b => rolle === "alle" || b[1] === rolle);
+    $("beitraege").innerHTML = l.map(b => `<a class="zeile" id="${b[0]}" href="#${b[0]}" onclick="return false"><span class="n">${b[2]}</span><span class="t">${FWP.esc(b[3])}<small>${FWP.esc(b[4])}</small></span><span class="m">${b[5]}</span><span class="p">→</span></a>`).join("");
+    $("beitragN").textContent = l.length + " Beiträge";
+  }
+  document.querySelectorAll(".rollen button").forEach(b => b.addEventListener("click", () => { document.querySelectorAll(".rollen button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); mal(b.dataset.rolle); }));
+  mal("alle");
+  $("mkZs").textContent = FWP.filtern({trans:"buy", ort:"rg:zentralschweiz"}).length; $("mkZh").textContent = FWP.filtern({trans:"buy", ort:"rg:zuerich"}).length;
+  // Deep-Link auf Beitrag: zur Sektion scrollen
+  if (location.hash && document.querySelector(location.hash)) setTimeout(() => document.querySelector(location.hash).scrollIntoView({block:"start"}), 200);
+})();
+</script>
+</body>
+</html>

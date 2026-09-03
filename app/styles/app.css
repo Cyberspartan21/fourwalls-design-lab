@@ -12,3 +12,11 @@
 .dform .fehler{color:var(--warn);font-size:.78rem;margin:6px 0 0}
 .dform .ok{display:none}
 .dform .ok.an{display:block}
+
+/* Sprachwahl sind Links (dieselbe Seite in der anderen Sprache), gestaltet wie die Knöpfe des Prototyps */
+.sprache a{padding:6px 5px;opacity:.7;border-bottom:1px solid transparent;text-decoration:none;color:inherit;font:inherit}
+.sprache a[aria-current="true"]{opacity:1;border-bottom-color:var(--licht)}
+/* Sprachwahl in der Kopfleiste der Objektseite */
+.dkopf .aktionen .sprache{display:flex;margin-right:6px}
+/* Wasserlinie während einer Navigation: die alten Treffer bleiben, die Leiste zeigt es leise */
+.wasserlinie.laedt{opacity:.85}

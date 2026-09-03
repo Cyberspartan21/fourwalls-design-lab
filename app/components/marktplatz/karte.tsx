@@ -1,0 +1,49 @@
+import type { Locale } from "@/i18n";
+import type { Treffer } from "@/domain/marktplatz";
+import { verfuegbarFrei } from "@/domain/marktplatz";
+import { preisText, quelleLabel, typLabel, verfuegbarLabel, proM2, fmtIn, type Woerter } from "./labels";
+import { MerkKnopf } from "./merk-knopf";
+
+/* Ergebniskarte — dieselben Klassen wie kartenHTML() im Prototyp.
+   Reine Komponente ohne Server-Abhängigkeit: die Seite rendert sie, «Weitere
+   anzeigen» im Browser ebenso. Die Bildadressen kommen fertig aus dem
+   Suchtreffer (Speicheranbieter, serverseitig). */
+export function Karte({ l, w, locale, href, aktiv = false, onMouseEnter, onMouseLeave, onClick }: { l: Treffer; w: Woerter; locale: Locale; href: string; aktiv?: boolean; onMouseEnter?: () => void; onMouseLeave?: () => void; onClick?: () => void }) {
+  const belegt = !verfuegbarFrei(l.availability.art);
+  const va = l.availability.art;
+  const m2 = proM2(l);
+  const f = [l.rooms ? `${l.rooms} ${w.o_ziKurz}` : null, l.livingArea ? `${l.livingArea} m²` : (l.plotArea ? `${l.plotArea} m² ${w.k_landWort}` : null), typLabel(w, l.propertyType)].filter(Boolean) as string[];
+  const set = (s: { width: number; url: string }[]) => s.map(x => `${x.url} ${x.width}w`).join(", ");
+  const sizes = "(max-width:700px) 100vw, (max-width:1200px) 50vw, 25vw";
+  const klein = l.bild?.jpeg.find(x => x.width === 480)?.url;
+  const mitte = l.bild?.jpeg.find(x => x.width === 960)?.url;
+  const preis = preisText(w, l);
+  return (
+    <article className={`karte${belegt ? " belegt" : ""}${aktiv ? " aktiv" : ""}`} data-slug={l.slug} data-ref={l.id} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
+      <div className="bild">
+        <div className="etikett">{l.listingTier === "exclusive" ? <span className="exkl">{w.exclusive}</span> : <span>{quelleLabel(w, l)}</span>}{l.neu && <span>{w.neu}</span>}</div>
+        {belegt ? <span className="status">{verfuegbarLabel(w, locale, l.availability)}</span> : va === "sofort" ? <span className="status frei">{w.sofort}</span> : null}
+        <MerkKnopf publicRef={l.id} label={w.merken!} />
+        {l.bild && (
+          <picture>
+            <source type="image/webp" srcSet={set(l.bild.webp)} sizes={sizes} />
+            <img src={mitte} srcSet={set(l.bild.jpeg)} sizes={sizes} alt={l.title} loading="lazy" decoding="async" />
+          </picture>
+        )}
+      </div>
+      <div className="refl" aria-hidden="true">{klein && <img src={klein} alt="" loading="lazy" decoding="async" />}</div>
+      <a className="oeffnen" href={href} aria-label={`${l.title}, ${preis}, ${l.city}`}></a>
+      <div className="lauf">
+        <div className="preis">{preis}{l.transactionType === "rent" ? <small>{w.nk}</small> : m2 ? <small>{fmtIn(m2)} {w.proM2}</small> : null}</div>
+        <div className="tit">{l.title}</div>
+        <div className="ort">{l.postalCode} {l.city} · {l.canton}</div>
+        <div className="fakten">{f.map((x, i) => <span key={i}>{x}</span>)}<span className="q">{quelleLabel(w, l)}{l.verificationStatus === "verified" && l.listingSource !== "fourwalls" ? " · " + w.geprueft : ""}</span></div>
+      </div>
+    </article>
+  );
+}
+
+/* Kanonische Objektadresse aus einem Treffer — die eine Identität überall */
+export function objektPfad(locale: Locale, pfad: { immobilien: string; kaufen: string; mieten: string }, l: Pick<Treffer, "slug" | "transactionType">) {
+  return `/${locale}/${pfad.immobilien}/${l.transactionType === "rent" ? pfad.mieten : pfad.kaufen}/${l.slug}`;
+}

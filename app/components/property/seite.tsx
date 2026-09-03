@@ -1,6 +1,9 @@
 import type { Dossier, Abschnitt } from "@/domain/dossier";
 import type { Locale, T } from "@/i18n";
-import { PFAD } from "@/i18n";
+import { PFAD, LOCALES } from "@/i18n";
+import type { Treffer } from "@/domain/marktplatz";
+import { Karte as Ergebniskarte, objektPfad } from "@/components/marktplatz/karte";
+import type { Woerter } from "@/components/marktplatz/labels";
 import { Bild } from "./bild";
 import { Kopf } from "./kopf";
 import { Blende } from "./blende";
@@ -25,6 +28,7 @@ function Abs({ id, abschnitte, children }: { id: string; abschnitte: Abschnitt[]
   return <section className="dabs" id={`d-${id}`}><h2>{a.titel}{a.klein && <small>{a.klein}</small>}</h2>{children}</section>;
 }
 
+void LOCALES;
 const keys = (t: T, ks: string[]) => Object.fromEntries(ks.map(k => [k, t(k)]));
 
 function Kompass({ ausrichtung, locale, label }: { ausrichtung: string; locale: Locale; label: string }) {
@@ -43,7 +47,7 @@ function Kompass({ ausrichtung, locale, label }: { ausrichtung: string; locale: 
   );
 }
 
-export function ObjektSeite({ d, t, locale }: { d: Dossier; t: T; locale: Locale }) {
+export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks }: { d: Dossier; t: T; locale: Locale; aehnliche: Treffer[]; w: Woerter; sprachLinks: Record<Locale, string> }) {
   const L = d.detail, p = L.property, s = L.sections, med = s.medien ?? {};
   const istEx = L.isExclusive, wir = L.publisher.representedByFourwalls;
   const ort = `${p.postalCode} ${p.city}`;
@@ -70,7 +74,7 @@ export function ObjektSeite({ d, t, locale }: { d: Dossier; t: T; locale: Locale
 
   return (
     <div className="detail seite an" id="detail">
-      <Kopf publicRef={L.publicRef} quelle={quelleLabel} titel={L.title} exklusiv={istEx} wirVertreten={wir} zurueck={zurueck}
+      <Kopf publicRef={L.publicRef} quelle={quelleLabel} titel={L.title} exklusiv={istEx} wirVertreten={wir} zurueck={zurueck} sprachLinks={sprachLinks} locale={locale}
         tx={{ merken: t("merken"), gemerkt: t("gemerktOk"), teilen: t("teilen"), kopiert: t("o_linkKopiert"), schliessen: t("schliessen") }} />
 
       {istEx && b0 ? (
@@ -179,6 +183,10 @@ export function ObjektSeite({ d, t, locale }: { d: Dossier; t: T; locale: Locale
           </Abs>
 
           <Abs id="kontakt" abschnitte={d.abschnitte}><div className="nurmobil">{begleiter("M")}</div></Abs>
+
+          <Abs id="aehnliche" abschnitte={d.abschnitte}>
+            <div className="aehnlich">{aehnliche.map(a => <Ergebniskarte key={a.id} l={a} w={w} locale={locale} href={objektPfad(locale, PFAD[locale], a)} />)}</div>
+          </Abs>
         </div>
         <aside className="dseite">{begleiter("")}</aside>
       </div>

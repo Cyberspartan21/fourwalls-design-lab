@@ -6,6 +6,9 @@ import { findePubliziertesInserat, typLabel } from "@/server/listings";
 import { baueDossier } from "@/domain/dossier";
 import { ObjektSeite } from "@/components/property/seite";
 import type { ListingDetail } from "@/domain/listing";
+import { aehnliche } from "@/server/similar";
+import { sql } from "@/server/db";
+import { woerter, mitMerkmalen } from "@/components/marktplatz/labels";
 
 /* /de/immobilien/kaufen/seehaus-walensee-fwl-2026-000142
 
@@ -57,7 +60,10 @@ export default async function Seite({ params }: { params: Promise<Params> }) {
   const { locale, d, kanonisch, umleiten } = await laden(params);
   if (umleiten) permanentRedirect(kanonisch);
   const t = uebersetzer(locale);
-  const dossier = baueDossier(d, t, locale, typLabel(d.property.kind, locale));
+  const [aehn, merkmale] = await Promise.all([aehnliche(d.publicRef, 3), sql`SELECT key, coalesce(${sql("name_" + locale)}, name_de) AS name FROM feature ORDER BY sort_order`]);
+  const w = mitMerkmalen(woerter(t), merkmale.map(m => ({ key: String(m.key), name: String(m.name) })));
+  const dossier = baueDossier(d, t, locale, typLabel(d.property.kind, locale), aehn.length);
+  const sprachLinks = Object.fromEntries(LOCALES.map(l => [l, pfad(l, d)])) as Record<Locale, string>;
   const site = env().NEXT_PUBLIC_SITE_URL;
 
   /* Strukturierte Daten: nur, was belegt ist. Keine Bewertungen, keine
@@ -76,7 +82,7 @@ export default async function Seite({ params }: { params: Promise<Params> }) {
     <>
       {/* eslint-disable-next-line react/no-danger -- JSON.stringify mit maskiertem «<»; das übliche, sichere Muster für JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldText }} />
-      <ObjektSeite d={dossier} t={t} locale={locale} />
+      <ObjektSeite d={dossier} t={t} locale={locale} aehnliche={aehn} w={w} sprachLinks={sprachLinks} />
     </>
   );
 }

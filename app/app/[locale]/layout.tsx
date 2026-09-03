@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import "@/styles/ufer.css";
 import "@/styles/objekt.css";
+import "@/styles/portal.css";
 import "@/styles/app.css";
 import { DEFAULT_LOCALE, istLocale } from "@/i18n";
 import { ModusScript } from "@/components/site/modus-script";

@@ -1,0 +1,292 @@
+/* UFER · Portal — wörtlich aus final/ufer/portal.html (Inline-Stil), nur Bildpfade angepasst */
+
+/* ================= UFER · Portal (Arbeitsmodus: leise, schnell, vollständig) ================= */
+.ansicht{display:none}.ansicht.an{display:block}
+
+/* ---- Wasserlinie: Suchleiste ---- */
+.wasserlinie{position:sticky;top:59px;z-index:150;background:var(--glas);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--linie);
+  padding:12px var(--pad);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wasserlinie::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(to right,transparent,var(--licht) 30%,var(--licht) 70%,transparent);opacity:.5}
+.tab2{display:flex;border:1px solid var(--linie2);border-radius:var(--r);overflow:hidden}
+.tab2 button{padding:.6em 1.05em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);min-height:40px;font-weight:500}
+.tab2 button[aria-pressed="true"]{background:var(--ink);color:var(--gr)}
+.ortfeld{position:relative;flex:1 1 220px;max-width:380px}
+.ortfeld .feld{width:100%}
+.vorschlaege{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--gr2);border:1px solid var(--linie);z-index:60;display:none;max-height:300px;overflow:auto;border-radius:var(--r);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.vorschlaege.an{display:block}
+.vorschlaege button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:.7em .9em;font-size:.84rem;border-bottom:1px solid var(--linie)}
+.vorschlaege button:hover,.vorschlaege button:focus-visible{background:var(--gr3);outline-offset:-2px}
+.vorschlaege small{color:var(--leise);font-size:.66rem;white-space:nowrap}
+.vorschlaege .art{font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--licht);margin-right:8px}
+.preisspanne{display:flex;align-items:center;gap:4px;border:1px solid var(--linie2);border-radius:var(--r);background:var(--gr2);padding:0 6px 0 0}
+.preisspanne input{width:112px;background:none;border:0;padding:.55em .7em;font-size:.84rem;min-height:38px;text-align:right}
+.preisspanne input::placeholder{color:var(--leise)}
+.preisspanne span{color:var(--leise);font-size:.7rem}
+.mehrfilter{position:relative}
+.filterfeld{position:absolute;right:0;top:calc(100% + 8px);width:min(460px,92vw);background:var(--gr2);border:1px solid var(--linie);border-radius:var(--r);padding:18px;z-index:80;display:none;box-shadow:0 26px 70px rgba(0,0,0,.4)}
+.filterfeld.an{display:block;animation:tafelAuf .3s var(--ease)}
+.filterfeld h4{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin:14px 0 8px;font-weight:500}
+.filterfeld h4:first-child{margin-top:0}
+.filterfeld input[type="number"]{width:100%}
+.chipwahl{display:flex;flex-wrap:wrap;gap:6px}
+.chipwahl button{border:1px solid var(--linie2);border-radius:var(--r);padding:.4em .7em;font-size:.7rem;color:var(--leise);min-height:32px}
+.chipwahl button[aria-pressed="true"]{border-color:var(--licht);color:var(--licht)}
+.filterfeld .aktionen{display:flex;justify-content:space-between;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--linie)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px var(--pad) 0}
+.chips:empty{display:none}
+.chips button{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--linie2);border-radius:var(--r);padding:.35em .7em;font-size:.7rem;color:var(--leise);min-height:30px}
+.chips button b{font-weight:400;color:var(--ink)}
+.chips button::after{content:"×";color:var(--licht)}
+.nurfw{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--leise);border:1px solid var(--linie2);border-radius:var(--r);padding:0 .8em;min-height:40px}
+.nurfw i{width:22px;height:12px;border-radius:999px;border:1px solid var(--linie2);position:relative;display:inline-block}
+.nurfw i::after{content:"";position:absolute;left:1px;top:1px;width:8px;height:8px;border-radius:999px;background:var(--leise);transition:left .2s,background .2s}
+.nurfw[aria-pressed="true"]{color:var(--licht);border-color:var(--licht)}
+.nurfw[aria-pressed="true"] i::after{left:11px;background:var(--licht)}
+
+/* ---- Resultate ---- */
+.resultkopf{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;padding:20px var(--pad) 6px}
+.resultkopf h1{font-family:var(--d);font-weight:300;font-size:clamp(1.5rem,2.6vw,2.2rem);letter-spacing:-.015em}
+.resultkopf .n{color:var(--leise);font-size:.8rem}
+.resultkopf .rechtsw{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.karte-liste{display:flex;border:1px solid var(--linie2);border-radius:var(--r);overflow:hidden}
+.karte-liste button{padding:.5em .85em;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--leise);min-height:36px;font-weight:500}
+.karte-liste button[aria-pressed="true"]{background:var(--ink);color:var(--gr)}
+.gitter{display:grid;grid-template-columns:repeat(auto-fill,minmax(296px,1fr));gap:clamp(14px,1.8vw,26px);padding:14px var(--pad) 40px}
+.karte{position:relative;display:flex;flex-direction:column;background:var(--gr);border-bottom:1px solid var(--linie);transition:transform .35s var(--ease)}
+.karte .bild{position:relative;aspect-ratio:3/2;background:var(--gr3);overflow:hidden}
+.karte .bild img{width:100%;height:100%;object-fit:cover;filter:saturate(.86);transition:transform 1.1s var(--ease)}
+.karte:hover .bild img,.karte:focus-within .bild img{transform:scale(1.035)}
+/* die Wasserlinie unter jedem Bild: ein Hauch Spiegelung, der beim Zeigen erwacht */
+.karte .refl{height:18px;overflow:hidden;position:relative;opacity:.28;transition:opacity .5s ease}
+.karte .refl img{width:100%;height:auto;transform:scaleY(-1) translateY(0);filter:blur(1.5px) saturate(.6);-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);position:absolute;top:0}
+.karte .refl::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(to right,transparent,var(--licht2),transparent);opacity:.7;z-index:1}
+.karte:hover .refl,.karte:focus-within .refl,.karte.aktiv .refl{opacity:.75}
+.etikett{position:absolute;left:10px;top:10px;display:flex;gap:6px;z-index:2}
+.etikett span{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;padding:.34em .6em;background:rgba(7,12,18,.72);color:#EEF1F2;backdrop-filter:blur(4px);border-radius:var(--r);font-weight:500}
+.etikett .exkl{background:var(--licht);color:#0B121B;font-weight:600}
+.merk{position:absolute;right:10px;top:10px;z-index:3;width:34px;height:34px;display:grid;place-items:center;background:rgba(7,12,18,.62);backdrop-filter:blur(4px);color:#EEF1F2;border:1px solid transparent;border-radius:var(--r)}
+.merk:hover{border-color:var(--licht)}
+.merk[aria-pressed="true"]{color:var(--licht)}
+.merk svg{width:15px;height:15px}
+.karte .oeffnen{position:absolute;inset:0;z-index:1}
+.karte .lauf{padding:12px 2px 16px;display:flex;flex-direction:column;gap:4px;position:relative;z-index:2;pointer-events:none}
+.karte .preis{font-family:var(--d);font-weight:400;font-size:1.35rem;letter-spacing:-.01em;line-height:1.1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.karte .preis small{font-family:var(--t);font-size:.66rem;color:var(--leise);letter-spacing:.06em;font-weight:400}
+.karte .tit{font-size:.88rem;line-height:1.35;font-weight:400}
+.karte .ort{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise)}
+.karte .fakten{margin-top:6px;padding-top:8px;border-top:1px solid var(--linie);display:flex;gap:12px;font-size:.72rem;color:var(--leise);flex-wrap:wrap}
+.karte .fakten .q{margin-left:auto;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase}
+.mehrknopf{margin:0 auto 46px;display:flex}
+.leer{padding:60px var(--pad);text-align:center;max-width:540px;margin:0 auto;display:none}
+.leer.an{display:block}
+.leer .mark{width:70px;margin:0 auto 18px;opacity:.35}
+.leer h2{font-family:var(--d);font-weight:300;font-size:1.7rem}
+.leer p{margin-top:10px;color:var(--leise);font-size:.9rem}
+.leer .vorschl{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.abozeile{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px var(--pad);border-top:1px solid var(--linie);border-bottom:1px solid var(--linie);background:var(--gr2);font-size:.8rem;color:var(--leise)}
+.abozeile b{font-weight:500;color:var(--ink)}
+
+/* ---- Karte ---- */
+.kartenraum{display:grid;grid-template-columns:minmax(300px,400px) 1fr;height:calc(100svh - 122px)}
+.kartenliste{overflow-y:auto;border-right:1px solid var(--linie);padding:12px;display:flex;flex-direction:column;gap:8px}
+.kartenliste .karte{flex-direction:row;min-height:92px;border:1px solid var(--linie);border-radius:var(--r);background:var(--gr2)}
+.kartenliste .karte .bild{aspect-ratio:auto;width:120px;flex:0 0 auto}
+.kartenliste .karte .refl{display:none}
+.kartenliste .karte .lauf{padding:8px 12px}
+.kartenliste .karte .preis{font-size:1.05rem}
+.kartenliste .karte.aktiv{border-color:var(--licht)}
+.karto{position:relative;background:var(--tief);overflow:hidden}
+#kmap{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
+#kmap.zieht{cursor:grabbing}
+.kartensteuer{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:6px;z-index:5}
+.kartensteuer button{width:36px;height:36px;display:grid;place-items:center;font-size:1rem;background:var(--glas);border:1px solid var(--linie2);backdrop-filter:blur(6px);border-radius:var(--r)}
+.hierSuchen{position:absolute;left:50%;top:14px;translate:-50% 0;z-index:5;background:var(--glas);backdrop-filter:blur(6px)}
+.kartehinweis{position:absolute;left:14px;bottom:12px;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise)}
+
+/* Objektseite: eigenes Blatt — objekt.css */
+/* ---- Inserieren: Weiche + Wizard ---- */
+.weiche{max-width:1040px;margin:0 auto;padding:clamp(30px,5vw,60px) var(--pad) 20px}
+.weiche h1{font-family:var(--d);font-weight:300;font-size:clamp(1.8rem,3.6vw,3rem);margin-top:10px;max-width:22ch;letter-spacing:-.02em}
+.weiche .zwei{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.weiche .weg{border:1px solid var(--linie);border-radius:var(--r);padding:24px 22px 20px;display:flex;flex-direction:column;gap:10px;text-align:left;transition:border-color .25s;background:var(--gr2)}
+.weiche .weg:hover{border-color:var(--licht)}
+.weiche .weg .w1{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leise);font-weight:500}
+.weiche .weg b{font-family:var(--d);font-weight:300;font-size:1.6rem;line-height:1.1;letter-spacing:-.015em}
+.weiche .weg p{color:var(--leise);font-size:.88rem;line-height:1.6}
+.weiche .weg ul{display:flex;flex-direction:column;gap:5px;font-size:.8rem;margin-top:4px}
+.weiche .weg li::before{content:"— ";color:var(--licht)}
+.weiche .weg .cta{margin-top:auto;padding-top:10px}
+.weiche .weg.mit{border-color:color-mix(in srgb,var(--licht) 50%,var(--linie))}
+.weiche .beide{margin-top:14px;font-size:.8rem;color:var(--leise);max-width:70ch}
+.wiz{max-width:660px;margin:0 auto;padding:clamp(20px,3vw,36px) var(--pad) 70px;display:none}
+.wiz.an{display:block}
+.wiz .fort{display:flex;gap:5px;margin-bottom:22px}
+.wiz .fort i{flex:1;height:2px;background:var(--linie)}
+.wiz .fort i.voll{background:var(--licht)}
+.wiz .schrittz{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leise)}
+.wiz h2{font-family:var(--d);font-weight:300;font-size:clamp(1.5rem,3vw,2.3rem);margin-top:8px;letter-spacing:-.015em}
+.wiz .fld{margin-top:18px}
+.wiz label{display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);margin-bottom:7px}
+.wiz input[type="text"],.wiz input[type="number"],.wiz input[type="email"],.wiz textarea,.wiz select{width:100%;background:var(--gr2);border:1px solid var(--linie2);border-radius:var(--r);padding:.72em .9em;font-size:.9rem;min-height:44px}
+.wiz textarea{min-height:120px;resize:vertical}
+.wiz .fehler{color:var(--warn);font-size:.76rem;margin-top:6px;display:none}
+.wiz .fehler.an{display:block}
+.grosswahl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grosswahl.dreier{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.grosswahl button{border:1px solid var(--linie2);border-radius:var(--r);padding:1em;text-align:left;min-height:56px}
+.grosswahl button b{display:block;font-family:var(--d);font-weight:400;font-size:1.2rem}
+.grosswahl button span{font-size:.72rem;color:var(--leise)}
+.grosswahl button[aria-pressed="true"]{border-color:var(--licht)}
+.grosswahl button[aria-pressed="true"] b{color:var(--licht)}
+.bildwahl{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.bildwahl button{position:relative;aspect-ratio:3/2;overflow:hidden;border:1px solid var(--linie2);border-radius:var(--r);padding:0;background:var(--gr3)}
+.bildwahl img{width:100%;height:100%;object-fit:cover;filter:saturate(.8)}
+.bildwahl button[aria-pressed="true"]{border-color:var(--licht)}
+.bildwahl button[aria-pressed="true"]::after{content:"✓";position:absolute;right:6px;top:3px;color:var(--licht)}
+.wiz .nav2{display:flex;justify-content:space-between;margin-top:28px;padding-top:16px;border-top:1px solid var(--linie)}
+.hinweisbox{margin-top:16px;border-left:2px solid var(--licht);padding:10px 14px;background:var(--gr2);font-size:.8rem;color:var(--leise);border-radius:0 var(--r) var(--r) 0}
+.vorschau{border:1px solid var(--linie);border-radius:var(--r);margin-top:16px;overflow:hidden;padding:0 14px}
+.vorschau .kz{padding:8px 0;border-bottom:1px solid var(--linie);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise)}
+.wizfertig{text-align:center;padding:50px 0;display:none}
+.wizfertig.an{display:block}
+.wizfertig .mark{width:70px;margin:0 auto 18px;--lg:var(--gut)}
+.wizfertig h2{font-family:var(--d);font-weight:300;font-size:1.9rem}
+.wizfertig p{margin-top:12px;color:var(--leise);max-width:44ch;margin-inline:auto;font-size:.9rem}
+
+/* ---- Konto ---- */
+.konto{max-width:1040px;margin:0 auto;padding:clamp(24px,4vw,48px) var(--pad) 70px}
+.konto h1{font-family:var(--d);font-weight:300;font-size:clamp(1.7rem,3.2vw,2.6rem);letter-spacing:-.02em}
+.konto .hin{color:var(--leise);font-size:.84rem;margin-top:8px;max-width:60ch}
+.kontotabs{display:flex;border-bottom:1px solid var(--linie);margin-top:18px;overflow-x:auto}
+.kontotabs button{padding:.8em 1.1em;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;min-height:44px;font-weight:500}
+.kontotabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--licht)}
+.kontoteil{display:none;padding-top:20px}
+.kontoteil.an{display:block}
+.kontoteil .leerhin{color:var(--leise);font-size:.88rem;padding:26px 0}
+.aboliste{display:flex;flex-direction:column;gap:8px}
+.abo{border:1px solid var(--linie);border-radius:var(--r);padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--gr2)}
+.abo b{font-weight:500;font-size:.92rem}
+.abo span{font-size:.72rem;color:var(--leise)}
+.abo .rechtsab{margin-left:auto;display:flex;gap:8px}
+.abo .status{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--licht);border:1px solid var(--linie2);padding:.3em .6em;border-radius:var(--r)}
+
+
+
+/* ---- P3: MapLibre-Karte ---- */
+#kmap{position:absolute;inset:0}
+#kmap canvas{outline:none}
+.karto{position:relative;background:var(--gr3);overflow:hidden}
+.hierSuchen{position:absolute;left:50%;top:14px;translate:-50% 0;z-index:5;background:var(--glas);backdrop-filter:blur(8px);box-shadow:0 8px 26px rgba(11,40,60,.18)}
+.kartenhinweis{position:absolute;left:14px;top:14px;z-index:5;background:var(--glas);backdrop-filter:blur(8px);border:1px solid var(--linie);
+  border-radius:var(--r);padding:.5em .8em;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--leise)}
+.kartenleer,.kartenfehler{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:6;background:var(--glas);backdrop-filter:blur(10px);
+  border:1px solid var(--linie);border-radius:var(--r);padding:20px 24px;text-align:center;max-width:min(380px,88%);box-shadow:0 20px 50px rgba(11,40,60,.2)}
+.kartenleer p,.kartenfehler p{font-size:.88rem;color:var(--leise);margin-bottom:14px}
+.kartenleer .wege{display:flex;flex-direction:column;gap:6px}
+.autosuche{cursor:pointer}
+.autosuche input{width:auto;accent-color:var(--licht)}
+.maplibregl-ctrl-group{border-radius:var(--r)!important;box-shadow:0 4px 16px rgba(11,40,60,.16)!important;border:1px solid var(--linie)!important;background:var(--glas)!important}
+.maplibregl-ctrl-group button{width:34px!important;height:34px!important}
+.maplibregl-ctrl-group button+button{border-top:1px solid var(--linie)!important}
+.maplibregl-ctrl-attrib{font-size:10px!important;background:rgba(255,255,255,.72)!important}
+[data-mode="dunkel"] .maplibregl-ctrl-attrib,
+[data-mode="dunkel"] .maplibregl-ctrl-attrib-inner{background:rgba(11,18,27,.72)!important;color:var(--ink)!important}
+[data-mode="dunkel"] .maplibregl-ctrl-attrib a{color:var(--ink)!important;text-decoration:underline}
+[data-mode="dunkel"] .maplibregl-ctrl-attrib-button{filter:invert(1) hue-rotate(180deg)}
+[data-mode="dunkel"] .maplibregl-ctrl-group button .maplibregl-ctrl-icon{filter:invert(1) hue-rotate(180deg)}
+.kartenliste .karte.aktiv{border-color:var(--licht);box-shadow:0 0 0 1px var(--licht)}
+/* Lagevorschau im Inserate-Assistenten */
+.wizkarte{position:relative;height:220px;margin:12px 0 10px;border:1px solid var(--linie);border-radius:var(--r);background:var(--tief);overflow:hidden;display:grid;place-items:center}
+.wizkarte .leerhin{font-size:.78rem;color:var(--leise);text-align:center;max-width:34ch;padding:0 18px}
+@media(max-width:600px){.wizkarte{height:180px}}
+/* Mobile Objektvorschau über der Karte */
+.mobilvorschau{display:none}
+@media(max-width:960px){
+  .kartenraum{grid-template-columns:1fr;grid-template-rows:1fr;height:calc(100svh - 118px)}
+  .kartenliste{display:none}
+  .karto{order:0}
+  .mobilvorschau{display:block;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px var(--pad) 14px;
+    background:linear-gradient(to top,var(--gr) 62%,transparent)}
+  .mobilvorschau[hidden]{display:none}
+  .mobilvorschau .karte{border:1px solid var(--linie);border-radius:var(--r);background:var(--gr2);flex-direction:row;min-height:96px;
+    box-shadow:0 12px 34px rgba(11,40,60,.22);overflow:hidden}
+  .mobilvorschau .karte .bild{aspect-ratio:auto;width:104px;flex:0 0 auto}
+  .mobilvorschau .karte .refl{display:none}
+  .mobilvorschau .karte .lauf{padding:9px 12px}
+  .mobilvorschau .karte .preis{font-size:1.05rem}
+  .mobilvorschau .karte .fakten{margin-top:4px;padding-top:5px}
+  .mobilvorschau .zu{position:absolute;right:calc(var(--pad) + 6px);top:2px;z-index:3;width:28px;height:28px;border-radius:999px;
+    background:var(--glas);border:1px solid var(--linie);display:grid;place-items:center;font-size:.8rem}
+  .hierSuchen{top:auto;bottom:130px}
+  .kartenhinweis{font-size:.6rem}
+}
+
+/* ---- P2: erweiterte Filter, Trefferzahl, Suchabo ---- */
+.fzwei{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.filterfeld{max-height:min(74vh,660px);overflow-y:auto}
+.fschalter{display:flex;gap:9px;align-items:center;font-size:.78rem;color:var(--leise);margin-top:18px;padding-top:14px;border-top:1px solid var(--linie);cursor:pointer}
+.fschalter input{width:auto;accent-color:var(--licht)}
+.resultkopf .n.zahl{font-variant-numeric:tabular-nums;font-weight:500;color:var(--ink)}
+.karte .status{position:absolute;left:10px;bottom:10px;z-index:2;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.34em .6em;border-radius:var(--r);background:rgba(7,12,18,.82);color:#EEF1F2;font-weight:600}
+.karte .status.frei{background:rgba(245,248,249,.9);color:#0F1B2A;font-weight:500}
+.karte.belegt .bild img{filter:saturate(.4) opacity(.72)}
+.karte .verf{font-size:.66rem;color:var(--leise)}
+.leer .vorschl .knopf{max-width:none}
+/* Suchabo */
+.abo-hg{position:fixed;inset:0;z-index:400;background:rgba(7,12,18,.55);display:grid;place-items:center;padding:16px}
+.abo-hg[hidden]{display:none}
+.abo-blatt{background:var(--gr);border:1px solid var(--linie);border-radius:var(--r);width:min(460px,100%);padding:22px;
+  box-shadow:0 40px 90px rgba(0,0,0,.4);max-height:90svh;overflow-y:auto}
+.abo-kopf{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
+.abo-kopf h2{font-family:var(--d);font-weight:300;font-size:1.45rem;letter-spacing:-.015em}
+.abo-summe{font-size:.86rem;color:var(--leise);border-left:2px solid var(--licht);padding:8px 12px;background:var(--gr2);margin-bottom:16px;line-height:1.55}
+.abo-blatt .feld{width:100%}
+.abo-fehler{color:var(--warn);font-size:.78rem;margin-top:6px}
+.abo-fein{font-size:.72rem;color:var(--leise);line-height:1.6;margin-top:14px}
+.abo-aktionen{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.abo-ok b{font-family:var(--d);font-weight:300;font-size:1.4rem;color:var(--gut)}
+@media(max-width:900px){
+  .abo-blatt{width:100%}
+  .abo-aktionen .knopf{flex:1}
+}
+
+/* ---- Mobil ---- */
+.mfilter{display:none}
+@media(max-width:960px){
+  .kartenraum{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;height:calc(100svh - 118px)}
+  .karto{order:-1;min-height:0}
+  .kartenliste{order:2;border-right:0;border-top:1px solid var(--linie);flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:10px;max-height:140px}
+  .kartenliste .karte{flex:0 0 250px}
+  .wasserlinie{top:55px}
+  /* backdrop-filter macht ein Element zum Bezugsrahmen fuer position:fixed —
+     auf Mobil deshalb deckend, damit das Filterblatt am unteren Rand klebt. */
+  .wasserlinie{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--gr)}
+  .wasserlinie > select.feld,.wasserlinie > .preisspanne,#filterAuf,.nurfw{display:none}
+  .mfilter{display:inline-flex}
+  .mehrfilter{position:static}
+  .filterfeld{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;max-height:80svh;overflow-y:auto;border-radius:10px 10px 0 0;box-shadow:0 -16px 50px rgba(0,0,0,.5)}
+  .filterfeld .aktionen{position:sticky;bottom:-18px;background:var(--gr2);padding-bottom:6px}
+  .dkoerper{grid-template-columns:1fr;padding-bottom:110px}
+  .dseite{position:static}
+  .dseite .begleiter .cta{display:none}
+  .galerie{grid-template-columns:1fr 1fr;grid-template-rows:minmax(150px,30vh) minmax(90px,16vh)}
+  .galerie figure:first-child{grid-column:span 2;grid-row:auto}
+  .galerie.einzel figure:first-child{grid-column:auto}
+  .gruppen,.lage,.finanz,.hl,.aehnlich,.weiche .zwei,.grosswahl{grid-template-columns:1fr}
+  .grosswahl.dreier{grid-template-columns:1fr 1fr}
+  .exkap{grid-template-columns:1fr}
+  .exgal .g1,.exgal .g2,.exgal .g3,.exgal .g4{grid-column:1/13;aspect-ratio:3/2}
+  .exheld .txt{grid-template-columns:1fr}
+  .exheld .eckr{text-align:left;flex-direction:row;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
+  .anker{top:55px}
+  .dabs{scroll-margin-top:100px}
+  .mobilcta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--glas);backdrop-filter:blur(14px);border-top:1px solid var(--linie);padding:10px var(--pad);gap:10px;align-items:center}
+  .mobilcta .p{font-family:var(--d);font-size:1.1rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mobilcta .p small{display:block;font-family:var(--t);font-size:.6rem;color:var(--leise);letter-spacing:.1em}
+}
+@media(max-width:600px){
+  .resultkopf .rechtsw{width:100%;margin-left:0}
+  .karte .lauf{padding:10px 0 14px}
+  .dtitel .preiszeile{flex-direction:column;gap:6px}
+}

@@ -1,0 +1,22 @@
+{
+  "k_anfragenTab": "Demandes",
+  "k_angelegtBenachrichtigung": "notification en cas de nouveaux résultats",
+  "k_angelegtWort": "créée le",
+  "k_aufrufeAnfragen": "0 vue · 0 demande",
+  "k_eingereichtWort": "soumis le",
+  "k_entwurfFallback": "Brouillon",
+  "k_ihrBereichHin": "Favoris, alertes et vos propres annonces — enregistrés sur cet appareil sans compte. Un compte n'est nécessaire que si vous voulez partager cela sur plusieurs appareils ou avec votre équipe.",
+  "k_jetztKostenlosPunkt": "Publier gratuitement maintenant.",
+  "k_keineAnfrage": "Aucune demande pour l'instant. Les demandes de visite et questions aux annonceurs apparaissent ici avec leur statut.",
+  "k_keinEigenesInserat": "Aucune annonce personnelle pour l'instant.",
+  "k_keinSuchabo": "Aucune alerte pour l'instant. Enregistrez une recherche — nous vous informons des nouveaux résultats.",
+  "k_landWort": "terrain",
+  "k_loeschenBtn": "Supprimer",
+  "k_nichtsGemerkt": "Rien d'enregistré pour l'instant. Touchez le cœur sur une annonce.",
+  "k_nochNichtEingereicht": "Pas encore soumis",
+  "k_objektBtn": "Bien",
+  "k_oeffnenBtn": "Ouvrir",
+  "k_ohneTitel": "(sans titre)",
+  "k_sucheFallback": "Recherche",
+  "k_weiterbearbeiten": "Continuer"
+}

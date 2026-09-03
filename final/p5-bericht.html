@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P5.1 — Architekturentscheid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#141210;--pap:#1c1916;--ink:#EDE6DA;--leise:#A69B8C;--linie:#332D27;--gold:#B8923F;--gut:#7FA66B;--warn:#C4838A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+.h{max-width:980px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:300;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.06}
+h2{font-size:1.6rem;margin:56px 0 16px;padding-top:26px;border-top:1px solid var(--linie)}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:500}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin-bottom:14px}
+.lead{font-size:1.12rem;color:#D9D0C3;max-width:64ch}
+p{max-width:68ch}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.status div{background:var(--pap);padding:15px 17px}
+.status b{display:block;font-family:"Fraunces",serif;font-weight:300;font-size:1.5rem;line-height:1.1}
+.status span{font-size:.75rem;color:var(--leise);letter-spacing:.05em;text-transform:uppercase}
+.knopf{display:inline-block;margin:22px 8px 0 0;padding:.85em 1.3em;border:1px solid var(--gold);color:var(--ink);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.knopf.voll{background:var(--gold);color:#141210}
+ul{padding-left:1.1em;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:14px 0;font-size:.93rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--linie);text-align:left;vertical-align:top}
+th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);font-weight:500}
+td.z{text-align:right;font-family:"IBM Plex Mono",monospace}
+figure{margin:22px 0}figure img{width:100%;height:auto;display:block;border:1px solid var(--linie)}
+figcaption{font-size:.8rem;color:var(--leise);margin-top:8px}
+.hinweis{border-left:3px solid var(--gold);padding:12px 18px;background:var(--pap);margin:18px 0;max-width:72ch}
+.klein{font-size:.85rem;color:var(--leise)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:#D9D0C3}
+.ok::before{content:"✓ ";color:var(--gut)}
+.off::before{content:"→ ";color:var(--gold)}
+.scroll{overflow-x:auto}
+pre{background:var(--pap);border:1px solid var(--linie);padding:12px 14px;margin:14px 0;max-width:72ch;font-size:.85rem}
+pre code{color:#D9D0C3}
+.hinweis ul{margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="h">
+<div class="eyebrow">Fourwalls · Phase 5.1 · 3. September 2026</div>
+<h1>Der Entscheid vor dem Bau.</h1>
+<p class="lead">P5 verlangt ausdrücklich, den Architekturentscheid zu treffen, <i>bevor</i> viel gebaut wird. Das ist dieser Bericht. Dazu kommt, was sich ohne fremde Zugänge bereits fertigstellen liess: das geprüfte Datenmodell, der Referenzbestand für die Design-Regression, die Trennung der Geschäftsaussagen und die Übersetzungskataloge. Was noch fehlt, fehlt aus zwei nennbaren Gründen — beide stehen am Schluss.</p>
+
+<div class="status">
+  <div><b>16 / 16</b><span>Datenbank-Zusagen geprüft</span></div>
+  <div><b>23</b><span>Referenzaufnahmen</span></div>
+  <div><b>437</b><span>Übersetzungen, 4 Sprachen</span></div>
+  <div><b>17</b><span>Aussagen zur Bestätigung</span></div>
+</div>
+<a class="knopf voll" href="ufer/index.html">UFER (unverändert)</a>
+<a class="knopf" href="p4-bericht.html">P4-Bericht</a>
+
+<div class="hinweis"><b>Keine Staging-Adresse.</b> Der Auftrag stellt den P5-Bericht unter einen Link auf eine laufende Staging-Anwendung. Den gibt es noch nicht, und zwar nicht aus Zeitmangel: Eine gehostete Anwendung braucht Konten und Zugangsdaten, die nur die Auftraggeberschaft anlegen kann (Hosting, Datenbank, Objektspeicher, E-Mail-Versand). Was ohne diese Zugänge beweisbar war, ist bewiesen — das Datenmodell läuft gegen eine echte PostgreSQL-16-Instanz mit PostGIS. Was Zugänge braucht, ist vorbereitet und wartet. Siehe Abschnitt 12.</div>
+
+<h2>1. Architekturentscheid</h2>
+<p><b>Empfehlung: ein modularer Monolith auf Next.js 16 (App Router), PostgreSQL 16 mit PostGIS, Objektspeicher, gehosteter E-Mail-Versand.</b> Eine Anwendung, eine Datenbank, ein Deployment. Keine Microservices, keine Warteschlangen-Infrastruktur, keine zweite Suchmaschine.</p>
+
+<h3>Warum Next.js — und was das kostet</h3>
+<p>Die Wahl hängt an einer Frage, die man zuerst ehrlich beantworten muss: <i>Ist Fourwalls eine Inhaltsseite mit Suche, oder eine Anwendung mit Marketingseiten?</i></p>
+<p>Nach vier Phasen ist die Antwort eindeutig. Suche mit Filtern, Karte mit Ausschnittsuche, neunstufiger Inserate-Assistent mit Zwischenspeicherung, Konto, Merkliste, Suchabos — und ab P5 zusätzlich Moderation, Organisationen, Dokumentfreigaben. Das ist eine Anwendung. Die Marketingseiten sind der kleinere Teil und wachsen nicht mit.</p>
+<p>Der Preis dieser Wahl ist real und soll nicht kleingeredet werden: <b>die Ansichtsschicht wird nach React überführt.</b> Der heutige Prototyp baut sein HTML mit Vorlagenzeichenketten in <code>objekt.js</code> und <code>portal.html</code>. Dieser Code wird zu Komponenten. Was dabei <i>nicht</i> angefasst wird und eins zu eins übernommen werden kann:</p>
+<table>
+<tr><th>Bleibt unverändert</th><th>Warum</th></tr>
+<tr><td><code>ufer.css</code>, <code>objekt.css</code></td><td>reines CSS ohne Präprozessor — jede Regel, jedes Gestaltungsmerkmal überlebt wörtlich</td></tr>
+<tr><td>Wasser-Shader (WebGL)</td><td>hängt an einem Canvas-Knoten, nicht an einem Framework</td></tr>
+<tr><td><code>karte.js</code> (MapLibre)</td><td>desgleichen — braucht einen DOM-Knoten und sonst nichts</td></tr>
+<tr><td><code>geo.js</code>, <code>suche.js</code></td><td>der Suchvertrag aus P3 ist bewusst schnittstellenförmig gebaut; der Adapter wechselt, der Vertrag nicht</td></tr>
+<tr><td>437 Übersetzungen</td><td>bereits als Kataloge herausgelöst (Abschnitt 6)</td></tr>
+</table>
+<p>Umgeschrieben wird also die Erzeugung des Markups — mit derselben DOM-Struktur und denselben Klassennamen. Ob das gelungen ist, entscheidet nicht eine Meinung, sondern der Bildvergleich aus Abschnitt 5.</p>
+
+<h3>Was ernsthaft dagegen sprach</h3>
+<p>Der stärkste Gegenvorschlag ist <b>Astro</b>. Er hätte den geringsten Migrationsaufwand: Der bestehende Vanilla-JavaScript-Code liesse sich als Inseln weiterverwenden, fast nichts müsste umgeschrieben werden, und die Seite bliebe von Haus aus leichtgewichtig. Für eine Seite, die zu 80 % aus Inhalt besteht, wäre Astro die richtige Antwort.</p>
+<p>Abgelehnt, weil die verbleibenden 20 % der Kern des Produkts sind und weiter wachsen. In Astro hiesse das: entweder auf Dauer handgeschriebene Zustandsverwaltung im Assistenten und in der Suche — oder später doch React/Svelte <i>innerhalb</i> von Astro, und dann zwei Denkweisen in einer Anwendung. Einmal wechseln ist billiger als zweimal.</p>
+<p><b>SvelteKit</b> wäre technisch ebenbürtig und liefert kleinere Bündel. Abgelehnt wegen der schmaleren Auswahl an fertigen Bausteinen für genau die Dinge, die P5 braucht (Authentifizierung, Bilder, Formulare) und der geringeren Verfügbarkeit von Entwicklerinnen und Entwicklern in der Schweiz. <b>Nuxt</b> ist gleichwertig zu Next, ohne dass etwas dafür spräche.</p>
+
+<h2>2. Technologie und Betrieb</h2>
+<table>
+<tr><th>Schicht</th><th>Empfehlung</th><th>Begründung</th></tr>
+<tr><td>Anwendung</td><td>Next.js 16 (App Router), TypeScript</td><td>aktuell im aktiven Langzeit-Support; serverseitiges Rendern, Routen, API und Bildverarbeitung in einem</td></tr>
+<tr><td>Datenbank</td><td>PostgreSQL 16 + PostGIS</td><td>Umkreis, Ausschnitt, Verwaltungsgebiete, Transaktionen, Beziehungen — alles in einem System</td></tr>
+<tr><td>Datenbankzugriff</td><td>Drizzle</td><td>SQL-nah; die Migrationen aus Abschnitt 4 bleiben lesbares SQL statt generierter Fremdsprache</td></tr>
+<tr><td>Authentifizierung</td><td>Auth.js v5 oder Better Auth, selbst betrieben</td><td>Daten bleiben in derselben Datenbank; keine zusätzliche Auftragsverarbeitung, keine Kosten pro Konto</td></tr>
+<tr><td>Objektspeicher</td><td>S3-kompatibel</td><td>Bilder, Grundrisse, Dokumente; signierte Adressen mit kurzer Gültigkeit für Geschütztes</td></tr>
+<tr><td>E-Mail</td><td>gehosteter Versanddienst</td><td>Bestätigungen, Anfragen, Suchabos — mit SPF, DKIM und DMARC auf eigener Domain</td></tr>
+<tr><td>Karte</td><td>MapLibre 5.6 + swisstopo</td><td>unverändert aus P3; Version 6 wird getrennt bewertet, nicht während der Migration</td></tr>
+<tr><td>Fehlerüberwachung</td><td>ein Dienst mit kostenloser Einstiegsstufe</td><td>klein halten; ein Überwachungsskript darf die Startleistung nicht auffressen</td></tr>
+</table>
+<p>Bewusst <b>nicht</b> gewählt: Elasticsearch (PostGIS trägt weit über das hinaus, was ein Schweizer Marktplatz in den ersten Jahren braucht), eine Warteschlangen-Infrastruktur (die Suchabo-Zustellung ist ein nächtlicher Lauf, kein Ereignisstrom), ein Content-Management-System (die wenigen redaktionellen Inhalte passen in die Datenbank).</p>
+
+<h3>Zwei Betriebsvarianten — und warum das die wichtigste offene Frage ist</h3>
+<p>Für die Schweizer Datenhaltung gibt es eine Weggabelung, die vor dem Bau entschieden sein sollte, weil sie den Hosting-Anbieter bestimmt — nicht aber die Anwendung selbst:</p>
+<table>
+<tr><th></th><th>A — schnell und günstig</th><th>B — Daten in der Schweiz</th></tr>
+<tr><td>Anwendung</td><td>Vercel (Region Frankfurt)</td><td>Container bei einem Schweizer Anbieter</td></tr>
+<tr><td>Datenbank</td><td>verwaltetes Postgres, EU-Region</td><td>verwaltetes Postgres in der Schweiz</td></tr>
+<tr><td>Aufwand</td><td>Deployment praktisch aus der Schachtel</td><td>eigener Betrieb, Aktualisierungen, Überwachung</td></tr>
+<tr><td>Kosten</td><td>tiefer</td><td>höher, vor allem an Arbeitszeit</td></tr>
+</table>
+<p><b>Deshalb die Bauvorgabe: keine anbieterspezifischen Bausteine verwenden.</b> Eine gewöhnliche Next.js-Anwendung mit Postgres und S3-kompatiblem Speicher läuft in beiden Varianten. Wird nur das benutzt, bleibt Variante B jederzeit offen — und ein Wechsel ist ein Umzug, kein Umbau. Das ist die konkrete Antwort auf die Frage nach Anbieterabhängigkeit.</p>
+<div class="hinweis"><b>Rechtlich nicht abschliessend beurteilt.</b> Ob EU-Hosting für Fourwalls genügt oder Schweizer Datenhaltung nötig ist, hängt an den tatsächlich verarbeiteten Daten und ist eine Rechtsfrage, keine technische. Der Auftrag verlangt ausdrücklich, hier keine Zusagen zu erfinden. Diese Frage gehört vor Baubeginn an eine juristische Beratung — sie entscheidet über den Anbieter, nicht über die Architektur.</div>
+
+<h2>3. Kosten</h2>
+<p>Schätzung für einen frühen Produktivbetrieb mit geringem Verkehr. Preise ändern sich; vor dem Abschluss zu prüfen.</p>
+<table>
+<tr><th>Posten</th><th class="z">Variante A / Monat</th></tr>
+<tr><td>Anwendungs-Hosting (kommerzielle Nutzung)</td><td class="z">~ CHF 20</td></tr>
+<tr><td>Postgres verwaltet, produktionstauglich mit Sicherungen</td><td class="z">~ CHF 20</td></tr>
+<tr><td>Objektspeicher (20–50 GB, mässiger Abruf)</td><td class="z">~ CHF 5–15</td></tr>
+<tr><td>E-Mail-Versand (bis einige Tausend pro Monat)</td><td class="z">CHF 0–20</td></tr>
+<tr><td>Fehlerüberwachung</td><td class="z">CHF 0–25</td></tr>
+<tr><td>Domain</td><td class="z">~ CHF 2</td></tr>
+<tr><td><b>Summe</b></td><td class="z"><b>~ CHF 50–100</b></td></tr>
+</table>
+<p>Solange nur Staging läuft, liegt das nahe null: alle genannten Dienste haben kostenlose Einstiegsstufen, die für eine Testumgebung reichen. Variante B liegt höher, vor allem durch Betriebsaufwand.</p>
+<p><b>Auslöser zum Nachrüsten</b> — vorher nichts davon bauen: mehr als etwa 50 000 aktive Inserate oder Suchantworten über 300 ms im 95. Perzentil → Lesekopie oder vorberechnete Suchtabelle. Dauerhaft mehr als etwa 100 Anfragen pro Sekunde → von Funktionen auf einen dauerhaft laufenden Dienst. Karte auf Landesebene zu langsam → Gruppierung serverseitig. Volltextsuche über Beschreibungen wird zentral → dann, und erst dann, eine Suchmaschine bewerten.</p>
+
+<h2>4. Datenmodell — gebaut und geprüft</h2>
+<p>Acht Migrationen, gegen PostgreSQL 16.4 mit PostGIS 3.4 eingespielt und geprüft. Sie liegen unter <code>db/migrations/</code>, die Prüfung unter <code>db/tests/</code>.</p>
+<p>Drei Entscheidungen tragen den Rest:</p>
+<h3>Liegenschaft ist nicht Inserat</h3>
+<p>Der Prototyp kennt nur das flache Inserat. Getrennt wird, weil dasselbe Haus 2026 vermietet, 2029 verkauft und 2031 wieder vermietet werden kann. Hängt alles am Inserat, verliert man beim Archivieren die Geschichte — und kann nie feststellen, ob zwei Inserate dieselbe Wohnung sind. Genau das braucht man aber für Doppelerfassung, Preisverlauf und Betrugserkennung.</p>
+<h3>Zwei Koordinaten, nicht eine</h3>
+<p>P3 hat die Genauigkeitsstufen eingeführt. In der Datenbank sind es jetzt zwei Spalten: <code>geom_exact</code> verlässt den Server nie, <code>geom_public</code> wird beim Speichern daraus berechnet und ist das Einzige, was ausgeliefert wird. Die öffentliche Sicht <code>listing_public</code> enthält <code>geom_exact</code> gar nicht erst — was nicht in der Sicht steht, kann eine Abfrage auch nicht versehentlich mitliefern.</p>
+<p>Die Rasterung ist bewusst <i>nicht</i> zufällig: Ein Zufallsversatz pro Abruf liesse sich über mehrere Abrufe herausmitteln und ergäbe am Ende doch die Adresse. Gemessen im Test: 198 Meter Abstand, bei jedem Aufruf derselbe.</p>
+<h3>Status ist keine Spalte, die man setzt</h3>
+<p>Die erlaubten Übergänge stehen als Bedingung in der Datenbank. Ein Entwurf kann nicht direkt veröffentlicht werden, auch nicht durch einen Fehler in der Anwendung. Archiviert bleibt archiviert. Jeder Wechsel landet mit handelnder Person und Begründung im Prüfpfad.</p>
+
+<h3>Geprüft, nicht nur entworfen</h3>
+<pre><code>✓ 1  geom_public ist 198 m von geom_exact entfernt
+✓ 2  Öffentliche Koordinate ist reproduzierbar (kein Zufall pro Abruf)
+✓ 3  Stufe «exakt» liefert die unveränderte Koordinate
+✓ 4  Unpassender Radius zur Genauigkeitsstufe wird abgelehnt
+✓ 5  Inserat ohne Herausgeber wird abgelehnt
+✓ 6  draft → published wird abgelehnt (Prüfschritt nicht überspringbar)
+✓ 7  draft → submitted → in_review → approved → published funktioniert
+✓ 8  published_at wird beim Veröffentlichen selbst gesetzt
+✓ 9  Alle 4 Statuswechsel stehen im Prüfpfad
+✓ 10 Archiviert bleibt archiviert
+✓ 11 Nicht veröffentlichte Inserate können nicht indexiert werden
+✓ 12 listing_public enthält weder geom_exact noch Strasse
+✓ 13 Version zählt bei Änderungen hoch
+✓ 14 Dasselbe Objekt lässt sich nicht doppelt merken
+✓ 15 Gespeicherte Suche verlangt ein Anfrageobjekt, keinen Anzeigetext
+✓ 16 Umkreissuche findet das Inserat über geom_public</code></pre>
+<p>Beim Einspielen fanden sich zwei echte Fehler, die ein reiner Entwurf nicht gezeigt hätte: <code>precision</code> ist in PostgreSQL ein reserviertes Wort, und die Migrationen liefen ohne Transaktionsklammer — ein Fehler in der Mitte hätte ein halb eingespieltes Schema hinterlassen. Beides behoben.</p>
+
+<h2>5. Design-Regression: der Massstab steht</h2>
+<p>Vor der Migration wurden 23 Zustände aufgenommen: Startseite Tag und Abend, Suche, Karte, Objektseite exklusiv und gewöhnlich, Verkaufen, Verwalten, Wissen, Assistent, Konto, die Objektseite in allen vier Sprachen und sieben Ansichten bei 390 Pixeln.</p>
+<p>Dazu ein Vergleichswerkzeug (<code>tools/vergleich.mjs</code>), das zwei Aufnahmereihen Bild für Bild gegenüberstellt. Es wurde selbst geprüft: identische Datei → 0,00 %, absichtlich vertauschte Datei → 92,41 % erkannt, fehlende Datei gemeldet. Nach der Migration gilt: Abweichung ist ein Fehler, bis jemand sie ausdrücklich als Verbesserung dokumentiert.</p>
+<pre><code>node tools/baseline.mjs http://localhost:3000 baseline/p5
+node tools/vergleich.mjs baseline/p4 baseline/p5</code></pre>
+
+<h2>6. Übersetzungen: aus dem Monolithen gelöst</h2>
+<p>Die Schlüssel wurden nicht abgetippt, sondern aus den laufenden Dateien ausgelesen — was in den Katalogen steht, ist nachweislich das, was der geprüfte Prototyp anzeigt.</p>
+<table>
+<tr><th>Bereich</th><th class="z">Schlüssel</th></tr>
+<tr><td>property (Objektseite)</td><td class="z">195</td></tr>
+<tr><td>wizard (Inserate-Assistent)</td><td class="z">80</td></tr>
+<tr><td>search (Suche, Filter, Karte)</td><td class="z">60</td></tr>
+<tr><td>navigation (Menü, Fusszeile)</td><td class="z">51</td></tr>
+<tr><td>common</td><td class="z">31</td></tr>
+<tr><td>account (Konto)</td><td class="z">20</td></tr>
+<tr><td><b>gesamt</b></td><td class="z"><b>437</b> × 4 Sprachen</td></tr>
+</table>
+<p>Nebenbefund: <b>keine einzige Lücke</b> — jeder Schlüssel liegt in allen vier Sprachen vor. Das bestätigt die Sprachvollständigkeit aus P4 unabhängig. (Der P4-Bericht nannte «rund 500»; die genaue Zahl ist 437.)</p>
+<p>Die Kataloge liegen unter <code>i18n/&lt;sprache&gt;/&lt;bereich&gt;.json</code> — das Format, das die neue Anwendung direkt liest. Der laufende Prototyp bleibt vorerst unverändert: Ihn jetzt umzubauen, kurz bevor die Migration seine Ladeschicht ohnehin ersetzt, brächte nur Risiko ohne Nutzen.</p>
+
+<h2>7. Geschäftsaussagen: getrennt, nicht entfernt</h2>
+<p>P4 hat erfundene Zahlen entfernt. P5 geht einen Schritt weiter: Aussagen über das Geschäft, die im Prototyp einfach dastanden, sind jetzt als das gekennzeichnet, was sie sind — unbestätigt.</p>
+<p><code>final/policy.js</code> führt 17 solche Aussagen mit Stand, Prüffrage und Fundstellen. Solange die Umgebung nicht auf «produktion» steht, wird nichts ausgeblendet — der Prototyp bleibt vollständig. In der Produktion wird nur sichtbar, was bestätigt ist. So kann keine unbestätigte Behauptung live gehen, bloss weil sie im Prototyp einmal dastand.</p>
+<p>Die vollständige Liste steht in Abschnitt 11.</p>
+
+<h2>8. Was die Architektur sonst festlegt</h2>
+<h3>Adressen</h3>
+<p>Die Rautenadressen verschwinden. Jedes Inserat bekommt eine echte, für Suchmaschinen erreichbare Adresse je Sprache, zum Beispiel <code>/de/immobilien/kaufen/seehaus-walensee-fwl-2026-000142</code>. Drei Kennungen bleiben getrennt: die interne Kennung (technisch), die öffentliche Referenz (unveränderlich, zitierbar) und der Slug (darf sich ändern). Alte Slugs bleiben in <code>listing_slug</code> stehen und leiten dauerhaft weiter — ein umbenanntes Inserat hinterlässt keinen toten Link.</p>
+<h3>Berechtigung</h3>
+<p>Zwei getrennte Rollenbegriffe: was jemand in seiner Organisation darf (Inhaberin, Verwaltung, Maklerin, Lesezugriff) und was auf der Plattform (Nutzerin, Mitarbeitende, Moderation, Verwaltung). Wer in seiner Firma alles darf, darf deswegen nichts moderieren. Geprüft wird immer am Objekt, nie an einer versteckten Schaltfläche: Wer eine fremde Inserats-Kennung in die Adresszeile schreibt, bekommt eine Absage, keine Seite.</p>
+<h3>Dokumente</h3>
+<p>Die Zugangsstufen aus P1 werden serverseitig durchgesetzt. Für ein geschütztes Dokument erhält der Browser gar keine brauchbare Adresse — nicht bloss einen ausgegrauten Knopf. Freigaben sind Vorgänge mit Urheber, Zeitpunkt und Begründung; jeder Zugriff wird protokolliert (die Tatsache, nicht der Inhalt).</p>
+<h3>Ohne Konto bleibt ohne Konto</h3>
+<p>Suchen, Merken und ein Suchabo anlegen funktionieren weiterhin ohne Anmeldung. Technisch hängen diese Daten an einer Besucherkennung; meldet sich die Person später an, wandern Merkliste, gespeicherte Suchen und ein angefangener Inseratsentwurf mit — niemand macht dieselbe Arbeit zweimal.</p>
+
+<h2>9. Migrationsreihenfolge</h2>
+<p>Kein Grosser Wurf auf einmal. Jede Stufe ist für sich auslieferbar:</p>
+<ol>
+  <li><b>Fundament</b> — Anwendung, Umgebungen, Datenbank, Migrationen, Protokollierung, CI, Staging.</li>
+  <li><b>Öffentliche Seiten</b> — Startseite, Verkaufen, Verwalten, Wissen. Nach jeder Seite der Bildvergleich.</li>
+  <li><b>Ein Objekt, senkrecht durch</b> — Datensatz → Abfrage → echte Adresse → serverseitig gerendertes HTML → Bilder → Karte → Merken → Anfrage. Das beweist die Architektur.</li>
+  <li><b>Suche</b> — der Vertrag aus P3 mit dem Server-Adapter dahinter.</li>
+  <li><b>Anmeldung und Inserat</b> — registrieren, Entwurf, Zwischenspeicherung, Vorschau, Einreichen, Moderation, Veröffentlichen. Das beweist den Marktplatz.</li>
+  <li><b>Formulare, Konto, Moderationsoberfläche.</b></li>
+</ol>
+<p>Die 320 Demo-Inserate wandern <b>nicht</b> zuerst in die Datenbank. Erst wenn Stufe 3 und 5 stehen, kommt ein Importlauf — und ausschliesslich nach Staging. Die Produktion startet leer; Demo-Objekte dürfen dort nie als echter Bestand erscheinen.</p>
+
+<h2>10. Leistungsmessung vor der Migration</h2>
+<p>Damit sich später beweisen lässt, ob die Migration geschadet hat:</p>
+<table>
+<tr><th>Seite</th><th class="z">JavaScript</th><th class="z">CSS</th><th class="z">gesamt</th><th class="z">DOM-Knoten</th></tr>
+<tr><td>Startseite</td><td class="z">516 KB</td><td class="z">18 KB</td><td class="z">859 KB</td><td class="z">455</td></tr>
+<tr><td>Suche</td><td class="z">652 KB</td><td class="z">40 KB</td><td class="z">1145 KB</td><td class="z">1104</td></tr>
+<tr><td>Objektseite</td><td class="z">851 KB</td><td class="z">48 KB</td><td class="z">1408 KB</td><td class="z">1446</td></tr>
+</table>
+<p>Der grösste Posten ist kein Gestaltungsproblem, sondern ein Prototyp-Artefakt: <code>listings.js</code> liefert alle 320 Inserate als JavaScript mit — rund 350 KB, die jede Seite lädt, auch die Startseite. In der Produktion wird daraus eine Datenbankabfrage. <b>Die Migration soll diese Zahl also nicht halten, sondern deutlich unterbieten.</b></p>
+<p>Zeitmessungen stehen hier bewusst nicht: Sie stammen aus einem Browser mit Software-Bildberechnung und sagen nichts über echte Geräte. Nach der Migration gehören sie mit einem richtigen Messwerkzeug erhoben.</p>
+
+<h2>11. Aussagen, die eine Bestätigung brauchen</h2>
+<p>Keine davon ist falsch. Keine ist bisher bestätigt. Vor einem Produktivgang muss jede einzelne beantwortet sein — die Liste steht maschinenlesbar in <code>final/policy.js</code>.</p>
+<table>
+<tr><th>Aussage</th><th>Frage</th></tr>
+<tr><td>Bewertung kostenlos</td><td>Ist die hedonische Bewertung wirklich kostenlos und unverbindlich?</td></tr>
+<tr><td>Honorar nur bei Erfolg</td><td>Wirklich ausschliesslich bei Verkauf, ohne Vorauszahlung? Und wie hoch (Satz oder Spanne)?</td></tr>
+<tr><td>Mandatslaufzeit</td><td>Sechs Monate, danach monatlich kündbar? Kein Alleinverkaufsrecht gegenüber der Eigentümerschaft?</td></tr>
+<tr><td>Käuferliste</td><td>Gibt es die gepflegte Käuferliste für den stillen Verkauf — und wie entsteht sie datenschutzkonform?</td></tr>
+<tr><td>Inserieren kostenlos</td><td>Bleibt es für Privatpersonen dauerhaft kostenlos?</td></tr>
+<tr><td>Keine Rangkäufe</td><td>Bleibt es dabei? Diese Aussage schliesst bezahlte Sichtbarkeit als Geschäftsmodell aus.</td></tr>
+<tr><td>Verwaltungsleistungen</td><td>Werden alle acht aufgeführten Leistungen wirklich angeboten?</td></tr>
+<tr><td>Verwaltungspreise</td><td>Stimmen die drei Preismodelle?</td></tr>
+<tr><td>Eigentümer-Report</td><td>Gibt es ihn monatlich in der gezeigten Form?</td></tr>
+<tr><td>Finanzierungspartner</td><td>Existiert eine Partnerschaft — mit wem?</td></tr>
+<tr><td>Verkaufsablauf</td><td>Entspricht der Zehn-Etappen-Ablauf dem tatsächlichen Vorgehen?</td></tr>
+<tr><td>Exclusive-Präsentation</td><td>Erhält jedes Mandat Fotografie, Film und Dossier ohne Zusatzkosten?</td></tr>
+<tr><td>Neubauangebot</td><td>Werden Neubauprojekte tatsächlich als eigene Kategorie vermarktet?</td></tr>
+<tr><td>Vier Sprachen</td><td>Oberfläche ja — aber auch Beratung und Korrespondenz?</td></tr>
+<tr><td>Dokumentfreigabe</td><td>Wer entscheidet operativ über die Stufen «nach Anfrage» und «nach Besichtigung»?</td></tr>
+<tr><td>Ohne Konto</td><td>Gilt das auch nach Einführung echter Konten?</td></tr>
+<tr><td>«Geprüftes Inserat»</td><td>Welche Prüfung findet statt, durch wen?</td></tr>
+</table>
+<p>Dazu die Firmenangaben aus P4, die weiterhin Platzhalter sind: Firmierung, Sitz, Telefon, E-Mail, Standorte, UID, Mitgliedschaften, WhatsApp-Nummer. <code>final/company.js</code> unterscheidet jetzt sauber zwischen bestätigt, Platzhalter und offen — offene Felder bleiben leer statt erfunden.</p>
+
+<h2>12. Was fehlt und warum</h2>
+<p>Zwei Dinge trennen diesen Bericht von einer laufenden Staging-Anwendung:</p>
+<h3>Zugänge</h3>
+<p>Hosting, Datenbank, Objektspeicher und E-Mail-Versand brauchen Konten auf den Namen von Fourwalls. Die kann nur die Auftraggeberschaft eröffnen — und sie sollten auch nicht auf einem Entwicklungskonto laufen, das später mühsam übertragen werden muss. Gebraucht werden vier Zugänge, in dieser Reihenfolge: Datenbank, Hosting, Objektspeicher, E-Mail-Domain.</p>
+<h3>Platz auf dem Entwicklungsrechner</h3>
+<p>Die Festplatte ist zu 100 % belegt, 3,6 GB frei. Für die Prüfung des Datenmodells reichte das knapp; eine Next.js-Anwendung mit Abhängigkeiten und lokaler Datenbank braucht mehr Luft. Das ist kein Architekturproblem, aber ein praktischer Blocker für den nächsten Schritt.</p>
+<div class="hinweis"><b>Der Auftrag gibt hier selbst die Reihenfolge vor:</b> «P5.1 — ARCHITECTURE ONLY. Bevor gross implementiert wird: einen Architekturentscheid liefern. Nicht das ganze Backend bauen, bevor das entschieden ist.» Genau dort steht dieser Bericht — an der Freigabestelle, nicht davor und nicht darüber hinaus.</div>
+
+<h2>13. Was als Nächstes ansteht</h2>
+<ol>
+  <li><b>Architektur freigeben</b> — oder begründet widersprechen. Insbesondere die Weggabelung EU-Hosting gegen Schweizer Datenhaltung (Abschnitt 2), weil sie den Anbieter bestimmt.</li>
+  <li><b>Zugänge eröffnen</b> — Datenbank, Hosting, Objektspeicher, E-Mail-Domain.</li>
+  <li><b>Dann P5.2 bis P5.4</b> — Fundament, eine Objektseite senkrecht durch, Anmeldung und Inserat mit Moderation. Nach jeder Stufe der Bildvergleich gegen die 23 Referenzaufnahmen.</li>
+</ol>
+<p>Die Geschäftsaussagen aus Abschnitt 11 blockieren den Bau nicht — wohl aber einen Produktivgang. Sie lassen sich parallel klären.</p>
+
+<p class="klein" style="margin-top:44px">Fourwalls · Phase 5.1 · Architekturentscheid · Datenmodell geprüft gegen PostgreSQL 16.4 / PostGIS 3.4 · alle Objekt- und Firmendaten sind weiterhin Platzhalter</p>
+</div>
+</body>
+</html>

@@ -22,7 +22,9 @@ window.FWP = (function () {
       zimmerFilter:"Zimmer", grundFilter:"Grundstück ab (m²)",
       flaecheFilter:"Wohnfläche (m²)",
       bild1:"Bild", bildN:"Bilder",
-      bilderMedien:"Bilder und Medien" },
+      bilderMedien:"Bilder und Medien",
+      artOrt:"Ort", artPlz:"PLZ", artKanton:"Kanton", artRegion:"Region",
+      autoSuchen:"Beim Verschieben automatisch suchen", hierSuchen:"In diesem Kartenausschnitt suchen", imAusschnitt:"Kartenausschnitt", karteLeerText:"In diesem Ausschnitt liegt kein Inserat.", karteFehler:"Die Karte lässt sich gerade nicht laden. Die Liste zeigt alle Treffer." },
     fr: { immobilien:"Immobilier", karte:"Carte", verkaufen:"Vendre", verwalten:"Gérance", inserieren:"Publier gratuitement",
       gemerkt:"Favoris", kaufen:"Acheter", mieten:"Louer", ort:"Lieu, NPA, canton ou région", typ:"Tous les types",
       preisBis:"Prix jusqu'à", preisVon:"Prix dès", zimmerAb:"Pièces dès", mehrFilter:"Plus de filtres", filter:"Filtres", sucheSpeichern:"Enregistrer la recherche",
@@ -41,7 +43,9 @@ window.FWP = (function () {
       zimmerFilter:"Pièces", grundFilter:"Terrain dès (m²)",
       flaecheFilter:"Surface habitable (m²)",
       bild1:"photo", bildN:"photos",
-      bilderMedien:"Photos et médias" },
+      bilderMedien:"Photos et médias",
+      artOrt:"Localité", artPlz:"NPA", artKanton:"Canton", artRegion:"Région",
+      autoSuchen:"Rechercher automatiquement en déplaçant", hierSuchen:"Rechercher dans cette zone", imAusschnitt:"Zone de la carte", karteLeerText:"Aucune annonce dans cette zone.", karteFehler:"La carte ne se charge pas pour le moment. La liste affiche tous les résultats." },
     it: { immobilien:"Immobili", karte:"Mappa", verkaufen:"Vendere", verwalten:"Amministrazione", inserieren:"Pubblica gratis",
       gemerkt:"Preferiti", kaufen:"Comprare", mieten:"Affittare", ort:"Località, NPA, cantone o regione", typ:"Tutti i tipi",
       preisBis:"Prezzo fino a", preisVon:"Prezzo da", zimmerAb:"Locali da", mehrFilter:"Altri filtri", filter:"Filtri", sucheSpeichern:"Salva ricerca",
@@ -60,7 +64,9 @@ window.FWP = (function () {
       zimmerFilter:"Locali", grundFilter:"Terreno da (m²)",
       flaecheFilter:"Superficie abitabile (m²)",
       bild1:"foto", bildN:"foto",
-      bilderMedien:"Foto e media" },
+      bilderMedien:"Foto e media",
+      artOrt:"Località", artPlz:"NPA", artKanton:"Cantone", artRegion:"Regione",
+      autoSuchen:"Cercare automaticamente spostando", hierSuchen:"Cercare in questa area", imAusschnitt:"Area della mappa", karteLeerText:"Nessun annuncio in questa area.", karteFehler:"La mappa non si carica al momento. L\u2019elenco mostra tutti i risultati." },
     en: { immobilien:"Properties", karte:"Map", verkaufen:"Sell", verwalten:"Management", inserieren:"List for free",
       gemerkt:"Saved", kaufen:"Buy", mieten:"Rent", ort:"Place, postcode, canton or region", typ:"All property types",
       preisBis:"Price up to", preisVon:"Price from", zimmerAb:"Rooms from", mehrFilter:"More filters", filter:"Filters", sucheSpeichern:"Save search",
@@ -79,7 +85,9 @@ window.FWP = (function () {
       zimmerFilter:"Rooms", grundFilter:"Plot from (m²)",
       flaecheFilter:"Living area (m²)",
       bild1:"photo", bildN:"photos",
-      bilderMedien:"Photos and media" }
+      bilderMedien:"Photos and media",
+      artOrt:"Place", artPlz:"Postcode", artKanton:"Canton", artRegion:"Region",
+      autoSuchen:"Search automatically while moving", hierSuchen:"Search this area", imAusschnitt:"Map area", karteLeerText:"No listing in this area.", karteFehler:"The map cannot load right now. The list shows every result." }
   };
   let LANG = "de";
   function sprache(l) { if (I18N[l]) LANG = l; try { localStorage.setItem("fw-lang", LANG); } catch (e) {} return LANG; }

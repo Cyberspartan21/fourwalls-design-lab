@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P3 — Echte Geografie, echte Karte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#141210;--pap:#1c1916;--ink:#EDE6DA;--leise:#A69B8C;--linie:#332D27;--gold:#B8923F;--gut:#7FA66B;--warn:#C4838A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+.h{max-width:980px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:300;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.06}
+h2{font-size:1.6rem;margin:56px 0 16px;padding-top:26px;border-top:1px solid var(--linie)}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:500}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin-bottom:14px}
+.lead{font-size:1.12rem;color:#D9D0C3;max-width:64ch}
+p{max-width:68ch}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.status div{background:var(--pap);padding:15px 17px}
+.status b{display:block;font-family:"Fraunces",serif;font-weight:300;font-size:1.5rem;line-height:1.1}
+.status span{font-size:.75rem;color:var(--leise);letter-spacing:.05em;text-transform:uppercase}
+.knopf{display:inline-block;margin:22px 8px 0 0;padding:.85em 1.3em;border:1px solid var(--gold);color:var(--ink);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.knopf.voll{background:var(--gold);color:#141210}
+ul{padding-left:1.1em;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:14px 0;font-size:.93rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--linie);text-align:left;vertical-align:top}
+th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);font-weight:500}
+td.z{text-align:right;font-family:"IBM Plex Mono",monospace}
+figure{margin:22px 0}figure img{width:100%;height:auto;display:block;border:1px solid var(--linie)}
+figcaption{font-size:.8rem;color:var(--leise);margin-top:8px}
+.hinweis{border-left:3px solid var(--gold);padding:12px 18px;background:var(--pap);margin:18px 0;max-width:72ch}
+.klein{font-size:.85rem;color:var(--leise)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:#D9D0C3}
+.ok::before{content:"✓ ";color:var(--gut)}
+.off::before{content:"→ ";color:var(--gold)}
+.scroll{overflow-x:auto}
+pre{background:var(--pap);border:1px solid var(--linie);padding:12px 14px;margin:14px 0;max-width:72ch;font-size:.85rem}
+pre code{color:#D9D0C3}
+.hinweis ul{margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="h">
+<div class="eyebrow">Fourwalls · Phase 3 · 3. September 2026</div>
+<h1>Die Karte ist kein Bild mehr.<br>Sie ist die zweite Oberfläche derselben Suche.</h1>
+<p class="lead">P2 hat den Bestand tragfähig gemacht. P3 setzt ihn auf echte Schweizer Geografie: amtliche Vektorkacheln, ein Ortsverzeichnis mit stabilen Kennungen, ein Suchvertrag, der später ohne Umbau auf einen Server zeigt — und eine Karte, die nicht nur zeigt, sondern sucht.</p>
+
+<div class="status">
+  <div><b>320</b><span>Objekte mit echter Lage</span></div>
+  <div><b>3</b><span>Genauigkeitsstufen</span></div>
+  <div><b>0</b><span>Schlüssel im Browser</span></div>
+  <div><b>9 ms</b><span>Suche bei 50 000 Objekten</span></div>
+</div>
+<a class="knopf voll" href="ufer/portal.html#karte">Karte öffnen</a>
+<a class="knopf" href="ufer/portal.html?ort=ort-zuerich&um=10#karte">Zürich + 10 km</a>
+<a class="knopf" href="ufer/portal.html#objekt/grundstueck-lausanne-1">Objekt mit Lagekarte</a>
+
+<h2>1. Was P3 verändert hat</h2>
+<p>Bis P2 war die Karte eine Zeichnung: schematische Ringe auf einem Raster, Koordinaten aus einer Zufallsstreuung um den Ortsmittelpunkt. Das genügte, um die Gestalt zu prüfen, und wäre in einem Produkt eine Täuschung gewesen. P3 ersetzt jede dieser Vereinfachungen durch etwas, das trägt:</p>
+<ul>
+  <li class="ok"><b>Ein Suchvertrag</b> zwischen Oberfläche und Bestand. Liste, Karte und Ausschnittsuche stellen dieselbe Anfrage; getauscht wird nur, wer sie beantwortet.</li>
+  <li class="ok"><b>Ein geografisches Verzeichnis</b> mit 38 Gemeinden, 26 Kantonen und 9 Regionen — mit echten Koordinaten, Umschliessungsrechtecken, Postleitzahlen und Namen in vier Sprachen.</li>
+  <li class="ok"><b>Amtliche Kacheln</b> von swisstopo, schlüsselfrei, mit einem Abendmodus, der die Farben jedes Layers umrechnet statt einen Filter darüberzulegen.</li>
+  <li class="ok"><b>Drei Genauigkeitsstufen</b>, die trennen, was gespeichert ist, und was öffentlich erscheint.</li>
+</ul>
+
+<h2>2. Der Suchvertrag</h2>
+<p>Eine Anfrage ist ein einziges Objekt: Transaktionsart, Ort als Entität, Umkreis, Kartenausschnitt, Objektart, Preis-, Zimmer-, Flächen- und Baujahrgrenzen, Etage, Verfügbarkeit, Merkmale, Quelle, Sortierung, Seite. Eine Antwort ist ebenso festgelegt: Treffer, Gesamtzahl, Seite, ob mehr folgt, wie der Ort verstanden wurde, Facetten, Dauer und Herkunft.</p>
+<p>Der heutige Beantworter arbeitet im Browser. Er lässt sich in einer Zeile austauschen:</p>
+<pre class="scroll"><code>FWSUCHE.SearchProvider.setzeAdapter(new HttpSearchProvider("/api/suche"));</code></pre>
+<p>Die geografische Auslegung ist bewusst in einer festen Reihenfolge: <b>Kartenausschnitt</b> schlägt <b>Umkreis</b>, dieser schlägt <b>Region</b>, <b>Kanton</b>, <b>Postleitzahl</b>, <b>Gemeinde</b>. Die Antwort sagt, welche Regel gegriffen hat — die Oberfläche muss nicht raten, ob sie gerade einen Ausschnitt oder einen Umkreis anzeigt.</p>
+<p>Für die Karte gibt es einen zweiten Modus: statt einer Seite liefert die Anfrage alle Punkte des Ergebnisses. Die Liste bleibt bei 24 Einträgen, die Karte kennt alle 177.</p>
+<div class="hinweis"><b>Warum das vor der Karte kam.</b> Wer die Karte zuerst baut, schreibt die Filterlogik zweimal — einmal für die Liste, einmal für den Ausschnitt. Deshalb wurde erst die Liste auf den Vertrag umgestellt und geprüft, dass sie identische Ergebnisse liefert. Danach war die Karte eine Anzeigefrage, keine Suchfrage.</p></div>
+
+<h2>3. Das geografische Modell</h2>
+<table>
+<tr><th>Art</th><th>Kennung</th><th>Was daran hängt</th></tr>
+<tr><td>Gemeinde</td><td><code>ort-zuerich</code></td><td>Koordinate, Kanton, Postleitzahlen, Namen in vier Sprachen, Schreibvarianten</td></tr>
+<tr><td>Postleitzahl</td><td><code>plz-8001</code></td><td>Zugehörige Gemeinde</td></tr>
+<tr><td>Kanton</td><td><code>kt-VD</code></td><td>Mittelpunkt, Umschliessungsrechteck, Name in vier Sprachen</td></tr>
+<tr><td>Region</td><td><code>rg-tessin</code></td><td>Kantonsmenge, Umschliessungsrechteck</td></tr>
+</table>
+<p>Diese Kennungen stehen in der Adresszeile. Ein geteilter Link trifft denselben Ort wie die Sitzung, aus der er stammt — auch in einer anderen Sprache, weil die Kennung sprachfrei ist und nur die Beschriftung wechselt. Ältere Linkformen (<code>?ort=Zürich</code>, <code>?ort=kt:VD</code>, <code>?ort=8001</code>) werden weiterhin gelesen und beim ersten Aufruf auf die stabile Form normalisiert.</p>
+<p>Die Suche verzeiht: Umlaute, Akzente, ein vertauschter Buchstabe, «Zuerich» statt «Zürich», «Genève» im deutschen Text. Eine vierstellige Postleitzahl ohne Treffer bietet den Postkreis an, statt eine leere Liste zu zeigen.</p>
+
+<h2>4. Anbieterwahl: Karte und Ortssuche</h2>
+<h3>Kacheln</h3>
+<table>
+<tr><th>Kandidat</th><th>Schlüssel nötig</th><th>Kosten</th><th>Entscheidung</th></tr>
+<tr><td>swisstopo <code>lightbasemap</code></td><td>nein</td><td>kostenlos für die Schweiz und Liechtenstein</td><td><b>gewählt</b> — amtliche Schweizer Geodaten, beste Datenqualität im Land, keine Zählwerke</td></tr>
+<tr><td>OpenFreeMap <code>positron</code></td><td>nein</td><td>kostenlos, spendenfinanziert</td><td><b>Rückfall</b>, wenn swisstopo nicht antwortet</td></tr>
+<tr><td>MapTiler / Mapbox</td><td>ja</td><td>ab Aufrufkontingent</td><td>verworfen — ein Browser-Schlüssel ist öffentlich; das lohnt nur, wenn er etwas kann, das die freien Dienste nicht können</td></tr>
+</table>
+<p>Die Bibliothek ist <b>MapLibre GL JS 5.6</b> (BSD-3-Klausel), geladen von cdnjs und erst dann, wenn jemand die Karte tatsächlich öffnet.</p>
+<h3>Ortssuche</h3>
+<p>Es wird <b>kein</b> öffentlicher Geokodierdienst angesprochen — insbesondere nicht Nominatim, dessen Nutzungsregeln für ein Produkt dieser Art nicht gedacht sind. Die Ortssuche läuft gegen das eigene Verzeichnis. Das hat eine klare Grenze, die im Code steht: <code>kannAdressen: false</code>. Strassen und Hausnummern kann dieses Verzeichnis nicht auflösen. Für eine Produktion wären die amtlichen Gebäude- und Wohnungsdaten (GWR) oder ein Adressdienst mit Vertrag der nächste Schritt — hinter derselben Schnittstelle, ohne Änderung an der Oberfläche.</p>
+
+<h2>5. Echte Koordinaten und Privatsphäre</h2>
+<p>Jedes Objekt trägt jetzt einen Geo-Block. Entscheidend ist die Trennung: es gibt eine gespeicherte Lage und eine <b>Anzeigelage</b> mit einer Genauigkeitsangabe. Öffentlich ist ausschliesslich die Anzeigelage.</p>
+<table>
+<tr><th>Stufe</th><th>Was öffentlich erscheint</th><th>Bestand</th></tr>
+<tr><td><code>exakt</code></td><td>Ein Punkt</td><td>11 Objekte</td></tr>
+<tr><td><code>ungefaehr</code></td><td>Ein Feld von rund 450 m</td><td>206 Objekte</td></tr>
+<tr><td><code>gemeinde</code></td><td>Ein Feld von rund 2 km</td><td>103 Objekte</td></tr>
+</table>
+<p>Die Unschärfe entsteht nicht dadurch, dass die zugrundeliegenden Daten verfälscht würden. Gespeichert bleibt, was stimmt; veröffentlicht wird, was freigegeben ist. Und es wird kein fiktives Haus auf ein reales Wohngebäude gesetzt: bei ungenauer Freigabe zeigt die Karte ein Feld, keinen Punkt.</p>
+<figure><img src="bilder/p3/p3-lage.jpg" alt="Objektseite mit Lagekarte: ein gestricheltes Feld von 450 Metern über Lausanne"><figcaption>Objektseite: 450-Meter-Feld statt Adresse. Die Beschriftung nennt Stufe, Vorbehalt und Kartenquelle.</figcaption></figure>
+
+<h2>6. Die Karte</h2>
+<p>Cluster mit Anzahl, Einzelobjekte mit Preisschild, exklusive Mandate in Kupfer, belegte Objekte gedämpft. Ein Klick auf ein Cluster zoomt so weit hinein, wie es sich auflöst. Ein Klick auf ein Objekt markiert es in der Liste daneben; ein Zeigen auf die Liste hebt es auf der Karte hervor.</p>
+<figure><img src="bilder/p3/p3-karte-hell.jpg" alt="Schweizkarte mit Clustern und Preisschildern"><figcaption>177 Kaufobjekte über der swisstopo-Basiskarte. Preise als Kurzform, Cluster mit Anzahl.</figcaption></figure>
+<figure><img src="bilder/p3/p3-karte-abend.jpg" alt="Dieselbe Karte im Abendmodus"><figcaption>Abendmodus: kein Helligkeitsfilter, sondern eine Umrechnung jeder Layer-Farbe in die Nachtpalette. Seen, Relief und Grenzen bleiben unterscheidbar.</figcaption></figure>
+<h3>Suche im Kartenausschnitt</h3>
+<p>Wer die Karte bewegt, bekommt ein Angebot, keinen Automatismus: «In diesem Kartenausschnitt suchen». Wer es lieber automatisch mag, schaltet es oben ein. Eigene Bewegungen der Karte — das Einpassen nach einer Suche — lösen das Angebot nicht aus.</p>
+<p>Die Ausschnittsuche führt auch die Liste nach: beide zeigen danach dieselben Objekte, und ein Hinweis sagt, dass gerade ein Ausschnitt und kein Ort die Grundlage ist.</p>
+<figure><img src="bilder/p3/p3-umkreis.jpg" alt="Umkreissuche: 10 Kilometer um Zürich als gestrichelter Ring"><figcaption>Umkreis 10 km um Zürich: 34 Treffer, als Ring auf der Karte und als Chip über der Liste.</figcaption></figure>
+
+<h2>7. Mobil</h2>
+<p>Auf 390 Pixeln ist die Karte die ganze Fläche. Ein Tippen auf ein Objekt öffnet eine Vorschaukarte am unteren Rand — Bild, Preis, Ort, Eckdaten, Quelle — mit Schliessknopf. Zur Ergebnisliste geht es über den Umschalter oben rechts. Kein seitliches Scrollen, keine Bedienelemente unter dem Daumenballen.</p>
+<figure style="max-width:420px"><img src="bilder/p3/p3-mobil.jpg" alt="Mobile Kartenansicht mit Objektvorschau am unteren Rand"><figcaption>390 × 844: Vollbildkarte, gewähltes Objekt hervorgehoben, Vorschau unten.</figcaption></figure>
+
+<h2>8. Inserieren: Lage als Struktur, Genauigkeit als Entscheidung</h2>
+<p>Der Ortsschritt des Inserate-Assistenten war ein Freitextfeld. Jetzt wird die Postleitzahl gegen dasselbe Verzeichnis geprüft, das die Suche nutzt: Gemeinde, Kanton und Region ergänzen sich, das Ergebnis wird angezeigt. Ist ein Ort nicht im Verzeichnis, blockiert das nichts — es wird gesagt, dass die Zuordnung von Hand erfolgt.</p>
+<p>Darunter steht die Entscheidung, die sonst niemand trifft: wie genau die Lage öffentlich erscheinen darf. Die Vorschau zeigt genau das, was Besucherinnen und Besucher später sehen.</p>
+<figure><img src="bilder/p3/p3-inserat.jpg" alt="Assistent: Postleitzahl erkannt, drei Genauigkeitsstufen, Kartenvorschau"><figcaption>«8001» wird zu Zürich, Kanton Zürich, Region Zürich. Die Vorschau zeigt das 450-Meter-Feld.</figcaption></figure>
+
+<h2>9. Messungen</h2>
+<h3>Suchdauer nach Bestandsgrösse</h3>
+<p>Gemessen im Browser, Median aus fünf Läufen, mit vervielfachtem Bestand:</p>
+<table>
+<tr><th>Bestand</th><th class="z">alles</th><th class="z">Umkreis 20 km</th><th class="z">Kartenausschnitt</th><th class="z">gefiltert</th></tr>
+<tr><td>320</td><td class="z">0,1 ms</td><td class="z">0,1 ms</td><td class="z">0,1 ms</td><td class="z">0,1 ms</td></tr>
+<tr><td>2 000</td><td class="z">0,6 ms</td><td class="z">0,2 ms</td><td class="z">0,2 ms</td><td class="z">0,2 ms</td></tr>
+<tr><td>10 000</td><td class="z">3,8 ms</td><td class="z">1,4 ms</td><td class="z">1,0 ms</td><td class="z">1,0 ms</td></tr>
+<tr><td>50 000</td><td class="z">25,1 ms</td><td class="z">13,1 ms</td><td class="z">11,9 ms</td><td class="z">9,1 ms</td></tr>
+</table>
+<p>Rechnen ist also nicht die Grenze. Die Grenze ist die Auslieferung: 50 000 Inserate in den Browser zu laden, verbietet sich unabhängig davon, wie schnell danach gefiltert wird. Genau dafür ist der Vertrag da — der Wechsel auf einen Serveradapter ändert keine Zeile in der Oberfläche.</p>
+<h3>Karte</h3>
+<table>
+<tr><th>Grösse</th><th class="z">Wert</th></tr>
+<tr><td>Bis Cluster sichtbar, kalter Start</td><td class="z">4,6 s</td></tr>
+<tr><td>MapLibre GL JS über cdnjs</td><td class="z">207 KB</td></tr>
+<tr><td>Portalseite gesamt, ohne Karte</td><td class="z">843 KB</td></tr>
+<tr><td>Speicher, Karte offen</td><td class="z">21 MB</td></tr>
+</table>
+<p>Die 4,6 Sekunden sind der ungünstigste Fall: leerer Cache, Bibliothek, Stil, Schriften, Sprite und Kacheln über das Netz. Berührt jemand den Kartenknopf, beginnt der Ladevorgang bereits vor dem Klick; das kostete in der Messung 1,2 Sekunden weniger. Beim zweiten Öffnen in derselben Sitzung erscheint die Karte sofort.</p>
+
+<h2>10. Was geprüft wurde</h2>
+<ul>
+  <li class="ok"><b>Wege:</b> Ort wählen → Umkreis → Karte → Objekt; Karte verschieben → im Ausschnitt suchen → Liste folgt; Zurück-Knopf; Link teilen und neu laden.</li>
+  <li class="ok"><b>Vier Sprachen:</b> Ortsnamen erscheinen als Genf / Genève / Ginevra / Geneva, Regionen und Kantone entsprechend. Der Zusatz nennt den Kanton ohne Beugung; trägt eine Gemeinde denselben Namen wie ihr Kanton, steht das Kürzel dabei.</li>
+  <li class="ok"><b>Fehlerfall:</b> Lädt die Karte nicht, erscheint ein Hinweis und die vollständige Liste — die Suche bleibt benutzbar.</li>
+  <li class="ok"><b>Konsole:</b> auf allen Seiten und in allen geprüften Abläufen ohne Fehler und Warnungen.</li>
+  <li class="ok"><b>Eingebettete Karte:</b> die Lagekarte auf der Objektseite fängt das Scrollen der Seite nicht ab; gezoomt wird über Knöpfe, Doppelklick oder zwei Finger.</li>
+</ul>
+<div class="hinweis"><b>Drei Fallstricke in MapLibre, die Zeit gekostet haben</b> — hier notiert, weil sie bei jeder Weiterarbeit wieder auftreten:
+<ul>
+<li>Ein Beschriftungs-Layer mit einem Schriftstapel, den der Kachelserver nicht kennt, lässt <b>die ganze Quelle</b> stumm — ohne Fehlermeldung. Die Schrift wird deshalb aus dem geladenen Stil übernommen, nicht geraten.</li>
+<li>Eine GeoJSON-Quelle, die ohne Inhalt angelegt wird, bleibt leer; ein späteres Nachreichen der Daten erreicht sie nicht mehr. Quellen entstehen darum zusammen mit ihren Daten.</li>
+<li><code>isStyleLoaded()</code> ist die falsche Bedingung zum Hinzufügen von Quellen: sie wartet zusätzlich auf alle Kacheln und wird nie wahr, solange der Behälter keine Grösse hat.</li>
+</ul></div>
+
+<h2>11. Lizenzen, Schlüssel, Daten</h2>
+<ul>
+  <li><b>swisstopo Vektorkacheln:</b> kostenlos für Nutzung in der Schweiz und Liechtenstein, Quellenangabe verpflichtend. Sie steht an der Karte selbst («© swisstopo»), nicht versteckt im Impressum. Der Dienst liefert sie über den Stil; im Abendmodus wurde die Farbe der Angabe korrigiert, damit sie lesbar bleibt. Für weltweite Daten gilt eine Einschränkung auf die Bundesverwaltung — für einen Schweizer Marktplatz ist das ohne Belang, für eine spätere Ausweitung ins Ausland nicht.</li>
+  <li><b>Geänderte Stile:</b> swisstopo weist darauf hin, dass bei Änderung des vordefinierten Stils die Bedingungen der zugrundeliegenden Daten gelten. Der Abendmodus ist eine solche Änderung; die Quellenangabe bleibt in beiden Modi gesetzt.</li>
+  <li><b>OpenFreeMap (Rückfall):</b> Attribution «OpenFreeMap © OpenMapTiles Data from OpenStreetMap», vom Stil geliefert.</li>
+  <li><b>MapLibre GL JS:</b> BSD-3-Klausel.</li>
+  <li><b>Schlüssel:</b> keine. Eine Durchsuchung des ausgelieferten Codes nach Schlüsseln, Tokens und Anbieternamen ist leer. Das ist kein Zufall, sondern der Grund für die Anbieterwahl: ein Schlüssel im Browser ist öffentlich, und Verschleierung macht ihn nicht geheim.</li>
+  <li><b>Standort des Geräts:</b> wird nicht abgefragt. Es gibt keinen Anlass, der ohne ausdrückliche Handlung entstünde.</li>
+  <li><b>Gespeichert wird</b> nur, was die Person selbst anlegt: Merkliste, Suchabos, Inseratsentwurf — im Browser, ohne Konto. Es entsteht kein Verlauf besuchter Orte.</li>
+</ul>
+
+<h2>12. Was Prototyp bleibt</h2>
+<ul>
+  <li class="off"><b>Die Objektdaten sind erfunden.</b> Auch die Koordinaten: sie sind plausibel und liegen in der richtigen Gemeinde, bezeichnen aber kein reales Grundstück.</li>
+  <li class="off"><b>Keine Adressauflösung.</b> Strasse und Hausnummer werden erfasst, aber nicht geokodiert — das braucht einen Adressdienst.</li>
+  <li class="off"><b>Fahrzeiten</b> stammen aus dem Dossier, nicht aus einer Routenberechnung. Aus Luftlinie werden keine Minuten erfunden.</li>
+  <li class="off"><b>Umgebungspunkte</b> stehen als Liste mit Entfernung, nicht als Punkte auf der Karte: ihre wirklichen Standorte sind nicht bekannt, und geschätzte Positionen auf einer echten Karte wären eine Behauptung über reale Orte.</li>
+  <li class="off"><b>Die Karte ist nicht mit der Tastatur bedienbar.</b> Cluster und Punkte lassen sich nur zeigen und klicken. Der gleichwertige Weg ist die Ergebnisliste daneben, die vollständig bedienbar bleibt — das ist eine bewusste Grenze, keine Lösung.</li>
+  <li class="off"><b>Objektseite und Inserate-Assistent sind einsprachig deutsch.</b> Das stammt aus P1 und wurde in P3 nicht ausgeweitet; die neuen Texte folgen dem bestehenden Stand.</li>
+  <li class="off"><b>Suchabos verschicken keine E-Mails.</b> Unverändert seit P2.</li>
+</ul>
+
+<h2>13. Was als Nächstes anstünde</h2>
+<p>Drei Möglichkeiten, ohne Empfehlung zur Reihenfolge — das ist eine Entscheidung, die vom Ziel abhängt, nicht von der Technik:</p>
+<ol>
+  <li><b>Suche auf den Server.</b> Der Vertrag steht, der Adapter fehlt. PostgreSQL mit PostGIS beantwortet Umkreis und Ausschnitt mit denselben Begriffen, die heute im Browser stehen. Das ist die Voraussetzung für jeden Bestand jenseits weniger tausend Inserate.</li>
+  <li><b>Adressen.</b> Ein Adressdienst hinter <code>GeoProvider</code> macht aus «Bahnhofstrasse 12» eine Koordinate — und aus dem Inserate-Assistenten ein Werkzeug, das die Lage kennt, statt sie zu erfragen.</li>
+  <li><b>Die Karte als Auswahlwerkzeug.</b> Ein gezeichneter Suchbereich, mehrere gemerkte Objekte im Vergleich nebeneinander, Fahrzeit-Isochronen statt Kreise. Das ist Produktarbeit, keine Grundlagenarbeit — und sinnvoll erst, wenn die ersten beiden Punkte stehen.</li>
+</ol>
+
+<p class="klein" style="margin-top:44px">Fourwalls · Phase 3 · alle Objektdaten sind fiktive Demo-Daten · Kartengrundlage © swisstopo</p>
+</div>
+</body>
+</html>

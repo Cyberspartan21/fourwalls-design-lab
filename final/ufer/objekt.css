@@ -152,7 +152,10 @@
 /* Lage */
 .lagekarte{position:relative;height:340px;background:var(--tief);border:1px solid var(--linie);border-radius:var(--r);overflow:hidden}
 .lagekarte canvas{position:absolute;inset:0;width:100%;height:100%}
-.lagekarte .voll{position:absolute;right:12px;top:12px;z-index:3;background:var(--glas);backdrop-filter:blur(6px)}
+#lageMap{position:absolute;inset:0;opacity:0;transition:opacity .5s ease}
+#lageMap.da{opacity:1}
+.lagekarte .fein{z-index:3;background:var(--glas);padding:3px 8px;border-radius:var(--r)}
+.lagekarte .voll{position:absolute;left:12px;top:12px;z-index:3;background:var(--glas);backdrop-filter:blur(6px)}
 .lagekarte .fein{position:absolute;left:12px;bottom:10px;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise)}
 .poifilter{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
 .poifilter button{border:1px solid var(--linie2);border-radius:var(--r);padding:.4em .8em;font-size:.66rem;letter-spacing:.1em;

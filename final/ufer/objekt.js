@@ -187,7 +187,7 @@ window.UOBJ = (function () {
     const poiDa = LA_ ? POI.filter(([k]) => LA_[k] && LA_[k].length) : [];
     const sonne = med.sonne;
     const bLage = `
-      <div class="lagekarte"><canvas id="lageKarte"></canvas><button class="knopf voll" id="karteVoll">Vergrössern</button><div class="fein">Schematische Darstellung · Produktion: MapLibre</div></div>
+      <div class="lagekarte"><div id="lageMap"></div><canvas id="lageKarte"></canvas><button class="knopf voll" id="karteVoll">Vergrössern</button><div class="fein" id="lageHinweis">${esc(lageHinweisText())}</div></div>
       ${poiDa.length ? `<div class="poifilter" role="group" aria-label="Was in der Nähe angezeigt wird">${poiDa.map(([k, n], i) => `<button data-poi="${k}" aria-pressed="true" style="--pc:${["#5E8FB5", "#7FA97A", "#C08A6B", "#B0768E", "#8A8FB5", "#6E8A94"][i]}"><i style="background:${["#5E8FB5", "#7FA97A", "#C08A6B", "#B0768E", "#8A8FB5", "#6E8A94"][i]}"></i>${esc(n)}</button>`).join("")}</div>` : ""}
       ${LA_ ? `<p class="dtext">${esc(LA_.beschreibung)}</p>
         ${LA_.charakter ? `<p class="dtext" style="margin-top:12px"><i>${esc(LA_.charakter)}</i></p>` : ""}
@@ -346,7 +346,7 @@ window.UOBJ = (function () {
     if (gr && gr.length) grundrisse(gr);
     if (kauf) finanzRechner(L.price);
     K.verdrahte(det);
-    requestAnimationFrame(() => { const c = $("lageKarte"); if (c) lageKarte(c); });
+    requestAnimationFrame(() => { const c = $("lageKarte"); if (c) { lageKarte(c); echteLageKarte(); } });
 
     /* Exclusive: das Fenster öffnet die Wand — Titel und Preis stehen von Anfang an */
     const wand = $("exWand");
@@ -490,6 +490,37 @@ window.UOBJ = (function () {
     $("fEk").addEventListener("input", r); $("fZins").addEventListener("change", r); r();
   }
 
+  /* Was die Karte zeigen darf, entscheidet der Datensatz — nicht die Optik. */
+  function lageFreigabe() {
+    const g = (L && L.geo) || {};
+    const a = g.anzeige || {};
+    const lat = a.lat != null ? a.lat : L.lat, lng = a.lng != null ? a.lng : L.lng;
+    return { lat, lng, genauigkeitM:a.genauigkeitM || 0, stufe:g.genauigkeit || "ungefaehr" };
+  }
+  function lageHinweisText() {
+    const f = lageFreigabe();
+    const quelle = "Karte: swisstopo";
+    if (f.stufe === "exakt") return "Genaue Lage vom Anbieter freigegeben · " + quelle;
+    if (f.stufe === "gemeinde") return "Lage auf Gemeindeebene · genaue Adresse nach Kontakt · " + quelle;
+    const m = f.genauigkeitM;
+    return "Ungefähre Lage" + (m ? " im Umkreis von " + (m >= 1000 ? (m / 1000) + " km" : m + " m") : "") +
+           " · genaue Adresse nach Kontakt · " + quelle;
+  }
+
+  /* Echte Karte über das Schema legen. Gelingt sie nicht, bleibt das Schema
+     stehen — die Seite verliert nie ihren Lageteil. */
+  let lageInstanz = null;
+  async function echteLageKarte() {
+    const el = $("lageMap"); if (!el || !window.UKARTE) return;
+    const f = lageFreigabe();
+    if (f.lat == null || f.lng == null) return;
+    try {
+      lageInstanz = await UKARTE.detail("lageMap", { lat:f.lat, lng:f.lng, genauigkeitM:f.genauigkeitM });
+      el.classList.add("da");
+      const c = $("lageKarte"); if (c) c.style.display = "none";
+    } catch (e) { el.classList.remove("da"); console.error("Lagekarte konnte nicht laden:", e); }
+  }
+
   /* ---------- Lagekarte: Objekt, Ringe, gefilterte Umgebung ---------- */
   const POI_FARBE = { oev:"#5E8FB5", schulen:"#7FA97A", einkauf:"#C08A6B", gesundheit:"#B0768E", freizeit:"#8A8FB5", verkehr:"#6E8A94" };
   let poiAn = null;
@@ -552,7 +583,7 @@ window.UOBJ = (function () {
       const gross = vb.textContent === "Vergrössern";
       cv.parentElement.style.height = gross ? "min(78vh,760px)" : "";
       vb.textContent = gross ? "Verkleinern" : "Vergrössern";
-      requestAnimationFrame(mal);
+      requestAnimationFrame(() => { mal(); if (lageInstanz) lageInstanz.resize(); });
     });
     window.addEventListener("resize", () => { if ($("lageKarte")) mal(); });
   }
@@ -587,7 +618,14 @@ window.UOBJ = (function () {
 
   function schliessen() { const d = $("detail"); if (d) { d.classList.remove("an"); d.innerHTML = ""; } document.body.style.overflow = ""; }
   function init(kontext) { K = kontext; }
-  function modusWechsel() { const c = $("lageKarte"); if (c && c._mal) c._mal(); }
+  function modusWechsel() {
+    const c = $("lageKarte"); if (c && c._mal) c._mal();
+    if (lageInstanz) { try { lageInstanz.remove(); } catch (e) {} lageInstanz = null;
+      const el = $("lageMap"); if (el) { el.innerHTML = ""; el.classList.remove("da"); }
+      if (c) c.style.display = "";
+      echteLageKarte();
+    }
+  }
 
   return { init, oeffne, schliessen, modusWechsel, lichtZu };
 })();

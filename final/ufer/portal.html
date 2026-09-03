@@ -7,9 +7,13 @@
 <meta name="description" content="Fourwalls Immobilienportal: Kaufen und Mieten in der ganzen Schweiz — mit vollständigen Objektseiten.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Die Karte wird erst auf Wunsch geladen; die Verbindungen stehen dann schon. -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://vectortiles.geo.admin.ch" crossorigin>
+<link rel="dns-prefetch" href="https://vectortiles.geo.admin.ch">
 <link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ufer.css?v=p2b">
-<link rel="stylesheet" href="objekt.css?v=p2b">
+<link rel="stylesheet" href="ufer.css?v=p4a">
+<link rel="stylesheet" href="objekt.css?v=p4a">
 <style>
 /* ================= UFER · Portal (Arbeitsmodus: leise, schnell, vollständig) ================= */
 .ansicht{display:none}.ansicht.an{display:block}
@@ -182,6 +186,56 @@
 .abo .status{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--licht);border:1px solid var(--linie2);padding:.3em .6em;border-radius:var(--r)}
 
 
+
+/* ---- P3: MapLibre-Karte ---- */
+#kmap{position:absolute;inset:0}
+#kmap canvas{outline:none}
+.karto{position:relative;background:var(--gr3);overflow:hidden}
+.hierSuchen{position:absolute;left:50%;top:14px;translate:-50% 0;z-index:5;background:var(--glas);backdrop-filter:blur(8px);box-shadow:0 8px 26px rgba(11,40,60,.18)}
+.kartenhinweis{position:absolute;left:14px;top:14px;z-index:5;background:var(--glas);backdrop-filter:blur(8px);border:1px solid var(--linie);
+  border-radius:var(--r);padding:.5em .8em;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--leise)}
+.kartenleer,.kartenfehler{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:6;background:var(--glas);backdrop-filter:blur(10px);
+  border:1px solid var(--linie);border-radius:var(--r);padding:20px 24px;text-align:center;max-width:min(380px,88%);box-shadow:0 20px 50px rgba(11,40,60,.2)}
+.kartenleer p,.kartenfehler p{font-size:.88rem;color:var(--leise);margin-bottom:14px}
+.kartenleer .wege{display:flex;flex-direction:column;gap:6px}
+.autosuche{cursor:pointer}
+.autosuche input{width:auto;accent-color:var(--licht)}
+.maplibregl-ctrl-group{border-radius:var(--r)!important;box-shadow:0 4px 16px rgba(11,40,60,.16)!important;border:1px solid var(--linie)!important;background:var(--glas)!important}
+.maplibregl-ctrl-group button{width:34px!important;height:34px!important}
+.maplibregl-ctrl-group button+button{border-top:1px solid var(--linie)!important}
+.maplibregl-ctrl-attrib{font-size:10px!important;background:rgba(255,255,255,.72)!important}
+[data-mode="dunkel"] .maplibregl-ctrl-attrib,
+[data-mode="dunkel"] .maplibregl-ctrl-attrib-inner{background:rgba(11,18,27,.72)!important;color:var(--ink)!important}
+[data-mode="dunkel"] .maplibregl-ctrl-attrib a{color:var(--ink)!important;text-decoration:underline}
+[data-mode="dunkel"] .maplibregl-ctrl-attrib-button{filter:invert(1) hue-rotate(180deg)}
+[data-mode="dunkel"] .maplibregl-ctrl-group button .maplibregl-ctrl-icon{filter:invert(1) hue-rotate(180deg)}
+.kartenliste .karte.aktiv{border-color:var(--licht);box-shadow:0 0 0 1px var(--licht)}
+/* Lagevorschau im Inserate-Assistenten */
+.wizkarte{position:relative;height:220px;margin:12px 0 10px;border:1px solid var(--linie);border-radius:var(--r);background:var(--tief);overflow:hidden;display:grid;place-items:center}
+.wizkarte .leerhin{font-size:.78rem;color:var(--leise);text-align:center;max-width:34ch;padding:0 18px}
+@media(max-width:600px){.wizkarte{height:180px}}
+/* Mobile Objektvorschau über der Karte */
+.mobilvorschau{display:none}
+@media(max-width:960px){
+  .kartenraum{grid-template-columns:1fr;grid-template-rows:1fr;height:calc(100svh - 118px)}
+  .kartenliste{display:none}
+  .karto{order:0}
+  .mobilvorschau{display:block;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px var(--pad) 14px;
+    background:linear-gradient(to top,var(--gr) 62%,transparent)}
+  .mobilvorschau[hidden]{display:none}
+  .mobilvorschau .karte{border:1px solid var(--linie);border-radius:var(--r);background:var(--gr2);flex-direction:row;min-height:96px;
+    box-shadow:0 12px 34px rgba(11,40,60,.22);overflow:hidden}
+  .mobilvorschau .karte .bild{aspect-ratio:auto;width:104px;flex:0 0 auto}
+  .mobilvorschau .karte .refl{display:none}
+  .mobilvorschau .karte .lauf{padding:9px 12px}
+  .mobilvorschau .karte .preis{font-size:1.05rem}
+  .mobilvorschau .karte .fakten{margin-top:4px;padding-top:5px}
+  .mobilvorschau .zu{position:absolute;right:calc(var(--pad) + 6px);top:2px;z-index:3;width:28px;height:28px;border-radius:999px;
+    background:var(--glas);border:1px solid var(--linie);display:grid;place-items:center;font-size:.8rem}
+  .hierSuchen{top:auto;bottom:130px}
+  .kartenhinweis{font-size:.6rem}
+}
+
 /* ---- P2: erweiterte Filter, Trefferzahl, Suchabo ---- */
 .fzwei{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .filterfeld{max-height:min(74vh,660px);overflow-y:auto}
@@ -313,18 +367,27 @@
 <section class="ansicht" id="a-karte">
   <div class="wasserlinie">
     <div class="tab2" role="group"><button id="tKaufK" aria-pressed="true" data-i="kaufen">Kaufen</button><button id="tMieteK" aria-pressed="false" data-i="mieten">Mieten</button></div>
-    <span class="n" id="karteN" style="color:var(--leise);font-size:.8rem"></span>
+    <span class="n zahl" id="karteN"></span>
+    <label class="nurfw autosuche" id="autoSuchLabel"><input type="checkbox" id="autoSuche"> <span data-i="autoSuchen">Beim Verschieben automatisch suchen</span></label>
     <button class="knopf" id="zurListe" style="margin-left:auto" data-i="liste">Liste</button>
   </div>
   <div class="kartenraum">
     <div class="kartenliste" id="karteListe"></div>
     <div class="karto">
-      <canvas id="kmap" role="img" aria-label="Karte der Inserate — die Liste ist die zugängliche Alternative"></canvas>
-      <button class="knopf hierSuchen" id="hierSuchen" hidden>In diesem Ausschnitt suchen</button>
-      <div class="kartensteuer"><button id="zoomPlus" aria-label="Vergrössern">+</button><button id="zoomMinus" aria-label="Verkleinern">−</button><button id="zoomReset" aria-label="Ganze Schweiz">◻</button></div>
-      <div class="kartehinweis">Fiktive Demo-Daten · Prototyp-Karte (Produktion: MapLibre)</div>
+      <div id="kmap" role="application" aria-label="Karte der Suchergebnisse — die Liste daneben enthält dieselben Objekte"></div>
+      <button class="knopf hierSuchen" id="hierSuchen" hidden data-i="hierSuchen">In diesem Kartenausschnitt suchen</button>
+      <div class="kartenhinweis" id="kartenHinweis" hidden></div>
+      <div class="kartenleer" id="kartenLeer" hidden>
+        <p data-i="karteLeerText">In diesem Ausschnitt liegt kein Inserat.</p>
+        <div class="wege" id="karteLeerWege"></div>
+      </div>
+      <div class="kartenfehler" id="kartenFehler" hidden>
+        <p data-i="karteFehler">Die Karte lässt sich gerade nicht laden. Die Liste zeigt alle Treffer.</p>
+        <button class="knopf" id="zurListe2" data-i="liste">Liste</button>
+      </div>
     </div>
   </div>
+  <div class="mobilvorschau" id="mobilVorschau" hidden></div>
 </section>
 
 <!-- ============ INSERIEREN ============ -->
@@ -397,13 +460,16 @@
 
 <footer class="fuss"></footer>
 
-<script src="../listings.js?v=p2b"></script>
-<script src="../properties.js?v=p2b"></script>
-<script src="../core.js?v=p2b"></script>
-<script src="detail-data.js?v=p2b"></script>
-<script src="dossier.js?v=p2b"></script>
-<script src="ufer.js?v=p2b"></script>
-<script src="objekt.js?v=p2b"></script>
+<script src="../listings.js?v=p4a"></script>
+<script src="../properties.js?v=p4a"></script>
+<script src="../core.js?v=p4a"></script>
+<script src="geo.js?v=p4a"></script>
+<script src="suche.js?v=p4a"></script>
+<script src="detail-data.js?v=p4a"></script>
+<script src="dossier.js?v=p4a"></script>
+<script src="ufer.js?v=p4a"></script>
+<script src="objekt.js?v=p4a"></script>
+<script src="karte.js?v=p4a"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -416,7 +482,32 @@
   UFER.startModus();
   let F = Object.assign({ trans:"buy", ort:"", umkreis:0, typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null, flMin:null, flMax:null,
     grMin:null, bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"", sort:"neu" }, FWP.ausURL());
-  let ergebnis = [], seite = 1; const PRO_SEITE = 24;
+  let ortEntitaet = null;                 /* geografische Entität statt Zeichenkette */
+  let letzteGeo = null;                   /* Interpretation der letzten Antwort */
+  const SUCHE = FWSUCHE.SearchProvider, GEO = FWGEO.GeoProvider;
+  /* Altlinks und getippte Eingaben in eine Entität übersetzen */
+  /* Ein geteilter Link muss denselben Ort treffen wie die Sitzung, aus der er
+     stammt. Darum werden zuerst die Kennungen gelesen, die wir selbst in die
+     URL schreiben, und erst danach ältere Formen und freier Text. */
+  function ortAusText(t){
+    if (!t) return null;
+    if (/^(ort|rg|kt|plz)-/.test(t)) return GEO.getPlace(t);
+    if (t.startsWith("rg:")) return GEO.getPlace("rg-" + t.slice(3));
+    if (t.startsWith("kt:")) return GEO.getPlace("kt-" + t.slice(3));
+    if (/^\d{4}$/.test(t))  { const p = GEO.search(t, {limit:1})[0]; return p ? GEO.getPlace(p.id) : null; }
+    return GEO.forward(t);
+  }
+  /* Der Suchvertrag kennt keine Oberflächenbegriffe — hier wird übersetzt */
+  function alsAnfrage(extra){
+    return Object.assign({
+      trans:F.trans, ort:ortEntitaet, umkreisKm:F.umkreis || 0,
+      typ:F.typ, pMin:F.pMin, pMax:F.pMax, ziMin:F.ziMin, ziMax:F.ziMax,
+      flMin:F.flMin, flMax:F.flMax, grMin:F.grMin, bjVon:F.bjVon, bjBis:F.bjBis,
+      etage:F.etage, verf:F.verf, feat:F.feat, quelle:F.quelle, nurFrei:F.nurFrei,
+      sort:F.sort, seite, proSeite:PRO_SEITE
+    }, extra || {});
+  }
+  let ergebnis = [], gesamt = 0, seite = 1; const PRO_SEITE = 24;
   const zahl = s => { const n = parseInt(String(s).replace(/[^\d]/g,""),10); return isNaN(n) ? null : n; };
   const fmtIn = n => n == null ? "" : String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"’");
 
@@ -448,7 +539,7 @@
     const n = ANS[kopf] ? kopf : "suche";
     letzte = n;
     Object.entries(ANS).forEach(([k,id]) => $(id).classList.toggle("an", k===n));
-    if (n === "karte") setTimeout(zeichneKarte, 30);
+    if (n === "karte") setTimeout(karteOeffnen, 30);
     if (n === "konto") malKonto();
     if (n === "neu"){ $("weiche").style.display = wizAktiv ? "none" : ""; $("wizBox").classList.toggle("an", wizAktiv); if (wizAktiv) malWizard(); }
     window.scrollTo(0,0);
@@ -493,10 +584,10 @@
     const t2 = F.typ;
     $("fEtageBox").hidden = !!(t2 && !FWP.hatEtage(t2));
     $("fGrundBox").hidden = !!(t2 && ["wohnung","parkplatz"].includes(t2));
-    $("umSel").hidden = !F.ort || F.ort.startsWith("rg:");
+    $("umSel").hidden = !ortEntitaet || !["ort","plz","kanton"].includes(ortEntitaet.typ);
   }
   function syncSteuer(){
-    $("ortInput").value = FWP.ortLabel(F.ort);
+    $("ortInput").value = ortEntitaet ? ortEntitaet.label : "";
     $("typSel").value = F.typ || ""; $("ziSel").value = F.ziMin != null ? String(F.ziMin) : "";
     $("pMinIn").value = fmtIn(F.pMin); $("pMaxIn").value = fmtIn(F.pMax);
     ["tKauf","tKaufK"].forEach(i => $(i).setAttribute("aria-pressed", F.trans==="buy"));
@@ -525,14 +616,24 @@
   $("ortInput").addEventListener("input", () => {
     clearTimeout(ortTimer);
     ortTimer = setTimeout(() => {
-      const v = FWP.vorschlaege($("ortInput").value);
-      $("ortVor").innerHTML = v.map(s => `<button data-wert="${esc(s.wert)}"><span><span class="art">${esc(s.art)}</span>${esc(s.label)}</span><small>${esc(s.sub)}</small></button>`).join("");
+      const roh = $("ortInput").value;
+      const v = GEO.search(roh, { limit:8 });
+      const ART = { ort:t("artOrt"), plz:t("artPlz"), kanton:t("artKanton"), region:t("artRegion") };
+      $("ortVor").innerHTML = v.map(s2 => `<button data-pid="${esc(s2.id)}"><span><span class="art">${esc(ART[s2.typ] || s2.typ)}</span>${esc(s2.label)}</span><small>${esc(s2.sub || "")}</small></button>`).join("");
       $("ortVor").classList.toggle("an", v.length > 0);
-      $("ortVor").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { F.ort = b.dataset.wert; $("ortInput").value = FWP.ortLabel(F.ort); $("ortVor").classList.remove("an"); filterSichtbarkeit(); such(); }));
-      if ($("ortInput").value.trim() === "" && F.ort){ F.ort = ""; F.umkreis = 0; filterSichtbarkeit(); such(); }
+      $("ortVor").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+        ortEntitaet = GEO.getPlace(b.dataset.pid);
+        F.ort = ortEntitaet ? ortEntitaet.id : "";
+        $("ortInput").value = ortEntitaet ? ortEntitaet.label : "";
+        $("ortVor").classList.remove("an"); filterSichtbarkeit(); such();
+      }));
+      if (roh.trim() === "" && F.ort){ F.ort = ""; ortEntitaet = null; F.umkreis = 0; filterSichtbarkeit(); such(); }
     }, 140);
   });
-  $("ortInput").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); const b = $("ortVor").querySelector("button"); if (b) b.click(); } if (e.key === "ArrowDown"){ const b = $("ortVor").querySelector("button"); if (b) b.focus(); } });
+  $("ortInput").addEventListener("keydown", e => {
+    if (e.key === "Enter"){ e.preventDefault(); const b = $("ortVor").querySelector("button"); if (b) b.click(); }
+    if (e.key === "ArrowDown"){ const b = $("ortVor").querySelector("button"); if (b) b.focus(); }
+  });
   document.addEventListener("click", e => { if (!e.target.closest(".ortfeld")) $("ortVor").classList.remove("an"); if (!e.target.closest(".mehrfilter")) $("filterFeld").classList.remove("an"); });
   $("typSel").addEventListener("change", () => { F.typ = $("typSel").value; filterSichtbarkeit(); such(); });
   $("ziSel").addEventListener("change", () => { F.ziMin = $("ziSel").value ? +$("ziSel").value : null; such(); });
@@ -559,8 +660,13 @@
     f.feat = [...$("fFeat").querySelectorAll('[aria-pressed="true"]')].map(b => b.dataset.f);
     return f;
   }
-  function vorschauTreffer(){ const n = FWP.filtern(leseFilterFeld()).length; $("filterTreffer").textContent = n;
-    const b = $("filterAnwenden"); if (b) b.disabled = false; }
+  let vorschauLauf = 0;
+  async function vorschauTreffer(){
+    const lauf = ++vorschauLauf, f = leseFilterFeld(), merk = F; F = f;
+    const q = alsAnfrage({ seite:1, proSeite:1 }); F = merk;
+    const a = await SUCHE.search(q);
+    if (lauf === vorschauLauf) $("filterTreffer").textContent = a.total;
+  }
   ["fPMin","fPMax","fFl","fFlMax","fGr","fBjV","fBjB"].forEach(i => $(i).addEventListener("input", vorschauTreffer));
   ["fZiMin","fZiMax","fAlle"].forEach(i => $(i).addEventListener("change", vorschauTreffer));
   $("umSel").addEventListener("change", () => { F.umkreis = +$("umSel").value; such(); });
@@ -570,7 +676,7 @@
   $("filterAnwenden").addEventListener("click", () => { F = leseFilterFeld(); $("filterFeld").classList.remove("an"); syncSteuer(); such(); });
   $("filterReset").addEventListener("click", () => { F = Object.assign({}, F, { typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null,
     flMin:null, flMax:null, grMin:null, bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"" }); syncSteuer(); such(); });
-  $("mehrKnopf").addEventListener("click", () => { seite++; malListe(true); });
+  $("mehrKnopf").addEventListener("click", () => { seite++; such(true); });
   $("wlKarte").addEventListener("click", () => location.hash = "karte");
   $("zurListe").addEventListener("click", () => location.hash = "suche");
   /* ---------- Suchabo: drei Angaben, kein Konto ---------- */
@@ -612,15 +718,23 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("aboHg").hidden) aboSchliessen(); });
 
   /* ---------- Suche ---------- */
-  function such(){
-    ergebnis = FWP.filtern(F); seite = 1; FWP.inURL(F);
+  let laeuft = 0;
+  async function such(behaltenSeite){
+    if (!behaltenSeite) seite = 1;
+    const lauf = ++laeuft;
+    FWP.inURL(F);
+    const antwort = await SUCHE.search(alsAnfrage());
+    if (lauf !== laeuft) return;                  /* eine neuere Anfrage hat übernommen */
+    ergebnis = antwort.treffer; gesamt = antwort.total; letzteGeo = antwort.geo;
     malListe(); malChips();
-    $("resultTitel").textContent = (F.trans === "rent" ? t("mieten") : t("kaufen")) + (F.ort ? " · " + FWP.ortLabel(F.ort) : "");
-    $("resultN").textContent = FWP.trefferLabel(ergebnis.length);
-    $("karteN").textContent = FWP.trefferLabel(ergebnis.length);
+    const wo = antwort.geo.label ? " · " + antwort.geo.label + (F.umkreis ? " + " + F.umkreis + " " + t("km") : "") : "";
+    $("resultTitel").textContent = (F.trans === "rent" ? t("mieten") : t("kaufen")) + wo;
+    $("resultN").textContent = FWP.trefferLabel(gesamt);
+    $("karteN").textContent = FWP.trefferLabel(gesamt);
     const n = FWP.aktiveFilterZahl(F); $("filterZahl").textContent = n; $("filterZahlM").textContent = n;
-    if ($("a-karte").classList.contains("an")) zeichneKarte();
+    if ($("a-karte").classList.contains("an")) karteAktualisieren();
   }
+
   function ziel(l){ return l.listingTier === "exclusive" && l.fw ? "#exclusive/" + l.slug : "#objekt/" + l.slug; }
   function kartenHTML(l){
     const fav = FWP.favs.hat(l.id);
@@ -641,51 +755,46 @@
         <div class="fakten"><span>${f.join("</span><span>")}</span><span class="q">${esc(FWP.quelleLabel(l))}${l.verificationStatus==="verified"&&l.listingSource!=="fourwalls"?" · "+t("geprueft"):""}</span></div>
       </div></article>`;
   }
-  function malListe(anhaengen){
-    const teil = ergebnis.slice(anhaengen ? (seite-1)*PRO_SEITE : 0, seite*PRO_SEITE);
-    if (anhaengen) $("gitter").insertAdjacentHTML("beforeend", teil.map(kartenHTML).join("")); else $("gitter").innerHTML = teil.map(kartenHTML).join("");
-    const gezeigt = Math.min(ergebnis.length, seite*PRO_SEITE);
-    $("mehrKnopf").style.display = ergebnis.length > gezeigt ? "flex" : "none";
-    $("mehrKnopf").textContent = t("weitere") + " (" + (ergebnis.length - gezeigt) + ")";
-    $("leer").classList.toggle("an", ergebnis.length === 0);
-    if (!ergebnis.length) malLeer();
+  function malListe(){
+    $("gitter").innerHTML = ergebnis.map(kartenHTML).join("");
+    $("mehrKnopf").style.display = gesamt > ergebnis.length ? "flex" : "none";
+    $("mehrKnopf").textContent = t("weitere") + " (" + (gesamt - ergebnis.length) + ")";
+    $("leer").classList.toggle("an", gesamt === 0);
+    if (!gesamt) malLeer();
     verdrahte($("gitter"));
   }
-  function malLeer(){
+
+  async function malLeer(){
     $("leerText").textContent = t("keineTreffer");
-    /* Jeder Vorschlag wird gerechnet, bevor er angeboten wird — keine leeren Versprechen. */
+    const merk = F;
+    const probe = async aend => { F = Object.assign({}, merk, aend); const q = alsAnfrage({ seite:1, proSeite:1 });
+      const a = await SUCHE.search(q); F = merk; return a.total; };
     const wege = [];
-    const probe = aend => FWP.filtern(Object.assign({}, F, aend)).length;
-    if (F.ort && !F.ort.startsWith("rg:")) {
-      for (const km of [10, 20, 50]) {
-        const n = probe({ umkreis:km });
-        if (n > 0) { wege.push([t("radiusMehr") + " · +" + km + " " + t("km") + " · " + FWP.trefferLabel(n), { umkreis:km }]); break; }
-      }
+    if (ortEntitaet && ["ort","plz"].includes(ortEntitaet.typ)) {
+      for (const km of [10, 20, 50]) { const n = await probe({ umkreis:km });
+        if (n > 0) { wege.push([t("radiusMehr") + " · +" + km + " " + t("km") + " · " + FWP.trefferLabel(n), { umkreis:km }]); break; } }
     }
-    if (F.pMax != null) {
-      const hoch = Math.round(F.pMax * 1.25 / 10000) * 10000;
-      const n = probe({ pMax:hoch });
-      if (n > 0) wege.push([t("budgetMehr") + " · ≤ " + FWP.chf(hoch) + " · " + FWP.trefferLabel(n), { pMax:hoch }]);
-    }
-    if (F.ziMin != null) { const n = probe({ ziMin:Math.max(1, F.ziMin - 1) }); if (n > 0) wege.push([(F.ziMin - 1) + "+ Zi. · " + FWP.trefferLabel(n), { ziMin:F.ziMin - 1 }]); }
-    if (F.flMin != null) { const n = probe({ flMin:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("wohnflaeche") + " · " + FWP.trefferLabel(n), { flMin:null }]); }
-    if (F.bjVon != null || F.bjBis != null) { const n = probe({ bjVon:null, bjBis:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("baujahr") + " · " + FWP.trefferLabel(n), { bjVon:null, bjBis:null }]); }
-    if (F.pMin != null) { const n = probe({ pMin:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("preisVon") + " · " + FWP.trefferLabel(n), { pMin:null }]); }
-    if (F.etage || F.verf) { const n = probe({ etage:"", verf:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + (F.etage ? t("etage") : t("verfuegbar")) + " · " + FWP.trefferLabel(n), { etage:"", verf:"" }]); }
-    if (F.typ) { const n = probe({ typ:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + FWL.typen[F.typ] + " · " + FWP.trefferLabel(n), { typ:"" }]); }
-    if (F.feat.length) { const n = probe({ feat:[] }); if (n > 0) wege.push([t("filterWeg") + ": " + t("ausstattung") + " · " + FWP.trefferLabel(n), { feat:[] }]); }
-    if (F.ort && !F.ort.startsWith("kt:") && !F.ort.startsWith("rg:")) {
-      const l0 = FWP.alle().find(x => x.city.toLowerCase() === F.ort.toLowerCase());
-      if (l0) { const n = probe({ ort:"kt:" + l0.canton, umkreis:0 }); if (n > 0) wege.push([FWP.ortLabel("kt:" + l0.canton) + " · " + FWP.trefferLabel(n), { ort:"kt:" + l0.canton, umkreis:0 }]); }
-    }
-    const ganz = FWP.filtern({ trans:F.trans }).length;
+    if (F.pMax != null) { const hoch = Math.round(F.pMax * 1.25 / 10000) * 10000; const n = await probe({ pMax:hoch });
+      if (n > 0) wege.push([t("budgetMehr") + " · ≤ " + FWP.chf(hoch) + " · " + FWP.trefferLabel(n), { pMax:hoch }]); }
+    if (F.ziMin != null) { const n = await probe({ ziMin:Math.max(1, F.ziMin - 1) });
+      if (n > 0) wege.push([(F.ziMin - 1) + "+ Zi. · " + FWP.trefferLabel(n), { ziMin:F.ziMin - 1 }]); }
+    if (F.flMin != null) { const n = await probe({ flMin:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("wohnflaeche") + " · " + FWP.trefferLabel(n), { flMin:null }]); }
+    if (F.bjVon != null || F.bjBis != null) { const n = await probe({ bjVon:null, bjBis:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("baujahr") + " · " + FWP.trefferLabel(n), { bjVon:null, bjBis:null }]); }
+    if (F.typ) { const n = await probe({ typ:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + FWL.typen[F.typ] + " · " + FWP.trefferLabel(n), { typ:"" }]); }
+    if (F.feat.length) { const n = await probe({ feat:[] }); if (n > 0) wege.push([t("filterWeg") + ": " + t("ausstattung") + " · " + FWP.trefferLabel(n), { feat:[] }]); }
+    if (F.etage || F.verf) { const n = await probe({ etage:"", verf:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + (F.etage ? t("etage") : t("verfuegbar")) + " · " + FWP.trefferLabel(n), { etage:"", verf:"" }]); }
+    if (ortEntitaet && ortEntitaet.typ === "ort") { const kt = GEO.getPlace("kt-" + ortEntitaet.kt);
+      if (kt) { const merkE = ortEntitaet; ortEntitaet = kt; const n = await probe({ umkreis:0 }); ortEntitaet = merkE;
+        if (n > 0) wege.push([kt.label + " · " + FWP.trefferLabel(n), { __ort:kt, umkreis:0 }]); } }
+    const ganz = (await SUCHE.search({ trans:F.trans, seite:1, proSeite:1 })).total;
     wege.push([t("zuruecksetzen") + " · " + FWP.trefferLabel(ganz), "reset"]);
     $("leerWege").innerHTML = wege.slice(0, 4).map((w, i) => `<button class="knopf" data-weg="${i}">${esc(w[0])}</button>`).join("");
     $("leerWege").querySelectorAll("[data-weg]").forEach(b => b.addEventListener("click", () => {
       const w = wege[+b.dataset.weg];
-      if (w[1] === "reset") F = Object.assign({}, { trans:F.trans, ort:"", umkreis:0, typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null,
-        flMin:null, flMax:null, grMin:null, bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"", sort:F.sort });
-      else F = Object.assign({}, F, w[1]);
+      if (w[1] === "reset") { ortEntitaet = null;
+        F = { trans:F.trans, ort:"", umkreis:0, typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null, flMin:null, flMax:null,
+              grMin:null, bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"", sort:F.sort }; }
+      else { const a = Object.assign({}, w[1]); if (a.__ort) { ortEntitaet = a.__ort; F.ort = a.__ort.id; delete a.__ort; } F = Object.assign({}, F, a); }
       syncSteuer(); such();
     }));
   }
@@ -695,7 +804,7 @@
   }
   function malChips(){
     const c = [];
-    if (F.ort) c.push(["ort", FWP.ortLabel(F.ort) + (F.umkreis ? " + " + F.umkreis + " " + t("km") : "")]);
+    if (ortEntitaet) c.push(["ort", ortEntitaet.label + (F.umkreis ? " + " + F.umkreis + " " + t("km") : "")]);
     if (F.typ) c.push(["typ", FWL.typen[F.typ]]);
     if (F.pMin != null) c.push(["pMin", "≥ " + FWP.chf(F.pMin)]);
     if (F.pMax != null) c.push(["pMax", "≤ " + FWP.chf(F.pMax)]);
@@ -715,7 +824,7 @@
     $("chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
       const k = b.dataset.chip;
       if (k.startsWith("feat:")) F.feat = F.feat.filter(x => x !== k.slice(5));
-      else if (k === "ort") { F.ort = ""; F.umkreis = 0; }
+      else if (k === "ort") { F.ort = ""; ortEntitaet = null; F.umkreis = 0; }
       else if (["typ","quelle","etage","verf"].includes(k)) F[k] = "";
       else if (k === "nurFrei") F.nurFrei = true;
       else F[k] = null;
@@ -723,69 +832,95 @@
     }));
   }
 
-  /* ---------- Karte (Prototyp-Renderer; Produktion: MapLibre + Vektorkacheln) ---------- */
-  const kmap = $("kmap"); let kZoom = 1, kCx = 0, kCy = 0, kAktiv = null, kBewegt = false;
-  function stil(n){ return getComputedStyle(document.body).getPropertyValue(n).trim(); }
-  function zeichneKarteRoh(){
-    const box = kmap.parentElement.getBoundingClientRect(); const dpr = Math.min(devicePixelRatio||1, 2);
-    kmap.width = box.width*dpr; kmap.height = box.height*dpr; const ctx = kmap.getContext("2d"); ctx.scale(dpr,dpr);
-    const w = box.width, h = box.height; if (!kCx){ kCx = w/2; kCy = h/2; }
-    const cTief = stil("--tief"), cLinie = stil("--linie"), cInk = stil("--ink"), cLicht = stil("--licht"), cWasser = stil("--wasser");
-    ctx.fillStyle = cTief; ctx.fillRect(0,0,w,h);
-    // stilles Wasser: horizontale Linien, unten dichter
-    ctx.strokeStyle = cLinie; ctx.lineWidth = 1;
-    for (let gy = 0; gy < h; gy += 48){ ctx.globalAlpha = .5 + gy/h*.5; ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
-    ctx.globalAlpha = 1;
-    // Seen als Andeutung
-    const seen = [[47.25,8.7,26,10],[46.45,6.6,44,14],[47.0,8.4,16,9],[46.0,8.95,14,6],[47.15,9.2,10,4],[46.68,7.72,10,4]];
-    ctx.fillStyle = cWasser; ctx.globalAlpha = .35;
-    for (const [la,ln,rx,ry] of seen){ const p = FWP.projekt(la,ln,w,h); const x = (p.x-kCx)*kZoom+w/2, y = (p.y-kCy)*kZoom+h/2; ctx.beginPath(); ctx.ellipse(x,y,rx*kZoom*.9,ry*kZoom*.9,-.3,0,7); ctx.fill(); }
-    ctx.globalAlpha = 1;
-    const staedte = [["Zürich",47.3769,8.5417],["Bern",46.948,7.4474],["Genf",46.2044,6.1432],["Basel",47.5596,7.5886],["Lugano",46.0037,8.9511],["Chur",46.8508,9.532],["Luzern",47.0502,8.3093],["St. Gallen",47.4245,9.3767],["Sitten",46.2331,7.3606],["Lausanne",46.5197,6.6323]];
-    ctx.font = "10px 'Manrope',sans-serif"; ctx.fillStyle = "rgba(138,152,167,.85)";
-    for (const [nm,la,ln] of staedte){ const p = FWP.projekt(la,ln,w,h); const x = (p.x-kCx)*kZoom+w/2, y = (p.y-kCy)*kZoom+h/2; if (x<-20||x>w+20||y<-20||y>h+20) continue; ctx.fillRect(x-1.5,y-1.5,3,3); ctx.fillText(nm.toUpperCase(), x+7, y+3); }
-    const grp = FWP.cluster(ergebnis, w, h, kZoom < 2.2 ? 42 : 30, kZoom, kCx, kCy); kmap._grp = grp;
-    for (const g of grp){
-      if (g.punkte.length > 1){
-        const r = Math.min(26, 12 + g.punkte.length*.6);
-        ctx.beginPath(); ctx.arc(g.x,g.y,r,0,7); ctx.fillStyle = "rgba(217,160,91,.14)"; ctx.fill(); ctx.strokeStyle = cLicht; ctx.stroke();
-        ctx.fillStyle = cInk; ctx.textAlign = "center"; ctx.font = "500 11px 'Manrope',sans-serif"; ctx.fillText(String(g.punkte.length), g.x, g.y+4); ctx.textAlign = "left";
-      } else {
-        const l = g.punkte[0].l, label = FWP.preisKurz(l); ctx.font = "500 10px 'Manrope',sans-serif"; const bw = ctx.measureText(label).width + 14; const aktiv = kAktiv === l.slug;
-        ctx.fillStyle = aktiv ? cLicht : cTief; ctx.strokeStyle = aktiv ? cLicht : "rgba(217,160,91,.8)"; ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(g.x-bw/2, g.y-20, bw, 18, 9); else ctx.rect(g.x-bw/2, g.y-20, bw, 18); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = aktiv ? cTief : cInk; ctx.textAlign = "center"; ctx.fillText(label, g.x, g.y-7); ctx.textAlign = "left";
-        // Lichtpunkt und seine Spiegelung
-        ctx.beginPath(); ctx.arc(g.x, g.y-1, 1.8, 0, 7); ctx.fillStyle = cLicht; ctx.fill();
-        ctx.beginPath(); ctx.arc(g.x, g.y+4, 1.2, 0, 7); ctx.fillStyle = "rgba(217,160,91,.35)"; ctx.fill();
-      }
+  /* ---------- Karte: MapLibre über denselben Suchvertrag ---------- */
+  let karteBereit = false, karteFehler = false, mobilAuswahl = null;
+  async function karteOeffnen(){
+    $("kartenFehler").hidden = true;
+    if (karteBereit || karteFehler) { UKARTE.groesseNeu(); await karteAktualisieren(); return; }
+    try {
+      await UKARTE.starte("kmap", {
+        bewegt: () => { if (autoSuchtGerade()) { karteSuchen(); } else { $("hierSuchen").hidden = false; } },
+        gewaehlt: slug => karteWaehlt(slug)
+      });
+      karteBereit = true;
+      await karteAktualisieren();
+    } catch (e) {
+      karteFehler = true; $("kartenFehler").hidden = false;
+      console.error("Karte konnte nicht starten:", e);
     }
-    $("hierSuchen").hidden = !kBewegt;
   }
-  function malKartenListe(){
-    const sicht = (kmap._grp||[]).flatMap(g => g.punkte.map(p => p.l)).slice(0, 40);
-    $("karteListe").innerHTML = sicht.map(kartenHTML).join(""); verdrahte($("karteListe"));
-    $("karteListe").querySelectorAll(".karte").forEach(k => { k.addEventListener("mouseenter", () => { kAktiv = k.dataset.slug; zeichneKarteRoh(); }); k.addEventListener("mouseleave", () => { kAktiv = null; zeichneKarteRoh(); }); });
+  const autoSuchtGerade = () => $("autoSuche") && $("autoSuche").checked;
+  /* Wer den Kartenknopf berührt, hat die Karte meist schon gewählt: das
+     Kartenwerk lädt dann bereits, während der Klick noch aussteht. */
+  ["pointerenter", "focus", "touchstart"].forEach(ev => {
+    const b = $("wlKarte"); if (b) b.addEventListener(ev, () => UKARTE.vorwaermen(), { once:true, passive:true });
+  });
+  async function karteAktualisieren(opt){
+    if (!karteBereit) return;
+    const a = await SUCHE.search(alsAnfrage({ modus:"map", seite:1 }));
+    UKARTE.zeige(a, opt);
+    malKartenListe(a.treffer);
+    $("karteN").textContent = FWP.trefferLabel(a.total);
+    $("kartenLeer").hidden = a.total > 0;
+    if (!a.total) karteLeerWege();
+    $("kartenHinweis").hidden = !(a.geo && a.geo.interpretation === "ausschnitt");
+    if (a.geo && a.geo.interpretation === "ausschnitt") $("kartenHinweis").textContent = t("imAusschnitt");
+    $("hierSuchen").hidden = true; UKARTE.setzeBewegt(false);
   }
-  function zeichneKarte(){ zeichneKarteRoh(); malKartenListe(); }
-  $("zoomPlus").addEventListener("click", () => { kZoom = Math.min(9, kZoom*1.6); kBewegt = true; zeichneKarte(); });
-  $("zoomMinus").addEventListener("click", () => { kZoom = Math.max(1, kZoom/1.6); kBewegt = kZoom > 1; zeichneKarte(); });
-  $("zoomReset").addEventListener("click", () => { kZoom = 1; kCx = 0; kCy = 0; kBewegt = false; zeichneKarte(); });
-  $("hierSuchen").addEventListener("click", () => {
-    const sicht = (kmap._grp||[]).flatMap(g => g.punkte.map(p => p.l)); ergebnis = sicht; seite = 1; malListe();
-    $("resultN").textContent = FWP.trefferLabel(ergebnis.length) + " · Kartenausschnitt"; $("karteN").textContent = FWP.trefferLabel(ergebnis.length) + " · Ausschnitt"; kBewegt = false; zeichneKarte();
-  });
-  let zieh = null;
-  kmap.addEventListener("pointerdown", e => { zieh = { x:e.clientX, y:e.clientY, cx:kCx, cy:kCy }; kmap.classList.add("zieht"); kmap.setPointerCapture(e.pointerId); });
-  kmap.addEventListener("pointermove", e => { if (!zieh) return; kCx = zieh.cx - (e.clientX-zieh.x)/kZoom; kCy = zieh.cy - (e.clientY-zieh.y)/kZoom; zeichneKarteRoh(); });
-  kmap.addEventListener("pointerup", e => {
-    const bewegt = zieh && (Math.abs(e.clientX-zieh.x)+Math.abs(e.clientY-zieh.y) > 6); zieh = null; kmap.classList.remove("zieht");
-    if (bewegt){ kBewegt = true; zeichneKarte(); return; }
-    const b = kmap.getBoundingClientRect(), mx = e.clientX-b.left, my = e.clientY-b.top;
-    for (const g of (kmap._grp||[])){ const dx = g.x-mx, dy = g.y-my; if (dx*dx+dy*dy < 26*26){ if (g.punkte.length > 1){ kCx = (g.x-b.width/2)/kZoom+kCx; kCy = (g.y-b.height/2)/kZoom+kCy; kZoom = Math.min(9, kZoom*2.1); kBewegt = true; zeichneKarte(); } else { location.hash = ziel(g.punkte[0].l); } return; } }
-  });
-  window.addEventListener("resize", () => { if ($("a-karte").classList.contains("an")) zeichneKarte(); });
-  UFER.hooks.modus.push(() => { if ($("a-karte").classList.contains("an")) zeichneKarte(); UOBJ.modusWechsel(); });
+  /* Suche im aktuellen Kartenausschnitt — Rechteck, nicht Radius */
+  async function karteSuchen(){
+    const b = UKARTE.bounds(); if (!b) return;
+    const a = await SUCHE.search(alsAnfrage({ modus:"map", bounds:b, seite:1 }));
+    UKARTE.zeige(a, { behalteAusschnitt:true });
+    malKartenListe(a.treffer);
+    $("karteN").textContent = FWP.trefferLabel(a.total);
+    $("kartenLeer").hidden = a.total > 0;
+    if (!a.total) karteLeerWege();
+    $("kartenHinweis").hidden = false; $("kartenHinweis").textContent = t("imAusschnitt");
+    $("hierSuchen").hidden = true; UKARTE.setzeBewegt(false);
+    /* Auch die Liste folgt dem Ausschnitt */
+    const l = await SUCHE.search(alsAnfrage({ bounds:b, seite:1 }));
+    ergebnis = l.treffer; gesamt = l.total; malListe();
+  }
+  function karteLeerWege(){
+    const w = $("karteLeerWege");
+    w.innerHTML = `<button class="knopf" id="klZoom">${t("radiusMehr")}</button><button class="knopf" id="klAlle">${t("zuruecksetzen")}</button>`;
+    $("klZoom").addEventListener("click", () => { const k = UKARTE.karte(); if (k) k.zoomOut(2); setTimeout(karteSuchen, 400); });
+    $("klAlle").addEventListener("click", async () => { const a = await SUCHE.search(alsAnfrage({ modus:"map", seite:1 })); UKARTE.zeige(a); malKartenListe(a.treffer); $("karteN").textContent = FWP.trefferLabel(a.total); $("kartenLeer").hidden = a.total > 0; $("kartenHinweis").hidden = true; });
+  }
+  function malKartenListe(liste){
+    const teil = (liste || []).slice(0, 60);
+    $("karteListe").innerHTML = teil.map(kartenHTML).join(""); verdrahte($("karteListe"));
+    $("karteListe").querySelectorAll(".karte").forEach(k => {
+      k.addEventListener("mouseenter", () => UKARTE.waehle(k.dataset.slug, true));
+      k.addEventListener("mouseleave", () => UKARTE.waehle(mobilAuswahl, true));
+      k.addEventListener("click", () => { mobilAuswahl = k.dataset.slug; UKARTE.waehle(k.dataset.slug); markiereListe(k.dataset.slug); });
+    });
+  }
+  function markiereListe(slug){
+    $("karteListe").querySelectorAll(".karte").forEach(k => k.classList.toggle("aktiv", k.dataset.slug === slug));
+    const akt = $("karteListe").querySelector(".karte.aktiv");
+    if (akt) akt.scrollIntoView({ block:"nearest", behavior:matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth" });
+  }
+  /* Auswahl auf der Karte: Desktop markiert die Liste, Mobil zeigt eine Vorschau */
+  async function karteWaehlt(slug){
+    mobilAuswahl = slug;
+    markiereListe(slug);
+    if (matchMedia("(max-width:960px)").matches) {
+      const l = await SUCHE.getListing(slug);
+      if (!l) return;
+      const z = FWSUCHE.zusammenfassung(l);
+      $("mobilVorschau").innerHTML = `<button class="zu" id="mvZu" aria-label="${t("schliessen")}">×</button>` + kartenHTML(z);
+      $("mobilVorschau").hidden = false;
+      verdrahte($("mobilVorschau"));
+      $("mvZu").addEventListener("click", () => { $("mobilVorschau").hidden = true; mobilAuswahl = null; UKARTE.waehle(null); });
+    }
+  }
+  $("hierSuchen").addEventListener("click", karteSuchen);
+  $("zurListe").addEventListener("click", () => location.hash = "suche");
+  $("zurListe2").addEventListener("click", () => location.hash = "suche");
+  $("autoSuche").addEventListener("change", () => { if (autoSuchtGerade() && UKARTE.istBewegt()) karteSuchen(); });
+  UFER.hooks.modus.push(m => { if (karteBereit) UKARTE.setzeModus(m === "dunkel"); UOBJ.modusWechsel(); });
 
   /* ---------- Objektseite: eigenes Modul (objekt.js) ---------- */
   function schliesseAlle(){ UOBJ.schliessen(); }
@@ -811,7 +946,18 @@
     let h = "";
     if (S.key==="absicht") h = `<div class="fld"><div class="grosswahl"><button data-w="sell" aria-pressed="${wizD.trans==="sell"}"><b>Verkaufen</b><span>Sie möchten Ihr Objekt verkaufen.</span></button><button data-w="rent" aria-pressed="${wizD.trans==="rent"}"><b>Vermieten</b><span>Sie suchen Mieterinnen oder Mieter.</span></button></div><p class="fehler" id="feTrans"></p></div><div class="fld"><label>Ich inseriere als</label><div class="grosswahl dreier">${["Privatperson","Makler / Agentur","Verwaltung","Bauträger"].map(r => `<button data-rolle="${r}" aria-pressed="${(wizD.rolle||"Privatperson")===r}"><b style="font-family:var(--t);font-size:.9rem">${r}</b></button>`).join("")}</div></div>`;
     else if (S.key==="typ") h = `<div class="fld"><div class="grosswahl dreier">${Object.entries(FWL.typen).map(([k,v]) => `<button data-w="${k}" aria-pressed="${wizD.typ===k}"><b style="font-family:var(--t);font-size:.95rem">${esc(v)}</b></button>`).join("")}</div><p class="fehler" id="feTyp"></p></div>`;
-    else if (S.key==="ort") h = `<div class="fld"><label for="wStrasse">Strasse und Nr. (optional — wird erst nach Kontakt sichtbar)</label><input type="text" id="wStrasse" value="${esc(wizD.strasse||"")}"></div><div class="fld" style="display:grid;grid-template-columns:110px 1fr;gap:10px"><div><label for="wPlz">PLZ</label><input type="text" id="wPlz" inputmode="numeric" maxlength="4" value="${esc(wizD.plz||"")}"><p class="fehler" id="fePlz"></p></div><div><label for="wStadt">Ort</label><input type="text" id="wStadt" value="${esc(wizD.stadt||"")}"><p class="fehler" id="feStadt"></p></div></div>`;
+    else if (S.key==="ort") h = `<div class="fld"><label for="wStrasse">Strasse und Nr. (optional — wird erst nach Kontakt sichtbar)</label><input type="text" id="wStrasse" value="${esc(wizD.strasse||"")}"></div>
+      <div class="fld" style="display:grid;grid-template-columns:110px 1fr;gap:10px"><div><label for="wPlz">PLZ</label><input type="text" id="wPlz" inputmode="numeric" maxlength="4" autocomplete="postal-code" value="${esc(wizD.plz||"")}"><p class="fehler" id="fePlz"></p></div><div><label for="wStadt">Ort</label><input type="text" id="wStadt" autocomplete="address-level2" list="wOrtListe" value="${esc(wizD.stadt||"")}"><datalist id="wOrtListe"></datalist><p class="fehler" id="feStadt"></p></div></div>
+      <p class="hin" id="wOrtStatus" style="margin:-4px 0 18px">Geben Sie die PLZ ein — Gemeinde, Kanton und Region ergänzen wir aus dem Ortsverzeichnis.</p>
+      <div class="fld"><label>Wie genau darf die Lage öffentlich erscheinen?</label>
+        <div class="grosswahl dreier" id="wGenau">
+          <button data-g="exakt" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="exakt"}"><b>Genaue Lage</b><span>Ein Punkt auf der Karte. Sinnvoll bei Neubauten und Gewerbe.</span></button>
+          <button data-g="ungefaehr" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="ungefaehr"}"><b>Ungefähr</b><span>Ein Feld von rund 450 m. Das Quartier ist erkennbar, das Haus nicht.</span></button>
+          <button data-g="gemeinde" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="gemeinde"}"><b>Nur Gemeinde</b><span>Ein Feld von rund 2 km. Grösstmögliche Zurückhaltung.</span></button>
+        </div>
+        <div class="wizkarte" id="wizKarte"></div>
+        <p class="hin" id="wGenauHin">Die Strasse bleibt in jedem Fall privat, bis Sie sie einer Anfrage gegenüber freigeben.</p>
+      </div>`;
     else if (S.key==="fakten"){ const zz = !["grundstueck","parkplatz","gewerbe","mfh"].includes(wizD.typ); h = (zz?`<div class="fld"><label for="wZi">Zimmer</label><select id="wZi">${["","1.5","2.5","3.5","4.5","5.5","6.5","7.5+"].map(z => `<option ${wizD.zimmer===z?"selected":""}>${z}</option>`).join("")}</select></div>`:"") + `<div class="fld"><label for="wFl">${wizD.typ==="grundstueck"?"Grundstücksfläche":"Wohnfläche"} (m²)</label><input type="number" id="wFl" min="0" value="${esc(wizD.flaeche||"")}"><p class="fehler" id="feFlaeche"></p></div><div class="fld"><label for="wJahr">Baujahr (optional)</label><input type="number" id="wJahr" min="1800" max="2030" value="${esc(wizD.jahr||"")}"></div>`; }
     else if (S.key==="preis") h = `<div class="fld"><label for="wPreis">${wizD.trans==="rent"?"Nettomiete pro Monat (CHF)":"Kaufpreis (CHF)"}</label><input type="number" id="wPreis" min="0" value="${esc(wizD.preis||"")}"><p class="fehler" id="fePreis"></p></div><div class="fld"><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--ink)"><input type="checkbox" id="wPaA" ${wizD.preisAufAnfrage?"checked":""} style="width:auto;min-height:0"> Preis auf Anfrage</label></div><div class="hinweisbox">Unsicher beim Preis? Fourwalls erstellt Ihnen kostenlos eine hedonische Bewertung innert 48 Stunden — als Richtwert, unverbindlich, auch wenn Sie selbst inserieren.</div>`;
     else if (S.key==="text") h = `<div class="fld"><label for="wTitel">Titel</label><input type="text" id="wTitel" maxlength="70" placeholder="z.B. Helle 3.5-Zi.-Wohnung mit Balkon" value="${esc(wizD.titel||"")}"><p class="fehler" id="feTitel"></p></div><div class="fld"><label for="wBeschr">Beschreibung</label><textarea id="wBeschr" placeholder="Lage, Zustand, Besonderheiten …">${esc(wizD.beschreibung||"")}</textarea><p class="fehler" id="feBeschreibung"></p></div>`;
@@ -821,7 +967,67 @@
     $("wizInhalt").innerHTML = h;
     $("wizInhalt").querySelectorAll(".grosswahl button").forEach(b => b.addEventListener("click", () => { b.closest(".grosswahl").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); if (b.dataset.rolle) wizD.rolle = b.dataset.rolle; else if (S.key==="absicht") wizD.trans = b.dataset.w; else if (S.key==="typ") wizD.typ = b.dataset.w; FWP.entwurf.speichern(wizD); }));
     $("wizInhalt").querySelectorAll(".bildwahl button").forEach(b => b.addEventListener("click", () => { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); wizD.bilder = [...$("wizInhalt").querySelectorAll('.bildwahl [aria-pressed="true"]')].map(x => x.dataset.b); FWP.entwurf.speichern(wizD); }));
+    if (S.key === "ort") ortSchritt();
     const f1 = $("wizInhalt").querySelector("input,select,textarea,button"); if (f1) f1.focus();
+  }
+
+  /* ---------- Ortsschritt: strukturierte Lage statt Freitext ----------
+     Die Eingabe wird gegen denselben Ortsindex geprüft, den auch die Suche
+     nutzt — so findet ein neues Inserat später überhaupt eine Umkreissuche.
+     Was öffentlich zu sehen ist, entscheidet die inserierende Person; die
+     Vorschau zeigt genau das, was Besucherinnen und Besucher sehen werden. */
+  let wizKarteInstanz = null, wizKarteLaeuft = false;
+  function ortSchritt(){
+    const plz = $("wPlz"), stadt = $("wStadt"), status = $("wOrtStatus"), liste = $("wOrtListe");
+    liste.innerHTML = GEO.alleOrte().map(o => `<option value="${esc(o.name)}">${esc(o.plz[0] || "")} · ${esc(o.kt)}</option>`).join("");
+
+    const zeige = (ort, quelle) => {
+      wizD.ortId = ort ? ort.id : null;
+      if (ort) {
+        const rgId = GEO.alleRegionen().find(r => (GEO.region(r).kantone || []).includes(ort.kt));
+        const rg = rgId ? GEO.region(rgId) : null;
+        wizD.kanton = ort.kt; wizD.region = rgId || null;
+        wizD.lat = ort.lat; wizD.lng = ort.lng;
+        status.innerHTML = `Erkannt: <b>${esc(ort.name)}</b> · Kanton ${esc(FWP.KANTON_NAME[ort.kt] || ort.kt)}${rg ? " · " + esc(rg.label) : ""}`;
+      } else {
+        status.textContent = quelle === "leer"
+          ? "Geben Sie die PLZ ein — Gemeinde, Kanton und Region ergänzen wir aus dem Ortsverzeichnis."
+          : "Diesen Ort führen wir noch nicht im Verzeichnis. Das Inserat lässt sich trotzdem einreichen; wir ordnen die Gemeinde von Hand zu.";
+      }
+      FWP.entwurf.speichern(wizD);
+      malWizKarte();
+    };
+    const pruefe = (quelle) => {
+      const p = (plz.value || "").trim(), o = (stadt.value || "").trim();
+      if (!p && !o) return zeige(null, "leer");
+      let treffer = null;
+      if (/^\d{4}$/.test(p)) { const r = GEO.search(p, { limit:1 }); if (r[0] && r[0].ortId) treffer = GEO.ort(r[0].ortId); }
+      if (treffer && !o) stadt.value = treffer.name;
+      if (!treffer && o) treffer = GEO.ortNachName(o) || (() => { const r = GEO.search(o, { limit:1 }); return r[0] && (r[0].ortId || String(r[0].id).startsWith("ort-")) ? GEO.ort(r[0].ortId || r[0].id) : null; })();
+      zeige(treffer && treffer.lat ? treffer : null, quelle);
+    };
+    plz.addEventListener("input", () => pruefe("plz"));
+    stadt.addEventListener("change", () => pruefe("ort"));
+    stadt.addEventListener("blur", () => pruefe("ort"));
+    $("wGenau").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      wizD.genauigkeit = b.dataset.g; FWP.entwurf.speichern(wizD); malWizKarte();
+    }));
+    pruefe("start");
+  }
+  const GENAU_M = { exakt:0, ungefaehr:450, gemeinde:2000 };
+  async function malWizKarte(){
+    const box = $("wizKarte"); if (!box) return;
+    const ort = wizD.ortId ? GEO.ort(wizD.ortId) : null;
+    if (!ort) { box.classList.remove("da"); box.innerHTML = `<p class="leerhin">Sobald der Ort feststeht, sehen Sie hier, wie Ihre Lage öffentlich erscheint.</p>`; return; }
+    if (wizKarteLaeuft) return;
+    wizKarteLaeuft = true;
+    try {
+      if (wizKarteInstanz) { try { wizKarteInstanz.remove(); } catch(e){} wizKarteInstanz = null; }
+      box.innerHTML = ""; box.classList.add("da");
+      wizKarteInstanz = await UKARTE.detail("wizKarte", {
+        lat:ort.lat, lng:ort.lng, genauigkeitM:GENAU_M[wizD.genauigkeit || "ungefaehr"] });
+    } catch (e) { box.classList.remove("da"); box.innerHTML = `<p class="leerhin">Die Vorschau lässt sich gerade nicht laden. Ihre Auswahl ist gespeichert.</p>`; }
+    wizKarteLaeuft = false;
   }
   function wizLese(){ const g = id => { const e = document.getElementById(id); return e ? e.value : undefined; };
     ["strasse:wStrasse","plz:wPlz","stadt:wStadt","zimmer:wZi","flaeche:wFl","jahr:wJahr","preis:wPreis","titel:wTitel","beschreibung:wBeschr","name:wName","email:wMail","telefon:wTel"].forEach(p => { const [k,id] = p.split(":"); if (g(id) !== undefined) wizD[k] = g(id); });
@@ -857,6 +1063,7 @@
   }
 
   /* ---------- Start ---------- */
+  ortEntitaet = ortAusText(F.ort); if (ortEntitaet) F.ort = ortEntitaet.id;
   baueFilterListen(); uebersetze(); syncSteuer(); UFER.favZahl(); such(); route();
 })();
 </script>

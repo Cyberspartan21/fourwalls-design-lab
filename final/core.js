@@ -16,7 +16,13 @@ window.FWP = (function () {
       veroeffentlichen:"Kostenlos veröffentlichen", exclusive:"Fourwalls Exclusive", privat:"Privatinserat", makler:"Makler",
       verwaltung:"Verwaltung", bautraeger:"Bauträger", neu:"Neu", geprueft:"geprüft", proM2:"CHF/m²", aufAnfrage:"Preis auf Anfrage",
       proMonat:"/ Mt.", nk:"+ NK", keineTreffer:"Für diese Kombination gibt es zurzeit kein Inserat.", suchabo:"Suchabo anlegen",
-      selbst:"Selbst inserieren", mitFW:"Mit Fourwalls verkaufen", zeilen:"Zeilen", kacheln:"Kacheln", buehne:"Bühne" },
+      selbst:"Selbst inserieren", mitFW:"Mit Fourwalls verkaufen", zeilen:"Zeilen", kacheln:"Kacheln", buehne:"Bühne",
+      verfuegbar:"Verfügbar", sofort:"Sofort", abDatum:"Ab", nachVereinbarung:"Nach Vereinbarung", reserviert:"Reserviert", verkauft:"Verkauft", vermietet:"Vermietet", etage:"Etage", eg:"Erdgeschoss", ug:"Untergeschoss", og:". Obergeschoss", dachgeschoss:"Dachgeschoss", baujahrVon:"Baujahr von", baujahrBis:"Baujahr bis", flaecheVon:"Wohnfläche von", flaecheBis:"Wohnfläche bis", grundVon:"Grundstück ab", umkreis:"Umkreis", keinUmkreis:"Genau dieser Ort", km:"km", treffer1:"Immobilie", trefferN:"Immobilien", sortEmpfohlen:"Empfohlen", sortM2:"Preis pro m²", statusZeigen:"Auch reservierte und verkaufte zeigen", nurVerfuegbar:"Nur verfügbare", suchaboSpeichern:"Suchabo speichern", suchaboTitel:"Neue Treffer zuerst sehen", suchaboMail:"E-Mail für die Benachrichtigung", suchaboWie:"Wie oft?", wieSofort:"Sofort", wieTaeglich:"Täglich", wieWoechentlich:"Wöchentlich", suchaboOk:"Suchabo gespeichert", suchaboKonto:"Optional: mit Konto auf allen Geräten verwalten", abbrechen:"Abbrechen", speichern:"Speichern", lockern:"Suche lockern", radiusMehr:"Umkreis vergrössern", budgetMehr:"Budget erhöhen", filterWeg:"Filter entfernen", ergebnisse:"Ergebnisse", kaution:"Kaution (max.)", bruttomiete:"Bruttomiete", nettomiete:"Nettomiete", nebenkosten:"Nebenkosten", zeigeAlle:"Alle anzeigen", ergebnisseProSeite:"pro Seite",
+      zimmerBis:"Zimmer bis", baujahr:"Baujahr", nichtEg:"Nicht Erdgeschoss", ab2:"Ab 2. Stock", in3Mt:"In 3 Monaten", mailFehler:"Bitte eine gültige E-Mail-Adresse eingeben.", aboPrototyp:"Prototyp: Das Suchabo wird auf diesem Gerät gespeichert. Es werden keine E-Mails versendet — die Zustellung entsteht mit dem Backend.",
+      zimmerFilter:"Zimmer", grundFilter:"Grundstück ab (m²)",
+      flaecheFilter:"Wohnfläche (m²)",
+      bild1:"Bild", bildN:"Bilder",
+      bilderMedien:"Bilder und Medien" },
     fr: { immobilien:"Immobilier", karte:"Carte", verkaufen:"Vendre", verwalten:"Gérance", inserieren:"Publier gratuitement",
       gemerkt:"Favoris", kaufen:"Acheter", mieten:"Louer", ort:"Lieu, NPA, canton ou région", typ:"Tous les types",
       preisBis:"Prix jusqu'à", preisVon:"Prix dès", zimmerAb:"Pièces dès", mehrFilter:"Plus de filtres", filter:"Filtres", sucheSpeichern:"Enregistrer la recherche",
@@ -29,7 +35,13 @@ window.FWP = (function () {
       veroeffentlichen:"Publier gratuitement", exclusive:"Fourwalls Exclusive", privat:"Annonce privée", makler:"Courtier",
       verwaltung:"Gérance", bautraeger:"Promoteur", neu:"Nouveau", geprueft:"vérifié", proM2:"CHF/m²", aufAnfrage:"Prix sur demande",
       proMonat:"/ mois", nk:"+ charges", keineTreffer:"Aucune annonce ne correspond actuellement à cette combinaison.", suchabo:"Créer une alerte",
-      selbst:"Publier moi-même", mitFW:"Vendre avec Fourwalls", zeilen:"Lignes", kacheln:"Vignettes", buehne:"Scène" },
+      selbst:"Publier moi-même", mitFW:"Vendre avec Fourwalls", zeilen:"Lignes", kacheln:"Vignettes", buehne:"Scène",
+      verfuegbar:"Disponible", sofort:"Immédiatement", abDatum:"Dès le", nachVereinbarung:"À convenir", reserviert:"Réservé", verkauft:"Vendu", vermietet:"Loué", etage:"Étage", eg:"Rez-de-chaussée", ug:"Sous-sol", og:"e étage", dachgeschoss:"Combles", baujahrVon:"Année dès", baujahrBis:"Année jusqu\u2019à", flaecheVon:"Surface dès", flaecheBis:"Surface jusqu\u2019à", grundVon:"Terrain dès", umkreis:"Rayon", keinUmkreis:"Ce lieu exactement", km:"km", treffer1:"bien", trefferN:"biens", sortEmpfohlen:"Recommandé", sortM2:"Prix au m²", statusZeigen:"Afficher aussi réservés et vendus", nurVerfuegbar:"Disponibles uniquement", suchaboSpeichern:"Créer une alerte", suchaboTitel:"Voir les nouveautés en premier", suchaboMail:"E-mail pour l\u2019alerte", suchaboWie:"À quelle fréquence ?", wieSofort:"Immédiatement", wieTaeglich:"Quotidien", wieWoechentlich:"Hebdomadaire", suchaboOk:"Alerte enregistrée", suchaboKonto:"Facultatif : gérer avec un compte sur tous vos appareils", abbrechen:"Annuler", speichern:"Enregistrer", lockern:"Élargir la recherche", radiusMehr:"Agrandir le rayon", budgetMehr:"Augmenter le budget", filterWeg:"Retirer un filtre", ergebnisse:"résultats", kaution:"Garantie (max.)", bruttomiete:"Loyer brut", nettomiete:"Loyer net", nebenkosten:"Charges", zeigeAlle:"Tout afficher", ergebnisseProSeite:"par page",
+      zimmerBis:"Pièces jusqu\u2019à", baujahr:"Année de construction", nichtEg:"Pas au rez", ab2:"Dès le 2e étage", in3Mt:"Dans 3 mois", mailFehler:"Merci d\u2019indiquer une adresse e-mail valide.", aboPrototyp:"Prototype : l\u2019alerte est enregistrée sur cet appareil. Aucun e-mail n\u2019est envoyé — la distribution viendra avec le backend.",
+      zimmerFilter:"Pièces", grundFilter:"Terrain dès (m²)",
+      flaecheFilter:"Surface habitable (m²)",
+      bild1:"photo", bildN:"photos",
+      bilderMedien:"Photos et médias" },
     it: { immobilien:"Immobili", karte:"Mappa", verkaufen:"Vendere", verwalten:"Amministrazione", inserieren:"Pubblica gratis",
       gemerkt:"Preferiti", kaufen:"Comprare", mieten:"Affittare", ort:"Località, NPA, cantone o regione", typ:"Tutti i tipi",
       preisBis:"Prezzo fino a", preisVon:"Prezzo da", zimmerAb:"Locali da", mehrFilter:"Altri filtri", filter:"Filtri", sucheSpeichern:"Salva ricerca",
@@ -42,7 +54,13 @@ window.FWP = (function () {
       veroeffentlichen:"Pubblica gratuitamente", exclusive:"Fourwalls Exclusive", privat:"Annuncio privato", makler:"Agenzia",
       verwaltung:"Amministrazione", bautraeger:"Costruttore", neu:"Nuovo", geprueft:"verificato", proM2:"CHF/m²", aufAnfrage:"Prezzo su richiesta",
       proMonat:"/ mese", nk:"+ spese", keineTreffer:"Al momento nessun annuncio corrisponde a questa combinazione.", suchabo:"Crea avviso",
-      selbst:"Pubblicare da solo", mitFW:"Vendere con Fourwalls", zeilen:"Righe", kacheln:"Schede", buehne:"Scena" },
+      selbst:"Pubblicare da solo", mitFW:"Vendere con Fourwalls", zeilen:"Righe", kacheln:"Schede", buehne:"Scena",
+      verfuegbar:"Disponibile", sofort:"Subito", abDatum:"Dal", nachVereinbarung:"Da convenire", reserviert:"Riservato", verkauft:"Venduto", vermietet:"Affittato", etage:"Piano", eg:"Pianterreno", ug:"Seminterrato", og:"° piano", dachgeschoss:"Mansarda", baujahrVon:"Anno da", baujahrBis:"Anno fino a", flaecheVon:"Superficie da", flaecheBis:"Superficie fino a", grundVon:"Terreno da", umkreis:"Raggio", keinUmkreis:"Esattamente questa località", km:"km", treffer1:"immobile", trefferN:"immobili", sortEmpfohlen:"Consigliati", sortM2:"Prezzo al m²", statusZeigen:"Mostrare anche riservati e venduti", nurVerfuegbar:"Solo disponibili", suchaboSpeichern:"Salva avviso", suchaboTitel:"Vedere prima le novità", suchaboMail:"E-mail per l\u2019avviso", suchaboWie:"Con che frequenza?", wieSofort:"Subito", wieTaeglich:"Giornaliero", wieWoechentlich:"Settimanale", suchaboOk:"Avviso salvato", suchaboKonto:"Facoltativo: gestire con un conto su tutti i dispositivi", abbrechen:"Annulla", speichern:"Salva", lockern:"Allargare la ricerca", radiusMehr:"Aumentare il raggio", budgetMehr:"Aumentare il budget", filterWeg:"Togliere un filtro", ergebnisse:"risultati", kaution:"Garanzia (max.)", bruttomiete:"Pigione lorda", nettomiete:"Pigione netta", nebenkosten:"Spese accessorie", zeigeAlle:"Mostra tutti", ergebnisseProSeite:"per pagina",
+      zimmerBis:"Locali fino a", baujahr:"Anno di costruzione", nichtEg:"Non pianterreno", ab2:"Dal 2° piano", in3Mt:"Entro 3 mesi", mailFehler:"Inserire un indirizzo e-mail valido.", aboPrototyp:"Prototipo: l\u2019avviso è salvato su questo dispositivo. Non vengono inviate e-mail — la consegna arriverà con il backend.",
+      zimmerFilter:"Locali", grundFilter:"Terreno da (m²)",
+      flaecheFilter:"Superficie abitabile (m²)",
+      bild1:"foto", bildN:"foto",
+      bilderMedien:"Foto e media" },
     en: { immobilien:"Properties", karte:"Map", verkaufen:"Sell", verwalten:"Management", inserieren:"List for free",
       gemerkt:"Saved", kaufen:"Buy", mieten:"Rent", ort:"Place, postcode, canton or region", typ:"All property types",
       preisBis:"Price up to", preisVon:"Price from", zimmerAb:"Rooms from", mehrFilter:"More filters", filter:"Filters", sucheSpeichern:"Save search",
@@ -55,7 +73,13 @@ window.FWP = (function () {
       veroeffentlichen:"Publish for free", exclusive:"Fourwalls Exclusive", privat:"Private listing", makler:"Agency",
       verwaltung:"Management", bautraeger:"Developer", neu:"New", geprueft:"verified", proM2:"CHF/m²", aufAnfrage:"Price on request",
       proMonat:"/ month", nk:"+ charges", keineTreffer:"No listing currently matches this combination.", suchabo:"Create alert",
-      selbst:"List it myself", mitFW:"Sell with Fourwalls", zeilen:"Rows", kacheln:"Cards", buehne:"Stage" }
+      selbst:"List it myself", mitFW:"Sell with Fourwalls", zeilen:"Rows", kacheln:"Cards", buehne:"Stage",
+      verfuegbar:"Available", sofort:"Immediately", abDatum:"From", nachVereinbarung:"By arrangement", reserviert:"Reserved", verkauft:"Sold", vermietet:"Let", etage:"Floor", eg:"Ground floor", ug:"Lower ground", og:"th floor", dachgeschoss:"Top floor", baujahrVon:"Built from", baujahrBis:"Built until", flaecheVon:"Living area from", flaecheBis:"Living area up to", grundVon:"Plot from", umkreis:"Radius", keinUmkreis:"This place exactly", km:"km", treffer1:"property", trefferN:"properties", sortEmpfohlen:"Recommended", sortM2:"Price per m²", statusZeigen:"Also show reserved and sold", nurVerfuegbar:"Available only", suchaboSpeichern:"Save search alert", suchaboTitel:"See new matches first", suchaboMail:"Email for the alert", suchaboWie:"How often?", wieSofort:"Immediately", wieTaeglich:"Daily", wieWoechentlich:"Weekly", suchaboOk:"Search alert saved", suchaboKonto:"Optional: manage it with an account on all devices", abbrechen:"Cancel", speichern:"Save", lockern:"Widen the search", radiusMehr:"Increase radius", budgetMehr:"Increase budget", filterWeg:"Remove a filter", ergebnisse:"results", kaution:"Deposit (max.)", bruttomiete:"Gross rent", nettomiete:"Net rent", nebenkosten:"Service charges", zeigeAlle:"Show all", ergebnisseProSeite:"per page",
+      zimmerBis:"Rooms up to", baujahr:"Construction year", nichtEg:"Not ground floor", ab2:"2nd floor and up", in3Mt:"Within 3 months", mailFehler:"Please enter a valid email address.", aboPrototyp:"Prototype: the alert is stored on this device. No emails are sent — delivery comes with the backend.",
+      zimmerFilter:"Rooms", grundFilter:"Plot from (m²)",
+      flaecheFilter:"Living area (m²)",
+      bild1:"photo", bildN:"photos",
+      bilderMedien:"Photos and media" }
   };
   let LANG = "de";
   function sprache(l) { if (I18N[l]) LANG = l; try { localStorage.setItem("fw-lang", LANG); } catch (e) {} return LANG; }
@@ -76,7 +100,7 @@ window.FWP = (function () {
       floor: p.floor ?? null, features: p.features || [], img: p.heroMedia, bilder: p.images || [p.heroMedia],
       beschreibung: p.blurb.de, text: p.description.de, highlights: p.highlights.de, raeume: p.roomsBreakdown || null,
       tagline: p.tagline.de, listingSource: "fourwalls", sellerType: "fourwalls", listingTier: p.featured ? "exclusive" : "verified",
-      verificationStatus: "verified", publicationStatus: "active", publishedAt: p.createdAt, neu: false,
+      verificationStatus: "verified", publicationStatus: "publiziert", availability: { art:"vereinbarung", datum:null }, publishedAt: p.createdAt, neu: false,
       views: 900 + Math.floor((p.livingArea || 100) * 7), favoritesCount: 40, inquiryCount: 9,
       publisher: "Fourwalls AG", contactOptions: ["form","call"], broker: p.broker, demo: true
     }));
@@ -172,13 +196,83 @@ window.FWP = (function () {
     return out.slice(0, 8);
   }
 
+  /* ---------- Abgeleitete Anzeige: eine Regel, eine Umsetzung ---------- */
+  function verfuegbarLabel(l) {
+    const a = l.availability || { art:"vereinbarung" };
+    if (a.art === "sofort") return t("sofort");
+    if (a.art === "datum" && a.datum) { const d = new Date(a.datum); return t("abDatum") + " " + d.toLocaleDateString(LANG === "en" ? "en-GB" : LANG + "-CH", { day:"2-digit", month:"2-digit", year:"numeric" }); }
+    if (a.art === "reserviert") return t("reserviert");
+    if (a.art === "verkauft") return t("verkauft");
+    if (a.art === "vermietet") return t("vermietet");
+    return t("nachVereinbarung");
+  }
+  const verfuegbarFrei = l => !["reserviert","verkauft","vermietet"].includes((l.availability || {}).art);
+  function etageLabel(f) {
+    if (f == null) return null;
+    if (f < 0) return t("ug");
+    if (f === 0) return t("eg");
+    if (f >= 6) return t("dachgeschoss");
+    return LANG === "en" ? f + t("og") : f + t("og");
+  }
+  /* Etage ist nur bei Objekten mit Geschosslage sinnvoll */
+  const hatEtage = typ => ["wohnung","gewerbe"].includes(typ);
+  function trefferLabel(n) { return n + " " + (n === 1 ? t("treffer1") : t("trefferN")); }
+  function bildLabel(n) { return n + " " + (n === 1 ? t("bild1") : t("bildN")); }
+  /* Monatliche Kostenschätzung nur bei Kauf mit Preis und Wohnfläche eines Wohnobjekts */
+  function monatlichMoeglich(l) {
+    return l.transactionType === "buy" && !l.priceOnRequest && !!l.price && ["wohnung","haus","villa","chalet","mfh"].includes(l.propertyType);
+  }
+  /* Ähnlichkeit, deterministisch und erklärbar: gleiche Transaktion und Objektart,
+     dann Nähe in Kanton, Preisband (±35 %), Zimmerzahl und Fläche. */
+  function aehnliche(l, anzahl) {
+    const w = x => x.transactionType === "rent" ? x.rentNet : x.price;
+    const basis = w(l);
+    const punkte = x => {
+      if (x.slug === l.slug) return -1;
+      if (x.transactionType !== l.transactionType) return -1;
+      if (!verfuegbarFrei(x)) return -1;
+      let p = 0;
+      if (x.propertyType === l.propertyType) p += 40; else return -1;
+      if (x.canton === l.canton) p += 20;
+      if (x.city === l.city) p += 15;
+      const wx = w(x);
+      if (basis && wx) { const ab = Math.abs(wx - basis) / basis; if (ab <= .35) p += Math.round(20 * (1 - ab / .35)); else return -1; }
+      if (l.rooms && x.rooms) p += Math.max(0, 10 - Math.abs(x.rooms - l.rooms) * 4);
+      if (l.livingArea && x.livingArea) p += Math.max(0, 10 - Math.abs(x.livingArea - l.livingArea) / 12);
+      return p;
+    };
+    return alle().map(x => ({ x, p:punkte(x) })).filter(o => o.p > 0)
+      .sort((a, b) => b.p - a.p || a.x.id.localeCompare(b.x.id)).slice(0, anzahl || 3).map(o => o.x);
+  }
+  /* Luftlinie in Kilometern (Haversine) — für die Umkreissuche */
+  function distanzKm(a, b) {
+    const R = 6371, r = Math.PI / 180;
+    const dLa = (b.lat - a.lat) * r, dLo = (b.lng - a.lng) * r;
+    const x = Math.sin(dLa / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLo / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+  /* Mittelpunkt eines Ortsbegriffs aus den Inseraten dieses Ortes */
+  function ortMitte(wert) {
+    if (!wert) return null;
+    let treffer;
+    if (wert.startsWith("kt:")) treffer = alle().filter(l => l.canton === wert.slice(3));
+    else if (wert.startsWith("rg:")) { const ks = (REGIONEN[wert.slice(3)] || { kantone:[] }).kantone; treffer = alle().filter(l => ks.includes(l.canton)); }
+    else { const o = wert.toLowerCase(); treffer = alle().filter(l => l.city.toLowerCase() === o || l.postalCode.startsWith(o)); }
+    if (!treffer.length) return null;
+    return { lat: treffer.reduce((s, l) => s + l.lat, 0) / treffer.length, lng: treffer.reduce((s, l) => s + l.lng, 0) / treffer.length };
+  }
+
   /* ---------- Filtern & Sortieren ---------- */
-  const LEER = { trans:"buy", ort:"", typ:"", pMin:null, pMax:null, ziMin:null, flMin:null, feat:[], quelle:"", sort:"neu" };
+  const LEER = { trans:"buy", ort:"", umkreis:0, typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null, flMin:null, flMax:null, grMin:null,
+    bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"", sort:"neu" };
   function filtern(f) {
     const q = Object.assign({}, LEER, f || {});
-    let res = alle().filter(l => l.publicationStatus === "active" && l.transactionType === q.trans);
+    let res = alle().filter(l => l.publicationStatus !== "archiviert" && l.transactionType === q.trans);
+    if (q.nurFrei) res = res.filter(verfuegbarFrei);
     if (q.ort) {
-      if (q.ort.startsWith("kt:")) { const kt = q.ort.slice(3); res = res.filter(l => l.canton === kt); }
+      const mitte = q.umkreis > 0 ? ortMitte(q.ort) : null;
+      if (mitte) res = res.filter(l => distanzKm(mitte, l) <= q.umkreis);
+      else if (q.ort.startsWith("kt:")) { const kt = q.ort.slice(3); res = res.filter(l => l.canton === kt); }
       else if (q.ort.startsWith("rg:")) { const ks = (REGIONEN[q.ort.slice(3)] || { kantone:[] }).kantone; res = res.filter(l => ks.includes(l.canton)); }
       else { const o = q.ort.toLowerCase(); res = res.filter(l => l.city.toLowerCase() === o || l.postalCode.startsWith(o)); }
     }
@@ -188,7 +282,22 @@ window.FWP = (function () {
     if (q.pMin != null) res = res.filter(l => w(l) != null && w(l) >= q.pMin);
     if (q.pMax != null) res = res.filter(l => w(l) != null && w(l) <= q.pMax);
     if (q.ziMin != null) res = res.filter(l => l.rooms != null && l.rooms >= q.ziMin);
+    if (q.ziMax != null) res = res.filter(l => l.rooms != null && l.rooms <= q.ziMax);
     if (q.flMin != null) res = res.filter(l => l.livingArea != null && l.livingArea >= q.flMin);
+    if (q.flMax != null) res = res.filter(l => l.livingArea != null && l.livingArea <= q.flMax);
+    if (q.grMin != null) res = res.filter(l => l.plotArea != null && l.plotArea >= q.grMin);
+    if (q.bjVon != null) res = res.filter(l => l.yearBuilt != null && l.yearBuilt >= q.bjVon);
+    if (q.bjBis != null) res = res.filter(l => l.yearBuilt != null && l.yearBuilt <= q.bjBis);
+    if (q.etage) res = res.filter(l => { if (l.floor == null) return false;
+      if (q.etage === "eg") return l.floor === 0;
+      if (q.etage === "nichteg") return l.floor > 0;
+      if (q.etage === "ab2") return l.floor >= 2;
+      if (q.etage === "dach") return l.floor >= 6; return true; });
+    if (q.verf) res = res.filter(l => { const a = (l.availability || {}).art;
+      if (q.verf === "sofort") return a === "sofort";
+      if (q.verf === "3mt") { if (a === "sofort") return true; if (a !== "datum") return false;
+        return (new Date(l.availability.datum) - new Date()) / 86400000 <= 92; }
+      return true; });
     for (const ft of q.feat) res = res.filter(l => l.features.includes(ft));
     return sortieren(res, q.sort);
   }
@@ -199,8 +308,20 @@ window.FWP = (function () {
     else if (art === "preis-ab") a.sort((x, y) => (w(y) === Infinity ? -1 : w(y)) - (w(x) === Infinity ? -1 : w(x)));
     else if (art === "flaeche") a.sort((x, y) => (y.livingArea || 0) - (x.livingArea || 0));
     else if (art === "zimmer") a.sort((x, y) => (y.rooms || 0) - (x.rooms || 0));
+    else if (art === "m2") {
+      const m = l => proM2(l) || Infinity;
+      a.sort((x, y) => m(x) - m(y));
+    }
+    else if (art === "empfohlen") {
+      /* Nachvollziehbar: vollständigere Inserate zuerst, danach das Datum.
+         Kein bezahltes Ranking — Exclusive erhält keinen Bonus in dieser Sortierung. */
+      const g = l => (l.bilder && l.bilder.length > 3 ? 3 : 0) + (l.livingArea ? 2 : 0) + (l.rooms != null ? 1 : 0) +
+                     (l.yearBuilt ? 1 : 0) + ((l.features || []).length ? 1 : 0) + (l.verificationStatus === "verified" ? 2 : 0);
+      a.sort((x, y) => g(y) - g(x) || y.publishedAt.localeCompare(x.publishedAt) || x.id.localeCompare(y.id));
+    }
     else {
       a.sort((x, y) => y.publishedAt.localeCompare(x.publishedAt) || y.id.localeCompare(x.id));
+      /* Höchstens drei Exclusive-Mandate oben, und nur bei «Neuste» — sichtbar begrenzt */
       const ex = a.filter(l => l.listingTier === "exclusive").slice(0, 3);
       return ex.concat(a.filter(l => !ex.includes(l)));
     }
@@ -208,7 +329,8 @@ window.FWP = (function () {
   }
   function aktiveFilterZahl(f) {
     const q = Object.assign({}, LEER, f || {});
-    return [q.typ, q.pMin != null, q.pMax != null, q.ziMin != null, q.flMin != null, q.quelle].filter(Boolean).length + q.feat.length;
+    return [q.typ, q.pMin != null, q.pMax != null, q.ziMin != null, q.ziMax != null, q.flMin != null, q.flMax != null,
+      q.grMin != null, q.bjVon != null, q.bjBis != null, q.etage, q.verf, q.quelle, q.umkreis > 0, !q.nurFrei].filter(Boolean).length + q.feat.length;
   }
   function ausURL() {
     const p = new URLSearchParams(location.search), f = {};
@@ -220,18 +342,36 @@ window.FWP = (function () {
     if (p.get("pmax")) f.pMax = +p.get("pmax");
     if (p.get("zi")) f.ziMin = +p.get("zi");
     if (p.get("fl")) f.flMin = +p.get("fl");
+    if (p.get("flmax")) f.flMax = +p.get("flmax");
+    if (p.get("zimax")) f.ziMax = +p.get("zimax");
+    if (p.get("gr")) f.grMin = +p.get("gr");
+    if (p.get("bjv")) f.bjVon = +p.get("bjv");
+    if (p.get("bjb")) f.bjBis = +p.get("bjb");
+    if (p.get("et")) f.etage = p.get("et");
+    if (p.get("vf")) f.verf = p.get("vf");
+    if (p.get("um")) f.umkreis = +p.get("um");
+    if (p.get("alle") === "1") f.nurFrei = false;
     if (p.get("feat")) f.feat = p.get("feat").split(",").filter(Boolean);
     if (p.get("sort")) f.sort = p.get("sort");
     return f;
   }
   function inURL(f) {
     const p = new URLSearchParams(location.search);
-    ["trans","ort","typ","quelle","pmin","pmax","zi","fl","feat","sort"].forEach(k => p.delete(k));
+    ["trans","ort","typ","quelle","pmin","pmax","zi","zimax","fl","flmax","gr","bjv","bjb","et","vf","um","alle","feat","sort"].forEach(k => p.delete(k));
     const q = Object.assign({}, LEER, f || {});
     if (q.trans !== "buy") p.set("trans", q.trans);
     if (q.ort) p.set("ort", q.ort); if (q.typ) p.set("typ", q.typ); if (q.quelle) p.set("quelle", q.quelle);
     if (q.pMin != null) p.set("pmin", q.pMin); if (q.pMax != null) p.set("pmax", q.pMax);
     if (q.ziMin != null) p.set("zi", q.ziMin); if (q.flMin != null) p.set("fl", q.flMin);
+    if (q.flMax != null) p.set("flmax", q.flMax);
+    if (q.ziMax != null) p.set("zimax", q.ziMax);
+    if (q.grMin != null) p.set("gr", q.grMin);
+    if (q.bjVon != null) p.set("bjv", q.bjVon);
+    if (q.bjBis != null) p.set("bjb", q.bjBis);
+    if (q.etage) p.set("et", q.etage);
+    if (q.verf) p.set("vf", q.verf);
+    if (q.umkreis > 0) p.set("um", q.umkreis);
+    if (!q.nurFrei) p.set("alle", "1");
     if (q.feat.length) p.set("feat", q.feat.join(",")); if (q.sort !== "neu") p.set("sort", q.sort);
     const s = p.toString();
     history.replaceState(null, "", location.pathname + (s ? "?" + s : "") + location.hash);
@@ -248,7 +388,7 @@ window.FWP = (function () {
   const favs = { alle:() => lsGet("fw-favoriten", []), hat:id => favs.alle().includes(id),
     kippen(id) { const a = favs.alle(); const i = a.indexOf(id); if (i >= 0) a.splice(i, 1); else a.push(id); lsSet("fw-favoriten", a); return i < 0; } };
   const suchen = { alle:() => lsGet("fw-suchabos", []),
-    speichern(f, name) { const a = suchen.alle(); a.push({ id:Date.now().toString(36), name, filter:f, erstellt:new Date().toISOString().slice(0, 10) }); lsSet("fw-suchabos", a); },
+    speichern(f, name, zustellung) { const a = suchen.alle(); a.push({ id:Date.now().toString(36), name, filter:f, erstellt:new Date().toISOString().slice(0, 10), zustellung: zustellung || null }); lsSet("fw-suchabos", a); },
     loeschen(id) { lsSet("fw-suchabos", suchen.alle().filter(s => s.id !== id)); } };
   const entwurf = { laden:() => lsGet("fw-inserat-entwurf", null), speichern:d => lsSet("fw-inserat-entwurf", d), verwerfen:() => lsSet("fw-inserat-entwurf", null),
     veroeffentlichte:() => lsGet("fw-inserate", []),
@@ -299,5 +439,6 @@ window.FWP = (function () {
 
   return { I18N, sprache, t, get lang() { return LANG; }, alle, mandate, finde, pic, chf, preis, preisKurz, proM2,
     KANTON_NAME, REGIONEN, ortLabel, vorschlaege, filtern, sortieren, aktiveFilterZahl, ausURL, inURL, beschreibeSuche,
-    favs, suchen, entwurf, projekt, cluster, WIZARD, wizardPruefen, esc, FEAT_DE, quelleLabel };
+    favs, suchen, entwurf, projekt, cluster, WIZARD, wizardPruefen, esc, FEAT_DE, quelleLabel,
+    verfuegbarLabel, verfuegbarFrei, etageLabel, hatEtage, trefferLabel, bildLabel, monatlichMoeglich, aehnliche, distanzKm, ortMitte };
 })();

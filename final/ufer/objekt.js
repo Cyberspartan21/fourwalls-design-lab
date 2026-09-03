@@ -52,7 +52,7 @@ window.UOBJ = (function () {
   function oeffne(slug, exclusive) {
     L = FWP.finde(slug);
     if (!L) { location.hash = "suche"; return; }
-    D = FWD()[slug] || null;
+    D = (window.FWDOS ? window.FWDOS.bauen(L) : null) || FWD()[slug] || null;
     istEx = !!(exclusive || (L.listingTier === "exclusive" && L.fw));
     stationen = [];
 
@@ -62,7 +62,7 @@ window.UOBJ = (function () {
     const quelle = (D && D.quelle) || { art:L.listingSource === "fourwalls" ? "fourwalls" : L.listingSource, name:L.publisher, verifiziert:L.verificationStatus === "verified" };
     const wirVertreten = quelle.art === "fourwalls";
     const fx = (D && D.fakten) || {};
-    const kauf = L.transactionType === "buy" && !L.priceOnRequest && L.price;
+    const kauf = FWP.monatlichMoeglich(L);
     const m2 = FWP.proM2(L);
     const monat = kauf ? finanz(L.price, .2, .019) : null;
     const fav = FWP.favs.hat(L.id);
@@ -84,7 +84,7 @@ window.UOBJ = (function () {
           ${bilder.slice(0, 3).map((b, i) => `<figure data-li="${i}">${FWP.pic(b.key, { alt:b.text || (L.title + " " + (i + 1)), sizes:"(max-width:960px) 100vw, 60vw", eager:i === 0 })}</figure>`).join("")}
         </div>
         <div class="medienleiste">
-          <button data-li="0"><b>${bilder.length}</b> Bilder</button>
+          <button data-li="0">${FWP.bildLabel(bilder.length)}</button>
           ${med.video ? `<button data-medium="video">Video</button>` : ""}
           ${med.tour360 ? `<button data-medium="360">360°</button>` : ""}
           ${(D && D.grundrisse && D.grundrisse.length) ? `<button data-anker="grundrisse">Grundrisse</button>` : ""}
@@ -98,7 +98,7 @@ window.UOBJ = (function () {
       (fx.wohnflaeche ?? L.livingArea) ? [(fx.wohnflaeche ?? L.livingArea) + " m²", "Wohnfläche"] : null,
       (fx.grundstueck ?? L.plotArea) ? [(fx.grundstueck ?? L.plotArea) + " m²", "Grundstück"] : null,
       (fx.baujahr ?? L.yearBuilt) ? [fx.baujahr ?? L.yearBuilt, "Baujahr"] : null,
-      fx.verfuegbar ? [fx.verfuegbar, "Verfügbar"] : null
+      [FWP.verfuegbarLabel(L), t("verfuegbar")]
     ].filter(Boolean);
     const titelzeile = `
       <div class="dtitel${istEx ? " kompakt" : ""}">
@@ -110,7 +110,7 @@ window.UOBJ = (function () {
           </div>
           <div class="preisblock">
             <div class="preis">${esc(FWP.preis(L))}</div>
-            ${L.transactionType === "rent" ? `<div class="prosub">+ CHF ${L.rentNK} Nebenkosten</div>` : m2 ? `<div class="prosub">${fmt(m2)} ${t("proM2")}</div>` : ""}
+            ${L.transactionType === "rent" ? `<div class="prosub">+ ${L.rentNK ? chf(L.rentNK) + " " + t("nebenkosten") : t("nebenkosten")}</div>` : m2 ? `<div class="prosub">${fmt(m2)} ${t("proM2")}</div>` : ""}
             ${monat ? `<div class="monat">ab ${chf(monat.total)} / Monat<br><a href="#d-finanzierung" data-anker="finanzierung">Tragbarkeit rechnen</a></div>` : ""}
           </div>
         </div>
@@ -136,7 +136,7 @@ window.UOBJ = (function () {
       ${kats.length > 2 ? `<div class="katfilter" role="group" aria-label="Bildkategorien">${kats.map((k, i) => `<button data-kat="${k}" aria-pressed="${i === 0}">${esc(KAT[k] || k)}</button>`).join("")}</div>` : ""}
       <div class="gal" id="galGitter"></div>
       <div class="medienknoepfe">
-        <button class="knopf" id="alleBilder">Alle ${bilder.length} Bilder</button>
+        <button class="knopf" id="alleBilder">${t("zeigeAlle")} · ${FWP.bildLabel(bilder.length)}</button>
         ${med.video ? `<button class="knopf" data-medium="video">${esc(med.video.titel || "Video")}${med.video.dauer ? " · " + esc(med.video.dauer) : ""}</button>` : ""}
         ${med.tour360 ? `<button class="knopf" data-medium="360">${esc(med.tour360.titel || "360°-Rundgang")}</button>` : ""}
         ${med.modell3d ? `<button class="knopf" data-medium="3d">${esc(med.modell3d.titel || "3D-Modell")}</button>` : ""}
@@ -157,7 +157,7 @@ window.UOBJ = (function () {
       fx.kubatur ? ["Kubatur", fmt(fx.kubatur) + " m³"] : null,
       (L.floor != null && !fx.geschosse) ? ["Etage", L.floor === 0 ? "EG" : L.floor + ". OG"] : null,
       m2 ? [t("proM2"), fmt(m2)] : null,
-      fx.verfuegbar ? ["Verfügbar", fx.verfuegbar] : null,
+      [t("verfuegbar"), FWP.verfuegbarLabel(L)],
       ["Referenz", L.id]
     ].filter(Boolean);
     const gr2 = D ? [gruppe("Gebäude", D.gebaeude, LG), gruppe("Ausstattung", D.ausstattung, LA), gruppe("Aussen", D.aussen, LO), gruppe("Parkieren", D.parkieren, LP), gruppe("Energie", D.energie, LE)].filter(Boolean) : [];
@@ -250,13 +250,12 @@ window.UOBJ = (function () {
         <div class="dmelde"><button id="dMelden${suffix}">${t("melden")}</button></div>
       </div>`;
 
-    const aehn = ((D && D.aehnliche) ? D.aehnliche.map(FWP.finde).filter(Boolean)
-      : FWP.filtern({ trans:L.transactionType, ort:"kt:" + L.canton, typ:L.propertyType }).filter(x => x.slug !== slug)).slice(0, 3);
+    const aehn = ((D && D.aehnliche) ? D.aehnliche.map(FWP.finde).filter(Boolean) : FWP.aehnliche(L)).slice(0, 3);
     const bAehn = aehn.length ? `<div class="aehnlich">${aehn.map(K.kartenHTML).join("")}</div>` : "";
 
     const koerper = `
       ${abschnitt("uebersicht", "Übersicht", bUebersicht)}
-      ${abschnitt("bilder", "Bilder und Medien", bMedien, bilder.length + " Bilder")}
+      ${abschnitt("bilder", t("bilderMedien"), bMedien, FWP.bildLabel(bilder.length))}
       ${abschnitt("eckdaten", "Eckdaten", bEck)}
       ${abschnitt("grundrisse", "Grundrisse", bPlaene)}
       ${abschnitt("lage", "Lage", bLage)}

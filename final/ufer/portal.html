@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ufer.css?v=p1b">
-<link rel="stylesheet" href="objekt.css?v=p1b">
+<link rel="stylesheet" href="ufer.css?v=p2b">
+<link rel="stylesheet" href="objekt.css?v=p2b">
 <style>
 /* ================= UFER · Portal (Arbeitsmodus: leise, schnell, vollständig) ================= */
 .ansicht{display:none}.ansicht.an{display:block}
@@ -181,6 +181,37 @@
 .abo .rechtsab{margin-left:auto;display:flex;gap:8px}
 .abo .status{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--licht);border:1px solid var(--linie2);padding:.3em .6em;border-radius:var(--r)}
 
+
+/* ---- P2: erweiterte Filter, Trefferzahl, Suchabo ---- */
+.fzwei{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.filterfeld{max-height:min(74vh,660px);overflow-y:auto}
+.fschalter{display:flex;gap:9px;align-items:center;font-size:.78rem;color:var(--leise);margin-top:18px;padding-top:14px;border-top:1px solid var(--linie);cursor:pointer}
+.fschalter input{width:auto;accent-color:var(--licht)}
+.resultkopf .n.zahl{font-variant-numeric:tabular-nums;font-weight:500;color:var(--ink)}
+.karte .status{position:absolute;left:10px;bottom:10px;z-index:2;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.34em .6em;border-radius:var(--r);background:rgba(7,12,18,.82);color:#EEF1F2;font-weight:600}
+.karte .status.frei{background:rgba(245,248,249,.9);color:#0F1B2A;font-weight:500}
+.karte.belegt .bild img{filter:saturate(.4) opacity(.72)}
+.karte .verf{font-size:.66rem;color:var(--leise)}
+.leer .vorschl .knopf{max-width:none}
+/* Suchabo */
+.abo-hg{position:fixed;inset:0;z-index:400;background:rgba(7,12,18,.55);display:grid;place-items:center;padding:16px}
+.abo-hg[hidden]{display:none}
+.abo-blatt{background:var(--gr);border:1px solid var(--linie);border-radius:var(--r);width:min(460px,100%);padding:22px;
+  box-shadow:0 40px 90px rgba(0,0,0,.4);max-height:90svh;overflow-y:auto}
+.abo-kopf{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
+.abo-kopf h2{font-family:var(--d);font-weight:300;font-size:1.45rem;letter-spacing:-.015em}
+.abo-summe{font-size:.86rem;color:var(--leise);border-left:2px solid var(--licht);padding:8px 12px;background:var(--gr2);margin-bottom:16px;line-height:1.55}
+.abo-blatt .feld{width:100%}
+.abo-fehler{color:var(--warn);font-size:.78rem;margin-top:6px}
+.abo-fein{font-size:.72rem;color:var(--leise);line-height:1.6;margin-top:14px}
+.abo-aktionen{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.abo-ok b{font-family:var(--d);font-weight:300;font-size:1.4rem;color:var(--gut)}
+@media(max-width:900px){
+  .abo-blatt{width:100%}
+  .abo-aktionen .knopf{flex:1}
+}
+
 /* ---- Mobil ---- */
 .mfilter{display:none}
 @media(max-width:960px){
@@ -189,7 +220,10 @@
   .kartenliste{order:2;border-right:0;border-top:1px solid var(--linie);flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:10px;max-height:140px}
   .kartenliste .karte{flex:0 0 250px}
   .wasserlinie{top:55px}
-  .wasserlinie select.feld,.preisspanne,#filterAuf,.nurfw{display:none}
+  /* backdrop-filter macht ein Element zum Bezugsrahmen fuer position:fixed —
+     auf Mobil deshalb deckend, damit das Filterblatt am unteren Rand klebt. */
+  .wasserlinie{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--gr)}
+  .wasserlinie > select.feld,.wasserlinie > .preisspanne,#filterAuf,.nurfw{display:none}
   .mfilter{display:inline-flex}
   .mehrfilter{position:static}
   .filterfeld{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;max-height:80svh;overflow-y:auto;border-radius:10px 10px 0 0;box-shadow:0 -16px 50px rgba(0,0,0,.5)}
@@ -229,6 +263,7 @@
   <div class="wasserlinie">
     <div class="tab2" role="group"><button id="tKauf" aria-pressed="true" data-i="kaufen">Kaufen</button><button id="tMiete" aria-pressed="false" data-i="mieten">Mieten</button></div>
     <div class="ortfeld"><input class="feld" id="ortInput" type="text" placeholder="Ort, PLZ, Kanton oder Region" autocomplete="off" aria-label="Ort" data-ph="ort"><div class="vorschlaege" id="ortVor"></div></div>
+    <select class="feld" id="umSel" aria-label="Umkreis" hidden></select>
     <select class="feld" id="typSel" aria-label="Objekttyp"></select>
     <div class="preisspanne" aria-label="Preisspanne"><input id="pMinIn" inputmode="numeric" placeholder="Preis von" aria-label="Preis von" data-ph="preisVon"><span>–</span><input id="pMaxIn" inputmode="numeric" placeholder="Preis bis" aria-label="Preis bis" data-ph="preisBis"></div>
     <select class="feld" id="ziSel" aria-label="Zimmer ab"></select>
@@ -238,17 +273,26 @@
       <button class="knopf" id="filterAuf"><span data-i="mehrFilter">Mehr Filter</span> <span class="zaehl" id="filterZahl">0</span></button>
       <div class="filterfeld" id="filterFeld" role="dialog" aria-label="Weitere Filter">
         <h4 data-i="preisChf">Preis (CHF)</h4>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="feld" type="number" id="fPMin" placeholder="von" min="0" step="10000"><input class="feld" type="number" id="fPMax" placeholder="bis" min="0" step="10000"></div>
-        <h4 data-i="wohnflaeche">Wohnfläche ab (m²)</h4><input class="feld" type="number" id="fFl" placeholder="z.B. 100" min="0" step="10">
+        <div class="fzwei"><input class="feld" type="number" id="fPMin" placeholder="von" min="0" step="10000"><input class="feld" type="number" id="fPMax" placeholder="bis" min="0" step="10000"></div>
+        <h4 data-i="flaecheFilter">Wohnfläche (m²)</h4>
+        <div class="fzwei"><input class="feld" type="number" id="fFl" placeholder="von" min="0" step="10"><input class="feld" type="number" id="fFlMax" placeholder="bis" min="0" step="10"></div>
+        <h4 data-i="zimmerFilter">Zimmer</h4>
+        <div class="fzwei"><select class="feld" id="fZiMin" aria-label="Zimmer von"></select><select class="feld" id="fZiMax" aria-label="Zimmer bis"></select></div>
+        <div id="fGrundBox"><h4 data-i="grundFilter">Grundstück ab (m²)</h4><input class="feld" type="number" id="fGr" placeholder="z.B. 500" min="0" step="50"></div>
+        <h4 data-i="baujahr">Baujahr</h4>
+        <div class="fzwei"><input class="feld" type="number" id="fBjV" placeholder="von" min="1800" max="2030" step="1"><input class="feld" type="number" id="fBjB" placeholder="bis" min="1800" max="2030" step="1"></div>
+        <div id="fEtageBox"><h4 data-i="etage">Etage</h4><div class="chipwahl" id="fEtage"></div></div>
+        <h4 data-i="verfuegbar">Verfügbarkeit</h4><div class="chipwahl" id="fVerf"></div>
         <h4 data-i="anbieter">Anbieter</h4><div class="chipwahl" id="fQuelle"></div>
         <h4 data-i="ausstattung">Ausstattung</h4><div class="chipwahl" id="fFeat"></div>
+        <label class="fschalter"><input type="checkbox" id="fAlle"> <span data-i="statusZeigen">Auch reservierte und verkaufte zeigen</span></label>
         <div class="aktionen"><button class="knopf" id="filterReset" data-i="zuruecksetzen">Zurücksetzen</button><button class="knopf voll" id="filterAnwenden"><span data-i="anwenden">Anwenden</span> · <span id="filterTreffer">0</span> <span data-i="treffer">Treffer</span></button></div>
       </div>
     </div>
   </div>
   <div class="chips" id="chips"></div>
   <div class="resultkopf">
-    <h1 id="resultTitel">Immobilien kaufen</h1><span class="n" id="resultN"></span>
+    <h1 id="resultTitel">Immobilien kaufen</h1><span class="n zahl" id="resultN"></span>
     <div class="rechtsw">
       <select class="feld" id="sortSel" aria-label="Sortierung"></select>
       <div class="karte-liste" role="group"><button aria-pressed="true" id="wlListe" data-i="liste">Liste</button><button aria-pressed="false" id="wlKarte" data-i="karte">Karte</button></div>
@@ -259,7 +303,8 @@
   <div class="leer" id="leer">
     <span class="mark"></span><h2>Hier liegt noch nichts am Ufer.</h2>
     <p id="leerText">Für diese Kombination gibt es zurzeit kein Inserat.</p>
-    <div class="vorschl"><button class="knopf" id="leerReset"></button><button class="knopf" id="leerKanton"></button><button class="knopf voll" id="leerAbo" data-i="suchabo">Suchabo anlegen</button></div>
+    <div class="vorschl" id="leerWege"></div>
+    <div class="vorschl" style="margin-top:10px"><button class="knopf voll" id="leerAbo" data-i="suchaboSpeichern">Suchabo speichern</button></div>
   </div>
   <div class="abozeile"><span><b>Neue Treffer zuerst sehen.</b> Wir melden uns nur, wenn etwas Passendes erscheint — kein Konto nötig.</span><button class="knopf" id="sucheSpeichern" data-i="sucheSpeichern" style="margin-left:auto">Suche speichern</button></div>
 </section>
@@ -326,17 +371,39 @@
   </div>
 </section>
 
+<!-- Suchabo: ohne Konto, drei Angaben -->
+<div class="abo-hg" id="aboHg" hidden><div class="abo-blatt" role="dialog" aria-modal="true" aria-labelledby="aboH">
+  <div class="abo-kopf"><h2 id="aboH" data-i="suchaboTitel">Neue Treffer zuerst sehen</h2><button class="knopf" id="aboZu" data-i="schliessen">Schliessen</button></div>
+  <div id="aboKoerper">
+    <p class="abo-summe" id="aboSumme"></p>
+    <label class="et" for="aboMail" data-i="suchaboMail">E-Mail für die Benachrichtigung</label>
+    <input class="feld" type="email" id="aboMail" placeholder="name@beispiel.ch" autocomplete="email">
+    <p class="abo-fehler" id="aboFehler" hidden></p>
+    <label class="et" style="margin-top:14px" data-i="suchaboWie">Wie oft?</label>
+    <div class="chipwahl" id="aboWie"></div>
+    <p class="abo-fein" id="aboFein"></p>
+    <div class="abo-aktionen"><button class="knopf" id="aboAbbruch" data-i="abbrechen">Abbrechen</button><button class="knopf voll" id="aboSpeichern" data-i="speichern">Speichern</button></div>
+  </div>
+  <div id="aboFertig" hidden>
+    <p class="abo-ok"><b data-i="suchaboOk">Suchabo gespeichert</b></p>
+    <p class="abo-summe" id="aboSumme2"></p>
+    <p class="abo-fein" id="aboFein2"></p>
+    <div class="abo-aktionen"><button class="knopf" id="aboKonto" data-i="suchaboKonto">Optional: mit Konto auf allen Geräten verwalten</button><button class="knopf voll" id="aboFertigZu" data-i="schliessen">Schliessen</button></div>
+  </div>
+</div></div>
+
 <div class="detail" id="detail" role="dialog" aria-modal="true" aria-label="Objektseite"></div>
 <div class="licht" id="licht" role="dialog" aria-modal="true" aria-label="Medien"></div>
 
 <footer class="fuss"></footer>
 
-<script src="../listings.js"></script>
-<script src="../properties.js"></script>
-<script src="../core.js"></script>
-<script src="detail-data.js?v=p1b"></script>
-<script src="ufer.js?v=p1b"></script>
-<script src="objekt.js?v=p1b"></script>
+<script src="../listings.js?v=p2b"></script>
+<script src="../properties.js?v=p2b"></script>
+<script src="../core.js?v=p2b"></script>
+<script src="detail-data.js?v=p2b"></script>
+<script src="dossier.js?v=p2b"></script>
+<script src="ufer.js?v=p2b"></script>
+<script src="objekt.js?v=p2b"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -347,7 +414,8 @@
   Object.entries(FWD).forEach(([slug, d]) => { const l = FWP.finde(slug); if (l && d.quelle && !l.fw){ l.listingSource = d.quelle.art === "agentur" ? "agentur" : d.quelle.art === "privat" ? "privat" : l.listingSource; l.publisher = d.quelle.name || l.publisher; l.verificationStatus = d.quelle.verifiziert ? "verified" : "unverified"; } });
 
   UFER.startModus();
-  let F = Object.assign({ trans:"buy", ort:"", typ:"", pMin:null, pMax:null, ziMin:null, flMin:null, feat:[], quelle:"", sort:"neu" }, FWP.ausURL());
+  let F = Object.assign({ trans:"buy", ort:"", umkreis:0, typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null, flMin:null, flMax:null,
+    grMin:null, bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"", sort:"neu" }, FWP.ausURL());
   let ergebnis = [], seite = 1; const PRO_SEITE = 24;
   const zahl = s => { const n = parseInt(String(s).replace(/[^\d]/g,""),10); return isNaN(n) ? null : n; };
   const fmtIn = n => n == null ? "" : String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"’");
@@ -356,7 +424,7 @@
   function uebersetze(){
     document.querySelectorAll("[data-i]").forEach(el => el.textContent = t(el.dataset.i));
     document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = t(el.dataset.ph));
-    $("sortSel").innerHTML = [["neu","neuste"],["preis-auf","preisAuf"],["preis-ab","preisAb"],["flaeche","flaeche"],["zimmer","zimmer"]].map(([v,k]) => `<option value="${v}">${t(k)}</option>`).join("");
+    $("sortSel").innerHTML = [["empfohlen","sortEmpfohlen"],["neu","neuste"],["preis-auf","preisAuf"],["preis-ab","preisAb"],["m2","sortM2"],["flaeche","flaeche"],["zimmer","zimmer"]].map(([v,k]) => `<option value="${v}">${t(k)}</option>`).join("");
     $("sortSel").value = F.sort;
     $("typSel").innerHTML = `<option value="">${t("typ")}</option>` + Object.entries(FWL.typen).map(([k,v]) => `<option value="${k}">${v}</option>`).join("");
     $("typSel").value = F.typ || "";
@@ -365,7 +433,7 @@
     $("mehrKnopf").textContent = t("weitere"); $("wizWeiter").textContent = t("weiter");
     document.documentElement.lang = FWP.lang;
   }
-  UFER.montiere({ aktuell:"immobilien", seite:"Portal", onLang:() => { uebersetze(); such(); } });
+  UFER.montiere({ aktuell:"immobilien", seite:"Portal", onLang:() => { baueFilterListen(); uebersetze(); syncSteuer(); such(); } });
 
   /* ---------- Routing ---------- */
   const ANS = { suche:"a-suche", karte:"a-karte", neu:"a-neu", konto:"a-konto" };
@@ -398,6 +466,35 @@
     b.addEventListener("click", () => { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); vorschauTreffer(); });
     $("fFeat").appendChild(b);
   });
+  /* ---- P2: Auswahllisten für die neuen Filter ---- */
+  const UMKREISE = [0,5,10,20,30,50];
+  const ETAGEN = [["eg","eg"],["nichteg","nichtEg"],["ab2","ab2"],["dach","dachgeschoss"]];
+  const VERF = [["sofort","sofort"],["3mt","in3Mt"]];
+  function baueFilterListen(){
+    $("umSel").innerHTML = UMKREISE.map(u => `<option value="${u}">${u === 0 ? t("keinUmkreis") : "+ " + u + " " + t("km")}</option>`).join("");
+    const zi = ["","1.5","2.5","3.5","4.5","5.5","6.5","7.5"];
+    $("fZiMin").innerHTML = zi.map(z => `<option value="${z}">${z ? z + "+" : t("zimmerAb")}</option>`).join("");
+    $("fZiMax").innerHTML = zi.map(z => `<option value="${z}">${z ? "≤ " + z : t("zimmerBis")}</option>`).join("");
+    $("fEtage").innerHTML = ETAGEN.map(([v,k]) => `<button data-et="${v}" aria-pressed="false">${t(k)}</button>`).join("");
+    $("fVerf").innerHTML = VERF.map(([v,k]) => `<button data-vf="${v}" aria-pressed="false">${t(k)}</button>`).join("");
+    $("fEtage").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      const an = b.getAttribute("aria-pressed") !== "true";
+      $("fEtage").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed", an); vorschauTreffer();
+    }));
+    $("fVerf").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      const an = b.getAttribute("aria-pressed") !== "true";
+      $("fVerf").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed", an); vorschauTreffer();
+    }));
+  }
+  /* Nur zeigen, was zum gewählten Objekttyp passt */
+  function filterSichtbarkeit(){
+    const t2 = F.typ;
+    $("fEtageBox").hidden = !!(t2 && !FWP.hatEtage(t2));
+    $("fGrundBox").hidden = !!(t2 && ["wohnung","parkplatz"].includes(t2));
+    $("umSel").hidden = !F.ort || F.ort.startsWith("rg:");
+  }
   function syncSteuer(){
     $("ortInput").value = FWP.ortLabel(F.ort);
     $("typSel").value = F.typ || ""; $("ziSel").value = F.ziMin != null ? String(F.ziMin) : "";
@@ -409,6 +506,15 @@
     $("fQuelle").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.q===F.quelle));
     $("fFeat").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", F.feat.includes(b.dataset.f)));
     $("nurFW").setAttribute("aria-pressed", F.quelle === "fourwalls");
+    $("umSel").value = String(F.umkreis || 0);
+    $("fFlMax").value = F.flMax ?? ""; $("fGr").value = F.grMin ?? "";
+    $("fBjV").value = F.bjVon ?? ""; $("fBjB").value = F.bjBis ?? "";
+    $("fZiMin").value = F.ziMin != null ? String(F.ziMin) : "";
+    $("fZiMax").value = F.ziMax != null ? String(F.ziMax) : "";
+    $("fAlle").checked = !F.nurFrei;
+    $("fEtage").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.et === F.etage));
+    $("fVerf").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.vf === F.verf));
+    filterSichtbarkeit();
     vorschauTreffer();
   }
   function transWechsel(tr){ F.trans = tr; F.pMin = F.pMax = null; syncSteuer(); such(); }
@@ -422,13 +528,13 @@
       const v = FWP.vorschlaege($("ortInput").value);
       $("ortVor").innerHTML = v.map(s => `<button data-wert="${esc(s.wert)}"><span><span class="art">${esc(s.art)}</span>${esc(s.label)}</span><small>${esc(s.sub)}</small></button>`).join("");
       $("ortVor").classList.toggle("an", v.length > 0);
-      $("ortVor").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { F.ort = b.dataset.wert; $("ortInput").value = FWP.ortLabel(F.ort); $("ortVor").classList.remove("an"); such(); }));
-      if ($("ortInput").value.trim() === "" && F.ort){ F.ort = ""; such(); }
+      $("ortVor").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { F.ort = b.dataset.wert; $("ortInput").value = FWP.ortLabel(F.ort); $("ortVor").classList.remove("an"); filterSichtbarkeit(); such(); }));
+      if ($("ortInput").value.trim() === "" && F.ort){ F.ort = ""; F.umkreis = 0; filterSichtbarkeit(); such(); }
     }, 140);
   });
   $("ortInput").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); const b = $("ortVor").querySelector("button"); if (b) b.click(); } if (e.key === "ArrowDown"){ const b = $("ortVor").querySelector("button"); if (b) b.focus(); } });
   document.addEventListener("click", e => { if (!e.target.closest(".ortfeld")) $("ortVor").classList.remove("an"); if (!e.target.closest(".mehrfilter")) $("filterFeld").classList.remove("an"); });
-  $("typSel").addEventListener("change", () => { F.typ = $("typSel").value; such(); });
+  $("typSel").addEventListener("change", () => { F.typ = $("typSel").value; filterSichtbarkeit(); such(); });
   $("ziSel").addEventListener("change", () => { F.ziMin = $("ziSel").value ? +$("ziSel").value : null; such(); });
   $("sortSel").addEventListener("change", () => { F.sort = $("sortSel").value; such(); });
   let preisTimer;
@@ -440,32 +546,78 @@
     const f = Object.assign({}, F);
     f.pMin = $("fPMin").value ? +$("fPMin").value : null; f.pMax = $("fPMax").value ? +$("fPMax").value : null;
     f.flMin = $("fFl").value ? +$("fFl").value : null;
+    f.flMax = $("fFlMax").value ? +$("fFlMax").value : null;
+    f.grMin = $("fGr").value ? +$("fGr").value : null;
+    f.bjVon = $("fBjV").value ? +$("fBjV").value : null;
+    f.bjBis = $("fBjB").value ? +$("fBjB").value : null;
+    f.ziMin = $("fZiMin").value ? +$("fZiMin").value : null;
+    f.ziMax = $("fZiMax").value ? +$("fZiMax").value : null;
+    f.nurFrei = !$("fAlle").checked;
+    const e = $("fEtage").querySelector('[aria-pressed="true"]'); f.etage = e ? e.dataset.et : "";
+    const v = $("fVerf").querySelector('[aria-pressed="true"]'); f.verf = v ? v.dataset.vf : "";
     const q = $("fQuelle").querySelector('[aria-pressed="true"]'); f.quelle = q ? q.dataset.q : "";
     f.feat = [...$("fFeat").querySelectorAll('[aria-pressed="true"]')].map(b => b.dataset.f);
     return f;
   }
-  function vorschauTreffer(){ $("filterTreffer").textContent = FWP.filtern(leseFilterFeld()).length; }
-  ["fPMin","fPMax","fFl"].forEach(i => $(i).addEventListener("input", vorschauTreffer));
+  function vorschauTreffer(){ const n = FWP.filtern(leseFilterFeld()).length; $("filterTreffer").textContent = n;
+    const b = $("filterAnwenden"); if (b) b.disabled = false; }
+  ["fPMin","fPMax","fFl","fFlMax","fGr","fBjV","fBjB"].forEach(i => $(i).addEventListener("input", vorschauTreffer));
+  ["fZiMin","fZiMax","fAlle"].forEach(i => $(i).addEventListener("change", vorschauTreffer));
+  $("umSel").addEventListener("change", () => { F.umkreis = +$("umSel").value; such(); });
   const filterUmschalt = () => { $("filterFeld").classList.toggle("an"); vorschauTreffer(); if ($("filterFeld").classList.contains("an")) $("fPMin").focus(); };
   $("filterAuf").addEventListener("click", filterUmschalt); $("mFilterAuf").addEventListener("click", filterUmschalt);
   document.addEventListener("keydown", e => { if (e.key === "Escape"){ $("filterFeld").classList.remove("an"); if ($("licht").classList.contains("an")){ UOBJ.lichtZu(); return; } if ($("detail").classList.contains("an")) location.hash = letzte; } });
   $("filterAnwenden").addEventListener("click", () => { F = leseFilterFeld(); $("filterFeld").classList.remove("an"); syncSteuer(); such(); });
-  $("filterReset").addEventListener("click", () => { F = Object.assign({}, F, { typ:"", pMin:null, pMax:null, ziMin:null, flMin:null, feat:[], quelle:"" }); syncSteuer(); such(); });
+  $("filterReset").addEventListener("click", () => { F = Object.assign({}, F, { typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null,
+    flMin:null, flMax:null, grMin:null, bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"" }); syncSteuer(); such(); });
   $("mehrKnopf").addEventListener("click", () => { seite++; malListe(true); });
   $("wlKarte").addEventListener("click", () => location.hash = "karte");
   $("zurListe").addEventListener("click", () => location.hash = "suche");
-  const aboAnlegen = () => { FWP.suchen.speichern(F, FWP.beschreibeSuche(F)); $("sucheSpeichern").textContent = t("gemerktOk"); setTimeout(() => $("sucheSpeichern").textContent = t("sucheSpeichern"), 1800); };
-  $("sucheSpeichern").addEventListener("click", aboAnlegen); $("leerAbo").addEventListener("click", aboAnlegen);
-  $("leerReset").addEventListener("click", () => { if ($("leerReset").dataset.ganz){ F.ort = ""; } $("filterReset").click(); });
-  $("leerKanton").addEventListener("click", () => { if ($("leerKanton").dataset.ort){ F.ort = $("leerKanton").dataset.ort; syncSteuer(); such(); } });
+  /* ---------- Suchabo: drei Angaben, kein Konto ---------- */
+  let aboWie = "taeglich";
+  function aboOeffnen(){
+    const n = ergebnis.length;
+    const summe = FWP.beschreibeSuche(F) || t("kaufen");
+    $("aboSumme").textContent = summe + " · " + FWP.trefferLabel(n) + (F.umkreis ? "" : "");
+    $("aboWie").innerHTML = [["sofort","wieSofort"],["taeglich","wieTaeglich"],["woechentlich","wieWoechentlich"]]
+      .map(([v,k]) => `<button data-wie="${v}" aria-pressed="${v===aboWie}">${t(k)}</button>`).join("");
+    $("aboWie").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      aboWie = b.dataset.wie; $("aboWie").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    }));
+    $("aboFein").textContent = t("aboPrototyp");
+    $("aboKoerper").hidden = false; $("aboFertig").hidden = true;
+    $("aboFehler").hidden = true; $("aboMail").value = "";
+    $("aboHg").hidden = false; document.body.style.overflow = "hidden";
+    setTimeout(() => $("aboMail").focus(), 60);
+  }
+  function aboSchliessen(){ $("aboHg").hidden = true; document.body.style.overflow = ""; $("sucheSpeichern").focus(); }
+  $("sucheSpeichern").addEventListener("click", aboOeffnen);
+  $("leerAbo").addEventListener("click", aboOeffnen);
+  $("aboZu").addEventListener("click", aboSchliessen);
+  $("aboAbbruch").addEventListener("click", aboSchliessen);
+  $("aboFertigZu").addEventListener("click", aboSchliessen);
+  $("aboKonto").addEventListener("click", () => { aboSchliessen(); location.hash = "konto"; });
+  $("aboHg").addEventListener("click", e => { if (e.target === $("aboHg")) aboSchliessen(); });
+  $("aboSpeichern").addEventListener("click", () => {
+    const mail = $("aboMail").value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) {
+      $("aboFehler").textContent = t("mailFehler"); $("aboFehler").hidden = false; $("aboMail").focus(); return;
+    }
+    FWP.suchen.speichern(F, FWP.beschreibeSuche(F), { mail, wie:aboWie });
+    $("aboSumme2").textContent = $("aboSumme").textContent;
+    $("aboFein2").textContent = t("aboPrototyp");
+    $("aboKoerper").hidden = true; $("aboFertig").hidden = false;
+    $("aboFertigZu").focus();
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("aboHg").hidden) aboSchliessen(); });
 
   /* ---------- Suche ---------- */
   function such(){
     ergebnis = FWP.filtern(F); seite = 1; FWP.inURL(F);
     malListe(); malChips();
     $("resultTitel").textContent = (F.trans === "rent" ? t("mieten") : t("kaufen")) + (F.ort ? " · " + FWP.ortLabel(F.ort) : "");
-    $("resultN").textContent = ergebnis.length + " " + t("inserate");
-    $("karteN").textContent = ergebnis.length + " " + t("inserate");
+    $("resultN").textContent = FWP.trefferLabel(ergebnis.length);
+    $("karteN").textContent = FWP.trefferLabel(ergebnis.length);
     const n = FWP.aktiveFilterZahl(F); $("filterZahl").textContent = n; $("filterZahlM").textContent = n;
     if ($("a-karte").classList.contains("an")) zeichneKarte();
   }
@@ -474,10 +626,12 @@
     const fav = FWP.favs.hat(l.id);
     const et = []; if (l.listingTier === "exclusive") et.push(`<span class="exkl">${t("exclusive")}</span>`); else et.push(`<span>${esc(FWP.quelleLabel(l))}</span>`);
     if (l.neu) et.push(`<span>${t("neu")}</span>`);
+    const belegt = !FWP.verfuegbarFrei(l);
+    const va = (l.availability || {}).art;
     const m2 = FWP.proM2(l);
     const f = [l.rooms ? l.rooms + " Zi." : null, l.livingArea ? l.livingArea + " m²" : (l.plotArea ? l.plotArea + " m² Land" : null), FWL.typen[l.propertyType]].filter(Boolean).map(esc);
-    return `<article class="karte" data-slug="${l.slug}">
-      <div class="bild"><div class="etikett">${et.join("")}</div><button class="merk" data-fav="${l.id}" aria-pressed="${fav}" aria-label="${t("merken")}">${HERZ}</button>${FWP.pic(l.img,{alt:l.title,sizes:"(max-width:700px) 100vw, (max-width:1200px) 50vw, 25vw"})}</div>
+    return `<article class="karte${belegt ? " belegt" : ""}" data-slug="${l.slug}">
+      <div class="bild"><div class="etikett">${et.join("")}</div>${belegt ? `<span class="status">${esc(FWP.verfuegbarLabel(l))}</span>` : va === "sofort" ? `<span class="status frei">${t("sofort")}</span>` : ""}<button class="merk" data-fav="${l.id}" aria-pressed="${fav}" aria-label="${t("merken")}">${HERZ}</button>${FWP.pic(l.img,{alt:l.title,sizes:"(max-width:700px) 100vw, (max-width:1200px) 50vw, 25vw"})}</div>
       <div class="refl" aria-hidden="true"><img src="../img/${l.img}-480.jpg" alt="" loading="lazy" decoding="async"></div>
       <a class="oeffnen" href="${ziel(l)}" aria-label="${esc(l.title)}, ${esc(FWP.preis(l))}, ${esc(l.city)}"></a>
       <div class="lauf">
@@ -499,25 +653,74 @@
   }
   function malLeer(){
     $("leerText").textContent = t("keineTreffer");
-    let nR = FWP.filtern({ trans:F.trans, ort:F.ort }).length;
-    if (nR > 0){ $("leerReset").textContent = t("zuruecksetzen") + " · " + nR + " " + t("treffer"); $("leerReset").dataset.ganz = ""; }
-    else { nR = FWP.filtern({ trans:F.trans }).length; $("leerReset").textContent = "Ganze Schweiz · " + nR + " " + t("treffer"); $("leerReset").dataset.ganz = "1"; }
-    let alt = null;
-    if (F.ort && !F.ort.startsWith("kt:") && !F.ort.startsWith("rg:")){ const l0 = FWP.alle().find(x => x.city.toLowerCase() === F.ort.toLowerCase()); if (l0) alt = "kt:" + l0.canton; }
-    else if (F.ort && F.ort.startsWith("kt:")){ const rg = Object.entries(FWP.REGIONEN).find(([k,r]) => r.kantone.includes(F.ort.slice(3))); if (rg) alt = "rg:" + rg[0]; }
-    if (alt){ const n = FWP.filtern(Object.assign({}, F, { ort:alt })).length; $("leerKanton").textContent = FWP.ortLabel(alt) + " · " + n + " " + t("treffer"); $("leerKanton").dataset.ort = alt; $("leerKanton").style.display = n ? "" : "none"; }
-    else $("leerKanton").style.display = "none";
+    /* Jeder Vorschlag wird gerechnet, bevor er angeboten wird — keine leeren Versprechen. */
+    const wege = [];
+    const probe = aend => FWP.filtern(Object.assign({}, F, aend)).length;
+    if (F.ort && !F.ort.startsWith("rg:")) {
+      for (const km of [10, 20, 50]) {
+        const n = probe({ umkreis:km });
+        if (n > 0) { wege.push([t("radiusMehr") + " · +" + km + " " + t("km") + " · " + FWP.trefferLabel(n), { umkreis:km }]); break; }
+      }
+    }
+    if (F.pMax != null) {
+      const hoch = Math.round(F.pMax * 1.25 / 10000) * 10000;
+      const n = probe({ pMax:hoch });
+      if (n > 0) wege.push([t("budgetMehr") + " · ≤ " + FWP.chf(hoch) + " · " + FWP.trefferLabel(n), { pMax:hoch }]);
+    }
+    if (F.ziMin != null) { const n = probe({ ziMin:Math.max(1, F.ziMin - 1) }); if (n > 0) wege.push([(F.ziMin - 1) + "+ Zi. · " + FWP.trefferLabel(n), { ziMin:F.ziMin - 1 }]); }
+    if (F.flMin != null) { const n = probe({ flMin:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("wohnflaeche") + " · " + FWP.trefferLabel(n), { flMin:null }]); }
+    if (F.bjVon != null || F.bjBis != null) { const n = probe({ bjVon:null, bjBis:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("baujahr") + " · " + FWP.trefferLabel(n), { bjVon:null, bjBis:null }]); }
+    if (F.pMin != null) { const n = probe({ pMin:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("preisVon") + " · " + FWP.trefferLabel(n), { pMin:null }]); }
+    if (F.etage || F.verf) { const n = probe({ etage:"", verf:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + (F.etage ? t("etage") : t("verfuegbar")) + " · " + FWP.trefferLabel(n), { etage:"", verf:"" }]); }
+    if (F.typ) { const n = probe({ typ:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + FWL.typen[F.typ] + " · " + FWP.trefferLabel(n), { typ:"" }]); }
+    if (F.feat.length) { const n = probe({ feat:[] }); if (n > 0) wege.push([t("filterWeg") + ": " + t("ausstattung") + " · " + FWP.trefferLabel(n), { feat:[] }]); }
+    if (F.ort && !F.ort.startsWith("kt:") && !F.ort.startsWith("rg:")) {
+      const l0 = FWP.alle().find(x => x.city.toLowerCase() === F.ort.toLowerCase());
+      if (l0) { const n = probe({ ort:"kt:" + l0.canton, umkreis:0 }); if (n > 0) wege.push([FWP.ortLabel("kt:" + l0.canton) + " · " + FWP.trefferLabel(n), { ort:"kt:" + l0.canton, umkreis:0 }]); }
+    }
+    const ganz = FWP.filtern({ trans:F.trans }).length;
+    wege.push([t("zuruecksetzen") + " · " + FWP.trefferLabel(ganz), "reset"]);
+    $("leerWege").innerHTML = wege.slice(0, 4).map((w, i) => `<button class="knopf" data-weg="${i}">${esc(w[0])}</button>`).join("");
+    $("leerWege").querySelectorAll("[data-weg]").forEach(b => b.addEventListener("click", () => {
+      const w = wege[+b.dataset.weg];
+      if (w[1] === "reset") F = Object.assign({}, { trans:F.trans, ort:"", umkreis:0, typ:"", pMin:null, pMax:null, ziMin:null, ziMax:null,
+        flMin:null, flMax:null, grMin:null, bjVon:null, bjBis:null, etage:"", verf:"", nurFrei:true, feat:[], quelle:"", sort:F.sort });
+      else F = Object.assign({}, F, w[1]);
+      syncSteuer(); such();
+    }));
   }
+
   function verdrahte(wurzel){
     wurzel.querySelectorAll(".merk").forEach(b => b.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); b.setAttribute("aria-pressed", FWP.favs.kippen(b.dataset.fav)); UFER.favZahl(); }));
   }
   function malChips(){
     const c = [];
-    if (F.typ) c.push(["typ", FWL.typen[F.typ]]); if (F.pMin != null) c.push(["pMin", "≥ " + FWP.chf(F.pMin)]); if (F.pMax != null) c.push(["pMax", "≤ " + FWP.chf(F.pMax)]);
-    if (F.ziMin != null) c.push(["ziMin", F.ziMin + "+ Zi."]); if (F.flMin != null) c.push(["flMin", "≥ " + F.flMin + " m²"]); if (F.quelle) c.push(["quelle", FWL.quellen[F.quelle]]);
+    if (F.ort) c.push(["ort", FWP.ortLabel(F.ort) + (F.umkreis ? " + " + F.umkreis + " " + t("km") : "")]);
+    if (F.typ) c.push(["typ", FWL.typen[F.typ]]);
+    if (F.pMin != null) c.push(["pMin", "≥ " + FWP.chf(F.pMin)]);
+    if (F.pMax != null) c.push(["pMax", "≤ " + FWP.chf(F.pMax)]);
+    if (F.ziMin != null) c.push(["ziMin", F.ziMin + "+ Zi."]);
+    if (F.ziMax != null) c.push(["ziMax", "≤ " + F.ziMax + " Zi."]);
+    if (F.flMin != null) c.push(["flMin", "≥ " + F.flMin + " m²"]);
+    if (F.flMax != null) c.push(["flMax", "≤ " + F.flMax + " m²"]);
+    if (F.grMin != null) c.push(["grMin", t("grundVon") + " " + F.grMin + " m²"]);
+    if (F.bjVon != null) c.push(["bjVon", t("baujahrVon") + " " + F.bjVon]);
+    if (F.bjBis != null) c.push(["bjBis", t("baujahrBis") + " " + F.bjBis]);
+    if (F.etage) c.push(["etage", t({eg:"eg", nichteg:"nichtEg", ab2:"ab2", dach:"dachgeschoss"}[F.etage])]);
+    if (F.verf) c.push(["verf", t(F.verf === "sofort" ? "sofort" : "in3Mt")]);
+    if (!F.nurFrei) c.push(["nurFrei", t("statusZeigen")]);
+    if (F.quelle) c.push(["quelle", FWL.quellen[F.quelle]]);
     F.feat.forEach(f => c.push(["feat:"+f, FWP.FEAT_DE[f]]));
     $("chips").innerHTML = c.map(([k,v]) => `<button data-chip="${k}" aria-label="Filter entfernen: ${esc(v)}"><b>${esc(v)}</b></button>`).join("");
-    $("chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { const k = b.dataset.chip; if (k.startsWith("feat:")) F.feat = F.feat.filter(x => x !== k.slice(5)); else if (k==="typ") F.typ=""; else if (k==="quelle") F.quelle=""; else F[k]=null; syncSteuer(); such(); }));
+    $("chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      const k = b.dataset.chip;
+      if (k.startsWith("feat:")) F.feat = F.feat.filter(x => x !== k.slice(5));
+      else if (k === "ort") { F.ort = ""; F.umkreis = 0; }
+      else if (["typ","quelle","etage","verf"].includes(k)) F[k] = "";
+      else if (k === "nurFrei") F.nurFrei = true;
+      else F[k] = null;
+      syncSteuer(); such();
+    }));
   }
 
   /* ---------- Karte (Prototyp-Renderer; Produktion: MapLibre + Vektorkacheln) ---------- */
@@ -570,7 +773,7 @@
   $("zoomReset").addEventListener("click", () => { kZoom = 1; kCx = 0; kCy = 0; kBewegt = false; zeichneKarte(); });
   $("hierSuchen").addEventListener("click", () => {
     const sicht = (kmap._grp||[]).flatMap(g => g.punkte.map(p => p.l)); ergebnis = sicht; seite = 1; malListe();
-    $("resultN").textContent = ergebnis.length + " " + t("inserate") + " · Kartenausschnitt"; $("karteN").textContent = ergebnis.length + " " + t("inserate") + " · Ausschnitt"; kBewegt = false; zeichneKarte();
+    $("resultN").textContent = FWP.trefferLabel(ergebnis.length) + " · Kartenausschnitt"; $("karteN").textContent = FWP.trefferLabel(ergebnis.length) + " · Ausschnitt"; kBewegt = false; zeichneKarte();
   });
   let zieh = null;
   kmap.addEventListener("pointerdown", e => { zieh = { x:e.clientX, y:e.clientY, cx:kCx, cy:kCy }; kmap.classList.add("zieht"); kmap.setPointerCapture(e.pointerId); });
@@ -654,7 +857,7 @@
   }
 
   /* ---------- Start ---------- */
-  uebersetze(); syncSteuer(); UFER.favZahl(); such(); route();
+  baueFilterListen(); uebersetze(); syncSteuer(); UFER.favZahl(); such(); route();
 })();
 </script>
 </body>

@@ -61,7 +61,8 @@ const ZUSTAENDE = [
   { name:"objekt-exclusive-it",    pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:1440, hoehe:1200, warten:7000, sprache:"it" },
   { name:"m-objekt-exclusive",     pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:390, hoehe:844, mobil:true, warten:7000 },
   { name:"m-objekt-exclusive-abend", pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:390, hoehe:844, mobil:true, warten:7000, modus:"dunkel" },
-  { name:"objekt-lage",            pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:1440, hoehe:1000, warten:7000, scrollZu:"#d-lage", nachher:9000 }
+  { name:"objekt-lage",            pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:1440, hoehe:1000, warten:7000, scrollZu:"#d-lage", nachher:9000 },
+  { name:"suche-gefiltert",        pfad:`portal.html?cb=b&ort=ort-zuerich&um=10&typ=wohnung&pmax=1500000#suche`, breite:1440, hoehe:1000, warten:5000 }
 ];
 
 /* Dieselben Zustände auf der Anwendung: gleiche Namen, damit vergleich.mjs
@@ -74,7 +75,17 @@ const ZUSTAENDE_APP = [
   { name:"objekt-exclusive-it",      pfad:`it/immobili/comprare/seehaus-walensee-fwl-2026-000142?mode=hell`,  breite:1440, hoehe:1200, warten:7000 },
   { name:"m-objekt-exclusive",       pfad:`de/${OBJ}?mode=hell`,   breite:390, hoehe:844, mobil:true, warten:7000 },
   { name:"m-objekt-exclusive-abend", pfad:`de/${OBJ}?mode=dunkel`, breite:390, hoehe:844, mobil:true, warten:7000 },
-  { name:"objekt-lage",              pfad:`de/${OBJ}?mode=hell`,   breite:1440, hoehe:1000, warten:7000, scrollZu:"#d-lage", nachher:9000 }
+  { name:"objekt-lage",              pfad:`de/${OBJ}?mode=hell`,   breite:1440, hoehe:1000, warten:7000, scrollZu:"#d-lage", nachher:9000 },
+  /* P5.3: Marktplatz */
+  { name:"suche",            pfad:`de/immobilien/kaufen?mode=hell`,   breite:1440, hoehe:1000, warten:5000 },
+  { name:"suche-abend",      pfad:`de/immobilien/kaufen?mode=dunkel`, breite:1440, hoehe:1000, warten:5000 },
+  { name:"suche-gefiltert",  pfad:`de/immobilien/kaufen?ort=ort-zuerich&um=10&typ=wohnung&pmax=1500000&mode=hell`, breite:1440, hoehe:1000, warten:5000 },
+  { name:"karte",            pfad:`de/immobilien/kaufen?ansicht=karte&mode=hell`,   breite:1440, hoehe:900, warten:12000, karte:true },
+  { name:"karte-abend",      pfad:`de/immobilien/kaufen?ansicht=karte&mode=dunkel`, breite:1440, hoehe:900, warten:12000, karte:true },
+  { name:"objekt-standard",  pfad:`de/immobilien/kaufen/haus-luzern-1-fwl-2026-101001?mode=hell`, breite:1440, hoehe:1200, warten:7000 },
+  { name:"m-suche",          pfad:`de/immobilien/kaufen?mode=hell`, breite:390, hoehe:844, mobil:true, warten:5000 },
+  { name:"m-karte",          pfad:`de/immobilien/kaufen?ansicht=karte&mode=hell`, breite:390, hoehe:844, mobil:true, warten:12000, karte:true },
+  { name:"m-objekt",         pfad:`de/immobilien/kaufen/haus-luzern-1-fwl-2026-101001?mode=hell`, breite:390, hoehe:844, mobil:true, warten:7000 }
 ];
 
 const schlaf = ms => new Promise(r => setTimeout(r, ms));

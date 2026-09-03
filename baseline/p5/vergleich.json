@@ -10,13 +10,13 @@
     },
     {
       "datei": "karte-abend.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "abweichend",
+      "wert": 3.78
     },
     {
       "datei": "karte.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "abweichend",
+      "wert": 7.63
     },
     {
       "datei": "konto.png",
@@ -30,8 +30,8 @@
     },
     {
       "datei": "m-karte.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "abweichend",
+      "wert": 0.41
     },
     {
       "datei": "m-menue.png",
@@ -41,17 +41,17 @@
     {
       "datei": "m-objekt-exclusive-abend.png",
       "zustand": "gleich",
-      "wert": 0.13
+      "wert": 0.15
     },
     {
       "datei": "m-objekt-exclusive.png",
       "zustand": "gleich",
-      "wert": 0.13
+      "wert": 0.15
     },
     {
       "datei": "m-objekt.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "gleich",
+      "wert": 0.15
     },
     {
       "datei": "m-start.png",
@@ -60,8 +60,8 @@
     },
     {
       "datei": "m-suche.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "gleich",
+      "wert": 0.03
     },
     {
       "datei": "m-verkaufen.png",
@@ -76,22 +76,22 @@
     {
       "datei": "objekt-exclusive-abend.png",
       "zustand": "gleich",
-      "wert": 0.06
+      "wert": 0.05
     },
     {
       "datei": "objekt-exclusive-fr.png",
       "zustand": "abweichend",
-      "wert": 0.96
+      "wert": 0.99
     },
     {
       "datei": "objekt-exclusive-it.png",
       "zustand": "abweichend",
-      "wert": 0.99
+      "wert": 1.01
     },
     {
       "datei": "objekt-exclusive.png",
       "zustand": "gleich",
-      "wert": 0.06
+      "wert": 0.05
     },
     {
       "datei": "objekt-fr.png",
@@ -106,12 +106,12 @@
     {
       "datei": "objekt-lage.png",
       "zustand": "abweichend",
-      "wert": 11.78
+      "wert": 11.49
     },
     {
       "datei": "objekt-standard.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "abweichend",
+      "wert": 0.21
     },
     {
       "datei": "start-abend.png",
@@ -125,13 +125,18 @@
     },
     {
       "datei": "suche-abend.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "gleich",
+      "wert": 0.14
+    },
+    {
+      "datei": "suche-gefiltert.png",
+      "zustand": "abweichend",
+      "wert": 4.4
     },
     {
       "datei": "suche.png",
-      "zustand": "fehlt",
-      "wert": null
+      "zustand": "gleich",
+      "wert": 0.14
     },
     {
       "datei": "verkaufen.png",

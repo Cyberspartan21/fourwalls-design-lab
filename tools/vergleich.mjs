@@ -12,6 +12,7 @@
    ohnehin auf dem Rechner ist und keine Bibliothek installiert werden muss.
    ============================================================ */
 import { spawn } from "node:child_process";
+import { rmSync } from "node:fs";
 import { readdirSync, existsSync, writeFileSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -89,6 +90,7 @@ for (const datei of dateien) {
 }
 
 ws.close(); kind.kill();
+setTimeout(() => { try { rmSync(`/tmp/fw-vergleich-${port}`, { recursive:true, force:true }); rmSync(arbeitsordner, { recursive:true, force:true }); } catch (e) {} }, 500);
 
 const breit = Math.max(...bericht.map(b => b.datei.length), 10);
 for (const b of bericht) {

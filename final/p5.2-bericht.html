@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P5.2 — Vertikale Scheibe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#141210;--pap:#1c1916;--ink:#EDE6DA;--leise:#A69B8C;--linie:#332D27;--gold:#B8923F;--gut:#7FA66B;--warn:#C4838A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+.h{max-width:980px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:300;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.06}
+h2{font-size:1.6rem;margin:56px 0 16px;padding-top:26px;border-top:1px solid var(--linie)}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:500}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin-bottom:14px}
+.lead{font-size:1.12rem;color:#D9D0C3;max-width:64ch}
+p{max-width:68ch}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.status div{background:var(--pap);padding:15px 17px}
+.status b{display:block;font-family:"Fraunces",serif;font-weight:300;font-size:1.5rem;line-height:1.1}
+.status span{font-size:.75rem;color:var(--leise);letter-spacing:.05em;text-transform:uppercase}
+.knopf{display:inline-block;margin:22px 8px 0 0;padding:.85em 1.3em;border:1px solid var(--gold);color:var(--ink);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.knopf.voll{background:var(--gold);color:#141210}
+ul{padding-left:1.1em;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:14px 0;font-size:.93rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--linie);text-align:left;vertical-align:top}
+th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);font-weight:500}
+td.z{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+figure{margin:22px 0}figure img{width:100%;height:auto;display:block;border:1px solid var(--linie)}
+figcaption{font-size:.8rem;color:var(--leise);margin-top:8px}
+.hinweis{border-left:3px solid var(--gold);padding:12px 18px;background:var(--pap);margin:18px 0;max-width:72ch}
+.klein{font-size:.85rem;color:var(--leise)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:#D9D0C3}
+.ok::before{content:"✓ ";color:var(--gut)}
+.off::before{content:"→ ";color:var(--gold)}
+.nein::before{content:"✗ ";color:var(--warn)}
+.scroll{overflow-x:auto}
+pre{background:var(--pap);border:1px solid var(--linie);padding:12px 14px;margin:14px 0;max-width:72ch;font-size:.85rem;overflow-x:auto}
+pre code{color:#D9D0C3}
+.hinweis ul{margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="h">
+<div class="eyebrow">Fourwalls · Phase 5.2 · 3. September 2026</div>
+<h1>Eine Objektseite, die es wirklich gibt.</h1>
+<p class="lead">P5.2 verlangte keine Attrappe und kein Gerüst, sondern die erste durchgehende Scheibe der produktiven Anwendung: Datenbank → Serverabfrage → echte Adresse → serverseitig gerendertes UFER-Dossier → Medien → Karte → Merken → Anfrage. Sie steht, sie ist geprüft, und sie sieht aus wie der Prototyp.</p>
+
+<div class="status">
+  <div><b>Steht</b><span>Vertikale Scheibe</span></div>
+  <div><b>16 / 16</b><span>Schema-Zusagen, DB von null</span></div>
+  <div><b>0.06 %</b><span>Bildabweichung Objektseite</span></div>
+  <div><b>0 / 0 / 0</b><span>Private Koordinate in HTML · RSC · Bundle</span></div>
+  <div><b>16.3.4</b><span>Next.js, gepinnt</span></div>
+</div>
+<a class="knopf voll" href="ufer/index.html">UFER (Prototyp, unverändert)</a>
+<a class="knopf" href="p5-bericht.html">P5.1-Bericht</a>
+
+<h2>Status der vertikalen Scheibe</h2>
+<p><b>Vollständig, lokal bewiesen.</b> Die Reise aus dem Auftrag ist in dieser Reihenfolge nachvollzogen und protokolliert:</p>
+<table>
+<tr><th>Schritt</th><th>Beleg</th></tr>
+<tr><td class="ok">Datenbank von null</td><td>PostgreSQL 16.4 / PostGIS 3.4 im Container, 9 Migrationen, 16/16 Zusagen, Entwicklungsbestand geladen</td></tr>
+<tr><td class="ok">Echte Adresse</td><td><code>/de/immobilien/kaufen/seehaus-walensee-fwl-2026-000142</code> — und dieselbe Immobilie unter <code>/fr/immobilier/acheter/…</code>, <code>/it/immobili/comprare/…</code>, <code>/en/properties/buy/…</code></td></tr>
+<tr><td class="ok">Serverseitig gerendert</td><td>Titel, Preis, Ort, Eckdaten, Meta-Beschreibung, Canonical und alle neun Abschnitte stehen im rohen HTML (Abschnitt 7)</td></tr>
+<tr><td class="ok">UFER-Dossier</td><td>Bild für Bild mit dem P5.1-Massstab verglichen: Tag 0.06 %, Abend 0.06 %, 390 px 0.13 % (Abschnitt 13)</td></tr>
+<tr><td class="ok">Medien</td><td>13 Bilder aus dem Speicheranbieter, <code>&lt;picture&gt;</code> mit denselben Varianten wie im Prototyp; Galerie, Lichtbox, Grundrisse laufen</td></tr>
+<tr><td class="ok">Karte</td><td>MapLibre/swisstopo aus P3 übernommen, geladen erst beim Scrollen; zeigt das 450-m-Feld um den gerasterten öffentlichen Punkt</td></tr>
+<tr><td class="ok">Merken</td><td>hinter <code>FavoriteRepository</code>, heute localStorage; Zustand überlebt den Neuaufbau</td></tr>
+<tr><td class="ok">Anfrage</td><td>erste echte Schreiboperation: Prüfung → Inserat serverseitig aufgelöst → Zeile in <code>inquiry</code> → Entwicklungs-Mailanbieter → «Anfrage angenommen»</td></tr>
+</table>
+<p>Nicht Teil der Scheibe und bewusst nicht gebaut: Konto/Anmeldung, Moderationsoberfläche, die 320 Inserate, echter Objektspeicher, echter Mailversand, Produktionsbetrieb. Was fehlt und was als Nächstes kommt, steht in den Abschnitten 16 und 17.</p>
+
+<h2>1. Speicherplatz</h2>
+<p>Die Platte war zu 100 % voll (2.9 GB frei). Die forensische Bestandsaufnahme fand die Ursache bei uns selbst: <b>4.6 GB Chrome-Profile unter <code>/tmp</code></b>, die die Aufnahme- und Vergleichswerkzeuge aus P4/P5.1 nach jedem Lauf stehen liessen. Sie wurden entfernt; die Werkzeuge räumen ihr Profil seither selbst weg. Dazu kamen Bildschirmfotos im Sitzungs-Arbeitsordner.</p>
+<p>Ergebnis: <b>8.7 GB frei</b> vor der Installation, rund 7 GB nach Node-Paketen und Build. Das genügt für P5.2, ist aber knapp — darum die Liste dessen, was <i>nicht</i> angerührt wurde, weil es anderen Projekten oder Benjamin gehört:</p>
+<table>
+<tr><th>Kandidat</th><th>Grösse</th><th>Warum nicht automatisch</th></tr>
+<tr><td>Docker-Build-Cache</td><td class="z">2.3 GB</td><td>projektübergreifend; <code>docker builder prune</code> ist harmlos, aber eine Entscheidung</td></tr>
+<tr><td>71 anonyme Docker-Volumes</td><td class="z">3.9 GB</td><td>nicht zuordenbar ohne Prüfung — könnten Datenbanken anderer Projekte sein</td></tr>
+<tr><td>XOWA <code>web/.next</code>, npm-Cache</td><td class="z">6.4 + 6.4 GB</td><td>anderes Projekt, reproduzierbar — aber nicht unseres</td></tr>
+<tr><td>Mission-Control, StoneX <code>.next</code></td><td class="z">0.5 + 0.5 GB</td><td>desgleichen</td></tr>
+<tr><td>Playwright, Puppeteer-Browser</td><td class="z">0.55 + 0.55 GB</td><td>Werkzeuge anderer Projekte</td></tr>
+<tr><td>Downloads, Bilder</td><td class="z">16 + 53 GB</td><td>Benutzerdaten — nur mit ausdrücklicher Freigabe</td></tr>
+</table>
+<p class="klein">Unangetastet blieben ausserdem <code>xowa-pg</code> und <code>mission-control-app-postgres-1</code> samt Volumes. Kein anderes Projekt wurde geopfert.</p>
+
+<h2>2. Next.js — genaue Version</h2>
+<p><b>Next.js 16.3.4</b>, die aktuelle gepatchte 16.3.x-Fassung, mit React 19.2.0. Alle Abhängigkeiten sind auf exakte Versionen gepinnt — kein <code>latest</code>, kein Caret:</p>
+<table>
+<tr><th>Paket</th><th>Version</th><th>Rolle</th></tr>
+<tr><td><code>next</code> / <code>react</code> / <code>react-dom</code></td><td class="z">16.3.4 / 19.2.0</td><td>App Router, Server Components</td></tr>
+<tr><td><code>postgres</code></td><td class="z">3.4.7</td><td>Datenbanktreiber; Tagged-Template-Abfragen sind <i>immer</i> parametrisiert</td></tr>
+<tr><td><code>zod</code></td><td class="z">3.25.76</td><td>die eine Validierung: Umgebung, Anfrage, Suche</td></tr>
+<tr><td><code>typescript</code></td><td class="z">5.8.3</td><td>strict, <code>noUncheckedIndexedAccess</code>, <code>exactOptionalPropertyTypes</code></td></tr>
+<tr><td><code>eslint</code> + <code>eslint-config-next</code></td><td class="z">9.39.5 + 16.3.4</td><td>ESLint 10 wurde zuerst gewählt und wieder verworfen: das in <code>eslint-config-next</code> gebündelte React-Plugin ruft noch <code>context.getFilename</code>, das ESLint 10 entfernt hat. 9.39.5 ist die letzte 9er-Fassung.</td></tr>
+<tr><td><code>server-only</code></td><td class="z">0.0.1</td><td>Bauzeit-Sperre: Server-Module können nicht in den Client importiert werden</td></tr>
+</table>
+<p>Kein ORM, keine UI-Bibliothek, kein CSS-Framework. 15 Abhängigkeiten insgesamt (mit Werkzeugen); das Client-Bundle der Objektseite ist 169 KB gross (Abschnitt 14).</p>
+
+<h2>3. Struktur der Anwendung</h2>
+<pre><code>app/
+  app/[locale]/                    Wurzel-Layout je Sprache (html lang), Startseite, 404, Fehlerzustand
+  app/[locale]/[bereich]/[art]/[slug]/page.tsx   die Objektseite
+  app/api/{health,inquiries,search}/route.ts     Route Handler
+  components/property/             UFER-Objektseite: Server-Markup + Client-Inseln
+  components/map/detail-map.ts     MapLibre-Detailkarte (Port von UKARTE.detail, faul geladen)
+  components/favorites.ts          FavoriteRepository → LocalStorageFavorites
+  domain/listing.ts, dossier.ts    Typen, Finanzlogik, Anzeigemodell («leere Blöcke entstehen nicht»)
+  server/env.ts, db.ts             Umgebungsprüfung (fail-closed), Verbindung
+  server/listings.ts, search.ts, inquiries.ts   die einzigen Stellen mit SQL
+  services/storage.ts, mail.ts     StorageProvider (local), MailProvider (dev)
+  config/company.ts, policy.ts     Firmendaten und Geschäftsaussagen mit Stand
+  i18n/                            437 + 1 Schlüssel je Sprache, nach Bereich
+  lib/errors.ts, log.ts, ratelimit.ts
+  scripts/migrate.mjs              Migrationen, --seed, --test
+  tests/                           node:test, CI-Workflow mit PostGIS-Dienst
+  styles/ufer.css, objekt.css      wörtlich aus dem Prototyp (nur Bildpfade angepasst)
+  public/media, plans, img         Entwicklungs-Fixtures</code></pre>
+<p>Regel, die das Ganze zusammenhält: <code>process.env</code> wird nur in <code>server/env.ts</code> gelesen. Ausserhalb von Development verlangt die Prüfung ein <code>APP_SECRET</code> und verweigert lokalen Speicher, Entwicklungs-Mail, localhost-Datenbank und http-Adressen — die Anwendung startet dann nicht.</p>
+
+<h2>4. Migrationen</h2>
+<p>Container <code>fw-dev-db</code> (<code>postgis/postgis:16-3.4-alpine</code>) frisch angelegt, dann <code>node scripts/migrate.mjs</code>: <b>9 Migrationen von null, jede in ihrer Transaktion</b>, verbucht in <code>schema_migration</code>. Neu in P5.2 ist <code>0009_inhalt.sql</code>: <code>listing_content</code> (Titel, Tagline, Abschnitte als JSON je Sprache) und <code>listing.is_demo</code>. Die P5.1-Migrationen blieben unverändert die Quelle der Wahrheit; kein Werkzeug hat sie erzeugt oder umgeschrieben.</p>
+<p>Der Entwicklungsbestand (<code>db/seed/0001_entwicklung.sql</code>) ist aus dem P1-Dossier <i>erzeugt</i>, nicht abgetippt — mit den echten Dateigrössen der Bildvarianten. Die Strasse ist ausdrücklich fiktiv («Seehausweg (fiktiv) 1»); die exakte Lage liegt nur in <code>geom_exact</code>. Der Statusweg läuft über die Zustandsmaschine (draft → submitted → in_review → approved → published), nicht per Direktsetzung. Dazu drei kleine Testinserate: Zürich mit freigegebener exakter Lage, Bern als Miete mit Gemeindegenauigkeit, und ein <b>Entwurf</b>, der öffentlich nie erscheinen darf.</p>
+
+<h2>5. Die 16 Zusagen</h2>
+<p><code>node scripts/migrate.mjs --test</code> gegen die frische Datenbank: <b>16 von 16 geprüft</b> — Versatz und Reproduzierbarkeit der öffentlichen Lage, Unveränderlichkeit der exakten, Radiusstufen, Herausgeberpflicht, verbotene Statussprünge, Audit-Einträge, Endzustand «archiviert», Index nur auf Veröffentlichtes, Sicht ohne <code>geom_exact</code> und Strasse, Versionszähler, eindeutige Merkliste, Suchabo-Objekt, Umkreissuche. Derselbe Lauf steht im CI-Workflow.</p>
+
+<h2>6. Die echte Route</h2>
+<table>
+<tr><th>Adresse</th><th>Antwort</th></tr>
+<tr><td><code>/de/immobilien/kaufen/seehaus-walensee-fwl-2026-000142</code></td><td class="ok">200, 109 KB Dokument</td></tr>
+<tr><td><code>/fr/immobilier/acheter/…</code> · <code>/it/immobili/comprare/…</code> · <code>/en/properties/buy/…</code></td><td class="ok">200, dieselbe Immobilie, <code>&lt;html lang&gt;</code> je Sprache, Pfadwörter je Sprache</td></tr>
+<tr><td><code>…/villa-am-walensee-fwl-2026-000142</code> (alter Slug)</td><td class="ok">308 → kanonische Adresse</td></tr>
+<tr><td><code>/de/immobilien/kaufen/wohnung-bern-demo-fwl-2026-000144</code> (Miete unter «kaufen»)</td><td class="ok">308 → <code>/de/immobilien/mieten/…</code></td></tr>
+<tr><td><code>…/entwurf-unsichtbar-fwl-2026-000145</code> (Entwurf, erratene Referenz)</td><td class="ok">404 — die Sicht <code>listing_public</code> kennt ihn nicht</td></tr>
+<tr><td><code>…/foo-fwl-2026-999999</code> · <code>…/' OR 1=1--</code> · <code>/xx/foo</code></td><td class="ok">404 · 404 · 404</td></tr>
+<tr><td><code>/</code></td><td class="ok">308 → <code>/de</code></td></tr>
+</table>
+<p>Der Schlüssel ist die öffentliche, unveränderliche Referenz am Ende der Adresse (<code>FWL-2026-000142</code>, aus <code>next_public_reference()</code>, nicht fortlaufend erratbar wie ein Primärschlüssel). Der Slug davor ist Lesbarkeit; stimmt er nicht, führt eine 308 auf die kanonische Adresse. Der interne UUID-Schlüssel verlässt den Server nie.</p>
+
+<h2>7. SSR-Beweis</h2>
+<p>Aus dem rohen HTML (<code>curl</code>, ohne JavaScript):</p>
+<pre><code>&lt;title&gt;Seehaus Walensee · 8883 Quarten — Fourwalls&lt;/title&gt;
+&lt;meta name="description" content="Beton, Glas und ein See, der die Wände färbt. Das Seehaus wurde 2019 …"&gt;
+&lt;link rel="canonical" href="…/de/immobilien/kaufen/seehaus-walensee-fwl-2026-000142"&gt;
+&lt;link rel="alternate" hreflang="fr" href="…/fr/immobilier/acheter/seehaus-walensee-fwl-2026-000142"&gt;
+CHF 5’480’000.–   (2 Treffer: Titelzeile und Mobil-Leiste)
+id="d-uebersicht" id="d-bilder" id="d-eckdaten" id="d-grundrisse" id="d-lage"
+id="d-finanzierung" id="d-dokumente" id="d-fragen" id="d-kontakt"</code></pre>
+<p>Dazu ein JSON-LD <code>RealEstateListing</code> mit Name, Adresse, Preis in CHF, Bild und Veröffentlichungsdatum — sonst nichts. Keine Bewertungen, keine Verfügbarkeitsversprechen, keine erfundenen Organisationsangaben; das <code>&lt;</code> ist maskiert.</p>
+<p>Die Gegenprobe «keine leeren Abschnitte»: das Zürcher Testinserat hat weder Pläne noch Dokumente, weder Energie- noch Parkierangaben, keine Bilder und keine Beschreibung. Seine Seite hat <b>fünf</b> Abschnitte (Übersicht entfällt ebenfalls), null leere. Das entscheidet <code>domain/dossier.ts</code>, nicht die Komponenten.</p>
+
+<h2>8. PostGIS-Beweis</h2>
+<p>Zwei Abfragen, beide mit <code>EXPLAIN ANALYZE</code>:</p>
+<table>
+<tr><th>Abfrage</th><th>Plan</th><th>Zeit</th></tr>
+<tr><td>Inserat nach öffentlicher Referenz</td><td><code>Index Scan using listing_public_ref_key</code>, dann <code>Index Only Scan using property_pkey</code></td><td class="z">3.7 ms</td></tr>
+<tr><td>Umkreis 5 km um 9.21/47.11, nur veröffentlicht, Kauf</td><td><code>Index Scan using listing_geom_gix</code> mit <code>geom_public &amp;&amp; _st_expand(…)</code> — der GIST-Index aus 0008 trägt</td><td class="z">84 ms (Kaltstart, 4 Zeilen)</td></tr>
+</table>
+<p><code>GET /api/search?transaction=sale&amp;lat=47.11&amp;lng=9.21&amp;radiusKm=5</code> liefert einen Treffer mit <code>"geo":{"lng":9.215,"lat":47.115,"precision":"approximate","radiusM":450}</code> und <code>distanceM: 673</code>. Die exakte Lage ist 9.2151 / 47.1132 — 200 m entfernt, deterministisch gerastert, und in keiner Antwort.</p>
+
+<h2>9. Geo-Privatsphäre</h2>
+<table>
+<tr><th>Wo gesucht</th><th>9.2151 · 47.1132 · «Seehausweg»</th></tr>
+<tr><td>Rohes HTML der Objektseite (de, fr)</td><td class="ok">0 Treffer</td></tr>
+<tr><td>RSC-Nutzlast (<code>self.__next_f</code>) im Browser</td><td class="ok">0 Treffer</td></tr>
+<tr><td>Antworten von <code>/api/search</code></td><td class="ok">nur <code>geom_public</code> — die Sicht hat nichts anderes</td></tr>
+<tr><td>JavaScript-Zustand der Seite (<code>outerHTML</code> nach dem Laden der Karte)</td><td class="ok">0 Treffer</td></tr>
+<tr><td>Client-Bundle (<code>.next/static</code>, 13 Dateien)</td><td class="ok">0 Treffer; ebenso 0 für Datenbank-URL, Passwort, <code>APP_SECRET</code>, Mail-Senke, Kontakt-E-Mail</td></tr>
+<tr><td>Berner Mietinserat (Gemeindegenauigkeit)</td><td class="ok">7.442 / 46.951 nicht enthalten; öffentlich ist der 2-km-Raster</td></tr>
+</table>
+<p>Die Karte bekommt nur, was <code>listing_public</code> hergibt, und zeichnet bei ungenauer Freigabe ein Feld, keinen Punkt. Das ist zugleich die eine sichtbare Abweichung zum Prototyp — dazu Abschnitt 13.</p>
+
+<h2>10. Anfrage — Beweis der Persistenz</h2>
+<p>Über die API und über die echte Oberfläche (headless Chrome: Klick auf «Besichtigung anfragen», Tippen, Senden):</p>
+<pre><code>POST /api/inquiries → 201 {"angenommen":true,"publicRef":"FWA-2026-001006"}
+inquiry: FWA-2026-001006 | viewing_request | new | Test Käuferin | test@example.com
+         recipient_user_id ✓ (Lena Furrer)  recipient_org_id ✓ (Fourwalls AG)  ip_hash 27767ff9… source web
+Oberfläche: Formular sichtbar → 201 → «Anfrage angenommen — Lena Furrer, Leitung Verkauf Zürich meldet sich bei Ihnen.»
+            Zeile FWA-2026-001013 · Merken: «Gemerkt ✓» · Lichtbox 1 / 13</code></pre>
+<p>Der Empfänger wird aus der Beziehung Inserat → Ansprechperson → Organisation bestimmt, nie aus dem Formular. Die Oberfläche sagt «Anfrage angenommen», nicht «gesendet» — das Prototyp-Wort wurde ersetzt, weil die Anwendung nur die Annahme garantiert, nicht die Zustellung.</p>
+<table>
+<tr><th>Negativfall</th><th>Antwort</th></tr>
+<tr><td>Referenz des Entwurfs (Manipulation)</td><td class="ok">404 NOT_FOUND</td></tr>
+<tr><td>Honigtopf gefüllt</td><td class="ok">422 VALIDATION — derselbe Fehler wie für Menschen, kein Hinweis</td></tr>
+<tr><td>20 KB Nachricht</td><td class="ok">422 «zu gross» (Grenze 8 KB, vor dem Parsen)</td></tr>
+<tr><td>Fremder Origin</td><td class="ok">403 FORBIDDEN</td></tr>
+<tr><td>Ungültige Art, E-Mail, zu kurz</td><td class="ok">422 mit Feldfehlern</td></tr>
+<tr><td>6. Anfrage derselben Herkunft in 10 Minuten</td><td class="ok">201 ×5, dann 429 RATE_LIMIT</td></tr>
+<tr><td>XSS-Nutzlast in Name und Text</td><td class="ok">gespeichert als Text, nirgends als HTML gerendert (React entkommt; kein <code>dangerouslySetInnerHTML</code> mit Daten)</td></tr>
+<tr><td>Datenbank gestoppt</td><td class="ok">Health 503 · Objektseite 500 ohne Interna · Anfrage 500 INTERNAL, <b>keine Zeile geschrieben</b>, kein falscher Erfolg</td></tr>
+</table>
+<p class="klein">CSRF-Modell: Route Handler prüfen die Herkunft nicht von selbst (anders als Server Actions, die Next mit Origin/Host abgleicht). Darum die ausdrückliche Prüfung von <code>Origin</code> und <code>Sec-Fetch-Site</code>. Es gibt in P5.2 keine Cookie-Sitzung; die Prüfung ist für den Tag da, an dem es eine gibt.</p>
+
+<h2>11. E-Mail-Adapter</h2>
+<p><code>MailProvider</code> mit genau einer Implementierung: <code>DevMailProvider</code> schreibt jede Nachricht nach <code>app/var/mail/&lt;kennung&gt;.json</code> und ins Protokoll nur Empfänger-Domain und Bezug — nie den Text. Empfänger in der Entwicklung ist die Senke <code>dev-sink@fourwalls.example</code>; ein echtes Postfach steht nirgends in der Fachlogik. Scheitert die Übergabe, bleibt die Datenbankzeile und das Protokoll hält es fest. <code>env.ts</code> verweigert diesen Anbieter ab Staging.</p>
+
+<h2>12. Speicherabstraktion</h2>
+<p><code>StorageProvider</code> mit <code>publicUrl()</code> für öffentliche Ableitungen und <code>signedUrl()</code> für Geschütztes. Die Datenbank kennt nur Schlüssel (<code>demo/seehaus-01-1600.jpg</code>); eine Adresse entsteht erst im Anbieter. <code>LocalDevStorage</code> liest die 78 Fixtures aus <code>public/media</code>; seine signierte Adresse ist ein sichtbar gekennzeichneter Platzhalter (<code>?dev-signed=1</code>), damit niemand glaubt, hier sei etwas geschützt. Grundriss-Zeichnungen sind erstautorisierte SVG-Dateien aus <code>public/plans</code> — hochgeladene Pläne lässt das Schema nur als Raster oder PDF zu; eingesetzt werden sie über <code>DOMParser</code>, ohne <code>innerHTML</code>, ohne Skriptausführung.</p>
+<p>Die Bildausschnitte wurden nicht verändert: kein <code>next/image</code>, dieselben drei Breiten in WebP und JPEG, dieselben <code>sizes</code>. Der Bildvergleich in Abschnitt 13 bestätigt es.</p>
+
+<h2>13. Design-Regression</h2>
+<figure><img src="img/p5-2-vergleich-tag.jpg" alt="Objektseite Tag: Prototyp links, Anwendung rechts"><figcaption>Links Prototyp (P5.1-Massstab), rechts die Anwendung aus der Datenbank. Abweichung 0.06 %.</figcaption></figure>
+<table>
+<tr><th>Zustand</th><th>Abweichung</th><th>Befund</th></tr>
+<tr><td>objekt-exclusive (1440, Tag)</td><td class="z">0.06 %</td><td class="ok">gleich</td></tr>
+<tr><td>objekt-exclusive-abend</td><td class="z">0.06 %</td><td class="ok">gleich</td></tr>
+<tr><td>m-objekt-exclusive (390 px)</td><td class="z">0.13 %</td><td class="ok">gleich</td></tr>
+<tr><td>m-objekt-exclusive-abend</td><td class="z">0.13 %</td><td class="ok">gleich</td></tr>
+<tr><td>objekt-exclusive-fr / -it</td><td class="z">0.96 % / 0.99 %</td><td class="off">erklärt: die Anwendung zeigt Tagline und Highlights auf Französisch/Italienisch (aus <code>properties.js</code> übernommen); der Prototyp fiel hier auf Deutsch zurück. Dazu fehlt der Anker «Ähnliche Objekte».</td></tr>
+<tr><td>objekt-lage (zur Karte gescrollt)</td><td class="z">11.8 %</td><td class="off">erklärt und gewollt: der Prototyp setzte bei «ungefährer» Lage einen Punkt auf Zoom 15 — genau das, was der Auftrag verbietet. Die Anwendung zeichnet das 450-m-Feld um den gerasterten Punkt auf Zoom 13.6.</td></tr>
+</table>
+<figure><img src="img/p5-2-vergleich-lage.jpg" alt="Lageabschnitt: Punkt im Prototyp, Feld in der Anwendung"><figcaption>Lage: links der Punkt des Prototyps, rechts das Feld der Anwendung. Alles andere — Filter, Texte, Listen, Kontaktkarte — deckungsgleich.</figcaption></figure>
+<h3>Was auf dem Weg zu 0.06 % korrigiert wurde</h3>
+<ul>
+<li><b>CHF/m²</b>: die Anwendung zeigte 18’962, der Prototyp rundet auf 100 (19’000). Rundung übernommen.</li>
+<li><b>Monatsbetrag</b>: «ab CHF 16’070.– / Monat» → «ab CHF 16’070 / Monat» wie im Prototyp.</li>
+<li><b>Ansprechperson</b>: «Lena Furrer» → «Lena Furrer, Leitung Verkauf Zürich» — die Funktion kommt aus <code>org_membership.public_title</code>.</li>
+<li><b>Werkzeug</b>: das Heldbild «atmet» (30-s-Animation), das Fenster «treibt». Zwei Aufnahmen verglichen zwei Zeitpunkte, nicht zwei Seiten (7 %). <code>baseline.mjs</code> friert Endlos-Animationen jetzt auf beiden Seiten ein; der P4-Massstab wurde für diese Zustände neu aufgenommen.</li>
+<li><b>Hydration</b>: der Modus wird vor dem ersten Zeichnen im Browser gesetzt; React beanstandete die Abweichung zum Server-Markup. <code>suppressHydrationWarning</code> auf <code>&lt;body&gt;</code>, das übliche Muster für Themenwechsel.</li>
+<li><b>Entwicklungsabzeichen</b>: die 390-px-Abweichung von 5 % war das «N»-Abzeichen der Next-Entwicklungswerkzeuge. Gemessen wird seither gegen den Produktions-Build.</li>
+</ul>
+<figure><img src="img/p5-2-vergleich-abend.jpg" alt="Objektseite Abend: Prototyp links, Anwendung rechts"><figcaption>Abendmodus: der umgerechnete MapLibre-Stil, die Palette, das Glas der Kopfleiste — 0.06 %.</figcaption></figure>
+
+<h2>14. Leistung gegenüber P5.1</h2>
+<p>Gemessen mit <code>tools/leistung.mjs</code> (headless Chrome, echte Zeit, 1440 px) auf derselben Seite — Prototyp und Produktions-Build der Anwendung, jeweils bis 9 s nach dem Aufruf, dann zur Karte gescrollt:</p>
+<table>
+<tr><th>Mass</th><th>Prototyp</th><th>Anwendung</th></tr>
+<tr><td>Anfragen bis zum ersten vollständigen Bild</td><td class="z">69</td><td class="z">24</td></tr>
+<tr><td>Übertragene Bytes</td><td class="z">2’217 KB</td><td class="z">605 KB</td></tr>
+<tr><td>davon JavaScript</td><td class="z">870 KB (12 Dateien)</td><td class="z">169 KB (8 Dateien)</td></tr>
+<tr><td>davon Dokument (übertragen)</td><td class="z">86 KB</td><td class="z">31 KB</td></tr>
+<tr><td>DOM-Knoten</td><td class="z">1’866</td><td class="z">813</td></tr>
+<tr><td>LCP</td><td class="z">3’512 ms</td><td class="z">2’196 ms</td></tr>
+<tr><td>CLS</td><td class="z">0.977</td><td class="z">0</td></tr>
+<tr><td>MapLibre vor dem Scrollen geladen</td><td class="nein">ja (424 KB)</td><td class="ok">nein — erst beim Sichtbarwerden des Lageteils</td></tr>
+<tr><td>Nutzlast der 320 Inserate (<code>listings.js</code>)</td><td class="z">enthalten</td><td class="ok">nicht vorhanden (0 Treffer im Bundle)</td></tr>
+</table>
+<p class="klein">Der CLS-Wert des Prototyps stammt aus dem Öffnen der Objektseite als Overlay über dem Portal; er ist kein Vorwurf, aber er zeigt, was eine echte Route ändert. INP wurde nicht gemessen — es gibt in dieser Scheibe keine Interaktion, die länger als ein Rahmen dauert.</p>
+
+<h2>15. Sicherheits-Falsifikation</h2>
+<table>
+<tr><th>Versuch</th><th>Ergebnis</th></tr>
+<tr><td>Private Koordinate in HTML, RSC, API, Bundle, Browserzustand</td><td class="ok">nicht vorhanden (Abschnitt 9)</td></tr>
+<tr><td>Entwurf über erratene Referenz, über Route und über Anfrage</td><td class="ok">404 / 404</td></tr>
+<tr><td>Ungültige Referenzen, SQL in Slug und Suchparametern</td><td class="ok">404 bzw. 422 — der Wert erreicht nie den SQL-Text (Tagged Templates, kein String-Aufbau)</td></tr>
+<tr><td>XSS in Anfragefeldern</td><td class="ok">als Text gespeichert; <code>react/no-danger</code> ist als Lint-Fehler geschaltet — die zwei Ausnahmen (Modus-Skript als Konstante, JSON-LD mit maskiertem <code>&lt;</code>) sind begründet und markiert</td></tr>
+<tr><td>Übergrosse Nutzlast</td><td class="ok">422 vor dem Parsen</td></tr>
+<tr><td>Fremde Herkunft, Ratenlimit, Honigtopf</td><td class="ok">403 / 429 / 422</td></tr>
+<tr><td>Fehlerleck bei DB-Ausfall</td><td class="ok">Fehlermodell ohne Stack, ohne SQL, ohne Verbindungsdaten</td></tr>
+<tr><td>Geheimnisse im Client-Build</td><td class="ok">0 Treffer in 13 Dateien</td></tr>
+<tr><td>Protokoll</td><td class="ok">JSON-Zeilen; Schlüssel wie <code>password</code>, <code>token</code>, <code>database_url</code> werden geschwärzt; Formulartexte werden nicht protokolliert</td></tr>
+</table>
+<p class="klein">Das ist eine Falsifikation durch den Bauenden, kein Penetrationstest.</p>
+
+<h2>16. Offene Blocker</h2>
+<ul>
+<li><b>Vier fremde Zugänge</b> fehlen weiterhin: Schweizer Hosting, verwaltete PostgreSQL/PostGIS, S3-kompatibler Speicher, Mailversand. Die Anwendung ist darauf vorbereitet (Schnittstellen, fail-closed-Umgebung), aber kein Adapter dafür existiert. Nichts wurde gekauft, nichts abonniert.</li>
+<li><b>Ratenlimit</b> zählt im Speicher eines Prozesses. Bei mehreren Instanzen braucht es denselben Zähler hinter derselben Schnittstelle (Postgres-Tabelle oder Redis).</li>
+<li><b>«Ähnliche Objekte»</b> fehlt auf der Objektseite — braucht die Marktplatzkarte und die Suche.</li>
+<li><b>Fehlerseite bei DB-Ausfall</b> wird clientseitig gezeichnet (Status 500, HTML ohne Text). Für Robots wäre ein serverseitiger Fehlertext besser.</li>
+<li><b>Nicht übersetzt</b>: Startseiten-Stub, 404- und Fehlertexte sind fest verdrahtet (vier Sprachen inline), nicht im Katalog.</li>
+<li><b>Rechtlich zu prüfen</b> (bleibt aus P5.1): Impressum, Datenschutz, UID, Mitgliedschaften — alle Felder sind als <code>offen</code> bzw. <code>platzhalter</code> markiert und erscheinen nur so.</li>
+</ul>
+
+<h2>17. Empfehlung für P5.3</h2>
+<p><b>Die Suche als zweite Scheibe — auf dem Suchanbieter, der jetzt existiert.</b> Konkret: Ergebnisliste und Karte unter <code>/de/immobilien/kaufen?ort=…</code> über <code>server/search.ts</code> (Umkreis, Preis, Seiten sind da), die Marktplatzkarte als Server-Markup mit den P2-Klassen, daraus «Ähnliche Objekte» auf der Objektseite, und 20–30 weitere Inserate als Entwicklungsbestand — nicht 320. Parallel dazu, sobald die Zugänge stehen: S3- und Mail-Adapter hinter den bestehenden Schnittstellen und ein erster Staging-Betrieb auf einem Schweizer Host. Konto und Anmeldung erst danach: Sie brauchen die Suche (Suchabo, Merkliste) als Gegenüber, nicht umgekehrt.</p>
+
+<p class="klein" style="margin-top:56px">Belege: <code>app/</code>, <code>db/migrations/0009_inhalt.sql</code>, <code>db/seed/</code>, <code>tools/baseline.mjs --app</code>, <code>tools/leistung.mjs</code>, <code>baseline/p4</code> und <code>baseline/p5</code> im Repository. Lokal: <code>fw-dev-db</code> auf 55433, Anwendung <code>npm run dev</code> bzw. Produktions-Build. Der Prototyp unter <code>final/</code> ist unverändert.</p>
+</div>
+</body>
+</html>

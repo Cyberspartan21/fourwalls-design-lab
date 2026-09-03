@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P2 — Vom Flaggschiff zum Marktplatz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#141210;--pap:#1c1916;--ink:#EDE6DA;--leise:#A69B8C;--linie:#332D27;--gold:#B8923F;--gut:#7FA66B;--warn:#C4838A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+.h{max-width:980px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:300;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.06}
+h2{font-size:1.6rem;margin:56px 0 16px;padding-top:26px;border-top:1px solid var(--linie)}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:500}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin-bottom:14px}
+.lead{font-size:1.12rem;color:#D9D0C3;max-width:64ch}
+p{max-width:68ch}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.status div{background:var(--pap);padding:15px 17px}
+.status b{display:block;font-family:"Fraunces",serif;font-weight:300;font-size:1.5rem;line-height:1.1}
+.status span{font-size:.75rem;color:var(--leise);letter-spacing:.05em;text-transform:uppercase}
+.knopf{display:inline-block;margin:22px 8px 0 0;padding:.85em 1.3em;border:1px solid var(--gold);color:var(--ink);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.knopf.voll{background:var(--gold);color:#141210}
+ul{padding-left:1.1em;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:14px 0;font-size:.93rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--linie);text-align:left;vertical-align:top}
+th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);font-weight:500}
+td.z{text-align:right;font-family:"IBM Plex Mono",monospace}
+figure{margin:22px 0}figure img{width:100%;height:auto;display:block;border:1px solid var(--linie)}
+figcaption{font-size:.8rem;color:var(--leise);margin-top:8px}
+.hinweis{border-left:3px solid var(--gold);padding:12px 18px;background:var(--pap);margin:18px 0;max-width:72ch}
+.klein{font-size:.85rem;color:var(--leise)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:#D9D0C3}
+.ok::before{content:"✓ ";color:var(--gut)}
+.off::before{content:"→ ";color:var(--gold)}
+.scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="h">
+<div class="eyebrow">Fourwalls · Phase 2 · 3. September 2026</div>
+<h1>Die Architektur trägt den ganzen Bestand.</h1>
+<p class="lead">P1 hat bewiesen, dass ein Objekt hervorragend dargestellt werden kann. P2 beweist, dass dieselbe Architektur auch dann trägt, wenn ein Anbieter drei Fotos liefert und ein anderer dreizehn, wenn ein Objekt Grundrisse hat und das nächste nicht, wenn es um Miete geht statt um ein Seehaus.</p>
+
+<div class="status">
+  <div><b>320</b><span>Inserate mit Dossier</span></div>
+  <div><b>0</b><span>leere Abschnitte</span></div>
+  <div><b>+9</b><span>neue Suchfilter</span></div>
+  <div><b>ohne Konto</b><span>Suchabo speicherbar</span></div>
+</div>
+<a class="knopf voll" href="ufer/portal.html">Suche öffnen</a>
+<a class="knopf" href="ufer/portal.html?ort=Luzern&um=20&pmax=2000000">Beispiel: Luzern + 20 km</a>
+
+<h2>1. Was geändert wurde</h2>
+<h3>Jedes Inserat hat jetzt ein Dossier</h3>
+<p>Ein neues Modul leitet aus jedem Inserat ein Objektdossier ab. Die Grundregel steht im Code an erster Stelle: <b>es werden keine Fakten erfunden.</b> Abgeleitet wird nur, was tatsächlich am Inserat hängt — Flächen, Zimmer, Baujahr, Merkmale, Quelle, Verfügbarkeit. Der Zustand wird aus dem Baujahr geschätzt und als Ableitung gekennzeichnet. Fehlt eine Angabe, fehlt der Abschnitt. Handgeschriebene Dossiers haben Vorrang.</p>
+
+<h3>Verfügbarkeit und Status im Datenmodell</h3>
+<p>Neu getrennt: <b>Verfügbarkeit</b> (sofort, ab Datum, nach Vereinbarung, reserviert, verkauft, vermietet) und <b>Publikationsstatus</b> (publiziert, reserviert, archiviert). Verkaufte und vermietete Objekte erscheinen nicht mehr als normal verfügbar; sie sind über einen Schalter im Filter sichtbar, in der Ergebniskarte gekennzeichnet und im Bild gedämpft.</p>
+
+<h3>Kein Rest der alten Objektseite</h3>
+<p>Jeder Weg in ein Objekt läuft über den neuen Renderer: Ergebnisliste, Karte, Favoriten, ähnliche Objekte, Direktlink, Zurück-Taste.</p>
+
+<h2>2. Wie viele Inserate</h2>
+<div class="scroll"><table>
+<tr><th>Quelle</th><th class="z">Inserate</th><th>Tiefe</th><th>Typische Stationen</th></tr>
+<tr><td>Privat</td><td class="z">108</td><td>A — was der Anbieter liefert</td><td>5 bis 6</td></tr>
+<tr><td>Makler</td><td class="z">113</td><td>B — gewerblich</td><td>7</td></tr>
+<tr><td>Verwaltung</td><td class="z">29</td><td>B</td><td>7</td></tr>
+<tr><td>Bauträger</td><td class="z">20</td><td>B</td><td>7</td></tr>
+<tr><td>Fourwalls</td><td class="z">50</td><td>B bis C</td><td>7, Flaggschiff 10</td></tr>
+<tr><td colspan="4" class="klein">Stichprobe über alle Quellen, Objektarten und beide Transaktionsarten: 14 von 14 öffnen sauber, kein leerer Abschnitt, Finanzblock nur bei Kauf von Wohnobjekten.</td></tr>
+</table></div>
+
+<h2>3. Suche und Filter</h2>
+<ul>
+  <li><b>Trefferzahl überall</b> — neben der Überschrift, im Anwenden-Knopf des Filters, in jedem Ausweg des Nullzustands.</li>
+  <li><b>Umkreissuche</b> 5 bis 50 km, berechnet aus den Objektkoordinaten. Luzern zeigt 8 Treffer, mit 20 km 9, mit 30 km 17.</li>
+  <li><b>Neue Filter:</b> Wohnfläche von und bis, Zimmer von und bis, Grundstück ab, Baujahr von und bis, Etage, Verfügbarkeit, Anzeige archivierter Objekte.</li>
+  <li><b>Passende Filter</b> — die Etage erscheint nur bei Wohnungen und Gewerbe, das Grundstück nicht bei Wohnungen und Parkplätzen.</li>
+  <li><b>Chips</b> für jeden aktiven Filter, einzeln entfernbar, inklusive Ort mit Umkreis.</li>
+  <li><b>Sortierung</b> um Empfohlen und Preis pro Quadratmeter erweitert. Empfohlen bewertet die Vollständigkeit eines Inserats, nicht die Herkunft. Der Exclusive-Bonus bleibt auf drei Positionen begrenzt und wirkt nur bei «Neuste».</li>
+  <li><b>Nullzustand</b> rechnet jeden Ausweg durch, bevor er ihn anbietet: «Filter entfernen: Baujahr · 4 Immobilien».</li>
+  <li><b>URL-Zustand</b> für alle Filter, damit eine Suche teilbar ist. Zurück-Taste führt zur Suche mit denselben Filtern.</li>
+</ul>
+
+<h2>4. Suchabo ohne Konto</h2>
+<p>Drei Angaben: die gespeicherte Suche mit ihrer Trefferzahl, eine E-Mail-Adresse, eine Frequenz. Danach die Bestätigung — und <b>erst dort</b> das Angebot, das Abo mit einem Konto auf allen Geräten zu verwalten. Keine Kontowand vor dem Nutzen.</p>
+<div class="hinweis">Der Prototyp sagt offen, was er tut: «Das Suchabo wird auf diesem Gerät gespeichert. Es werden keine E-Mails versendet — die Zustellung entsteht mit dem Backend.» Es wird kein Versand vorgetäuscht.</div>
+
+<h2>5. Was Prototyp bleibt</h2>
+<ul>
+  <li class="off"><b>Karte</b> — unverändert schematisch. Produktionskartografie ist P3.</li>
+  <li class="off"><b>Koordinaten</b> sind synthetisch um die Ortsmitte gestreut. Die Umkreissuche rechnet damit korrekt, aber die Genauigkeit ist Demo, nicht Vermessung.</li>
+  <li class="off"><b>E-Mail-Zustellung</b> des Suchabos existiert nicht.</li>
+  <li class="off"><b>Dokumentstufen</b> sind Anzeige; die Durchsetzung gehört auf den Server.</li>
+  <li class="off"><b>Video, 360 Grad, 3D</b> bleiben erklärte Platzhalter.</li>
+  <li class="off"><b>Neubauprojekte</b> sind als Quelle vorhanden, aber Projekt und Einheit sind noch nicht getrennt.</li>
+</ul>
+
+<h2>6. Skalentest</h2>
+<p>Gemessen mit leichten synthetischen Zusammenfassungen, keine Bildobjekte:</p>
+<div class="scroll"><table>
+<tr><th>Datensätze</th><th class="z">Filter und Sortierung</th><th class="z">Empfohlen</th><th class="z">Umkreis</th></tr>
+<tr><td>320</td><td class="z">0.8 ms</td><td class="z">27 ms</td><td class="z">0.6 ms</td></tr>
+<tr><td>1 000</td><td class="z">0.1 ms</td><td class="z">1.3 ms</td><td class="z">0.4 ms</td></tr>
+<tr><td>10 000</td><td class="z">0.8 ms</td><td class="z">5.4 ms</td><td class="z">1.8 ms</td></tr>
+<tr><td>50 000</td><td class="z">7.4 ms</td><td class="z">26 ms</td><td class="z">21 ms</td></tr>
+</table></div>
+<p>Die Rechenzeit ist nicht die Grenze. Die Grenze ist die Nutzlast: eine Zusammenfassung wiegt rund 870 Byte, der ganze Bestand 272 KB roh und 28 KB komprimiert. Bei etwa 2000 Objekten ist Schluss mit dem Ausliefern des ganzen Bestands — ab dort muss die Suche auf den Server. Zusammenfassung und Dossier sind bereits getrennt, das Dossier wird berechnet und nicht mitgeliefert.</p>
+<p><b>Ladestrategie:</b> 24 Treffer, dann «Weitere anzeigen». Begründung: die Zurück-Taste bleibt brauchbar, auf dem Telefon entsteht kein Scrollgefängnis, und für Suchmaschinen zählen in Produktion ohnehin die Kategorieseiten und die Objektseiten, nicht die Filterkombinationen.</p>
+
+<h2>7. Nachweis</h2>
+<figure><img src="../qa/p2/p2-suche.jpg" alt="Suche in vier Zuständen" loading="lazy"><figcaption>Suche am Tag und am Abend, gefiltert auf Luzern mit 20 km, und der Nullzustand mit gerechneten Auswegen.</figcaption></figure>
+<figure><img src="../qa/p2/p2-dossiers.jpg" alt="Vier Dossiers unterschiedlicher Tiefe" loading="lazy"><figcaption>Dieselbe Architektur bei vier Datenlagen: Privatinserat zur Miete, Makler-Inserat, Fourwalls Exclusive, Bauland. Kein leerer Abschnitt, keine erfundenen Felder.</figcaption></figure>
+<figure><img src="../qa/p2/p2-mobil.jpg" alt="Mobile Ansichten" loading="lazy"><figcaption>390 Pixel: Suche am Tag und am Abend, Privatinserat.</figcaption></figure>
+
+<h3>Fehlertor</h3>
+<ul class="klein">
+<li class="ok">Kein horizontaler Überlauf auf Desktop und 390 Pixeln</li>
+<li class="ok">Kein Objektlink führt in die alte Darstellung</li>
+<li class="ok">Kein leerer Dossierabschnitt in 14 Stichproben über alle Quellen und Objektarten</li>
+<li class="ok">Alle neuen Bedienelemente in vier Sprachen, auf Italienisch und Französisch geprüft</li>
+<li class="ok">Kein vorgetäuschter E-Mail-Versand</li>
+<li class="ok">Favoriten konsistent über Liste, Detail, Konto und Neuladen</li>
+<li class="ok">Zurück und Vorwärts erhalten Filter, Trefferzahl und geöffnetes Objekt</li>
+</ul>
+<p class="klein">Zwei Fehler wurden dabei gefunden und behoben: das Filterblatt hing auf Mobil am oberen Rand, weil die Suchleiste durch ihre Weichzeichnung zum Bezugsrahmen für fixierte Elemente wurde; und die Zimmerauswahl im Filter verschwand auf Mobil, weil eine Ausblenderegel zu weit griff.</p>
+
+<h2>8. Offene Punkte</h2>
+<ul>
+  <li class="off">Die Ergebniskarte zeigt Verfügbarkeit, aber noch keinen Vergleich mehrerer Objekte.</li>
+  <li class="off">Zuletzt angesehene Objekte sind nicht umgesetzt; sie standen im Auftrag als nachrangig.</li>
+  <li class="off">Ähnliche Objekte greifen auf Objektart, Kanton, Ort, Preisband, Zimmer und Fläche zurück. Bei sehr seltenen Objektarten bleibt die Liste kurz statt beliebig aufgefüllt.</li>
+  <li class="off">Firmendaten auf Verkaufen und Verwaltung sind weiterhin Platzhalter.</li>
+</ul>
+
+<h2>9. Empfehlung für P3</h2>
+<p>P3 ist die Karte, wie im Auftrag vorgesehen. Vor der Kartografie sollten zwei Dinge geklärt sein, weil sie die Kartenarbeit sonst zweimal anfallen lassen:</p>
+<ol>
+  <li><b>Echte Koordinaten.</b> Ohne Geokodierung bleibt jede Karte dekorativ. Das ist die eigentliche Abhängigkeit, nicht die Kartenbibliothek.</li>
+  <li><b>Suche auf den Server.</b> Ab etwa 2000 Objekten trägt die Auslieferung des ganzen Bestands nicht mehr. Kartenausschnitt-Suche und Serversuche sind dieselbe Schnittstelle.</li>
+</ol>
+<p>Danach: MapLibre mit Vektorkacheln, Cluster, Preis-Pins, Suche im Kartenausschnitt, Umkreis auf der Karte, mobile Kartenbedienung und Kartenzustand in der Adresse.</p>
+
+<p class="klein" style="margin-top:44px">Fourwalls · Phase 2 · Marke <code>p2-marktplatz</code> · alle Objektdaten sind fiktive Demo-Daten</p>
+</div>
+</body>
+</html>

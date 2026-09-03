@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P1 — UFER als Produktbasis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#141210;--pap:#1c1916;--ink:#EDE6DA;--leise:#A69B8C;--linie:#332D27;--gold:#B8923F;--gut:#7FA66B;--warn:#C4838A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+.h{max-width:980px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:300;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.06}
+h2{font-size:1.6rem;margin:56px 0 16px;padding-top:26px;border-top:1px solid var(--linie)}
+h3{font-size:1.1rem;margin:24px 0 8px;font-weight:500}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin-bottom:14px}
+.lead{font-size:1.12rem;color:#D9D0C3;max-width:64ch}
+p{max-width:68ch}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.status div{background:var(--pap);padding:15px 17px}
+.status b{display:block;font-family:"Fraunces",serif;font-weight:300;font-size:1.5rem;line-height:1.1}
+.status span{font-size:.75rem;color:var(--leise);letter-spacing:.05em;text-transform:uppercase}
+.knopf{display:inline-block;margin:22px 8px 0 0;padding:.85em 1.3em;border:1px solid var(--gold);color:var(--ink);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.knopf.voll{background:var(--gold);color:#141210}
+ul{padding-left:1.1em;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:14px 0;font-size:.94rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--linie);text-align:left;vertical-align:top}
+th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);font-weight:500}
+td.z{text-align:right;font-family:"IBM Plex Mono",monospace}
+figure{margin:22px 0}figure img{width:100%;height:auto;display:block;border:1px solid var(--linie)}
+figcaption{font-size:.8rem;color:var(--leise);margin-top:8px}
+.hinweis{border-left:3px solid var(--gold);padding:12px 18px;background:var(--pap);margin:18px 0;max-width:72ch}
+.klein{font-size:.85rem;color:var(--leise)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:#D9D0C3}
+.ok::before{content:"✓ ";color:var(--gut)}
+.off::before{content:"→ ";color:var(--gold)}
+.scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="h">
+<div class="eyebrow">Fourwalls · Phase 1 · 3. September 2026</div>
+<h1>UFER ist jetzt die Produktbasis.</h1>
+<p class="lead">Das Turnier ist beendet, die Gestaltung eingefroren. Diese Phase hat die Informationsarchitektur festgelegt, die Navigation um die fünf Reisen geschärft und eine Objektseite gebaut, die einen ernsthaften Käufer vollständig bedient — an einem Objekt, als Referenz für alle weiteren.</p>
+
+<div class="status">
+  <div><b>ufer-v1</b><span>Gestaltung eingefroren</span></div>
+  <div><b>10</b><span>Stationen auf der Objektseite</span></div>
+  <div><b>3</b><span>Tiefenstufen, eine Architektur</span></div>
+  <div><b>0</b><span>unbelegte Kennzahlen</span></div>
+</div>
+<a class="knopf voll" href="ufer/portal.html#exclusive/seehaus-walensee">Flaggschiff-Objektseite öffnen</a>
+<a class="knopf" href="ufer/">Startseite</a>
+
+<h2>Was gemacht wurde</h2>
+<h3>Gestaltung eingefroren</h3>
+<p><a href="../docs/ufer-design-language-v1.md">UFER Design Language v1</a> hält Farbe, Typografie, Raster, Komponenten, die beiden Signaturen und die drei Bewegungsstufen fest. Git-Marke <code>ufer-v1</code>. Ab hier ändert sich Gestaltung nur noch aus einem Nutzungsgrund.</p>
+
+<h3>Informationsarchitektur</h3>
+<p><a href="../docs/p1-informationsarchitektur.md">Sitemap, Navigation, Objektseiten-Architektur und Datenmodell</a> sind festgelegt. Kern ist die Unterscheidung der fünf Reisen: suchen, verkaufen lassen, selbst inserieren, bewerten, verwalten lassen. Jeder Untereintrag der Navigation trägt eine Zeile, die genau das benennt — «Wir übernehmen den ganzen Verkauf» gegen «Sie inserieren und betreuen selbst». Vier Gruppen im Kopf, kein Mega-Menü.</p>
+
+<h3>Objektseite</h3>
+<p>Neu als eigenes Modul gebaut. Der Grundsatz ist <b>Übersicht zuerst, Tiefe auf Abruf</b>: Preis, Quadratmeterpreis, Monatsrate, Zimmer, Fläche, Grundstück, Baujahr, Verfügbarkeit und Quelle stehen ohne Scrollen im Bild. Alles Weitere hängt am klebenden Anker-Menü.</p>
+<ul>
+  <li><b>Medien</b> — Mosaik im Fluss, Filter nach Aussen, Wohnen, Küche, Schlafen, Bad, Lage. Die Lightbox ist der Arbeitsmodus: Miniaturen, Bildunterschriften, Pfeiltasten, Wischen, Kategorienwechsel.</li>
+  <li><b>Grundrisse</b> als eigene Station, nicht am Seitenende. Geschosswahl, Zoom, Vollbild, Raumliste mit Quadratmetern.</li>
+  <li><b>Lage</b> mit Distanzringen über 500 Metern, einem und drei Kilometern, sechs abschaltbaren Umgebungsschichten, Fahrzeiten und einem Kompass für die Ausrichtung.</li>
+  <li><b>Finanzierung</b> mit Eigenmittel-Regler, drei Zinsmodellen, aufgeschlüsselten Monatskosten und dem nötigen Haushaltseinkommen.</li>
+  <li><b>Dokumente</b> in fünf Zugangsstufen, ehrlich beschriftet.</li>
+  <li><b>Kontakt</b> klebt mit; wer antwortet, steht explizit dort — und ob Fourwalls das Objekt vertritt oder nicht.</li>
+</ul>
+
+<h3>Drei Tiefenstufen, keine leeren Blöcke</h3>
+<div class="scroll"><table>
+<tr><th>Stufe</th><th>Objekt</th><th class="z">Stationen</th><th class="z">Bilder</th><th>Was fehlt</th></tr>
+<tr><td>A · Privat</td><td>2.5-Zi.-Wohnung Zürich</td><td class="z">7</td><td class="z">3</td><td>Medien, Grundrisse, Fragen — fehlen sauber</td></tr>
+<tr><td>B · Makler</td><td>6-Zi.-Einfamilienhaus Zürich</td><td class="z">10</td><td class="z">8</td><td>Pläne als PDF statt Zeichnung</td></tr>
+<tr><td>C · Exclusive</td><td>Seehaus Walensee</td><td class="z">10</td><td class="z">13</td><td>nichts</td></tr>
+</table></div>
+
+<h3>Unbelegte Kennzahlen entfernt</h3>
+<p>Zahlen wie 2840 verwaltete Einheiten, 67 Tage Vermarktungsdauer, 2.0 bis 2.9 Prozent Honorar, 1.4 Prozent Leerstand und die Verbandsmitgliedschaft standen als Tatsachen auf den Seiten. Keine davon ist belegt. Sie sind durch prüfbare Aussagen ersetzt: Erfolgshonorar, eine Ansprechperson, Belege online, vier Sprachen, kein bezahltes Ranking. Marktzahlen im Wissensteil sind jetzt als Demo gekennzeichnet.</p>
+
+<h2>Woher die Produktideen kommen</h2>
+<div class="scroll"><table>
+<tr><th>Quelle</th><th>Übernommen</th><th>Bewusst nicht</th></tr>
+<tr><td>Objekttiefe</td><td>feste Stationen je Objekt, Eckdaten unter dem Titel, Monatsrate als Brücke zur Finanzierung, Merkmale in stabilen Gruppen, Dokumente gestuft</td><td>Login-Wand vor Grundrissen, dreifach wiederholter Maklerblock</td></tr>
+<tr><td>Produktklarheit</td><td>vier Navigationsgruppen, eine Handlung je Abschnitt, erklärende Zeile je Reise, Suchabo direkt an der Suche</td><td>Aggregation fremder Portale, Werbeversprechen</td></tr>
+<tr><td>Zurückhaltung</td><td>ein Satz, ein Suchfeld, karge Karten, Bewertung als Richtwert mit zweitem Schritt, wenige ruhige Zahlen</td><td>Layout, Schrift, Farben, Bildmotive</td></tr>
+<tr><td>Schweizer Portale</td><td>Lückenliste für Phase 3 (Umkreis, Trefferzähler, Verfügbarkeit, Etage, Baujahr, Suchabo ohne Konto)</td><td>bezahltes Ranking, Werbung zwischen Treffern, Abos für Suchende, Einkommensabfrage im Erstkontakt</td></tr>
+</table></div>
+
+<h2>Prüfung</h2>
+<figure><img src="../qa/p1/paar-desktop.jpg" alt="Objektseite am Tag und am Abend" loading="lazy"><figcaption>Erstes Bild, 1440 × 900: Premiere, Titel, Preis, Quadratmeterpreis, Monatsrate, fünf Eckdaten, Quelle und das Anker-Menü — ohne Scrollen, in beiden Zuständen.</figcaption></figure>
+<figure><img src="../qa/p1/paar-mobil.jpg" alt="Objektseite auf 390 Pixeln in drei Varianten" loading="lazy"><figcaption>390 × 844: Tag, Abend und ein Makler-Objekt. Unten die ruhige Leiste mit Preis und Hauptaktion.</figcaption></figure>
+<figure><img src="../qa/p1/paar-stufen.jpg" alt="Makler-Objekt und Privatinserat nebeneinander" loading="lazy"><figcaption>Dieselbe Architektur bei unterschiedlicher Datentiefe — links Makler mit acht Bildern und Video, rechts ein Privatinserat mit drei Bildern.</figcaption></figure>
+
+<h3>Falsifikation</h3>
+<ul class="klein">
+<li class="ok">Preis ohne Scrollen sichtbar (657 Pixel bei 900 Pixeln Höhe, mobil 597)</li>
+<li class="ok">Ein H1 pro Seite, kein doppelter Titel</li>
+<li class="ok">Grundrisse als eigene Station mit Zoom und Vollbild</li>
+<li class="ok">Schätzung von Tatsache getrennt: Finanzblock und Ausrichtung nennen ihre Grundlage</li>
+<li class="ok">Dokumentstufen ehrlich, kein Umweg suggeriert</li>
+<li class="ok">Kontakt benennt, wer antwortet, und ob Fourwalls vertritt</li>
+<li class="ok">Kein horizontaler Überlauf, keine Konsolenfehler, Escape und Pfeiltasten in der Lightbox</li>
+<li class="ok">Vier Sprachen ohne Umbruchfehler auf 390 Pixeln geprüft</li>
+<li class="ok">Keine Gestaltung von Wettbewerbern übernommen, keine Namen im ausgelieferten Code</li>
+<li class="ok">Fliesstext auf der Objektseite: 220 Wörter, sechs Highlights, dreizehn Faktenfelder</li>
+</ul>
+
+<h2>Offene Punkte</h2>
+<ul>
+  <li class="off"><b>Karte</b> ist schematisch: Distanzringe und verteilte Umgebungspunkte, keine echte Kartografie. Produktion braucht MapLibre mit Vektorkacheln und echten Koordinaten.</li>
+  <li class="off"><b>Umgebungsdaten</b> sind Demo. In Produktion aus einer Ortsdatenbank, sonst entstehen falsche Distanzen.</li>
+  <li class="off"><b>Dokumentstufen</b> sind heute nur Anzeige. Sie müssen serverseitig durchgesetzt werden.</li>
+  <li class="off"><b>Video, 360 Grad und 3D</b> zeigen erklärte Platzhalter statt eingebetteter Medien.</li>
+  <li class="off"><b>Zwei Objekte</b> haben volle Tiefe, eines Basistiefe. Die übrigen 320 laufen auf Standardtiefe.</li>
+  <li class="off"><b>Suchlücken</b> aus der Analyse sind bewusst offen und gehören in Phase 3.</li>
+  <li class="off"><b>Firmendaten</b> auf Verkaufen und Verwaltung sind Platzhalter, bis echte Angaben vorliegen.</li>
+</ul>
+
+<h2>Empfehlung für Phase 2</h2>
+<p>Der Brief sieht Phase 2 als Objektdetail vor. Das ist mit diesem Durchgang bereits geliefert. Ich schlage vor, Phase 2 auf die <b>Breite</b> zu legen statt auf mehr Tiefe an einem Objekt:</p>
+<ol>
+  <li>Das Dossier-Schema auf alle Objekte anwenden, damit jedes Inserat wenigstens Eckdaten, Lage und Finanzierung in guter Qualität zeigt.</li>
+  <li>Die Suchergebnisliste an die neue Objektseite anschliessen: Umkreissuche, Trefferzähler im Filter, Verfügbarkeit, Etage, Baujahr, Ober- und Untergrenzen.</li>
+  <li>Suchabo ohne Konto, weil es der wunde Punkt der Schweizer Portale ist.</li>
+</ol>
+<p>Wenn Sie lieber beim Brief bleiben, ist der nächste sinnvolle Schritt an der Objektseite die echte Karte — sie ist die grösste verbleibende Schwäche.</p>
+
+<p class="klein" style="margin-top:44px">Fourwalls · Phase 1 · Marken <code>ufer-v1</code> und <code>p1-produktbasis</code> · alle Objektdaten sind fiktive Demo-Daten</p>
+</div>
+</body>
+</html>

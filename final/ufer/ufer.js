@@ -42,7 +42,7 @@ window.UFER = (function () {
   };
   const u = k => (T[FWP.lang] && T[FWP.lang][k]) || T.de[k] || k;
 
-  /* Informationsarchitektur: vier Gruppen, alles Weitere darunter (Properti-Lektion: sichtbar, aber nicht gleichrangig) */
+  /* Informationsarchitektur: vier Gruppen, alles Weitere darunter (sichtbar, aber nicht gleichrangig) */
   const NAV = [
     { key:"immobilien", href:"portal.html", items:[
       ["kaufen","portal.html","sSuche","nKaufen"],

@@ -1,0 +1,296 @@
+/* ============================================================
+   UFER — Objektseite (P2-Vorgriff im P1-Slice)
+   Prinzip: ÜBERSICHT ZUERST. TIEFE AUF ABRUF.
+   Preis, Eckdaten und Kontakt stehen im ersten Bild — alles Weitere
+   liegt hinter dem Anker-Menü, aber nur einen Sprung entfernt.
+   ============================================================ */
+
+.detail{position:fixed;inset:0;z-index:300;display:none;background:var(--gr);overflow-y:auto;overscroll-behavior:contain}
+.detail.an{display:block}
+
+/* ---------- Kopf ---------- */
+.dkopf{position:sticky;top:0;z-index:24;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:10px var(--pad);background:var(--glas);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--linie)}
+.dkopf .z{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise);display:flex;gap:10px;align-items:center;min-width:0}
+.dkopf .z b{font-weight:500;color:var(--ink);white-space:nowrap}
+.dkopf .z .mark{width:24px;flex:0 0 auto;--lg:var(--licht)}
+.dkopf .z .tt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dkopf .aktionen{display:flex;gap:6px;flex-wrap:nowrap}
+
+/* ---------- Held: Standard = Mosaik, Exclusive = Premiere ---------- */
+.dheld{position:relative;background:var(--gr3)}
+.mosaik{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:repeat(2,minmax(150px,26vh));gap:4px;background:var(--tief)}
+.mosaik figure{position:relative;overflow:hidden;background:var(--gr3);cursor:zoom-in;margin:0}
+.mosaik figure:first-child{grid-row:span 2}
+.mosaik img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease)}
+.mosaik figure:hover img{transform:scale(1.03)}
+.mosaik.einzel{grid-template-columns:1fr;grid-template-rows:minmax(220px,50vh)}
+.mosaik.einzel figure:first-child{grid-row:auto}
+.mosaik.zwei{grid-template-rows:minmax(220px,50vh)}
+.mosaik.zwei figure:first-child{grid-row:auto}
+.medienleiste{position:absolute;left:var(--pad);bottom:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:3}
+.medienleiste button{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;background:rgba(7,12,18,.72);color:#EEF1F2;
+  padding:.55em .85em;border-radius:var(--r);backdrop-filter:blur(6px);border:1px solid transparent;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.medienleiste button:hover{border-color:var(--licht2)}
+.medienleiste button b{font-weight:600}
+.quellband{position:absolute;right:var(--pad);top:12px;z-index:3;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:.5em .8em;border-radius:var(--r);font-weight:600;background:rgba(245,248,249,.9);color:#0F1B2A;backdrop-filter:blur(6px)}
+.quellband.exkl{background:var(--licht);color:#0B121B}
+
+/* Exclusive-Premiere: das Fenster öffnet die Wand — Titel und Preis stehen darüber */
+.premiere{position:relative;height:min(64svh,640px);min-height:400px;overflow:hidden;background:#070C12;color:#EEF1F2}
+.premiere .voll{position:absolute;inset:0}
+.premiere .voll img{width:100%;height:100%;object-fit:cover;animation:atmen 30s ease-in-out infinite alternate}
+@keyframes atmen{from{transform:scale(1)}to{transform:scale(1.05)}}
+.premiere .wand{position:absolute;inset:0;background:#0B121B;display:grid;place-items:center;z-index:2}
+.premiere .wand .fenster{width:min(400px,54vw);-webkit-mask-size:var(--ms,contain);mask-size:var(--ms,contain)}
+.premiere .wand.aus{display:none}
+.premiere .flor{position:absolute;left:0;right:0;bottom:0;top:38%;z-index:3;
+  background:linear-gradient(to top,rgba(7,12,18,.92),rgba(7,12,18,.45) 42%,rgba(7,12,18,0))}
+.premiere .txt{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 var(--pad) clamp(22px,3vw,40px)}
+.premiere .kick{color:var(--licht2);margin-bottom:12px}
+.premiere h1{font-family:var(--d);font-weight:200;font-size:clamp(2.1rem,5.2vw,4.4rem);line-height:1;letter-spacing:-.025em;max-width:16ch;
+  text-shadow:0 2px 40px rgba(7,12,18,.7)}
+.premiere .tag{margin-top:12px;font-family:var(--d);font-style:italic;font-size:clamp(.95rem,1.4vw,1.2rem);color:rgba(238,241,242,.85);max-width:46ch}
+
+/* ---------- Titelzeile: Preis und Eckdaten sofort ---------- */
+.dtitel.kompakt{padding-top:clamp(14px,1.8vw,22px)}
+.dtitel.kompakt .ort{margin-top:0}
+.dtitel{padding:clamp(18px,2.4vw,30px) var(--pad) clamp(16px,2vw,24px);border-bottom:1px solid var(--linie);max-width:1360px;margin:0 auto}
+.dtitel .kick{margin-bottom:10px}
+.dtitel .oben{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 40px;align-items:end}
+.dtitel h1{font-family:var(--d);font-weight:300;font-size:clamp(1.6rem,3.1vw,2.6rem);line-height:1.08;letter-spacing:-.02em;max-width:22ch}
+.dtitel .ort{margin-top:8px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise)}
+.dtitel .preisblock{text-align:right;white-space:nowrap}
+.dtitel .preis{font-family:var(--d);font-weight:400;font-size:clamp(1.5rem,2.8vw,2.3rem);letter-spacing:-.015em;line-height:1.05}
+.dtitel .prosub{margin-top:4px;font-size:.74rem;color:var(--leise)}
+.dtitel .monat{margin-top:6px;font-size:.78rem;color:var(--leise)}
+.dtitel .monat a{color:var(--licht);border-bottom:1px solid currentColor}
+.eck{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:18px;font-size:.84rem;align-items:baseline}
+.eck div{display:flex;gap:7px;align-items:baseline}
+.eck b{font-family:var(--d);font-weight:400;font-size:1.1rem}
+.eck span{color:var(--leise);font-size:.76rem}
+.eck .quelle{margin-left:auto;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);
+  border:1px solid var(--linie2);border-radius:var(--r);padding:.34em .7em}
+.eck .quelle.exkl{border-color:var(--licht);color:var(--licht)}
+
+/* ---------- Anker ---------- */
+.anker{position:sticky;top:56px;z-index:23;display:flex;gap:2px;overflow-x:auto;padding:0 var(--pad);
+  background:var(--glas);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--linie);scrollbar-width:none}
+.anker::-webkit-scrollbar{display:none}
+.anker a{padding:13px 13px;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);white-space:nowrap;
+  border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:color .2s}
+.anker a[aria-current="true"],.anker a:hover{color:var(--ink);border-bottom-color:var(--licht)}
+
+/* ---------- Körper ---------- */
+.dkoerper{max-width:1360px;margin:0 auto;padding:0 var(--pad) 90px;display:grid;grid-template-columns:minmax(0,1fr) 348px;gap:clamp(28px,4vw,64px);align-items:start}
+.dhaupt{min-width:0}
+.dabs{padding:clamp(30px,3.6vw,48px) 0 0;scroll-margin-top:112px}
+.dabs>h2{font-family:var(--d);font-weight:300;font-size:clamp(1.3rem,2.1vw,1.75rem);letter-spacing:-.015em;margin-bottom:18px;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.dabs>h2 small{font-family:var(--t);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--leise);font-weight:500}
+.dtext{max-width:66ch;color:var(--leise);font-size:.95rem;line-height:1.78}
+[data-mode="hell"] .dtext{color:#3B4854}
+.dtext p+p{margin-top:14px}
+.dtext.kurz{max-height:9.4em;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,#000 68%,transparent);mask-image:linear-gradient(to bottom,#000 68%,transparent)}
+.mehrtext{margin-top:10px;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--licht);border-bottom:1px solid currentColor;padding-bottom:2px}
+
+/* Highlights — kuratiert, höchstens sechs */
+.hl{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;max-width:72ch;margin-bottom:22px}
+.hl li{padding:9px 0;border-bottom:1px solid var(--linie);font-size:.9rem;display:flex;gap:12px;align-items:baseline}
+.hl li::before{content:"";width:7px;height:1px;background:var(--licht);flex:0 0 auto;transform:translateY(-.35em)}
+
+/* Bilder & Medien */
+.katfilter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.katfilter button{border:1px solid var(--linie2);border-radius:var(--r);padding:.4em .8em;font-size:.66rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--leise);min-height:32px;font-weight:500}
+.katfilter button[aria-pressed="true"]{border-color:var(--licht);color:var(--licht)}
+.gal{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(8px,1.1vw,14px)}
+.gal figure{overflow:hidden;background:var(--gr3);position:relative;cursor:zoom-in;margin:0}
+.gal img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.gal figure:hover img{transform:scale(1.04)}
+.gal figcaption{position:absolute;left:12px;bottom:10px;right:12px;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.75);opacity:0;transition:opacity .3s}
+.gal figure:hover figcaption{opacity:1}
+.gal .g0{grid-column:span 7;aspect-ratio:16/10}
+.gal .g1{grid-column:span 5;aspect-ratio:4/5}
+.gal .g2{grid-column:span 4;aspect-ratio:1}
+.gal .g3{grid-column:span 8;aspect-ratio:16/9}
+.gal .g4{grid-column:span 6;aspect-ratio:3/2}
+.gal .g5{grid-column:span 6;aspect-ratio:3/2}
+.medienknoepfe{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+
+/* Eckdaten */
+.fakten{display:grid;grid-template-columns:repeat(auto-fit,minmax(142px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie);border-radius:var(--r);overflow:hidden}
+.fakten div{background:var(--gr2);padding:13px 15px}
+.fakten dt{font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise)}
+.fakten dd{margin-top:5px;font-size:1rem;font-family:var(--d);font-weight:400}
+.gruppen{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,3vw,48px);margin-top:26px}
+.gruppe h3{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--licht);margin:20px 0 4px;font-weight:500}
+.gruppe dl{display:grid;grid-template-columns:auto 1fr;gap:0 16px}
+.gruppe dt{font-size:.78rem;color:var(--leise);padding:8px 0;border-bottom:1px solid var(--linie);white-space:nowrap}
+.gruppe dd{font-size:.84rem;padding:8px 0;border-bottom:1px solid var(--linie);text-align:right}
+.dfeat{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.dfeat span{border:1px solid var(--linie2);border-radius:var(--r);padding:.4em .75em;font-size:.72rem;color:var(--leise)}
+.geak{display:inline-flex;align-items:center;gap:12px;border:1px solid var(--linie2);border-radius:var(--r);padding:10px 14px;font-size:.78rem;margin-top:12px}
+.geak b{font-family:var(--d);font-size:1.5rem;color:var(--licht);font-weight:400;line-height:1}
+
+/* Grundrisse */
+.plaene .tabs{display:flex;gap:2px;border-bottom:1px solid var(--linie);margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.plaene .tabs button{padding:.75em 1em;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);
+  border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500}
+.plaene .tabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--licht)}
+.plaene .tabs .rechts{margin-left:auto;display:flex;gap:4px;align-items:center}
+.plaene .tabs .rechts button{padding:.5em .75em;border:1px solid var(--linie2);border-radius:var(--r);margin-bottom:0}
+.planblatt{border:1px solid var(--linie);border-radius:var(--r);background:var(--gr2);overflow:auto;max-height:72vh;position:relative}
+.planblatt .zeichnung{transform-origin:0 0;transition:transform .3s var(--ease);padding:16px;color:var(--ink)}
+.planblatt svg{width:100%;height:auto;display:block}
+.plaene .raeume{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.78rem;color:var(--leise)}
+.plaene .raeume b{color:var(--ink);font-weight:400}
+.plaene .pdfplan{border:1px dashed var(--linie2);border-radius:var(--r);padding:32px;text-align:center;color:var(--leise);font-size:.84rem}
+
+/* Lage */
+.lagekarte{position:relative;height:340px;background:var(--tief);border:1px solid var(--linie);border-radius:var(--r);overflow:hidden}
+.lagekarte canvas{position:absolute;inset:0;width:100%;height:100%}
+#lageMap{position:absolute;inset:0;opacity:0;transition:opacity .5s ease}
+#lageMap.da{opacity:1}
+.lagekarte .fein{z-index:3;background:var(--glas);padding:3px 8px;border-radius:var(--r)}
+.lagekarte .voll{position:absolute;left:12px;top:12px;z-index:3;background:var(--glas);backdrop-filter:blur(6px)}
+.lagekarte .fein{position:absolute;left:12px;bottom:10px;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise)}
+.poifilter{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.poifilter button{border:1px solid var(--linie2);border-radius:var(--r);padding:.4em .8em;font-size:.66rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--leise);min-height:32px;font-weight:500;display:inline-flex;gap:7px;align-items:center}
+.poifilter button[aria-pressed="true"]{border-color:var(--licht);color:var(--licht)}
+.poifilter i{width:7px;height:7px;border-radius:999px;background:currentColor;display:inline-block}
+.poispalten{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,3vw,48px);margin-top:8px}
+.poi h4{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--licht);margin:18px 0 2px;font-weight:500}
+.poi li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--linie);font-size:.82rem}
+.poi li span{color:var(--leise);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lagefakt{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:.8rem;color:var(--leise);margin-top:20px;padding-top:14px;border-top:1px solid var(--linie)}
+.lagefakt b{color:var(--ink);font-weight:400}
+/* Ausrichtung: ehrlicher Kompass, keine erfundene Verschattungsstudie */
+.sonne{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;margin-top:22px;border:1px solid var(--linie);border-radius:var(--r);padding:18px;background:var(--gr2)}
+.sonne svg{width:118px;height:118px;flex:0 0 auto}
+.sonne .txt b{font-family:var(--d);font-weight:400;font-size:1.1rem;display:block}
+.sonne .txt p{font-size:.82rem;color:var(--leise);line-height:1.65;margin-top:6px;max-width:52ch}
+.sonne .txt .fein{font-size:.68rem;margin-top:8px;color:var(--leise);opacity:.85}
+
+/* Finanzierung */
+.finanz{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,44px);border:1px solid var(--linie);border-radius:var(--r);padding:clamp(18px,2.4vw,28px);background:var(--gr2)}
+.finanz label.et{margin-top:16px}
+.finanz label.et:first-child{margin-top:0}
+.finanz input[type="range"]{width:100%;accent-color:var(--licht)}
+.finanz .wert{display:flex;justify-content:space-between;font-size:.8rem;color:var(--leise);margin-top:4px}
+.finanz .wert b{color:var(--ink);font-weight:400;font-family:var(--d);font-size:1rem}
+.finanz .ausgabe{display:grid;grid-template-columns:1fr auto;gap:0 16px;font-size:.82rem;align-content:start}
+.finanz .ausgabe span{color:var(--leise);padding:6px 0;border-bottom:1px solid var(--linie)}
+.finanz .ausgabe b{font-weight:400;text-align:right;padding:6px 0;border-bottom:1px solid var(--linie);font-family:var(--d);font-size:1rem;font-variant-numeric:tabular-nums}
+.finanz .ausgabe .totalL,.finanz .ausgabe .total{border-bottom:0;padding-top:12px}
+.finanz .ausgabe .total{font-size:1.55rem;color:var(--licht)}
+.finanz .fein{grid-column:1/-1;font-size:.7rem;color:var(--leise);line-height:1.65;margin-top:6px;border-top:1px solid var(--linie);padding-top:12px}
+
+/* Dokumente */
+.doks{display:grid;gap:6px}
+.dok{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;border:1px solid var(--linie);border-radius:var(--r);padding:11px 15px}
+.dok b{font-weight:400;font-size:.88rem}
+.dok small{display:block;font-size:.66rem;color:var(--leise);margin-top:3px}
+.dok .z{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:.45em .7em;border:1px solid var(--linie2);border-radius:var(--r);white-space:nowrap;color:var(--leise)}
+.dok .z.frei{border-color:var(--licht);color:var(--licht)}
+.dokfein{font-size:.72rem;color:var(--leise);margin-top:12px;line-height:1.6;max-width:66ch}
+
+/* FAQ */
+.faq details{border-bottom:1px solid var(--linie)}
+.faq summary{cursor:pointer;padding:13px 0;font-size:.92rem;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--licht);font-family:var(--d);font-size:1.2rem;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 15px;color:var(--leise);font-size:.86rem;line-height:1.7;max-width:66ch}
+
+/* Begleiter */
+.dseite{position:sticky;top:112px;display:flex;flex-direction:column;gap:12px}
+.begleiter{border:1px solid var(--linie);border-radius:var(--r);padding:18px;background:var(--gr2)}
+.begleiter .wer{display:flex;gap:12px;align-items:center}
+.begleiter .wer .mark{width:34px;flex:0 0 auto;--lg:var(--licht)}
+.begleiter .wer .av{width:42px;height:42px;border-radius:999px;background:var(--gr4);display:grid;place-items:center;font-family:var(--d);font-size:1rem;flex:0 0 auto}
+.begleiter .wer b{display:block;font-weight:500;font-size:.92rem}
+.begleiter .wer span{font-size:.68rem;color:var(--leise);display:block;margin-top:2px}
+.begleiter .vertrauen{margin-top:14px;font-size:.74rem;color:var(--leise);line-height:1.6;border-top:1px solid var(--linie);padding-top:12px}
+.begleiter .vertrauen b{color:var(--ink);font-weight:500}
+.begleiter .cta{margin-top:14px;display:grid;gap:6px}
+.begleiter .cta .knopf{width:100%}
+.begleiter .schritte{margin-top:14px;border-top:1px solid var(--linie);padding-top:12px;counter-reset:s}
+.begleiter .schritte li{font-size:.75rem;color:var(--leise);padding:4px 0;display:flex;gap:10px}
+.begleiter .schritte li::before{content:counter(s) ".";counter-increment:s;color:var(--licht);font-family:var(--d)}
+.dform{border:1px solid var(--linie);border-radius:var(--r);padding:16px;display:none;background:var(--gr2)}
+.dform.an{display:block}
+.dform .paar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dform input,.dform textarea{width:100%;background:var(--gr);border:1px solid var(--linie2);border-radius:var(--r);padding:.68em .8em;font-size:.86rem;margin-bottom:10px}
+.dform textarea{min-height:92px;resize:vertical}
+.dform .ok{color:var(--gut);font-size:.82rem;display:none;margin-top:6px}
+.dform label.ab{display:flex;gap:8px;align-items:center;font-size:.76rem;color:var(--leise);margin-bottom:10px}
+.dform label.ab input{width:auto;margin:0}
+.dmelde{text-align:right}
+.dmelde button{font-size:.62rem;color:var(--leise);letter-spacing:.1em;text-decoration:underline;padding:6px}
+.aehnlich{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+/* Mobile CTA */
+.mobilcta{display:none}
+
+/* ---------- Lightbox: Galerie-Modus ---------- */
+.licht{position:fixed;inset:0;z-index:600;background:rgba(7,12,18,.97);display:none;flex-direction:column;color:#EEF1F2}
+.licht.an{display:flex}
+.licht .lk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px var(--pad);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase}
+.licht .lk .mitte{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:1}
+.licht .lk .mitte button{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:.4em .7em;border:1px solid rgba(238,241,242,.28);border-radius:var(--r);color:rgba(238,241,242,.75)}
+.licht .lk .mitte button[aria-pressed="true"]{border-color:var(--licht2);color:var(--licht2)}
+.licht .lb{flex:1;display:grid;place-items:center;min-height:0;padding:0 var(--pad);position:relative}
+.licht .lb img{max-width:100%;max-height:100%;object-fit:contain}
+.licht .buehne{width:min(940px,90vw);aspect-ratio:16/9;background:#111B27;display:grid;place-items:center;text-align:center;padding:26px;color:rgba(238,241,242,.75);font-size:.9rem;border:1px solid rgba(238,241,242,.14)}
+.licht .buehne b{display:block;font-family:var(--d);font-size:1.7rem;color:#EEF1F2;font-weight:300;margin-bottom:10px}
+.licht .buehne .fein{font-size:.72rem;margin-top:14px;opacity:.7}
+.licht .bu{padding:8px var(--pad) 0;font-size:.78rem;color:rgba(238,241,242,.8);text-align:center;min-height:1.6em}
+.licht .lf{display:flex;gap:5px;overflow-x:auto;padding:12px var(--pad);scrollbar-width:thin}
+.licht .lf button{flex:0 0 78px;aspect-ratio:3/2;overflow:hidden;opacity:.45;border:1px solid transparent;transition:opacity .2s}
+.licht .lf button[aria-current="true"]{opacity:1;border-color:var(--licht)}
+.licht .lf img{width:100%;height:100%;object-fit:cover}
+.licht .pf{position:absolute;top:50%;translate:0 -50%;width:46px;height:46px;display:grid;place-items:center;font-size:1.5rem;
+  background:rgba(238,241,242,.1);border-radius:999px;color:#EEF1F2}
+.licht .pf:hover{background:rgba(238,241,242,.2)}
+.licht .pf.l{left:calc(var(--pad) / 2)}.licht .pf.r{right:calc(var(--pad) / 2)}
+.licht .knopf{border-color:rgba(238,241,242,.4);color:#EEF1F2}
+
+/* ---------- Mobil ---------- */
+@media(max-width:960px){
+  .dkoerper{grid-template-columns:1fr;padding-bottom:112px}
+  .dseite{position:static}
+  .dseite .begleiter:last-child{display:none}
+  .mosaik{grid-template-columns:1fr 1fr;grid-template-rows:minmax(160px,30vh) minmax(90px,15vh)}
+  .mosaik figure:first-child{grid-column:span 2;grid-row:auto}
+  .mosaik.einzel figure:first-child{grid-column:auto}
+  .premiere{height:min(56svh,500px);min-height:340px}
+  .dtitel .oben{grid-template-columns:1fr}
+  .dtitel .preisblock{text-align:left}
+  .eck .quelle{margin-left:0;margin-top:6px}
+  .gruppen,.poispalten,.finanz,.hl,.aehnlich{grid-template-columns:1fr}
+  .gal .g0,.gal .g1,.gal .g2,.gal .g3,.gal .g4,.gal .g5{grid-column:span 12;aspect-ratio:3/2}
+  .gal figcaption{opacity:1}
+  .anker{top:52px}
+  .dabs{scroll-margin-top:100px}
+  .sonne{grid-template-columns:1fr}
+  .lagekarte{height:260px}
+  .mobilcta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:26;background:var(--glas);backdrop-filter:blur(16px);
+    border-top:1px solid var(--linie);padding:10px var(--pad);gap:10px;align-items:center}
+  .mobilcta .p{font-family:var(--d);font-size:1.1rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mobilcta .p small{display:block;font-family:var(--t);font-size:.6rem;color:var(--leise);letter-spacing:.08em}
+  .licht .lf button{flex:0 0 62px}
+}
+@media(max-width:600px){
+  .dkopf{padding:8px 12px;gap:8px}
+  .dkopf .z{flex:0 1 auto;overflow:hidden}
+  .dkopf .z .tt{display:none}
+  .dkopf .z b{font-size:.56rem;letter-spacing:.12em;overflow:hidden;text-overflow:ellipsis}
+  .dkopf .aktionen{margin-left:auto;flex:0 0 auto}
+  .dkopf .aktionen .knopf{padding:.45em .6em;font-size:.56rem;letter-spacing:.06em;min-height:32px}
+  .dtitel .preis{font-size:1.5rem}
+  .licht .pf{width:38px;height:38px}
+}

@@ -1,0 +1,14 @@
+/* Nur, was die Anwendung anders braucht als der Prototyp. Alles Sichtbare
+   kommt unverändert aus ufer.css / objekt.css. */
+
+/* Die Objektseite ist eine Seite, kein Overlay: sie läuft im Dokumentfluss
+   und scrollt mit dem Fenster. Kopfleiste bleibt sticky wie zuvor. */
+.detail.seite{position:static;inset:auto;display:block;overflow:visible;z-index:auto}
+.detail.seite .dkopf{z-index:60}
+/* Das Fensterbild kommt als <img>, nicht als background-image — gleicher Ausschnitt */
+.premiere .fenster .medien img{width:100%;height:100%;object-fit:cover}
+/* Honigtopf: für Menschen nicht vorhanden */
+.dform .ht{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.dform .fehler{color:var(--warn);font-size:.78rem;margin:6px 0 0}
+.dform .ok{display:none}
+.dform .ok.an{display:block}

@@ -13,12 +13,17 @@
    --virtual-time-budget liefert bei Karten und WebGL unbrauchbare Ergebnisse.
    ============================================================ */
 import { spawn } from "node:child_process";
+import { rmSync } from "node:fs";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const [basis, ziel, nur] = process.argv.slice(2);
-if (!basis || !ziel) { console.error("Aufruf: node tools/baseline.mjs <basis-url> <zielordner> [nurName]"); process.exit(1); }
+const argv = process.argv.slice(2);
+/* --app: Zustände der Next-Anwendung (P5.2) statt des Prototyps. Modus und
+   Sprache stehen dort in der Adresse (?mode=, /fr/…), nicht in JS-Aufrufen. */
+const APP = argv.includes("--app");
+const [basis, ziel, nur] = argv.filter(a => a !== "--app");
+if (!basis || !ziel) { console.error("Aufruf: node tools/baseline.mjs <basis-url> <zielordner> [name,name] [--app]"); process.exit(1); }
 
 /* Ruhigstellen, was sich von selbst bewegt: Intro, Wasser-Shader und
    Einblend-Animationen. Sonst vergleicht man Zufall mit Zufall. */
@@ -49,7 +54,27 @@ const ZUSTAENDE = [
   { name:"m-objekt",         pfad:`portal.html?cb=b#objekt/haus-luzern-1`,  breite:390, hoehe:844, mobil:true, warten:7000 },
   { name:"m-assistent",      pfad:`portal.html?cb=b#neu`,                   breite:390, hoehe:844, mobil:true },
   { name:"m-verkaufen",      pfad:`verkaufen.html?${RUHIG}`,                breite:390, hoehe:844, mobil:true },
-  { name:"m-menue",          pfad:`index.html?${RUHIG}`,                    breite:390, hoehe:844, mobil:true, menue:true }
+  { name:"m-menue",          pfad:`index.html?${RUHIG}`,                    breite:390, hoehe:844, mobil:true, menue:true },
+  /* P5.2: die Exclusive-Objektseite in allen Vergleichslagen (Prototyp) */
+  { name:"objekt-exclusive-abend", pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:1440, hoehe:1200, warten:7000, modus:"dunkel" },
+  { name:"objekt-exclusive-fr",    pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:1440, hoehe:1200, warten:7000, sprache:"fr" },
+  { name:"objekt-exclusive-it",    pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:1440, hoehe:1200, warten:7000, sprache:"it" },
+  { name:"m-objekt-exclusive",     pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:390, hoehe:844, mobil:true, warten:7000 },
+  { name:"m-objekt-exclusive-abend", pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:390, hoehe:844, mobil:true, warten:7000, modus:"dunkel" },
+  { name:"objekt-lage",            pfad:`portal.html?cb=b#exclusive/seehaus-walensee`, breite:1440, hoehe:1000, warten:7000, scrollZu:"#d-lage", nachher:9000 }
+];
+
+/* Dieselben Zustände auf der Anwendung: gleiche Namen, damit vergleich.mjs
+   Bild für Bild gegenüberstellen kann. */
+const OBJ = "immobilien/kaufen/seehaus-walensee-fwl-2026-000142";
+const ZUSTAENDE_APP = [
+  { name:"objekt-exclusive",         pfad:`de/${OBJ}?mode=hell`,   breite:1440, hoehe:1200, warten:7000 },
+  { name:"objekt-exclusive-abend",   pfad:`de/${OBJ}?mode=dunkel`, breite:1440, hoehe:1200, warten:7000 },
+  { name:"objekt-exclusive-fr",      pfad:`fr/immobilier/acheter/seehaus-walensee-fwl-2026-000142?mode=hell`, breite:1440, hoehe:1200, warten:7000 },
+  { name:"objekt-exclusive-it",      pfad:`it/immobili/comprare/seehaus-walensee-fwl-2026-000142?mode=hell`,  breite:1440, hoehe:1200, warten:7000 },
+  { name:"m-objekt-exclusive",       pfad:`de/${OBJ}?mode=hell`,   breite:390, hoehe:844, mobil:true, warten:7000 },
+  { name:"m-objekt-exclusive-abend", pfad:`de/${OBJ}?mode=dunkel`, breite:390, hoehe:844, mobil:true, warten:7000 },
+  { name:"objekt-lage",              pfad:`de/${OBJ}?mode=hell`,   breite:1440, hoehe:1000, warten:7000, scrollZu:"#d-lage", nachher:9000 }
 ];
 
 const schlaf = ms => new Promise(r => setTimeout(r, ms));
@@ -103,7 +128,14 @@ async function aufnehmen(z) {
   /* Alles einblenden, was sonst erst beim Scrollen erscheint — sonst ist der
      Vergleich vom Zufall des Beobachters abhängig. */
   await js(`document.querySelectorAll(".auf,.blende,.blende-v,.bild-hinter").forEach(e=>e.classList.add("in")); true`);
+  /* Endlos-Animationen der Objektseite (Atmen des Heldbilds, Treiben im
+     Fenster) einfrieren — sonst vergleicht man zwei Zeitpunkte, nicht zwei
+     Seiten. Gilt für Prototyp und Anwendung gleichermassen. */
+  await js(`document.head.insertAdjacentHTML("beforeend","<style>.premiere .voll img,.fenster .medien,.fenster .lichtzug{animation:none!important;transform:none!important}</style>"); true`);
   await schlaf(600);
+
+  /* Zu einem Abschnitt scrollen und der Karte Zeit geben (faule Grenze) */
+  if (z.scrollZu) { await js(`document.querySelector("${z.scrollZu}").scrollIntoView(); true`); await schlaf(z.nachher || 6000); }
 
   let clip = null;
   if (z.voll) {
@@ -116,11 +148,13 @@ async function aufnehmen(z) {
   writeFileSync(join(ziel, z.name + ".png"), Buffer.from(shot.result.data, "base64"));
 
   ws.close(); kind.kill();
+  setTimeout(() => { try { rmSync(profil, { recursive:true, force:true }); } catch (e) {} }, 500);
   return `${z.name}.png`;
 }
 
 mkdirSync(ziel, { recursive:true });
-const liste = nur ? ZUSTAENDE.filter(z => z.name === nur) : ZUSTAENDE;
+const QUELLE = APP ? ZUSTAENDE_APP : ZUSTAENDE;
+const liste = nur ? QUELLE.filter(z => nur.split(",").includes(z.name)) : QUELLE;
 for (const z of liste) {
   try { console.log("✓ " + await aufnehmen(z)); }
   catch (e) { console.log("✗ " + z.name + " — " + e.message); }

@@ -2,7 +2,7 @@
    in Reihenfolge, jede genau einmal (Buch in schema_migration).
 
    node scripts/migrate.mjs           Migrationen
-   node scripts/migrate.mjs --seed    zusätzlich den Entwicklungsbestand (nie in Produktion)
+   node scripts/migrate.mjs --seed    zusätzlich den Entwicklungsbestand über den Demo-Importer (nie in Produktion)
    node scripts/migrate.mjs --test    die 16 Zusagen aus db/tests prüfen
 
    Kein Docker-Aufruf: läuft gegen DATABASE_URL, also lokal wie in CI wie in
@@ -38,12 +38,12 @@ async function migrieren() {
 }
 
 async function seeden() {
+  /* Entwicklungsbestand: der Demo-Importer (scripts/import-demo.mjs) liest den
+     Prototyp-Bestand und schreibt ihn in einer Transaktion. Nie in Produktion. */
   if (appEnv === "production") { console.error("Seed in Produktion verweigert"); process.exit(2); }
-  const dateien = readdirSync(join(dbOrdner, "seed")).filter(f => f.endsWith(".sql")).sort();
-  for (const f of dateien) {
-    await sql.unsafe(readFileSync(join(dbOrdner, "seed", f), "utf8"));
-    console.log("✓ seed " + f);
-  }
+  const { spawnSync } = await import("node:child_process");
+  const r = spawnSync(process.execPath, [join(hier, "import-demo.mjs")], { stdio: "inherit", env: process.env });
+  if (r.status !== 0) { console.error("Demo-Import fehlgeschlagen"); process.exit(r.status ?? 1); }
 }
 
 async function testen() {

@@ -13,7 +13,8 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:seed": "node scripts/migrate.mjs --seed",
     "db:test": "node scripts/migrate.mjs --test",
-    "check:slice": "node scripts/slice-check.mjs"
+    "check:slice": "node scripts/slice-check.mjs",
+    "db:import": "node scripts/import-demo.mjs"
   },
   "dependencies": {
     "next": "16.3.4",

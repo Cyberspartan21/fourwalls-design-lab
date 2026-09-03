@@ -20,7 +20,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "incremental": true,
-    "allowJs": false,
+    "allowJs": true,
     "plugins": [
       {
         "name": "next"

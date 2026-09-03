@@ -21,7 +21,7 @@ INSERT INTO app_user (id, email, display_name, platform_role)
 VALUES ('22222222-2222-2222-2222-222222222222', 'mod@example.ch', 'Moderation', 'moderator');
 
 INSERT INTO place (id, key, kind, canton, name_de, name_fr, centroid)
-VALUES ('33333333-3333-3333-3333-333333333333', 'ort-zuerich', 'municipality', 'ZH', 'Zürich', 'Zurich',
+VALUES ('33333333-3333-3333-3333-333333333333', 'test-ort-zuerich', 'municipality', 'ZH', 'Zürich', 'Zurich',
         ST_SetSRID(ST_MakePoint(8.5417, 47.3769), 4326)::geography);
 
 -- Liegenschaft mit exakter Koordinate mitten in Zürich
@@ -170,9 +170,11 @@ BEGIN
   UPDATE listing SET status = 'in_review' WHERE id = '66666666-6666-6666-6666-666666666666';
   UPDATE listing SET status = 'approved'  WHERE id = '66666666-6666-6666-6666-666666666666';
   UPDATE listing SET status = 'published' WHERE id = '66666666-6666-6666-6666-666666666666';
+  -- Gezählt werden nur die eigenen Testinserate: die Datenbank darf Bestand haben (P5.3-Import).
   SELECT count(*) INTO n FROM search_listings_nearby(
-    ST_SetSRID(ST_MakePoint(8.5417, 47.3769), 4326)::geography, 5000, 'sale', 50);
-  ASSERT n = 1, format('Umkreissuche fand %s statt 1 Treffer (archiviertes darf nicht erscheinen)', n);
+    ST_SetSRID(ST_MakePoint(8.5417, 47.3769), 4326)::geography, 5000, 'sale', 400) s
+   WHERE s.listing_id IN ('55555555-5555-5555-5555-555555555555', '66666666-6666-6666-6666-666666666666');
+  ASSERT n = 1, format('Umkreissuche fand %s statt 1 eigenes Inserat (archiviertes darf nicht erscheinen)', n);
   RAISE NOTICE '✓ 16 Umkreissuche findet das Inserat über geom_public';
 
   RAISE NOTICE '';

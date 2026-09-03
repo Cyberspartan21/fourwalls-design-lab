@@ -270,7 +270,7 @@
   .premiere{height:min(56svh,500px);min-height:340px}
   .dtitel .oben{grid-template-columns:1fr}
   .dtitel .preisblock{text-align:left}
-  .eck .quelle{margin-left:0}
+  .eck .quelle{margin-left:0;margin-top:6px}
   .gruppen,.poispalten,.finanz,.hl,.aehnlich{grid-template-columns:1fr}
   .gal .g0,.gal .g1,.gal .g2,.gal .g3,.gal .g4,.gal .g5{grid-column:span 12;aspect-ratio:3/2}
   .gal figcaption{opacity:1}

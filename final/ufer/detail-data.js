@@ -9,7 +9,7 @@ window.FWD = {
       "art": "fourwalls",
       "name": "Fourwalls AG",
       "person": "Lena Furrer, Leitung Verkauf Zürich",
-      "telefon": "+41 44 555 01 01",
+      "telefon": "+41 44 555 01 01",   // Fourwalls-Trunknummer, siehe company.js
       "email": "lena.furrer@fourwalls.example",
       "verifiziert": true,
       "hinweis": "Fourwalls vertritt die Verkäuferschaft exklusiv"
@@ -832,7 +832,7 @@ window.FWD = {
       },
       {
         "frage": "Ist eine Besichtigung kurzfristig möglich?",
-        "antwort": "Ja, die Maklerin koordiniert Besichtigungstermine in der Regel innert 3 Werktagen."
+        "antwort": "Ja, die Maklerin koordiniert Besichtigungstermine in der Regel kurzfristig."
       }
     ],
     "naechsteSchritte": [

@@ -13,11 +13,20 @@ window.UOBJ = (function () {
 
   const HERZ = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.6-9.2-8.8C1.2 8 3 5 6.2 5c2 0 3.3 1 4.3 2.4h3c1-1.4 2.3-2.4 4.3-2.4 3.2 0 5 3 3.4 6.2C19 15.4 12 20 12 20Z"/></svg>';
   const fmt = n => n == null ? "" : String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "’");
+  /* Etagenbezeichnung mit sprachgerechter Ordnungszahl statt einer zusammengesetzten Abkürzung */
+  function etageText(floor) {
+    if (floor === 0) return t("o_egKurz");
+    const l = FWP.lang;
+    if (l === "fr") return floor + (floor === 1 ? "er" : "e") + " étage";
+    if (l === "it") return floor + "° piano";
+    if (l === "en") return floor + (floor === 1 ? "st" : floor === 2 ? "nd" : floor === 3 ? "rd" : "th") + " floor";
+    return floor + ". OG";
+  }
   const chf = n => "CHF " + fmt(n);
 
-  const KAT = { alle:"Alle", aussen:"Aussen", wohnen:"Wohnen", kueche:"Küche", schlafen:"Schlafen", bad:"Bad", lage:"Lage", plan:"Grundriss" };
-  const ZUG = { oeffentlich:["Herunterladen","frei"], konto:["Mit Konto",""], anfrage:["Nach Anfrage",""], besichtigung:["Nach Besichtigung",""], gesperrt:["Nach Einigung",""] };
-  const ZUG_TEXT = "Was hier «Nach Anfrage» oder «Nach Besichtigung» heisst, ist nicht öffentlich abrufbar — auch nicht über Umwege. Wir schalten es frei, sobald der jeweilige Schritt getan ist.";
+  const KAT = () => ({ alle:t("o_katAlle"), aussen:t("o_katAussen"), wohnen:t("o_katWohnen"), kueche:t("o_katKueche"), schlafen:t("o_katSchlafen"), bad:t("o_katBad"), lage:t("o_katLage"), plan:t("o_katPlan") });
+  const ZUG = () => ({ oeffentlich:[t("o_zugHerunterladen"),"frei"], konto:[t("o_zugMitKonto"),""], anfrage:[t("o_zugNachAnfrage"),""], besichtigung:[t("o_zugNachBesichtigung"),""], gesperrt:[t("o_zugNachEinigung"),""] });
+  const ZUG_TEXT = () => t("o_zugText");
 
   /* ---------- Finanzlogik: Bankenpraxis, transparent gerechnet ---------- */
   function finanz(preis, ekAnteil, zins) {
@@ -42,11 +51,11 @@ window.UOBJ = (function () {
     return `<div class="gruppe"><h3>${esc(titel)}</h3><dl>${zeilen.map(([k, v]) =>
       `<dt>${esc(labels[k] || k)}</dt><dd>${v === true ? "Ja" : esc(String(v))}</dd>`).join("")}</dl></div>`;
   }
-  const LG = { bauweise:"Bauweise", dach:"Dach", fenster:"Fenster", zustand:"Zustand", ausrichtung:"Ausrichtung", volumen:"Volumen", qualitaet:"Qualität" };
-  const LA = { kueche:"Küche", baeder:"Bäder", boeden:"Böden", geraete:"Geräte", waschen:"Waschen", cheminee:"Cheminée", lift:"Lift", smarthome:"Smart Home", stauraum:"Stauraum" };
-  const LE = { heizung:"Heizung", energietraeger:"Energieträger", verteilung:"Wärmeverteilung", photovoltaik:"Photovoltaik", geak:"GEAK", minergie:"Minergie" };
-  const LO = { balkon:"Balkon", terrasse:"Terrasse", garten:"Garten", pool:"Pool", aussicht:"Aussicht", privatsphaere:"Privatsphäre" };
-  const LP = { garage:"Garage", tiefgarage:"Tiefgarage", aussenplaetze:"Aussenplätze", ladestation:"Ladestation" };
+  const LG = () => ({ bauweise:t("o_lgBauweise"), dach:t("o_lgDach"), fenster:t("o_lgFenster"), zustand:t("o_lgZustand"), ausrichtung:t("o_lgAusrichtung"), volumen:t("o_lgVolumen"), qualitaet:t("o_lgQualitaet") });
+  const LA = () => ({ kueche:t("o_laKueche"), baeder:t("o_laBaeder"), boeden:t("o_laBoeden"), geraete:t("o_laGeraete"), waschen:t("o_laWaschen"), cheminee:t("o_laCheminee"), lift:t("o_laLift"), smarthome:t("o_laSmarthome"), stauraum:t("o_laStauraum") });
+  const LE = () => ({ heizung:t("o_leHeizung"), energietraeger:t("o_leEnergietraeger"), verteilung:t("o_leVerteilung"), photovoltaik:t("o_lePhotovoltaik"), geak:t("o_leGeak"), minergie:t("o_leMinergie") });
+  const LO = () => ({ balkon:t("o_loBalkon"), terrasse:t("o_loTerrasse"), garten:t("o_loGarten"), pool:t("o_loPool"), aussicht:t("o_loAussicht"), privatsphaere:t("o_loPrivatsphaere") });
+  const LP = () => ({ garage:t("o_lpGarage"), tiefgarage:t("o_lpTiefgarage"), aussenplaetze:t("o_lpAussenplaetze"), ladestation:t("o_lpLadestation") });
 
   /* ---------- Öffnen ---------- */
   function oeffne(slug, exclusive) {
@@ -85,19 +94,19 @@ window.UOBJ = (function () {
         </div>
         <div class="medienleiste">
           <button data-li="0">${FWP.bildLabel(bilder.length)}</button>
-          ${med.video ? `<button data-medium="video">Video</button>` : ""}
+          ${med.video ? `<button data-medium="video">${esc(t("o_video"))}</button>` : ""}
           ${med.tour360 ? `<button data-medium="360">360°</button>` : ""}
-          ${(D && D.grundrisse && D.grundrisse.length) ? `<button data-anker="grundrisse">Grundrisse</button>` : ""}
+          ${(D && D.grundrisse && D.grundrisse.length) ? `<button data-anker="grundrisse">${esc(t("o_grundrisseBtn"))}</button>` : ""}
         </div>
-        ${quelle.verifiziert && !wirVertreten ? `<span class="quellband">Geprüftes Inserat</span>` : ""}
+        ${quelle.verifiziert && !wirVertreten ? `<span class="quellband">${esc(t("o_geprueft2"))}</span>` : ""}
       </div>`;
 
     /* --- Titelzeile: Preis und Eckdaten ohne Scrollen --- */
     const eck = [
-      (fx.zimmer ?? L.rooms) ? [fx.zimmer ?? L.rooms, "Zimmer"] : null,
-      (fx.wohnflaeche ?? L.livingArea) ? [(fx.wohnflaeche ?? L.livingArea) + " m²", "Wohnfläche"] : null,
-      (fx.grundstueck ?? L.plotArea) ? [(fx.grundstueck ?? L.plotArea) + " m²", "Grundstück"] : null,
-      (fx.baujahr ?? L.yearBuilt) ? [fx.baujahr ?? L.yearBuilt, "Baujahr"] : null,
+      (fx.zimmer ?? L.rooms) ? [fx.zimmer ?? L.rooms, t("o_fZimmer")] : null,
+      (fx.wohnflaeche ?? L.livingArea) ? [(fx.wohnflaeche ?? L.livingArea) + " m²", t("o_fWohnflaeche")] : null,
+      (fx.grundstueck ?? L.plotArea) ? [(fx.grundstueck ?? L.plotArea) + " m²", t("o_fGrundstueck")] : null,
+      (fx.baujahr ?? L.yearBuilt) ? [fx.baujahr ?? L.yearBuilt, t("o_fBaujahr")] : null,
       [FWP.verfuegbarLabel(L), t("verfuegbar")]
     ].filter(Boolean);
     const titelzeile = `
@@ -106,12 +115,12 @@ window.UOBJ = (function () {
         <div class="oben">
           <div>
             ${istEx ? "" : `<h1>${esc(L.title)}</h1>`}
-            <div class="ort">${esc(L.city)} · ${esc(FWP.KANTON_NAME[L.canton] || L.canton)} · Genaue Adresse nach Kontakt</div>
+            <div class="ort">${esc(L.city)} · ${esc(FWP.KANTON_NAME[L.canton] || L.canton)} · ${esc(t("o_genaueAdresse"))}</div>
           </div>
           <div class="preisblock">
             <div class="preis">${esc(FWP.preis(L))}</div>
             ${L.transactionType === "rent" ? `<div class="prosub">+ ${L.rentNK ? chf(L.rentNK) + " " + t("nebenkosten") : t("nebenkosten")}</div>` : m2 ? `<div class="prosub">${fmt(m2)} ${t("proM2")}</div>` : ""}
-            ${monat ? `<div class="monat">ab ${chf(monat.total)} / Monat<br><a href="#d-finanzierung" data-anker="finanzierung">Tragbarkeit rechnen</a></div>` : ""}
+            ${monat ? `<div class="monat">ab ${chf(monat.total)} / Monat<br><a href="#d-finanzierung" data-anker="finanzierung">${esc(t("o_tragbarkeitRechnen"))}</a></div>` : ""}
           </div>
         </div>
         <div class="eck">
@@ -129,38 +138,38 @@ window.UOBJ = (function () {
       ${hl.length ? `<ul class="hl">${hl.map(h => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
       ${story ? `<h3 style="font-family:var(--d);font-weight:300;font-size:1.25rem;margin-bottom:10px">${esc(story.titel)}</h3>` : ""}
       <div class="dtext ${lang ? "kurz" : ""}" id="dText">${text}</div>
-      ${lang ? `<button class="mehrtext" id="mehrText">Ganze Beschreibung</button>` : ""}`;
+      ${lang ? `<button class="mehrtext" id="mehrText">${esc(t("o_ganzeBeschreibung"))}</button>` : ""}`;
 
     const kats = ["alle", ...[...new Set(bilder.map(b => b.kat).filter(Boolean))]];
     const bMedien = bilder.length > 3 || med.video || med.tour360 ? `
-      ${kats.length > 2 ? `<div class="katfilter" role="group" aria-label="Bildkategorien">${kats.map((k, i) => `<button data-kat="${k}" aria-pressed="${i === 0}">${esc(KAT[k] || k)}</button>`).join("")}</div>` : ""}
+      ${kats.length > 2 ? `<div class="katfilter" role="group" aria-label="Bildkategorien">${kats.map((k, i) => `<button data-kat="${k}" aria-pressed="${i === 0}">${esc(KAT()[k] || k)}</button>`).join("")}</div>` : ""}
       <div class="gal" id="galGitter"></div>
       <div class="medienknoepfe">
         <button class="knopf" id="alleBilder">${t("zeigeAlle")} · ${FWP.bildLabel(bilder.length)}</button>
-        ${med.video ? `<button class="knopf" data-medium="video">${esc(med.video.titel || "Video")}${med.video.dauer ? " · " + esc(med.video.dauer) : ""}</button>` : ""}
+        ${med.video ? `<button class="knopf" data-medium="video">${esc(med.video.titel || t("o_video"))}${med.video.dauer ? " · " + esc(med.video.dauer) : ""}</button>` : ""}
         ${med.tour360 ? `<button class="knopf" data-medium="360">${esc(med.tour360.titel || "360°-Rundgang")}</button>` : ""}
         ${med.modell3d ? `<button class="knopf" data-medium="3d">${esc(med.modell3d.titel || "3D-Modell")}</button>` : ""}
       </div>` : "";
 
     const fakten = [
-      ["Preis", FWP.preis(L)],
-      (fx.zimmer ?? L.rooms) ? ["Zimmer", fx.zimmer ?? L.rooms] : null,
-      (fx.wohnflaeche ?? L.livingArea) ? ["Wohnfläche", (fx.wohnflaeche ?? L.livingArea) + " m²"] : null,
-      fx.nutzflaeche ? ["Nutzfläche", fx.nutzflaeche + " m²"] : null,
-      (fx.grundstueck ?? L.plotArea) ? ["Grundstück", (fx.grundstueck ?? L.plotArea) + " m²"] : null,
-      fx.schlafzimmer ? ["Schlafzimmer", fx.schlafzimmer] : null,
-      fx.badezimmer ? ["Badezimmer", fx.badezimmer] : null,
-      (fx.baujahr ?? L.yearBuilt) ? ["Baujahr", fx.baujahr ?? L.yearBuilt] : null,
-      fx.renovation ? ["Renovation", fx.renovation] : null,
-      fx.geschosse ? ["Geschosse", fx.geschosse] : null,
-      fx.raumhoehe ? ["Raumhöhe", fx.raumhoehe + " m"] : null,
-      fx.kubatur ? ["Kubatur", fmt(fx.kubatur) + " m³"] : null,
-      (L.floor != null && !fx.geschosse) ? ["Etage", L.floor === 0 ? "EG" : L.floor + ". OG"] : null,
+      [t("o_fPreis"), FWP.preis(L)],
+      (fx.zimmer ?? L.rooms) ? [t("o_fZimmer"), fx.zimmer ?? L.rooms] : null,
+      (fx.wohnflaeche ?? L.livingArea) ? [t("o_fWohnflaeche"), (fx.wohnflaeche ?? L.livingArea) + " m²"] : null,
+      fx.nutzflaeche ? [t("o_fNutzflaeche"), fx.nutzflaeche + " m²"] : null,
+      (fx.grundstueck ?? L.plotArea) ? [t("o_fGrundstueck"), (fx.grundstueck ?? L.plotArea) + " m²"] : null,
+      fx.schlafzimmer ? [t("o_fSchlafzimmer"), fx.schlafzimmer] : null,
+      fx.badezimmer ? [t("o_fBadezimmer"), fx.badezimmer] : null,
+      (fx.baujahr ?? L.yearBuilt) ? [t("o_fBaujahr"), fx.baujahr ?? L.yearBuilt] : null,
+      fx.renovation ? [t("o_fRenovation"), fx.renovation] : null,
+      fx.geschosse ? [t("o_fGeschosse"), fx.geschosse] : null,
+      fx.raumhoehe ? [t("o_fRaumhoehe"), fx.raumhoehe + " m"] : null,
+      fx.kubatur ? [t("o_fKubatur"), fmt(fx.kubatur) + " m³"] : null,
+      (L.floor != null && !fx.geschosse) ? [t("o_fEtage"), etageText(L.floor)] : null,
       m2 ? [t("proM2"), fmt(m2)] : null,
       [t("verfuegbar"), FWP.verfuegbarLabel(L)],
-      ["Referenz", L.id]
+      [t("o_fReferenz"), L.id]
     ].filter(Boolean);
-    const gr2 = D ? [gruppe("Gebäude", D.gebaeude, LG), gruppe("Ausstattung", D.ausstattung, LA), gruppe("Aussen", D.aussen, LO), gruppe("Parkieren", D.parkieren, LP), gruppe("Energie", D.energie, LE)].filter(Boolean) : [];
+    const gr2 = D ? [gruppe(t("o_secGebaeude"), D.gebaeude, LG()), gruppe(t("ausstattung"), D.ausstattung, LA()), gruppe(t("o_secAussen"), D.aussen, LO()), gruppe(t("o_secParkieren"), D.parkieren, LP()), gruppe(t("o_secEnergie"), D.energie, LE())].filter(Boolean) : [];
     const bEck = `
       <dl class="fakten">${fakten.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(String(v))}</dd></div>`).join("")}</dl>
       ${gr2.length ? `<div class="gruppen">${gr2.join("")}</div>` : ""}
@@ -173,8 +182,8 @@ window.UOBJ = (function () {
         <div class="tabs">
           ${gr.map((g, i) => `<button data-plan="${i}" aria-pressed="${i === 0}">${esc(g.geschoss)}${g.flaeche ? ` · ${g.flaeche} m²` : ""}</button>`).join("")}
           <div class="rechts">
-            <button data-zoom="-" aria-label="Verkleinern">−</button><button data-zoom="+" aria-label="Vergrössern">+</button>
-            <button data-zoom="v" aria-label="Vollbild">⛶</button>
+            <button data-zoom="-" aria-label="${esc(t("o_verkleinern"))}">−</button><button data-zoom="+" aria-label="${esc(t("o_vergroessern"))}">+</button>
+            <button data-zoom="v" aria-label="${esc(t("o_vollbild"))}">⛶</button>
             <a class="knopf leise" id="planLaden" download>PDF</a>
           </div>
         </div>
@@ -183,69 +192,69 @@ window.UOBJ = (function () {
       </div>` : "";
 
     const LA_ = D && D.lage;
-    const POI = [["oev", "Öffentlicher Verkehr"], ["schulen", "Schulen"], ["einkauf", "Einkauf"], ["gesundheit", "Gesundheit"], ["freizeit", "Freizeit"], ["verkehr", "Verkehr"]];
+    const POI = [["oev", t("o_poiOev")], ["schulen", t("o_poiSchulen")], ["einkauf", t("o_poiEinkauf")], ["gesundheit", t("o_poiGesundheit")], ["freizeit", t("o_poiFreizeit")], ["verkehr", t("o_poiVerkehr")]];
     const poiDa = LA_ ? POI.filter(([k]) => LA_[k] && LA_[k].length) : [];
     const sonne = med.sonne;
     const bLage = `
-      <div class="lagekarte"><div id="lageMap"></div><canvas id="lageKarte"></canvas><button class="knopf voll" id="karteVoll">Vergrössern</button><div class="fein" id="lageHinweis">${esc(lageHinweisText())}</div></div>
+      <div class="lagekarte"><div id="lageMap"></div><canvas id="lageKarte"></canvas><button class="knopf voll" id="karteVoll">${esc(t("o_vergroessern"))}</button><div class="fein" id="lageHinweis">${esc(lageHinweisText())}</div></div>
       ${poiDa.length ? `<div class="poifilter" role="group" aria-label="Was in der Nähe angezeigt wird">${poiDa.map(([k, n], i) => `<button data-poi="${k}" aria-pressed="true" style="--pc:${["#5E8FB5", "#7FA97A", "#C08A6B", "#B0768E", "#8A8FB5", "#6E8A94"][i]}"><i style="background:${["#5E8FB5", "#7FA97A", "#C08A6B", "#B0768E", "#8A8FB5", "#6E8A94"][i]}"></i>${esc(n)}</button>`).join("")}</div>` : ""}
       ${LA_ ? `<p class="dtext">${esc(LA_.beschreibung)}</p>
         ${LA_.charakter ? `<p class="dtext" style="margin-top:12px"><i>${esc(LA_.charakter)}</i></p>` : ""}
         <div class="poispalten">${poiDa.map(([k, n]) => `<div class="poi" data-liste="${k}"><h4>${esc(n)}</h4><ul>${LA_[k].map(p => `<li>${esc(p.name)}<span>${esc(p.distanz || "")}${p.zeit ? " · " + esc(p.zeit) : ""}</span></li>`).join("")}</ul></div>`).join("")}</div>
-        ${LA_.fahrzeiten ? `<div class="poi" style="margin-top:6px"><h4>Fahrzeiten mit dem Auto</h4><ul style="columns:2;column-gap:36px">${LA_.fahrzeiten.map(f => `<li>${esc(f.ziel)}<span>${esc(f.zeit)}</span></li>`).join("")}</ul></div>` : ""}
-        <div class="lagefakt">${LA_.gemeinde ? `<span>Gemeinde <b>${esc(LA_.gemeinde)}</b></span>` : ""}${LA_.quartier ? `<span>Quartier <b>${esc(LA_.quartier)}</b></span>` : ""}${LA_.steuerfuss ? `<span>Steuerfuss <b>${esc(String(LA_.steuerfuss))}</b></span>` : ""}</div>`
-      : `<p class="dtext">${esc(L.postalCode + " " + L.city)}, Kanton ${esc(FWP.KANTON_NAME[L.canton] || L.canton)}. Die genaue Adresse erhalten Sie nach Kontakt mit der Anbieterin oder dem Anbieter.</p>`}
-      ${sonne ? `<div class="sonne">${kompass(sonne.ausrichtung)}<div class="txt"><b>Ausrichtung ${esc(sonne.ausrichtung)}</b><p>${esc(sonne.hauptraeume)}. ${esc(sonne.sonnenstunden)}.</p><p class="fein">${esc(sonne.grundlage)}.</p></div></div>` : ""}`;
+        ${LA_.fahrzeiten ? `<div class="poi" style="margin-top:6px"><h4>${esc(t("o_fahrzeitenAuto"))}</h4><ul style="columns:2;column-gap:36px">${LA_.fahrzeiten.map(f => `<li>${esc(f.ziel)}<span>${esc(f.zeit)}</span></li>`).join("")}</ul></div>` : ""}
+        <div class="lagefakt">${LA_.gemeinde ? `<span>${esc(t("o_gemeindeWort"))} <b>${esc(LA_.gemeinde)}</b></span>` : ""}${LA_.quartier ? `<span>${esc(t("o_quartierWort"))} <b>${esc(LA_.quartier)}</b></span>` : ""}${LA_.steuerfuss ? `<span>${esc(t("o_steuerfussWort"))} <b>${esc(String(LA_.steuerfuss))}</b></span>` : ""}</div>`
+      : `<p class="dtext">${esc(L.postalCode + " " + L.city)}, ${esc(t("o_kantonWort"))} ${esc(FWP.KANTON_NAME[L.canton] || L.canton)}. ${esc(t("o_genAdresseNachKontaktSatz"))}</p>`}
+      ${sonne ? `<div class="sonne">${kompass(sonne.ausrichtung)}<div class="txt"><b>${esc(t("o_ausrichtungWort"))} ${esc(sonne.ausrichtung)}</b><p>${esc(sonne.hauptraeume)}. ${esc(sonne.sonnenstunden)}.</p><p class="fein">${esc(sonne.grundlage)}.</p></div></div>` : ""}`;
 
     const FZ = D && D.finanzen;
     const bFinanz = kauf ? `
       <div class="finanz" id="finanzBox">
         <div>
-          <label class="et">Kaufpreis</label><div class="wert"><span>Objektpreis</span><b>${esc(FWP.preis(L))}</b></div>
-          <label class="et" for="fEk">Eigenmittel</label><input type="range" id="fEk" min="20" max="60" step="5" value="20">
+          <label class="et">${esc(t("o_kaufpreis"))}</label><div class="wert"><span>${esc(t("o_objektpreis"))}</span><b>${esc(FWP.preis(L))}</b></div>
+          <label class="et" for="fEk">${esc(t("o_eigenmittel"))}</label><input type="range" id="fEk" min="20" max="60" step="5" value="20">
           <div class="wert"><span id="fEkP">20 %</span><b id="fEkB"></b></div>
-          <label class="et" for="fZins">Zinsmodell</label>
-          <select class="feld" id="fZins" style="width:100%"><option value="0.016">SARON · 1.6 %</option><option value="0.019" selected>Festhypothek 5 Jahre · 1.9 %</option><option value="0.022">Festhypothek 10 Jahre · 2.2 %</option></select>
-          <div class="wert" style="margin-top:14px"><span>Belehnung</span><b id="fBel"></b></div>
+          <label class="et" for="fZins">${esc(t("o_zinsmodell"))}</label>
+          <select class="feld" id="fZins" style="width:100%"><option value="0.016">${esc(t("o_saron"))}</option><option value="0.019" selected>${esc(t("o_fest5"))}</option><option value="0.022">${esc(t("o_fest10"))}</option></select>
+          <div class="wert" style="margin-top:14px"><span>${esc(t("o_belehnung"))}</span><b id="fBel"></b></div>
         </div>
         <div class="ausgabe">
-          <span>Hypothek</span><b id="fHyp"></b>
-          <span>Zins / Monat</span><b id="fZ"></b>
-          <span>Amortisation / Monat</span><b id="fA"></b>
-          <span>Unterhalt und Nebenkosten / Monat</span><b id="fU"></b>
-          <span class="totalL">Total / Monat</span><b class="total" id="fT"></b>
-          <span>Nötiges Haushaltseinkommen</span><b id="fE"></b>
+          <span>${esc(t("o_hypothek"))}</span><b id="fHyp"></b>
+          <span>${esc(t("o_zinsMonat"))}</span><b id="fZ"></b>
+          <span>${esc(t("o_amortMonat"))}</span><b id="fA"></b>
+          <span>${esc(t("o_unterhMonat"))}</span><b id="fU"></b>
+          <span class="totalL">${esc(t("o_totalMonat"))}</span><b class="total" id="fT"></b>
+          <span>${esc(t("o_noetHaushalt"))}</span><b id="fE"></b>
         </div>
-        <p class="fein">${FZ && FZ.nebenkosten ? esc(FZ.nebenkosten) + " " : ""}${FZ && FZ.preisM2Kontext ? esc(FZ.preisM2Kontext) + " " : ""}Richtwerte nach Bankenpraxis: Belehnung 80 %, zweite Hypothek in 15 Jahren amortisiert, Unterhalt 1 % pro Jahr, Tragbarkeit mit 5 % kalkulatorischem Zins bis höchstens einem Drittel des Einkommens. Das ist eine Orientierung und keine Finanzierungszusage — verbindlich rechnet Ihre Bank.</p>
+        <p class="fein">${FZ && FZ.nebenkosten ? esc(FZ.nebenkosten) + " " : ""}${FZ && FZ.preisM2Kontext ? esc(FZ.preisM2Kontext) + " " : ""}${esc(t("o_finanzFein"))}</p>
       </div>` : "";
 
     const doks = (D && D.dokumente) || [];
     const bDoks = doks.length ? `
-      <div class="doks">${doks.map(d => `<div class="dok"><div><b>${esc(d.name)}</b><small>${esc((d.typ || "pdf").toUpperCase())}${d.seiten ? " · " + d.seiten + " S." : ""}${d.groesse ? " · " + esc(d.groesse) : ""}${d.hinweis ? " — " + esc(d.hinweis) : ""}</small></div><span class="z ${d.zugang === "oeffentlich" ? "frei" : ""}">${(ZUG[d.zugang] || ZUG.anfrage)[0]}</span></div>`).join("")}</div>
-      <p class="dokfein">${ZUG_TEXT}</p>` : "";
+      <div class="doks">${doks.map(d => `<div class="dok"><div><b>${esc(d.name)}</b><small>${esc((d.typ || "pdf").toUpperCase())}${d.seiten ? " · " + d.seiten + " " + esc(t("o_seitenAbk")) : ""}${d.groesse ? " · " + esc(d.groesse) : ""}${d.hinweis ? " — " + esc(d.hinweis) : ""}</small></div><span class="z ${d.zugang === "oeffentlich" ? "frei" : ""}">${(ZUG()[d.zugang] || ZUG().anfrage)[0]}</span></div>`).join("")}</div>
+      <p class="dokfein">${ZUG_TEXT()}</p>` : "";
 
     const bFaq = (D && D.faq && D.faq.length) ? `<div class="faq">${D.faq.map(f => `<details><summary>${esc(f.frage)}</summary><p>${esc(f.antwort)}</p></details>`).join("")}</div>` : "";
 
-    const schritte = (D && D.naechsteSchritte) || ["Besichtigung anfragen", "Frage stellen", "Finanzierung prüfen"];
+    const schritte = (D && D.naechsteSchritte) || [t("o_naechsteBesichtigung"), t("o_naechsteFrage"), t("o_naechsteFinanzierung")];
     const kontaktKarte = (suffix) => `
       <div class="begleiter">
         <div class="wer">${wirVertreten ? '<span class="mark"></span>' : `<span class="av">${esc((quelle.person || quelle.name || "?").split(" ").map(x => x[0]).join("").slice(0, 2))}</span>`}
           <div><b>${esc(quelle.person || quelle.name || L.publisher)}</b><span>${esc(quelle.name && quelle.person ? quelle.name : FWP.quelleLabel(L))}${quelle.verifiziert ? " · " + t("geprueft") : ""}</span></div></div>
         <div class="vertrauen">${wirVertreten
-          ? `<b>Fourwalls vertritt die Verkäuferschaft.</b> Ihre Anfrage geht an ${esc(quelle.person || "unser Team")}, nicht an Dritte.`
-          : `Inseriert von <b>${esc(FWP.quelleLabel(L))}</b>. Ihre Anfrage geht direkt an diese Anbieterin oder diesen Anbieter. Fourwalls vertritt dieses Objekt nicht${quelle.verifiziert ? ", hat aber Identität und Inserat geprüft" : ""}.`}</div>
+          ? `<b>${esc(t("o_wirVertreten"))}</b> ${esc(t("o_anfrageGehtAn"))} ${esc(quelle.person || t("o_unserTeam"))}, ${esc(t("o_nichtAnDritte"))}`
+          : `${esc(t("o_inseriertVon"))} <b>${esc(FWP.quelleLabel(L))}</b>. ${esc(t("o_anfrageDirekt"))} ${esc(t("o_vertrittNicht"))}${quelle.verifiziert ? esc(t("o_hatGeprueft")) : ""}.`}</div>
         <div class="cta">
           <button class="knopf voll" data-anfrage>${t("anfrage")}</button>
-          <button class="knopf" data-frage>Frage stellen</button>
-          ${(quelle.telefon || (L.contactOptions || []).includes("call")) ? `<a class="knopf leise" href="tel:${esc((quelle.telefon || "+41 44 555 01 01").replace(/\s/g, ""))}">${esc(quelle.telefon || "+41 44 555 01 01")}</a>` : ""}
+          <button class="knopf" data-frage>${esc(t("o_frageStellen"))}</button>
+          ${(quelle.telefon || (L.contactOptions || []).includes("call")) ? `<a class="knopf leise" href="tel:${esc((quelle.telefon || (window.FWCO || {}).telefon || "").replace(/\s/g, ""))}">${esc(quelle.telefon || (window.FWCO || {}).telefon || "")}</a>` : ""}
         </div>
         <ul class="schritte">${schritte.map(s => `<li>${esc(s)}</li>`).join("")}</ul>
         <div class="dform" id="dForm${suffix}">
-          <div class="paar"><input type="text" placeholder="Name" id="dfName${suffix}" aria-label="Name"><input type="email" placeholder="E-Mail" id="dfMail${suffix}" aria-label="E-Mail"></div>
-          <textarea aria-label="Nachricht" id="dfText${suffix}">Guten Tag\nIch interessiere mich für dieses Objekt und würde es gerne besichtigen.</textarea>
-          <label class="ab"><input type="checkbox" checked> Ähnliche Objekte per Suchabo erhalten</label>
-          <button class="knopf voll" id="dfSenden${suffix}" style="width:100%">Anfrage senden</button>
-          <p class="ok" id="dfOk${suffix}">Gesendet — ${esc(quelle.person || quelle.name || L.publisher)} meldet sich bei Ihnen.</p>
+          <div class="paar"><input type="text" placeholder="${esc(t("o_name"))}" id="dfName${suffix}" aria-label="Name"><input type="email" placeholder="E-Mail" id="dfMail${suffix}" aria-label="E-Mail"></div>
+          <textarea aria-label="Nachricht" id="dfText${suffix}">${esc(t("o_nachrichtStandard"))}</textarea>
+          <label class="ab"><input type="checkbox" checked> ${esc(t("o_aehnlicheSuchabo"))}</label>
+          <button class="knopf voll" id="dfSenden${suffix}" style="width:100%">${esc(t("o_anfrageSenden"))}</button>
+          <p class="ok" id="dfOk${suffix}">${esc(t("o_gesendetPrefix"))} ${esc(quelle.person || quelle.name || L.publisher)} ${esc(t("o_gesendetAn"))}</p>
         </div>
         <div class="dmelde"><button id="dMelden${suffix}">${t("melden")}</button></div>
       </div>`;
@@ -254,16 +263,16 @@ window.UOBJ = (function () {
     const bAehn = aehn.length ? `<div class="aehnlich">${aehn.map(K.kartenHTML).join("")}</div>` : "";
 
     const koerper = `
-      ${abschnitt("uebersicht", "Übersicht", bUebersicht)}
+      ${abschnitt("uebersicht", t("o_secUebersicht"), bUebersicht)}
       ${abschnitt("bilder", t("bilderMedien"), bMedien, FWP.bildLabel(bilder.length))}
-      ${abschnitt("eckdaten", "Eckdaten", bEck)}
-      ${abschnitt("grundrisse", "Grundrisse", bPlaene)}
-      ${abschnitt("lage", "Lage", bLage)}
-      ${abschnitt("finanzierung", "Finanzierung", bFinanz, "Richtwerte")}
-      ${abschnitt("dokumente", "Dokumente", bDoks)}
-      ${abschnitt("fragen", "Häufige Fragen", bFaq)}
-      ${abschnitt("kontakt", "Kontakt", `<div class="nurmobil">${kontaktKarte("M")}</div>`)}
-      ${abschnitt("aehnliche", "Ähnliche Objekte", bAehn)}`;
+      ${abschnitt("eckdaten", t("o_secEckdaten"), bEck)}
+      ${abschnitt("grundrisse", t("o_secGrundrisse"), bPlaene)}
+      ${abschnitt("lage", t("o_secLage"), bLage)}
+      ${abschnitt("finanzierung", t("o_secFinanzierung"), bFinanz, t("o_secRichtwerte"))}
+      ${abschnitt("dokumente", t("o_secDokumente"), bDoks)}
+      ${abschnitt("fragen", t("o_secFragen"), bFaq)}
+      ${abschnitt("kontakt", t("o_secKontakt"), `<div class="nurmobil">${kontaktKarte("M")}</div>`)}
+      ${abschnitt("aehnliche", t("o_secAehnliche"), bAehn)}`;
 
     const anker = `<nav class="anker" aria-label="Auf dieser Seite">${stationen.map(([id, ti]) => `<a href="#d-${id}" data-anker="${id}">${esc(ti)}</a>`).join("")}</nav>`;
 
@@ -278,7 +287,7 @@ window.UOBJ = (function () {
       </div>
       ${held}${titelzeile}${anker}
       <div class="dkoerper"><div class="dhaupt">${koerper}</div><aside class="dseite">${kontaktKarte("")}</aside></div>
-      <div class="mobilcta"><div class="p">${esc(FWP.preis(L))}<small>${esc((L.rooms ? L.rooms + " Zi. · " : "") + (L.livingArea ? L.livingArea + " m² · " : "") + L.city)}</small></div><button class="knopf voll" data-anfrage>${t("anfrage")}</button></div>`;
+      <div class="mobilcta"><div class="p">${esc(FWP.preis(L))}<small>${esc((L.rooms ? L.rooms + " " + t("o_ziKurz") + " · " : "") + (L.livingArea ? L.livingArea + " m² · " : "") + L.city)}</small></div><button class="knopf voll" data-anfrage>${t("anfrage")}</button></div>`;
 
     const det = $("detail");
     det.classList.add("an"); det.scrollTop = 0; document.body.style.overflow = "hidden";
@@ -294,7 +303,7 @@ window.UOBJ = (function () {
       $("dMerken").textContent = an ? t("gemerktOk") : t("merken");
       $("dMerken").setAttribute("aria-pressed", an); K.favZahl();
     });
-    $("dTeilen").addEventListener("click", () => { try { navigator.clipboard.writeText(location.href); } catch (e) {} $("dTeilen").textContent = "Link kopiert ✓"; });
+    $("dTeilen").addEventListener("click", () => { try { navigator.clipboard.writeText(location.href); } catch (e) {} $("dTeilen").textContent = t("o_linkKopiert"); });
     const mehr = $("mehrText"); if (mehr) mehr.addEventListener("click", () => { $("dText").classList.remove("kurz"); mehr.remove(); });
 
     det.querySelectorAll("[data-anker]").forEach(a => a.addEventListener("click", e => {
@@ -312,7 +321,7 @@ window.UOBJ = (function () {
     const zeigeForm = frage => {
       const f = matchMedia("(max-width:960px)").matches ? ($("dFormM") || $("dForm")) : ($("dForm") || $("dFormM"));
       f.classList.add("an");
-      if (frage) f.querySelector("textarea").value = "Guten Tag\nIch habe eine Frage zu diesem Objekt:\n";
+      if (frage) f.querySelector("textarea").value = t("o_nachrichtFrage");
       f.scrollIntoView({ behavior:"smooth", block:"center" });
       f.querySelector("input").focus();
     };
@@ -326,11 +335,11 @@ window.UOBJ = (function () {
         $("dfOk" + s).style.display = "block"; btn.disabled = true; btn.style.opacity = .5;
         try {
           const a = JSON.parse(localStorage.getItem("fw-anfragen") || "[]");
-          a.push({ slug, titel:L.title, ort:L.city, datum:new Date().toISOString().slice(0, 10), status:"Gesendet" });
+          a.push({ slug, titel:L.title, ort:L.city, datum:new Date().toISOString().slice(0, 10), status:t("o_gesendetStatus") });
           localStorage.setItem("fw-anfragen", JSON.stringify(a));
         } catch (e) {}
       });
-      const md = $("dMelden" + s); if (md) md.addEventListener("click", () => { md.textContent = "Gemeldet — danke, wir prüfen das."; md.disabled = true; });
+      const md = $("dMelden" + s); if (md) md.addEventListener("click", () => { md.textContent = t("o_gemeldetDanke"); md.disabled = true; });
     });
 
     /* Galerie */
@@ -385,10 +394,10 @@ window.UOBJ = (function () {
     $("licht").innerHTML = `
       <div class="lk">
         <span id="lichtZ"></span>
-        <div class="mitte">${kats.map((k, n) => `<button data-lkat="${k}" aria-pressed="${n === 0}">${esc(KAT[k] || k)}</button>`).join("")}</div>
+        <div class="mitte">${kats.map((k, n) => `<button data-lkat="${k}" aria-pressed="${n === 0}">${esc(KAT()[k] || k)}</button>`).join("")}</div>
         <button class="knopf" id="lichtZu">${t("schliessen")} ×</button>
       </div>
-      <div class="lb"><button class="pf l" id="lichtL" aria-label="Vorheriges Bild">‹</button><img id="lichtImg" alt=""><button class="pf r" id="lichtR" aria-label="Nächstes Bild">›</button></div>
+      <div class="lb"><button class="pf l" id="lichtL" aria-label="${esc(t("o_vorherigesBild"))}">‹</button><img id="lichtImg" alt=""><button class="pf r" id="lichtR" aria-label="${esc(t("o_naechstesBild"))}">›</button></div>
       <div class="bu" id="lichtBu"></div>
       <div class="lf" id="lichtF"></div>`;
     $("licht").classList.add("an");
@@ -414,7 +423,7 @@ window.UOBJ = (function () {
     malStreifen(); zeig(); $("lichtZu").focus();
   }
   function malStreifen() {
-    $("lichtF").innerHTML = lichtListe.map(n => `<button data-j="${n}" aria-current="${n === lichtI}" aria-label="Bild ${n + 1}"><img src="../img/${bilder[n].key}-480.jpg" alt="" loading="lazy"></button>`).join("");
+    $("lichtF").innerHTML = lichtListe.map(n => `<button data-j="${n}" aria-current="${n === lichtI}" aria-label="${esc(t("o_bildWort"))} ${n + 1}"><img src="../img/${bilder[n].key}-480.jpg" alt="" loading="lazy"></button>`).join("");
     $("lichtF").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { lichtI = +b.dataset.j; zeig(); }));
   }
   function sprung(d) {
@@ -435,17 +444,17 @@ window.UOBJ = (function () {
   function lichtMedium(art) {
     const med = (D && D.medien) || {};
     const M = {
-      video:["Objektfilm", med.video ? `${med.video.hinweis}. Länge ${med.video.dauer}.` : "", "In Produktion läuft hier der Film als HLS-Stream, ohne Ton-Autoplay."],
-      "360":["360°-Rundgang", med.tour360 ? med.tour360.hinweis + "." : "", "In Produktion wird hier der Rundgang eingebettet, mit Raumwahl an der Seite."],
-      "3d":["3D-Modell", med.modell3d ? med.modell3d.hinweis + "." : "", "Erscheint nur bei Objekten, die digital vermessen wurden — kein nachgebautes Volumen."],
-      sonne:["Ausrichtung", med.sonne ? `${med.sonne.hauptraeume}. ${med.sonne.sonnenstunden}.` : "", med.sonne ? med.sonne.grundlage + "." : ""]
+      video:[t("o_objektfilm"), med.video ? `${med.video.hinweis}. Länge ${med.video.dauer}.` : "", t("o_videoProd")],
+      "360":[t("o_rundgang"), med.tour360 ? med.tour360.hinweis + "." : "", t("o_rundgangProd")],
+      "3d":[t("o_modell3d"), med.modell3d ? med.modell3d.hinweis + "." : "", t("o_modell3dHinweis")],
+      sonne:[t("o_ausrichtungWort"), med.sonne ? `${med.sonne.hauptraeume}. ${med.sonne.sonnenstunden}.` : "", med.sonne ? med.sonne.grundlage + "." : ""]
     }[art];
     $("licht").innerHTML = `<div class="lk"><span>${esc(M[0])} · ${esc(L.title)}</span><button class="knopf" id="lichtZu">${t("schliessen")} ×</button></div>
       <div class="lb"><div class="buehne"><div><b>${esc(M[0])}</b>${esc(M[1])}<div class="fein">${esc(M[2])}</div></div></div></div>`;
     $("licht").classList.add("an"); $("lichtZu").addEventListener("click", lichtZu); $("lichtZu").focus();
   }
   function lichtPlan(svg, geschoss) {
-    $("licht").innerHTML = `<div class="lk"><span>Grundriss · ${esc(geschoss)}</span><button class="knopf" id="lichtZu">${t("schliessen")} ×</button></div>
+    $("licht").innerHTML = `<div class="lk"><span>${esc(t("o_grundrissPrefix"))} ${esc(geschoss)}</span><button class="knopf" id="lichtZu">${t("schliessen")} ×</button></div>
       <div class="lb"><div style="width:min(1100px,92vw);color:#EEF1F2">${svg}</div></div>`;
     $("licht").classList.add("an"); $("lichtZu").addEventListener("click", lichtZu); $("lichtZu").focus();
   }
@@ -459,9 +468,9 @@ window.UOBJ = (function () {
       const g = gr[i]; $("planBlatt").scrollTo(0, 0);
       if (g.datei && /\.svg$/.test(g.datei)) {
         try { blatt.innerHTML = await (await fetch(g.datei)).text(); }
-        catch (e) { blatt.innerHTML = `<div class="pdfplan">Plan konnte nicht geladen werden.</div>`; }
+        catch (e) { blatt.innerHTML = `<div class="pdfplan">${esc(t("o_planNichtGeladen"))}</div>`; }
       } else {
-        blatt.innerHTML = `<div class="pdfplan"><b style="font-family:var(--d);font-size:1.4rem;display:block;margin-bottom:8px;color:var(--ink)">${esc(g.geschoss)}</b>Plan liegt als PDF vor${g.datei ? ` (${esc(g.datei)})` : ""}. In Produktion wird die erste Seite als Vorschau gerendert.</div>`;
+        blatt.innerHTML = `<div class="pdfplan"><b style="font-family:var(--d);font-size:1.4rem;display:block;margin-bottom:8px;color:var(--ink)">${esc(g.geschoss)}</b>${esc(t("o_planPdf1"))}${g.datei ? ` (${esc(g.datei)})` : ""}. ${esc(t("o_planPdf2"))}</div>`;
       }
       rae.innerHTML = (g.raeume || []).map(r => `<span><b>${esc(r.name)}</b> ${r.m2 ? r.m2 + " m²" : ""}</span>`).join("");
       document.querySelectorAll("[data-plan]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.plan === i));
@@ -485,7 +494,7 @@ window.UOBJ = (function () {
       $("fEkB").textContent = chf(f.ek); $("fBel").textContent = f.belehnung + " %";
       $("fHyp").textContent = chf(f.hyp); $("fZ").textContent = chf(f.zinsM);
       $("fA").textContent = chf(f.amortM); $("fU").textContent = chf(f.unterhM);
-      $("fT").textContent = chf(f.total); $("fE").textContent = chf(f.einkommen) + " / Jahr";
+      $("fT").textContent = chf(f.total); $("fE").textContent = chf(f.einkommen) + " " + t("o_proJahr");
     };
     $("fEk").addEventListener("input", r); $("fZins").addEventListener("change", r); r();
   }
@@ -499,12 +508,12 @@ window.UOBJ = (function () {
   }
   function lageHinweisText() {
     const f = lageFreigabe();
-    const quelle = "Karte: swisstopo";
-    if (f.stufe === "exakt") return "Genaue Lage vom Anbieter freigegeben · " + quelle;
-    if (f.stufe === "gemeinde") return "Lage auf Gemeindeebene · genaue Adresse nach Kontakt · " + quelle;
+    const quelle = t("o_karteSwisstopo");
+    if (f.stufe === "exakt") return t("o_lageExakt") + " · " + quelle;
+    if (f.stufe === "gemeinde") return t("o_lageGemeinde") + " · " + t("o_genaueAdresse2") + " · " + quelle;
     const m = f.genauigkeitM;
-    return "Ungefähre Lage" + (m ? " im Umkreis von " + (m >= 1000 ? (m / 1000) + " km" : m + " m") : "") +
-           " · genaue Adresse nach Kontakt · " + quelle;
+    return t("o_lageUngefaehr") + (m ? " " + t("o_imUmkreisVon") + " " + (m >= 1000 ? (m / 1000) + " km" : m + " m") : "") +
+           " · " + t("o_genaueAdresse2") + " · " + quelle;
   }
 
   /* Echte Karte über das Schema legen. Gelingt sie nicht, bleibt das Schema
@@ -569,7 +578,7 @@ window.UOBJ = (function () {
       c.fillStyle = stil("--ink"); c.font = "500 10px 'Manrope',sans-serif";
       c.fillText((L.postalCode + " " + L.city).toUpperCase(), cx + 22, cy + 3);
       c.fillStyle = stil("--leise"); c.font = "9px 'Manrope',sans-serif";
-      c.fillText("UNGEFÄHRE LAGE · GENAUE ADRESSE NACH KONTAKT", 12, h - 26);
+      c.fillText(t("o_ungefaehreLageCanvas"), 12, h - 26);
     }
     cv._mal = mal; mal();
     document.querySelectorAll("[data-poi]").forEach(b => b.addEventListener("click", () => {
@@ -580,9 +589,9 @@ window.UOBJ = (function () {
     }));
     const vb = $("karteVoll");
     if (vb) vb.addEventListener("click", () => {
-      const gross = vb.textContent === "Vergrössern";
+      const gross = vb.textContent === t("o_vergroessern");
       cv.parentElement.style.height = gross ? "min(78vh,760px)" : "";
-      vb.textContent = gross ? "Verkleinern" : "Vergrössern";
+      vb.textContent = gross ? t("o_verkleinern") : t("o_vergroessern");
       requestAnimationFrame(() => { mal(); if (lageInstanz) lageInstanz.resize(); });
     });
     window.addEventListener("resize", () => { if ($("lageKarte")) mal(); });
@@ -593,16 +602,20 @@ window.UOBJ = (function () {
     const G = { "Nord":0, "Nord-Ost":45, "Ost":90, "Süd-Ost":135, "Süd":180, "Süd-West":225, "West":270, "Nord-West":315 };
     const a = G[ausrichtung] != null ? G[ausrichtung] : 180;
     const rad = (a - 90) * Math.PI / 180, x = 59 + Math.cos(rad) * 38, y = 59 + Math.sin(rad) * 38;
-    return `<svg viewBox="0 0 118 118" role="img" aria-label="Ausrichtung ${esc(ausrichtung)}">
+    /* Achsbeschriftung: N/S bleiben überall gleich, O/W wechseln mit der Sprache
+       (Ost/Ouest teilen sich das O, das englische East/West nicht). */
+    const ACHSEN = { de:["N","S","O","W"], fr:["N","S","E","O"], it:["N","S","E","O"], en:["N","S","E","W"] };
+    const [aN, aS, aO, aW] = ACHSEN[FWP.lang] || ACHSEN.de;
+    return `<svg viewBox="0 0 118 118" role="img" aria-label="${esc(t("o_ausrichtungWort"))} ${esc(ausrichtung)}">
       <circle cx="59" cy="59" r="46" fill="none" stroke="currentColor" stroke-opacity=".18"/>
       <circle cx="59" cy="59" r="30" fill="none" stroke="currentColor" stroke-opacity=".1"/>
       <path d="M59 59 L${x.toFixed(1)} ${y.toFixed(1)}" stroke="var(--licht)" stroke-width="2.5" stroke-linecap="round"/>
       <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.5" fill="var(--licht)"/>
       <circle cx="59" cy="59" r="3" fill="currentColor"/>
-      <text x="59" y="16" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">N</text>
-      <text x="59" y="110" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">S</text>
-      <text x="108" y="63" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">O</text>
-      <text x="10" y="63" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">W</text>
+      <text x="59" y="16" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">${aN}</text>
+      <text x="59" y="110" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">${aS}</text>
+      <text x="108" y="63" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">${aO}</text>
+      <text x="10" y="63" text-anchor="middle" font-size="9" fill="currentColor" opacity=".55" font-family="Manrope,sans-serif">${aW}</text>
     </svg>`;
   }
 

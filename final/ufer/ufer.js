@@ -5,40 +5,40 @@ window.UFER = (function () {
   const T = {
     de: { immobilien:"Immobilien", verkaufen:"Verkaufen", verwalten:"Verwalten", wissen:"Wissen", konto:"Konto",
       kaufen:"Kaufen", mieten:"Mieten", karte:"Karte", exclusive:"Fourwalls Exclusive", neubau:"Neubauprojekte", suchabo:"Suchabo",
-      bewertung:"Bewertung in 48 Std.", mitFW:"Mit Fourwalls verkaufen", selbst:"Gratis selbst inserieren", vermieten:"Vermieten",
-      bewirtschaftung:"Bewirtschaftung", report:"Eigentümer-Report", erstvermietung:"Erstvermietung", offerte:"Offerte in 48 Std.",
+      bewertung:"Kostenlose Bewertung", mitFW:"Mit Fourwalls verkaufen", selbst:"Gratis selbst inserieren", vermieten:"Vermieten",
+      bewirtschaftung:"Bewirtschaftung", report:"Eigentümer-Report", erstvermietung:"Erstvermietung", offerte:"Offerte anfordern",
       ratgeber:"Ratgeber", tragbarkeit:"Tragbarkeit berechnen", nebenkosten:"Kaufnebenkosten", markt:"Marktbericht",
       gemerkt:"Gemerkt", inserieren:"Gratis inserieren", menue:"Menü", schliessen:"Schliessen", tag:"Tag", nacht:"Nacht",
       suchen:"Suchen", ortPh:"Ort, PLZ, Kanton oder Region", alle:"Alle Inserate",
       wegSuchen:"Immobilien suchen", wegSuchenS:"Kaufen und mieten, schweizweit", wegInser:"Gratis inserieren", wegInserS:"Selbst verkaufen oder vermieten",
-      wegVerk:"Mit Fourwalls verkaufen", wegVerkS:"Mandat · Bewertung in 48 Std.", wegVerw:"Immobilien verwalten", wegVerwS:"Bewirtschaftung für Eigentümer" },
+      wegVerk:"Mit Fourwalls verkaufen", wegVerkS:"Mandat · kostenlose Bewertung", wegVerw:"Immobilien verwalten", wegVerwS:"Bewirtschaftung für Eigentümer" },
     fr: { immobilien:"Immobilier", verkaufen:"Vendre", verwalten:"Gérance", wissen:"Savoir", konto:"Compte",
       kaufen:"Acheter", mieten:"Louer", karte:"Carte", exclusive:"Fourwalls Exclusive", neubau:"Projets neufs", suchabo:"Alerte de recherche",
-      bewertung:"Estimation en 48 h", mitFW:"Vendre avec Fourwalls", selbst:"Publier moi-même, gratuit", vermieten:"Mettre en location",
-      bewirtschaftung:"Gérance d'immeubles", report:"Rapport propriétaire", erstvermietung:"Première location", offerte:"Offre en 48 h",
+      bewertung:"Estimation gratuite", mitFW:"Vendre avec Fourwalls", selbst:"Publier moi-même, gratuit", vermieten:"Mettre en location",
+      bewirtschaftung:"Gérance d'immeubles", report:"Rapport propriétaire", erstvermietung:"Première location", offerte:"Demander une offre",
       ratgeber:"Guides", tragbarkeit:"Calculer la capacité financière", nebenkosten:"Frais d'acquisition", markt:"Rapport de marché",
       gemerkt:"Favoris", inserieren:"Publier gratuitement", menue:"Menu", schliessen:"Fermer", tag:"Jour", nacht:"Nuit",
       suchen:"Rechercher", ortPh:"Lieu, NPA, canton ou région", alle:"Toutes les annonces",
       wegSuchen:"Chercher un bien", wegSuchenS:"Acheter et louer, dans toute la Suisse", wegInser:"Publier gratuitement", wegInserS:"Vendre ou louer soi-même",
-      wegVerk:"Vendre avec Fourwalls", wegVerkS:"Mandat · Estimation en 48 h", wegVerw:"Gérer un immeuble", wegVerwS:"Gérance pour propriétaires" },
+      wegVerk:"Vendre avec Fourwalls", wegVerkS:"Mandat · estimation gratuite", wegVerw:"Gérer un immeuble", wegVerwS:"Gérance pour propriétaires" },
     it: { immobilien:"Immobili", verkaufen:"Vendere", verwalten:"Amministrazione", wissen:"Sapere", konto:"Conto",
       kaufen:"Comprare", mieten:"Affittare", karte:"Mappa", exclusive:"Fourwalls Exclusive", neubau:"Nuove costruzioni", suchabo:"Avviso di ricerca",
-      bewertung:"Valutazione in 48 ore", mitFW:"Vendere con Fourwalls", selbst:"Pubblicare da soli, gratis", vermieten:"Affittare",
-      bewirtschaftung:"Amministrazione stabili", report:"Rapporto proprietari", erstvermietung:"Prima locazione", offerte:"Offerta in 48 ore",
+      bewertung:"Valutazione gratuita", mitFW:"Vendere con Fourwalls", selbst:"Pubblicare da soli, gratis", vermieten:"Affittare",
+      bewirtschaftung:"Amministrazione stabili", report:"Rapporto proprietari", erstvermietung:"Prima locazione", offerte:"Richiedere un'offerta",
       ratgeber:"Guide", tragbarkeit:"Calcolare la sostenibilità", nebenkosten:"Spese accessorie d'acquisto", markt:"Rapporto di mercato",
       gemerkt:"Preferiti", inserieren:"Pubblica gratis", menue:"Menu", schliessen:"Chiudi", tag:"Giorno", nacht:"Notte",
       suchen:"Cerca", ortPh:"Località, NPA, cantone o regione", alle:"Tutti gli annunci",
       wegSuchen:"Cercare immobili", wegSuchenS:"Comprare e affittare in tutta la Svizzera", wegInser:"Pubblicare gratis", wegInserS:"Vendere o affittare da soli",
-      wegVerk:"Vendere con Fourwalls", wegVerkS:"Mandato · Valutazione in 48 ore", wegVerw:"Amministrare immobili", wegVerwS:"Amministrazione per proprietari" },
+      wegVerk:"Vendere con Fourwalls", wegVerkS:"Mandato · valutazione gratuita", wegVerw:"Amministrare immobili", wegVerwS:"Amministrazione per proprietari" },
     en: { immobilien:"Properties", verkaufen:"Sell", verwalten:"Manage", wissen:"Knowledge", konto:"Account",
       kaufen:"Buy", mieten:"Rent", karte:"Map", exclusive:"Fourwalls Exclusive", neubau:"New developments", suchabo:"Search alert",
-      bewertung:"Valuation in 48 h", mitFW:"Sell with Fourwalls", selbst:"List it yourself, free", vermieten:"Let",
-      bewirtschaftung:"Property management", report:"Owner report", erstvermietung:"First letting", offerte:"Quote in 48 h",
+      bewertung:"Free valuation", mitFW:"Sell with Fourwalls", selbst:"List it yourself, free", vermieten:"Let",
+      bewirtschaftung:"Property management", report:"Owner report", erstvermietung:"First letting", offerte:"Request a quote",
       ratgeber:"Guides", tragbarkeit:"Affordability calculator", nebenkosten:"Purchase costs", markt:"Market report",
       gemerkt:"Saved", inserieren:"List for free", menue:"Menu", schliessen:"Close", tag:"Day", nacht:"Night",
       suchen:"Search", ortPh:"Place, postcode, canton or region", alle:"All listings",
       wegSuchen:"Search properties", wegSuchenS:"Buy and rent, across Switzerland", wegInser:"List for free", wegInserS:"Sell or let it yourself",
-      wegVerk:"Sell with Fourwalls", wegVerkS:"Mandate · Valuation in 48 h", wegVerw:"Manage property", wegVerwS:"Management for owners" }
+      wegVerk:"Sell with Fourwalls", wegVerkS:"Mandate · free valuation", wegVerw:"Manage property", wegVerwS:"Management for owners" }
   };
   const u = k => (T[FWP.lang] && T[FWP.lang][k]) || T.de[k] || k;
 
@@ -83,7 +83,7 @@ window.UFER = (function () {
     nBewirt:{de:"Laufende Betreuung Ihrer Liegenschaft",fr:"Gestion courante de votre immeuble",it:"Gestione corrente del vostro stabile",en:"Ongoing care for your property"},
     nReport:{de:"Ihr Haus in einer Seite, monatlich",fr:"Votre bien en une page, chaque mois",it:"Il vostro immobile in una pagina, ogni mese",en:"Your property on one page, monthly"},
     nErst:{de:"Erstvermietung mit Marktmiete",fr:"Première location au prix du marché",it:"Prima locazione a prezzo di mercato",en:"First letting at market rent"},
-    nOfferte:{de:"Schriftlich in 48 Stunden",fr:"Par écrit sous 48 heures",it:"Per iscritto entro 48 ore",en:"In writing within 48 hours"},
+    nOfferte:{de:"Schriftlich, mit Leistungsumfang",fr:"Par écrit, avec le détail",it:"Per iscritto, con i dettagli",en:"In writing, with full scope"},
     nRatgeber:{de:"Kurz, geprüft, ohne Verkaufsdruck",fr:"Bref, vérifié, sans pression",it:"Breve, verificato, senza pressione",en:"Short, checked, no sales pressure"},
     nTragbar:{de:"Was darf mein Objekt kosten?",fr:"Quel prix puis-je me permettre ?",it:"Quanto posso permettermi?",en:"What can I afford?"},
     nNeben:{de:"Was neben dem Preis anfällt",fr:"Ce qui s'ajoute au prix",it:"Cosa si aggiunge al prezzo",en:"What comes on top of the price"},
@@ -125,14 +125,15 @@ window.UFER = (function () {
   }
   function fussHTML(seite) {
     const esc = FWP.esc;
+    const co = window.FWCO || {};
     return `<span class="fw band" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></span>
       <div class="spalten">
         <div><b>${esc(u("immobilien"))}</b><a href="portal.html">${esc(u("kaufen"))}</a><a href="portal.html?trans=rent">${esc(u("mieten"))}</a><a href="portal.html?quelle=fourwalls">${esc(u("exclusive"))}</a><a href="portal.html#konto">${esc(u("suchabo"))}</a></div>
         <div><b>${esc(u("verkaufen"))}</b><a href="verkaufen.html#bewertung">${esc(u("bewertung"))}</a><a href="verkaufen.html">${esc(u("mitFW"))}</a><a href="portal.html#neu">${esc(u("selbst"))}</a></div>
         <div><b>${esc(u("verwalten"))} · ${esc(u("wissen"))}</b><a href="verwalten.html">${esc(u("bewirtschaftung"))}</a><a href="verwalten.html#report">${esc(u("report"))}</a><a href="wissen.html">${esc(u("ratgeber"))}</a><a href="wissen.html#tragbarkeit">${esc(u("tragbarkeit"))}</a></div>
-        <div><b>Fourwalls AG</b><span>Löwenstrasse 12 · 8001 Zürich</span><span>+41 44 555 01 01</span><span>hallo@fourwalls.example</span><span>Zürich · Bern · Genf · Lugano</span></div>
+        <div><b>${esc(co.name || "Fourwalls AG")}</b><span>${esc(co.strasse || "")} · ${esc(co.plzOrt || "")}</span><span>${esc(co.telefon || "")}</span><span>${esc(co.email || "")}</span><span>${esc((co.staedte || []).join(" · "))}</span></div>
       </div>
-      <div class="fein"><span>Grand Final «Ufer» · ${esc(seite||"")} · fiktive Demo-Daten · © 2026 Fourwalls</span><span>Mitglied SVIT Schweiz</span></div>`;
+      <div class="fein"><span>${esc(seite||"")} · Prototyp mit fiktiven Objekt- und Firmendaten · © 2026 Fourwalls</span><span>Kontaktangaben sind Platzhalter</span></div>`;
   }
 
   /* ---------- Erscheinung: Tag / Nacht ---------- */

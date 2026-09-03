@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wissen — Ratgeber, Rechner, Marktberichte · Fourwalls</title>
 <meta name="description" content="Fourwalls Wissen: Tragbarkeit und Kaufnebenkosten rechnen, Ratgeber zu Kauf, Verkauf und Bewirtschaftung, Marktberichte nach Region.">
+<link rel="canonical" href="https://cyberspartan21.github.io/fourwalls-design-lab/final/ufer/wissen.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ufer.css?v=p3b">
+<link rel="stylesheet" href="ufer.css?v=p4j">
 <style>
 .kopfbild{padding:clamp(48px,7vw,96px) var(--pad) clamp(28px,4vw,48px);max-width:1280px;margin:0 auto}
 .kopfbild h1{font-family:var(--d);font-weight:200;font-size:clamp(2.2rem,5vw,4.2rem);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
@@ -47,7 +48,24 @@
 .check .w1{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--licht);font-weight:500}
 .check b{font-family:var(--d);font-weight:300;font-size:1.2rem;line-height:1.15}
 .check span{font-size:.72rem;color:var(--leise)}
-@media(max-width:960px){.werkzeuge,.markt{grid-template-columns:1fr}.check{grid-template-columns:1fr}}
+.artikel{border-top:1px solid var(--linie)}
+.artikel details{border-bottom:1px solid var(--linie)}
+.artikel summary{cursor:pointer;padding:18px 0;list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.artikel summary::-webkit-details-marker{display:none}
+.artikel summary .kopf{display:flex;flex-direction:column;gap:4px;min-width:0}
+.artikel summary .n{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise)}
+.artikel summary .t{font-family:var(--d);font-weight:300;font-size:clamp(1.1rem,1.8vw,1.4rem);line-height:1.2}
+.artikel summary .m{font-size:.78rem;color:var(--leise);white-space:nowrap;flex:0 0 auto}
+.artikel summary::after{content:"+";color:var(--licht);font-size:1.1rem;flex:0 0 auto}
+.artikel details[open] summary::after{content:"–"}
+.artikel .txt{padding:0 0 22px;max-width:66ch;color:var(--leise);font-size:.9rem;line-height:1.75}
+.checklisten2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,40px)}
+.checkliste{border:1px solid var(--linie);border-radius:var(--r);padding:clamp(18px,2.4vw,26px);background:var(--gr2)}
+.checkliste h3{font-family:var(--d);font-weight:300;font-size:1.3rem}
+.checkliste ul{margin-top:14px;display:grid;gap:9px;font-size:.86rem}
+.checkliste li{display:flex;gap:10px;align-items:baseline}
+.checkliste li::before{content:"—";color:var(--licht);flex:0 0 auto}
+@media(max-width:960px){.werkzeuge,.markt,.checklisten2{grid-template-columns:1fr}.check{grid-template-columns:1fr}}
 </style>
 </head>
 <body data-mode="hell">
@@ -91,10 +109,10 @@
   </div>
 </section>
 
-<section class="abschnitt gr2 eng beitraege" id="ratgeber">
+<section class="abschnitt gr2 eng" id="ratgeber">
   <div class="innen">
     <div class="kopfzeile auf"><div><div class="kick">Ratgeber</div><h2 class="titel">Lesen, was zur Entscheidung fehlt.</h2></div><span class="rechts-link" id="beitragN"></span></div>
-    <div class="zeilen" id="beitraege"></div>
+    <div class="artikel auf" id="beitraege"></div>
   </div>
 </section>
 
@@ -108,22 +126,48 @@
   </div>
 </section>
 
-<section class="abschnitt gr2 eng" id="checklisten">
+<section class="abschnitt eng" id="checklisten">
   <div class="innen">
     <div class="kopfzeile auf"><div><div class="kick">Checklisten</div><h2 class="titel">Zum Abhaken.</h2></div></div>
-    <div class="check">
-      <a class="auf" href="#" id="checkliste-verkauf" onclick="return false"><span class="w1">Verkaufen</span><b>Unterlagen für den Verkauf</b><span>14 Dokumente · PDF · 2 Seiten</span></a>
-      <a class="auf verzoegert-1" href="#" onclick="return false"><span class="w1">Kaufen</span><b>Besichtigung: 22 Fragen, die man vergisst</b><span>PDF · 1 Seite</span></a>
-      <a class="auf verzoegert-2" href="#" id="checkliste-verwaltung" onclick="return false"><span class="w1">Verwaltung</span><b>Verwaltungswechsel vor dem 1. Januar</b><span>9 Punkte · PDF · 1 Seite</span></a>
+    <div class="checklisten2">
+      <div class="checkliste auf" id="checkliste-verkauf">
+        <h3>Unterlagen für den Verkauf</h3>
+        <ul>
+          <li>Grundbuchauszug (aktuell)</li>
+          <li>Katasterplan / Situationsplan</li>
+          <li>Baubeschrieb und Grundrisspläne</li>
+          <li>Gebäudeversicherungspolice mit Versicherungswert</li>
+          <li>Energieausweis / GEAK, falls vorhanden</li>
+          <li>Letzte Nebenkosten- und Heizkostenabrechnungen</li>
+          <li>Reglement und Versammlungsprotokolle (bei Stockwerkeigentum)</li>
+          <li>Aktueller Stand des Erneuerungsfonds (bei Stockwerkeigentum)</li>
+          <li>Hypothekarauszug mit Ablösewerten</li>
+          <li>Fotografien und, falls vorhanden, eine Mängelliste</li>
+        </ul>
+      </div>
+      <div class="checkliste auf verzoegert-1" id="checkliste-verwaltung">
+        <h3>Verwaltungswechsel: was vor dem Start bereitliegen sollte</h3>
+        <ul>
+          <li>Kündigungstermin bei der bisherigen Verwaltung</li>
+          <li>Alle laufenden Mietverträge mit Nachträgen</li>
+          <li>Nebenkostenabrechnungen der letzten drei Jahre</li>
+          <li>Kontaktdaten der Mieterschaft</li>
+          <li>Kontakte zu Hauswartung und beauftragten Handwerksbetrieben</li>
+          <li>Versicherungspolicen (Gebäude, Haftpflicht)</li>
+          <li>Kontostand und Reglement des Erneuerungsfonds (bei Stockwerkeigentum)</li>
+          <li>Aktuelle Zählerstände, sofern einzeln erfasst</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 </main>
 <footer class="fuss"></footer>
-<script src="../listings.js?v=p3b"></script>
-<script src="../properties.js?v=p3b"></script>
-<script src="../core.js?v=p3b"></script>
-<script src="ufer.js?v=p3b"></script>
+<script src="../listings.js?v=p4j"></script>
+<script src="../properties.js?v=p4j"></script>
+<script src="../core.js?v=p4j"></script>
+<script src="../company.js?v=p4j"></script>
+<script src="ufer.js?v=p4j"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -152,31 +196,34 @@
     const tot = haeB+notB+gbB+sbB; $("nTot").textContent = chf(tot); $("nProz").textContent = p ? (tot/p*100).toFixed(2)+" %" : "—";
   }
   ["nKt","nPreis","nHyp"].forEach(i => $(i).addEventListener("input", neben)); neben();
-  /* Ratgeber nach Rolle */
+  /* Ratgeber: eine kleine, echte Auswahl statt vieler toter Links —
+     jeder Beitrag öffnet sich direkt hier, mit wirklichem Inhalt. */
   const B = [
-    ["nebenkosten","kauf","Ratgeber","Kaufnebenkosten in der Schweiz: Was neben dem Preis anfällt","Handänderung · Notariat · Grundbuch · nach Kanton","6 Min."],
-    ["hypothek","kauf","Ratgeber","Hypothek verstehen: SARON, Fest, Amortisation — in 10 Minuten","Ohne Bankdeutsch","10 Min."],
-    ["besichtigung","kauf","Ratgeber","Die Besichtigung: 22 Fragen, die man vor Ort vergisst","Mit Checkliste","5 Min."],
-    ["verkauf","verkauf","Ratgeber","Selbst verkaufen oder Mandat? Eine ehrliche Entscheidungshilfe","Für Eigentümerinnen und Eigentümer","5 Min."],
-    ["steuern","verkauf","Ratgeber","Grundstückgewinnsteuer: Was beim Verkauf hängen bleibt","Nach Kanton und Haltedauer","7 Min."],
-    ["fotografie","verkauf","Ratgeber","Warum die Stunde der Fotografie den Preis beeinflusst","Aus der Vermarktung","4 Min."],
-    ["mietrecht","miete","Ratgeber","Mietzins, Nebenkosten, Kündigung: die fünf Regeln, die man kennen muss","Für beide Seiten","6 Min."],
-    ["erstvermietung","miete","Ratgeber","Erstvermietung: Marktmiete finden, ohne Leerstand zu riskieren","Für Vermieterinnen und Vermieter","6 Min."],
-    ["nebenkosten-abrechnung","eigentum","Ratgeber","Nebenkostenabrechnung: Was umlegbar ist — und was nicht","Mit Beispielabrechnung","6 Min."],
-    ["sanierung","eigentum","Ratgeber","Sanieren oder verkaufen? Der 10-Jahres-Blick auf Ihre Liegenschaft","Werterhalt","8 Min."],
-    ["stwe","eigentum","Ratgeber","Stockwerkeigentum: Erneuerungsfonds, Versammlung, Entscheide","Grundlagen","7 Min."],
-    ["markt-zs","kauf","Markt","Zentralschweiz im Herbst 2026: Preise, Angebot, Tempo","Marktbericht · vierteljährlich","8 Min."]
+    ["verkauf","verkauf","Ratgeber","Selbst verkaufen oder Mandat? Eine ehrliche Entscheidungshilfe","5 Min.",
+      "Selbst verkaufen spart die Provision, kostet aber Zeit für Fotografie, Anfragen, Besichtigungen und Verhandlung — und die Verhandlungsposition ist eine andere, wenn Käuferschaft direkt mit der Eigentümerschaft spricht statt mit einer neutralen Vermittlung. Ein Mandat kostet ein Erfolgshonorar, übernimmt dafür Qualifikation der Käuferschaft, Vermarktung und Verhandlung und trennt Emotion von Verhandlung. Es gibt kein grundsätzlich richtig oder falsch, nur die Frage, was zu diesem Objekt und dieser Situation passt: Grössere, werthaltige oder emotional bedeutsame Objekte profitieren oft von professioneller Vermarktung, kleinere und unkomplizierte Objekte in gefragter Lage verkaufen sich auch im Alleingang gut."],
+    ["steuern","verkauf","Ratgeber","Grundstückgewinnsteuer: Was beim Verkauf hängen bleibt","7 Min.",
+      "Beim Verkauf einer Liegenschaft mit Gewinn erhebt der Kanton eine Grundstückgewinnsteuer — auf Bundesebene gibt es sie nicht, dafür 26 unterschiedliche kantonale Regelungen. Steuerbar ist die Differenz zwischen Verkaufspreis und den ursprünglichen Anlagekosten (Kaufpreis plus wertvermehrende Investitionen), nicht der ganze Erlös. Die meisten Kantone senken den Satz mit zunehmender Haltedauer und kennen einen Aufschub bei Ersatzbeschaffung von selbstbewohntem Wohneigentum. Weil die Berechnung so stark vom Kanton und vom Einzelfall abhängt, lässt sich eine verbindliche Zahl nur beim Steueramt oder Notariat einholen."],
+    ["sanierung","eigentum","Ratgeber","Sanieren oder verkaufen? Der 10-Jahres-Blick auf Ihre Liegenschaft","6 Min.",
+      "Eine Liegenschaft, der grössere Erneuerungen bevorstehen — Heizung, Fenster, Dach, Fassade —, stellt Eigentümerschaft vor eine Wahl: investieren und den Wert erhalten, oder vor den Kosten verkaufen. Wertvermehrende Investitionen zahlen sich oft aus, weil sie beim späteren Verkauf die Grundstückgewinnsteuer senken und die Liegenschaft attraktiver machen; reiner Unterhalt erhält den Status quo, ohne den Wert zu steigern. Wer nicht sicher ist, was ansteht, bekommt aus einer Bewertung meist auch eine Einschätzung, welche Erneuerungen sich noch lohnen — und welche eher ein Verkaufsargument sind."],
+    ["nebenkosten-abrechnung","eigentum","Ratgeber","Nebenkostenabrechnung: Was umlegbar ist — und was nicht","5 Min.",
+      "Umlegbar auf die Mieterschaft sind grundsätzlich die laufenden Betriebskosten: Heizung, Warmwasser, Hauswartung, Allgemeinstrom, Gebäudeversicherung, Kehrichtgebühren. Nicht umlegbar sind Unterhalt und Reparaturen, die den Wert der Liegenschaft erhalten oder steigern — die trägt die Eigentümerschaft. Die Abgrenzung steht im Mietvertrag und folgt den anerkannten Nebenkostenarten; was dort nicht aufgeführt ist, darf nicht abgerechnet werden. Eine sorgfältige, belegbasierte Abrechnung ist der häufigste Streitpunkt zwischen Mieterschaft und Verwaltung — und der einfachste, ihn zu vermeiden."]
   ];
   function mal(rolle){
     const l = B.filter(b => rolle === "alle" || b[1] === rolle);
-    $("beitraege").innerHTML = l.map(b => `<a class="zeile" id="${b[0]}" href="#${b[0]}" onclick="return false"><span class="n">${b[2]}</span><span class="t">${FWP.esc(b[3])}<small>${FWP.esc(b[4])}</small></span><span class="m">${b[5]}</span><span class="p">→</span></a>`).join("");
-    $("beitragN").textContent = l.length + " Beiträge";
+    $("beitraege").innerHTML = l.length
+      ? l.map(b => `<details id="${b[0]}"><summary><span class="kopf"><span class="n">${b[2]}</span><span class="t">${FWP.esc(b[3])}</span></span><span class="m">${b[4]}</span></summary><p class="txt">${FWP.esc(b[5])}</p></details>`).join("")
+      : `<p class="hin" style="padding:18px 0">Für diese Auswahl gibt es aktuell keinen Beitrag. Die beiden Rechner oben und der Marktbericht unten gelten trotzdem für alle.</p>`;
+    $("beitragN").textContent = l.length ? l.length + " Beiträge" : "";
   }
   document.querySelectorAll(".rollen button").forEach(b => b.addEventListener("click", () => { document.querySelectorAll(".rollen button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); mal(b.dataset.rolle); }));
   mal("alle");
   $("mkZs").textContent = FWP.filtern({trans:"buy", ort:"rg:zentralschweiz"}).length; $("mkZh").textContent = FWP.filtern({trans:"buy", ort:"rg:zuerich"}).length;
   // Deep-Link auf Beitrag: zur Sektion scrollen
-  if (location.hash && document.querySelector(location.hash)) setTimeout(() => document.querySelector(location.hash).scrollIntoView({block:"start"}), 200);
+  if (location.hash && document.querySelector(location.hash)) setTimeout(() => {
+    const ziel = document.querySelector(location.hash);
+    if (ziel.tagName === "DETAILS") ziel.open = true;
+    ziel.scrollIntoView({block:"start"});
+  }, 200);
 })();
 </script>
 </body>

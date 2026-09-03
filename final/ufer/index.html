@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Fourwalls: Immobilien kaufen, mieten, verkaufen und verwalten — schweizweit, aus einer Hand.">
+<link rel="canonical" href="https://cyberspartan21.github.io/fourwalls-design-lab/final/ufer/index.html">
 <title>Fourwalls — Immobilien kaufen, mieten, verkaufen, verwalten</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="../img/ufer-tag-1600.webp" type="image/webp" media="(min-width:700px)">
-<link rel="stylesheet" href="ufer.css?v=p3b">
+<link rel="stylesheet" href="ufer.css?v=p4j">
 <style>
 /* ============ Intro: das Fenster öffnet sich ============ */
 #pre{position:fixed;inset:0;z-index:500;background:var(--gr);display:grid;place-items:center;transition:opacity .7s ease}
@@ -188,7 +189,7 @@
   <div class="innen">
     <div class="kopfzeile auf"><div><div class="kick">Mehr, wenn Sie es brauchen</div><h2 class="titel">Eine Adresse für die ganze Immobilie.</h2></div><a class="rechts-link" href="wissen.html">Alle Werkzeuge</a></div>
     <div class="kann">
-      <a class="auf" href="verkaufen.html#bewertung"><span class="k">Bewertung</span><b>Was ist mein Haus wert?</b><p>Hedonische Bewertung innert 48 Stunden — kostenlos, als Richtwert deklariert, mit persönlichem Zweitschritt.</p><span class="z">Kostenlos anfragen →</span></a>
+      <a class="auf" href="verkaufen.html#bewertung"><span class="k">Bewertung</span><b>Was ist mein Haus wert?</b><p>Hedonische Bewertung — kostenlos, als Richtwert deklariert, mit persönlichem Zweitschritt.</p><span class="z">Kostenlos anfragen →</span></a>
       <a class="auf verzoegert-1" href="wissen.html#tragbarkeit"><span class="k">Finanzierung</span><b>Kann ich mir das leisten?</b><p>Tragbarkeit und monatliche Kosten in einer Minute — an jedem Objekt und als eigenes Werkzeug.</p><span class="z">Tragbarkeit rechnen →</span></a>
       <a class="auf verzoegert-2" href="portal.html#konto"><span class="k">Suchabo</span><b>Neue Objekte zuerst sehen.</b><p>Speichern Sie eine Suche. Wir melden uns nur, wenn etwas Passendes erscheint — ohne Konto zum Start.</p><span class="z">Suche speichern →</span></a>
       <a class="auf" href="portal.html?quelle=fourwalls"><span class="k">Exclusive</span><b>Mandate, die wir vertreten.</b><p>Objekte, die Fourwalls im Auftrag der Eigentümerschaft vermarktet — vollständig dokumentiert, in Szene gesetzt.</p><span class="z">Exclusive ansehen →</span></a>
@@ -206,7 +207,7 @@
         <div class="kick">Mit Fourwalls verkaufen</div>
         <h3>Wir zeigen, was Ihr Haus wert ist — und wem.</h3>
         <p class="lauf">Bewertung, Strategie, Fotografie zur richtigen Stunde, Käuferqualifikation, Besichtigungen, Verhandlung, Notariat, Übergabe. Eine Ansprechperson, ein Honorar nur bei Erfolg.</p>
-        <ul><li><span>Bewertung</span><b>48 Stunden</b></li><li><span>Honorar</span><b>nur bei Erfolg</b></li><li><span>Ansprechperson</span><b>eine, durchgehend</b></li><li><span>Käuferliste</span><b>laufend gepflegt</b></li></ul>
+        <ul><li><span>Bewertung</span><b>kostenlos</b></li><li><span>Honorar</span><b>nur bei Erfolg</b></li><li><span>Ansprechperson</span><b>eine, durchgehend</b></li><li><span>Käuferliste</span><b>laufend gepflegt</b></li></ul>
         <div class="cta"><a class="knopf voll" href="verkaufen.html">Verkauf kennenlernen</a></div>
       </div>
     </div>
@@ -247,11 +248,25 @@
 
 <footer class="fuss"></footer>
 
-<script src="../listings.js?v=p3b"></script>
-<script src="../properties.js?v=p3b"></script>
-<script src="../core.js?v=p3b"></script>
-<script src="ufer.js?v=p3b"></script>
+<script src="../listings.js?v=p4j"></script>
+<script src="../properties.js?v=p4j"></script>
+<script src="../core.js?v=p4j"></script>
+<script src="../company.js?v=p4j"></script>
+<script src="ufer.js?v=p4j"></script>
 <script>
+/* Organization-Kennzeichnung aus derselben Quelle wie der Fusszeilentext (company.js) —
+   eine Firmenangabe wird an einem Ort gepflegt, nicht an zweien, die auseinanderlaufen können. */
+(function(){
+  const co = window.FWCO || {};
+  const ld = document.createElement("script"); ld.type = "application/ld+json";
+  ld.textContent = JSON.stringify({
+    "@context":"https://schema.org", "@type":"RealEstateAgent",
+    name: co.name || "Fourwalls", url:"https://cyberspartan21.github.io/fourwalls-design-lab/final/ufer/index.html",
+    address:{ "@type":"PostalAddress", streetAddress:co.strasse, addressLocality:(co.plzOrt||"").split(" ").slice(1).join(" "), postalCode:(co.plzOrt||"").split(" ")[0], addressCountry:"CH" },
+    telephone:co.telefon, email:co.email, areaServed:co.staedte || []
+  });
+  document.head.appendChild(ld);
+})();
 (function(){
   const $ = id => document.getElementById(id);
   const qs = new URLSearchParams(location.search);

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Immobilien suchen — Fourwalls</title>
 <meta name="description" content="Fourwalls Immobilienportal: Kaufen und Mieten in der ganzen Schweiz — mit vollständigen Objektseiten.">
+<link rel="canonical" href="https://cyberspartan21.github.io/fourwalls-design-lab/final/ufer/portal.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Die Karte wird erst auf Wunsch geladen; die Verbindungen stehen dann schon. -->
@@ -12,8 +13,8 @@
 <link rel="preconnect" href="https://vectortiles.geo.admin.ch" crossorigin>
 <link rel="dns-prefetch" href="https://vectortiles.geo.admin.ch">
 <link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,200..500;1,200..400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ufer.css?v=p4a">
-<link rel="stylesheet" href="objekt.css?v=p4a">
+<link rel="stylesheet" href="ufer.css?v=p4j">
+<link rel="stylesheet" href="objekt.css?v=p4j">
 <style>
 /* ================= UFER · Portal (Arbeitsmodus: leise, schnell, vollständig) ================= */
 .ansicht{display:none}.ansicht.an{display:block}
@@ -355,12 +356,12 @@
   <div class="gitter" id="gitter"></div>
   <button class="knopf mehrknopf" id="mehrKnopf">Weitere anzeigen</button>
   <div class="leer" id="leer">
-    <span class="mark"></span><h2>Hier liegt noch nichts am Ufer.</h2>
+    <span class="mark"></span><h2 data-i="p_leerH2">Hier liegt noch nichts am Ufer.</h2>
     <p id="leerText">Für diese Kombination gibt es zurzeit kein Inserat.</p>
     <div class="vorschl" id="leerWege"></div>
     <div class="vorschl" style="margin-top:10px"><button class="knopf voll" id="leerAbo" data-i="suchaboSpeichern">Suchabo speichern</button></div>
   </div>
-  <div class="abozeile"><span><b>Neue Treffer zuerst sehen.</b> Wir melden uns nur, wenn etwas Passendes erscheint — kein Konto nötig.</span><button class="knopf" id="sucheSpeichern" data-i="sucheSpeichern" style="margin-left:auto">Suche speichern</button></div>
+  <div class="abozeile"><span><b data-i="p_aboZeileB">Neue Treffer zuerst sehen.</b> <span data-i="p_aboZeileSpan">Wir melden uns nur, wenn etwas Passendes erscheint — kein Konto nötig.</span></span><button class="knopf" id="sucheSpeichern" data-i="sucheSpeichern" style="margin-left:auto">Suche speichern</button></div>
 </section>
 
 <!-- ============ KARTE ============ -->
@@ -393,44 +394,44 @@
 <!-- ============ INSERIEREN ============ -->
 <section class="ansicht" id="a-neu">
   <div class="weiche" id="weiche">
-    <div class="kick">Für Eigentümerinnen und Eigentümer</div>
-    <h1>Zwei Wege zum Verkauf. Sie wählen.</h1>
+    <div class="kick" data-i="w_fuerEigentuemer">Für Eigentümerinnen und Eigentümer</div>
+    <h1 data-i="w_zweiWege">Zwei Wege zum Verkauf. Sie wählen.</h1>
     <div class="zwei">
       <button class="weg" id="wegSelbst">
-        <span class="w1">Selbst inserieren · kostenlos</span>
-        <b>Ich erstelle und betreue das Inserat selbst.</b>
-        <p>Sie schreiben den Text, wählen die Bilder, beantworten Anfragen und führen Besichtigungen. Fourwalls stellt Reichweite und Werkzeug.</p>
-        <ul><li>Kostenlos, ohne Konto zum Start</li><li>9 kurze Schritte, jederzeit unterbrechbar</li><li>Anfragen gehen direkt an Sie</li></ul>
-        <span class="cta knopf">Jetzt kostenlos inserieren</span>
+        <span class="w1" data-i="w_selbstKostenlos">Selbst inserieren · kostenlos</span>
+        <b data-i="w_ichErstelleSelbst">Ich erstelle und betreue das Inserat selbst.</b>
+        <p data-i="w_selbstBeschreibung">Sie schreiben den Text, wählen die Bilder, beantworten Anfragen und führen Besichtigungen. Fourwalls stellt Reichweite und Werkzeug.</p>
+        <ul><li data-i="w_selbstListe1">Kostenlos, ohne Konto zum Start</li><li data-i="w_selbstListe2">9 kurze Schritte, jederzeit unterbrechbar</li><li data-i="w_selbstListe3">Anfragen gehen direkt an Sie</li></ul>
+        <span class="cta knopf" data-i="w_jetztKostenlos">Jetzt kostenlos inserieren</span>
       </button>
       <a class="weg mit" href="verkaufen.html">
-        <span class="w1">Mit Fourwalls verkaufen · Mandat</span>
-        <b>Fourwalls übernimmt den Verkauf professionell.</b>
-        <p>Bewertung, Strategie, Fotografie, Käuferqualifikation, Besichtigungen, Verhandlung, Notariat — eine Ansprechperson bis zur Übergabe.</p>
-        <ul><li>Hedonische Bewertung in 48 Stunden</li><li>Honorar nur bei Erfolg</li><li>Fourwalls-Exclusive-Präsentation</li></ul>
-        <span class="cta knopf voll">Verkauf mit Fourwalls kennenlernen</span>
+        <span class="w1" data-i="w_mitFwMandat">Mit Fourwalls verkaufen · Mandat</span>
+        <b data-i="w_fwUebernimmt">Fourwalls übernimmt den Verkauf professionell.</b>
+        <p data-i="w_fwUebernimmtBeschreibung">Bewertung, Strategie, Fotografie, Käuferqualifikation, Besichtigungen, Verhandlung, Notariat — eine Ansprechperson bis zur Übergabe.</p>
+        <ul><li data-i="w_mitFwListe1">Kostenlose hedonische Bewertung</li><li data-i="w_mitFwListe2">Honorar nur bei Erfolg</li><li data-i="w_mitFwListe3">Fourwalls-Exclusive-Präsentation</li></ul>
+        <span class="cta knopf voll" data-i="w_verkaufKennenlernen">Verkauf mit Fourwalls kennenlernen</span>
       </a>
     </div>
-    <p class="beide">Beides ist ehrlich gemeint: Wer selbst inserieren will, bekommt das beste Werkzeug. Wer es abgeben will, den besten Service. Sie können jederzeit wechseln.</p>
+    <p class="beide" data-i="w_beidesEhrlich">Beides ist ehrlich gemeint: Wer selbst inserieren will, bekommt das beste Werkzeug. Wer es abgeben will, den besten Service. Sie können jederzeit wechseln.</p>
   </div>
   <div class="wiz" id="wizBox">
     <div class="fort" id="wizFort"></div><div class="schrittz" id="wizSchritt"></div><h2 id="wizTitel"></h2><div id="wizInhalt"></div>
     <div class="nav2"><button class="knopf" id="wizZurueck" data-i="zurueck">Zurück</button><button class="knopf voll" id="wizWeiter">Weiter</button></div>
-    <div class="hinweisbox">Ihr Entwurf wird automatisch gespeichert — Sie können jederzeit unterbrechen und später weiterfahren. Inserieren ist kostenlos.</div>
+    <div class="hinweisbox" data-i="w_entwurfAutosave">Ihr Entwurf wird automatisch gespeichert — Sie können jederzeit unterbrechen und später weiterfahren. Inserieren ist kostenlos.</div>
   </div>
-  <div class="wizfertig" id="wizFertig"><span class="mark"></span><h2>Ihr Inserat ist eingereicht.</h2><p>Wir prüfen jedes Inserat kurz, bevor es erscheint — in der Regel innert weniger Stunden. Sie finden es unter «Meine Inserate».</p><p style="margin-top:18px"><a class="knopf voll" href="#konto">Zu meinen Inseraten</a></p></div>
+  <div class="wizfertig" id="wizFertig"><span class="mark"></span><h2 data-i="w_fertigTitel">Ihr Inserat ist eingereicht.</h2><p data-i="w_fertigText">Wir prüfen jedes Inserat kurz, bevor es erscheint. Sie finden es unter «Meine Inserate».</p><p style="margin-top:18px"><a class="knopf voll" href="#konto" data-i="w_zuMeinenInseraten">Zu meinen Inseraten</a></p></div>
 </section>
 
 <!-- ============ KONTO ============ -->
 <section class="ansicht" id="a-konto">
   <div class="konto">
     <h1 data-i="konto">Ihr Bereich</h1>
-    <p class="hin">Merkliste, Suchabos und eigene Inserate — ohne Konto auf diesem Gerät gespeichert. Ein Konto brauchen Sie erst, wenn Sie das auf mehreren Geräten oder mit Ihrem Team teilen wollen.</p>
-    <div class="kontotabs" role="tablist"><button aria-pressed="true" data-kt="merk" data-i="merkliste">Gemerkte Objekte</button><button aria-pressed="false" data-kt="abos" data-i="suchabos">Suchabos</button><button aria-pressed="false" data-kt="anfr">Anfragen</button><button aria-pressed="false" data-kt="meine" data-i="meine">Meine Inserate</button></div>
-    <div class="kontoteil an" id="kt-merk"><div class="gitter" id="merkGitter" style="padding:0"></div><div class="leerhin" id="merkLeer">Noch nichts gemerkt. Tippen Sie auf das Herz in einem Inserat.</div></div>
-    <div class="kontoteil" id="kt-abos"><div class="aboliste" id="aboListe"></div><div class="leerhin" id="aboLeer">Noch kein Suchabo. Speichern Sie eine Suche — wir benachrichtigen Sie bei neuen Treffern.</div></div>
-    <div class="kontoteil" id="kt-anfr"><div class="aboliste" id="anfrListe"></div><div class="leerhin" id="anfrLeer">Noch keine Anfrage. Besichtigungsanfragen und Fragen an Anbietende erscheinen hier mit Status.</div></div>
-    <div class="kontoteil" id="kt-meine"><div class="aboliste" id="meineListe"></div><div class="leerhin" id="meineLeer">Noch kein eigenes Inserat. <a href="#neu" style="text-decoration:underline">Jetzt kostenlos inserieren.</a></div></div>
+    <p class="hin" data-i="k_ihrBereichHin">Merkliste, Suchabos und eigene Inserate — ohne Konto auf diesem Gerät gespeichert. Ein Konto brauchen Sie erst, wenn Sie das auf mehreren Geräten oder mit Ihrem Team teilen wollen.</p>
+    <div class="kontotabs" role="tablist"><button aria-pressed="true" data-kt="merk" data-i="merkliste">Gemerkte Objekte</button><button aria-pressed="false" data-kt="abos" data-i="suchabos">Suchabos</button><button aria-pressed="false" data-kt="anfr" data-i="k_anfragenTab">Anfragen</button><button aria-pressed="false" data-kt="meine" data-i="meine">Meine Inserate</button></div>
+    <div class="kontoteil an" id="kt-merk"><div class="gitter" id="merkGitter" style="padding:0"></div><div class="leerhin" id="merkLeer" data-i="k_nichtsGemerkt">Noch nichts gemerkt. Tippen Sie auf das Herz in einem Inserat.</div></div>
+    <div class="kontoteil" id="kt-abos"><div class="aboliste" id="aboListe"></div><div class="leerhin" id="aboLeer" data-i="k_keinSuchabo">Noch kein Suchabo. Speichern Sie eine Suche — wir benachrichtigen Sie bei neuen Treffern.</div></div>
+    <div class="kontoteil" id="kt-anfr"><div class="aboliste" id="anfrListe"></div><div class="leerhin" id="anfrLeer" data-i="k_keineAnfrage">Noch keine Anfrage. Besichtigungsanfragen und Fragen an Anbietende erscheinen hier mit Status.</div></div>
+    <div class="kontoteil" id="kt-meine"><div class="aboliste" id="meineListe"></div><div class="leerhin" id="meineLeer"><span data-i="k_keinEigenesInserat">Noch kein eigenes Inserat.</span> <a href="#neu" style="text-decoration:underline" data-i="k_jetztKostenlosPunkt">Jetzt kostenlos inserieren.</a></div></div>
   </div>
 </section>
 
@@ -460,16 +461,17 @@
 
 <footer class="fuss"></footer>
 
-<script src="../listings.js?v=p4a"></script>
-<script src="../properties.js?v=p4a"></script>
-<script src="../core.js?v=p4a"></script>
-<script src="geo.js?v=p4a"></script>
-<script src="suche.js?v=p4a"></script>
-<script src="detail-data.js?v=p4a"></script>
-<script src="dossier.js?v=p4a"></script>
-<script src="ufer.js?v=p4a"></script>
-<script src="objekt.js?v=p4a"></script>
-<script src="karte.js?v=p4a"></script>
+<script src="../listings.js?v=p4j"></script>
+<script src="../properties.js?v=p4j"></script>
+<script src="../core.js?v=p4j"></script>
+<script src="../company.js?v=p4j"></script>
+<script src="geo.js?v=p4j"></script>
+<script src="suche.js?v=p4j"></script>
+<script src="detail-data.js?v=p4j"></script>
+<script src="dossier.js?v=p4j"></script>
+<script src="ufer.js?v=p4j"></script>
+<script src="objekt.js?v=p4j"></script>
+<script src="karte.js?v=p4j"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -517,14 +519,21 @@
     document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = t(el.dataset.ph));
     $("sortSel").innerHTML = [["empfohlen","sortEmpfohlen"],["neu","neuste"],["preis-auf","preisAuf"],["preis-ab","preisAb"],["m2","sortM2"],["flaeche","flaeche"],["zimmer","zimmer"]].map(([v,k]) => `<option value="${v}">${t(k)}</option>`).join("");
     $("sortSel").value = F.sort;
-    $("typSel").innerHTML = `<option value="">${t("typ")}</option>` + Object.entries(FWL.typen).map(([k,v]) => `<option value="${k}">${v}</option>`).join("");
+    $("typSel").innerHTML = `<option value="">${t("typ")}</option>` + Object.keys(FWL.typen).map(k => `<option value="${k}">${esc(typLabel(k))}</option>`).join("");
     $("typSel").value = F.typ || "";
     $("ziSel").innerHTML = `<option value="">${t("zimmerAb")}</option>` + ["1.5","2.5","3.5","4.5","5.5"].map(z => `<option value="${z}">${z}+</option>`).join("");
     $("ziSel").value = F.ziMin != null ? String(F.ziMin) : "";
     $("mehrKnopf").textContent = t("weitere"); $("wizWeiter").textContent = t("weiter");
     document.documentElement.lang = FWP.lang;
   }
-  UFER.montiere({ aktuell:"immobilien", seite:"Portal", onLang:() => { baueFilterListen(); uebersetze(); syncSteuer(); such(); } });
+  UFER.montiere({ aktuell:"immobilien", seite:"Portal", onLang:() => {
+    baueFilterListen(); uebersetze(); syncSteuer(); such();
+    /* Eine offene Objektseite trägt ihren eigenen Text — ein Sprachwechsel
+       muss sie neu aufbauen, sonst bleibt sie in der alten Sprache stehen. */
+    const h = (location.hash || "").replace("#", ""), kopf = h.split("/")[0];
+    if (kopf === "objekt") oeffneDetail(h.split("/")[1] || "");
+    else if (kopf === "exclusive") oeffneDetail(h.split("/")[1] || "", true);
+  } });
 
   /* ---------- Routing ---------- */
   const ANS = { suche:"a-suche", karte:"a-karte", neu:"a-neu", konto:"a-konto" };
@@ -547,8 +556,9 @@
   window.addEventListener("hashchange", route);
 
   /* ---------- Steuerung ---------- */
-  Object.entries(FWL.quellen).forEach(([k,v]) => {
-    const b = document.createElement("button"); b.textContent = v; b.dataset.q = k; b.setAttribute("aria-pressed","false");
+  const { typLabel, quelleFilterLabel } = FWP;
+  Object.keys(FWL.quellen).forEach(k => {
+    const b = document.createElement("button"); b.textContent = quelleFilterLabel(k); b.dataset.q = k; b.setAttribute("aria-pressed","false");
     b.addEventListener("click", () => { const an = b.getAttribute("aria-pressed")==="true"; $("fQuelle").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); if(!an) b.setAttribute("aria-pressed","true"); vorschauTreffer(); });
     $("fQuelle").appendChild(b);
   });
@@ -743,7 +753,7 @@
     const belegt = !FWP.verfuegbarFrei(l);
     const va = (l.availability || {}).art;
     const m2 = FWP.proM2(l);
-    const f = [l.rooms ? l.rooms + " Zi." : null, l.livingArea ? l.livingArea + " m²" : (l.plotArea ? l.plotArea + " m² Land" : null), FWL.typen[l.propertyType]].filter(Boolean).map(esc);
+    const f = [l.rooms ? l.rooms + " " + t("o_ziKurz") : null, l.livingArea ? l.livingArea + " m²" : (l.plotArea ? l.plotArea + " m² " + t("k_landWort") : null), typLabel(l.propertyType)].filter(Boolean).map(esc);
     return `<article class="karte${belegt ? " belegt" : ""}" data-slug="${l.slug}">
       <div class="bild"><div class="etikett">${et.join("")}</div>${belegt ? `<span class="status">${esc(FWP.verfuegbarLabel(l))}</span>` : va === "sofort" ? `<span class="status frei">${t("sofort")}</span>` : ""}<button class="merk" data-fav="${l.id}" aria-pressed="${fav}" aria-label="${t("merken")}">${HERZ}</button>${FWP.pic(l.img,{alt:l.title,sizes:"(max-width:700px) 100vw, (max-width:1200px) 50vw, 25vw"})}</div>
       <div class="refl" aria-hidden="true"><img src="../img/${l.img}-480.jpg" alt="" loading="lazy" decoding="async"></div>
@@ -780,7 +790,7 @@
       if (n > 0) wege.push([(F.ziMin - 1) + "+ Zi. · " + FWP.trefferLabel(n), { ziMin:F.ziMin - 1 }]); }
     if (F.flMin != null) { const n = await probe({ flMin:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("wohnflaeche") + " · " + FWP.trefferLabel(n), { flMin:null }]); }
     if (F.bjVon != null || F.bjBis != null) { const n = await probe({ bjVon:null, bjBis:null }); if (n > 0) wege.push([t("filterWeg") + ": " + t("baujahr") + " · " + FWP.trefferLabel(n), { bjVon:null, bjBis:null }]); }
-    if (F.typ) { const n = await probe({ typ:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + FWL.typen[F.typ] + " · " + FWP.trefferLabel(n), { typ:"" }]); }
+    if (F.typ) { const n = await probe({ typ:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + typLabel(F.typ) + " · " + FWP.trefferLabel(n), { typ:"" }]); }
     if (F.feat.length) { const n = await probe({ feat:[] }); if (n > 0) wege.push([t("filterWeg") + ": " + t("ausstattung") + " · " + FWP.trefferLabel(n), { feat:[] }]); }
     if (F.etage || F.verf) { const n = await probe({ etage:"", verf:"" }); if (n > 0) wege.push([t("filterWeg") + ": " + (F.etage ? t("etage") : t("verfuegbar")) + " · " + FWP.trefferLabel(n), { etage:"", verf:"" }]); }
     if (ortEntitaet && ortEntitaet.typ === "ort") { const kt = GEO.getPlace("kt-" + ortEntitaet.kt);
@@ -805,7 +815,7 @@
   function malChips(){
     const c = [];
     if (ortEntitaet) c.push(["ort", ortEntitaet.label + (F.umkreis ? " + " + F.umkreis + " " + t("km") : "")]);
-    if (F.typ) c.push(["typ", FWL.typen[F.typ]]);
+    if (F.typ) c.push(["typ", typLabel(F.typ)]);
     if (F.pMin != null) c.push(["pMin", "≥ " + FWP.chf(F.pMin)]);
     if (F.pMax != null) c.push(["pMax", "≤ " + FWP.chf(F.pMax)]);
     if (F.ziMin != null) c.push(["ziMin", F.ziMin + "+ Zi."]);
@@ -818,7 +828,7 @@
     if (F.etage) c.push(["etage", t({eg:"eg", nichteg:"nichtEg", ab2:"ab2", dach:"dachgeschoss"}[F.etage])]);
     if (F.verf) c.push(["verf", t(F.verf === "sofort" ? "sofort" : "in3Mt")]);
     if (!F.nurFrei) c.push(["nurFrei", t("statusZeigen")]);
-    if (F.quelle) c.push(["quelle", FWL.quellen[F.quelle]]);
+    if (F.quelle) c.push(["quelle", quelleFilterLabel(F.quelle)]);
     F.feat.forEach(f => c.push(["feat:"+f, FWP.FEAT_DE[f]]));
     $("chips").innerHTML = c.map(([k,v]) => `<button data-chip="${k}" aria-label="Filter entfernen: ${esc(v)}"><b>${esc(v)}</b></button>`).join("");
     $("chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
@@ -938,32 +948,33 @@
   $("wegSelbst").addEventListener("click", () => { wizAktiv = true; $("weiche").style.display = "none"; $("wizBox").classList.add("an"); malWizard(); });
   function malWizard(){
     $("wizFertig").classList.remove("an"); $("wizBox").classList.add("an");
-    const S = FWP.WIZARD[wizI];
-    $("wizFort").innerHTML = FWP.WIZARD.map((_,i) => `<i class="${i<=wizI?"voll":""}"></i>`).join("");
-    $("wizSchritt").textContent = "Schritt " + (wizI+1) + " von " + FWP.WIZARD.length + (wizD.trans ? " · " + (wizD.trans==="rent"?"Vermieten":"Verkaufen") : "");
+    const WIZ = FWP.WIZARD(), S = WIZ[wizI];
+    $("wizFort").innerHTML = WIZ.map((_,i) => `<i class="${i<=wizI?"voll":""}"></i>`).join("");
+    $("wizSchritt").textContent = t("w_schrittWort") + " " + (wizI+1) + " " + t("w_vonWort") + " " + WIZ.length + (wizD.trans ? " · " + (wizD.trans==="rent"?t("w_vermieten"):t("verkaufen")) : "");
     $("wizTitel").textContent = S.titel; $("wizZurueck").style.visibility = wizI===0 ? "hidden" : "visible";
     $("wizWeiter").textContent = S.key==="pruefen" ? t("veroeffentlichen") : t("weiter");
     let h = "";
-    if (S.key==="absicht") h = `<div class="fld"><div class="grosswahl"><button data-w="sell" aria-pressed="${wizD.trans==="sell"}"><b>Verkaufen</b><span>Sie möchten Ihr Objekt verkaufen.</span></button><button data-w="rent" aria-pressed="${wizD.trans==="rent"}"><b>Vermieten</b><span>Sie suchen Mieterinnen oder Mieter.</span></button></div><p class="fehler" id="feTrans"></p></div><div class="fld"><label>Ich inseriere als</label><div class="grosswahl dreier">${["Privatperson","Makler / Agentur","Verwaltung","Bauträger"].map(r => `<button data-rolle="${r}" aria-pressed="${(wizD.rolle||"Privatperson")===r}"><b style="font-family:var(--t);font-size:.9rem">${r}</b></button>`).join("")}</div></div>`;
-    else if (S.key==="typ") h = `<div class="fld"><div class="grosswahl dreier">${Object.entries(FWL.typen).map(([k,v]) => `<button data-w="${k}" aria-pressed="${wizD.typ===k}"><b style="font-family:var(--t);font-size:.95rem">${esc(v)}</b></button>`).join("")}</div><p class="fehler" id="feTyp"></p></div>`;
-    else if (S.key==="ort") h = `<div class="fld"><label for="wStrasse">Strasse und Nr. (optional — wird erst nach Kontakt sichtbar)</label><input type="text" id="wStrasse" value="${esc(wizD.strasse||"")}"></div>
-      <div class="fld" style="display:grid;grid-template-columns:110px 1fr;gap:10px"><div><label for="wPlz">PLZ</label><input type="text" id="wPlz" inputmode="numeric" maxlength="4" autocomplete="postal-code" value="${esc(wizD.plz||"")}"><p class="fehler" id="fePlz"></p></div><div><label for="wStadt">Ort</label><input type="text" id="wStadt" autocomplete="address-level2" list="wOrtListe" value="${esc(wizD.stadt||"")}"><datalist id="wOrtListe"></datalist><p class="fehler" id="feStadt"></p></div></div>
-      <p class="hin" id="wOrtStatus" style="margin:-4px 0 18px">Geben Sie die PLZ ein — Gemeinde, Kanton und Region ergänzen wir aus dem Ortsverzeichnis.</p>
-      <div class="fld"><label>Wie genau darf die Lage öffentlich erscheinen?</label>
+    if (S.key==="absicht") { const ROLLEN = ["w_privatperson","w_maklerAgentur","w_verwaltungWort","w_bautraegerWort"];
+      h = `<div class="fld"><div class="grosswahl"><button data-w="sell" aria-pressed="${wizD.trans==="sell"}"><b>${esc(t("verkaufen"))}</b><span>${esc(t("w_verkaufenHin"))}</span></button><button data-w="rent" aria-pressed="${wizD.trans==="rent"}"><b>${esc(t("w_vermieten"))}</b><span>${esc(t("w_vermietenHin"))}</span></button></div><p class="fehler" id="feTrans"></p></div><div class="fld"><label>${esc(t("w_inseriereAls"))}</label><div class="grosswahl dreier">${ROLLEN.map(rk => `<button data-rolle="${rk}" aria-pressed="${(wizD.rolle||ROLLEN[0])===rk}"><b style="font-family:var(--t);font-size:.9rem">${esc(t(rk))}</b></button>`).join("")}</div></div>`; }
+    else if (S.key==="typ") h = `<div class="fld"><div class="grosswahl dreier">${Object.keys(FWL.typen).map(k => `<button data-w="${k}" aria-pressed="${wizD.typ===k}"><b style="font-family:var(--t);font-size:.95rem">${esc(typLabel(k))}</b></button>`).join("")}</div><p class="fehler" id="feTyp"></p></div>`;
+    else if (S.key==="ort") h = `<div class="fld"><label for="wStrasse">${esc(t("w_strasseLabel"))}</label><input type="text" id="wStrasse" value="${esc(wizD.strasse||"")}"></div>
+      <div class="fld" style="display:grid;grid-template-columns:110px 1fr;gap:10px"><div><label for="wPlz">${esc(t("w_plzLabel"))}</label><input type="text" id="wPlz" inputmode="numeric" maxlength="4" autocomplete="postal-code" value="${esc(wizD.plz||"")}"><p class="fehler" id="fePlz"></p></div><div><label for="wStadt">${esc(t("w_ortLabel"))}</label><input type="text" id="wStadt" autocomplete="address-level2" list="wOrtListe" value="${esc(wizD.stadt||"")}"><datalist id="wOrtListe"></datalist><p class="fehler" id="feStadt"></p></div></div>
+      <p class="hin" id="wOrtStatus" style="margin:-4px 0 18px">${esc(t("w_geoStatusLeer"))}</p>
+      <div class="fld"><label>${esc(t("w_lageGenauFrage"))}</label>
         <div class="grosswahl dreier" id="wGenau">
-          <button data-g="exakt" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="exakt"}"><b>Genaue Lage</b><span>Ein Punkt auf der Karte. Sinnvoll bei Neubauten und Gewerbe.</span></button>
-          <button data-g="ungefaehr" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="ungefaehr"}"><b>Ungefähr</b><span>Ein Feld von rund 450 m. Das Quartier ist erkennbar, das Haus nicht.</span></button>
-          <button data-g="gemeinde" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="gemeinde"}"><b>Nur Gemeinde</b><span>Ein Feld von rund 2 km. Grösstmögliche Zurückhaltung.</span></button>
+          <button data-g="exakt" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="exakt"}"><b>${esc(t("w_lageExaktTitel"))}</b><span>${esc(t("w_lageExaktHin"))}</span></button>
+          <button data-g="ungefaehr" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="ungefaehr"}"><b>${esc(t("w_lageUngefaehrTitel"))}</b><span>${esc(t("w_lageUngefaehrHin"))}</span></button>
+          <button data-g="gemeinde" aria-pressed="${(wizD.genauigkeit||"ungefaehr")==="gemeinde"}"><b>${esc(t("w_lageGemeindeTitel"))}</b><span>${esc(t("w_lageGemeindeHin"))}</span></button>
         </div>
         <div class="wizkarte" id="wizKarte"></div>
-        <p class="hin" id="wGenauHin">Die Strasse bleibt in jedem Fall privat, bis Sie sie einer Anfrage gegenüber freigeben.</p>
+        <p class="hin" id="wGenauHin">${esc(t("w_strasseBleibtPrivat"))}</p>
       </div>`;
-    else if (S.key==="fakten"){ const zz = !["grundstueck","parkplatz","gewerbe","mfh"].includes(wizD.typ); h = (zz?`<div class="fld"><label for="wZi">Zimmer</label><select id="wZi">${["","1.5","2.5","3.5","4.5","5.5","6.5","7.5+"].map(z => `<option ${wizD.zimmer===z?"selected":""}>${z}</option>`).join("")}</select></div>`:"") + `<div class="fld"><label for="wFl">${wizD.typ==="grundstueck"?"Grundstücksfläche":"Wohnfläche"} (m²)</label><input type="number" id="wFl" min="0" value="${esc(wizD.flaeche||"")}"><p class="fehler" id="feFlaeche"></p></div><div class="fld"><label for="wJahr">Baujahr (optional)</label><input type="number" id="wJahr" min="1800" max="2030" value="${esc(wizD.jahr||"")}"></div>`; }
-    else if (S.key==="preis") h = `<div class="fld"><label for="wPreis">${wizD.trans==="rent"?"Nettomiete pro Monat (CHF)":"Kaufpreis (CHF)"}</label><input type="number" id="wPreis" min="0" value="${esc(wizD.preis||"")}"><p class="fehler" id="fePreis"></p></div><div class="fld"><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--ink)"><input type="checkbox" id="wPaA" ${wizD.preisAufAnfrage?"checked":""} style="width:auto;min-height:0"> Preis auf Anfrage</label></div><div class="hinweisbox">Unsicher beim Preis? Fourwalls erstellt Ihnen kostenlos eine hedonische Bewertung innert 48 Stunden — als Richtwert, unverbindlich, auch wenn Sie selbst inserieren.</div>`;
-    else if (S.key==="text") h = `<div class="fld"><label for="wTitel">Titel</label><input type="text" id="wTitel" maxlength="70" placeholder="z.B. Helle 3.5-Zi.-Wohnung mit Balkon" value="${esc(wizD.titel||"")}"><p class="fehler" id="feTitel"></p></div><div class="fld"><label for="wBeschr">Beschreibung</label><textarea id="wBeschr" placeholder="Lage, Zustand, Besonderheiten …">${esc(wizD.beschreibung||"")}</textarea><p class="fehler" id="feBeschreibung"></p></div>`;
-    else if (S.key==="bilder"){ const a = wizD.bilder||[]; h = `<p style="color:var(--leise);font-size:.86rem">Prototyp: Beispielbilder auswählen. Produktion: Drag &amp; Drop, das erste Bild ist das Titelbild, Grundrisse als eigene Kategorie.</p><div class="fld"><div class="bildwahl">${["condo-modern-1","interior-bright-1","kitchen-1","family-house-1","zurich-altbau-1","chalet-2"].map(k => `<button data-b="${k}" aria-pressed="${a.includes(k)}" aria-label="Bild ${k}">${FWP.pic(k,{sizes:"120px"})}</button>`).join("")}</div></div>`; }
-    else if (S.key==="kontakt") h = `<div class="fld"><label for="wName">Name</label><input type="text" id="wName" value="${esc(wizD.name||"")}"><p class="fehler" id="feName"></p></div><div class="fld"><label for="wMail">E-Mail</label><input type="email" id="wMail" value="${esc(wizD.email||"")}"><p class="fehler" id="feEmail"></p></div><div class="fld"><label for="wTel">Telefon (optional)</label><input type="text" id="wTel" value="${esc(wizD.telefon||"")}"></div>`;
-    else if (S.key==="pruefen"){ const b0 = (wizD.bilder||[])[0]; h = `<div class="vorschau"><div class="kz">Vorschau Ihres Inserats</div><article class="karte" style="border:0"><div class="bild">${b0?FWP.pic(b0,{sizes:"600px"}):""}</div><div class="lauf"><div class="preis">${wizD.preisAufAnfrage?t("aufAnfrage"):wizD.preis?FWP.chf(+wizD.preis)+(wizD.trans==="rent"?".– "+t("proMonat"):".–"):"—"}</div><div class="tit">${esc(wizD.titel||"")}</div><div class="ort">${esc((wizD.plz||"")+" "+(wizD.stadt||""))}</div><div class="fakten"><span>${esc(wizD.zimmer?wizD.zimmer+" Zi.":"")}</span><span>${esc(wizD.flaeche?wizD.flaeche+" m²":"")}</span><span>${esc(FWL.typen[wizD.typ]||"")}</span><span class="q">${esc(wizD.rolle||t("privat"))}</span></div></div></article></div><div class="hinweisbox">Mit dem Veröffentlichen bestätigen Sie, dass Sie zur Vermarktung dieses Objekts berechtigt sind. Wir prüfen jedes Inserat, bevor es erscheint.</div>`; }
+    else if (S.key==="fakten"){ const zz = !["grundstueck","parkplatz","gewerbe","mfh"].includes(wizD.typ); h = (zz?`<div class="fld"><label for="wZi">${esc(t("w_zimmerLabel"))}</label><select id="wZi">${["","1.5","2.5","3.5","4.5","5.5","6.5","7.5+"].map(z => `<option ${wizD.zimmer===z?"selected":""}>${z}</option>`).join("")}</select></div>`:"") + `<div class="fld"><label for="wFl">${esc(wizD.typ==="grundstueck"?t("w_grundstuecksflaeche"):t("w_wohnflaeche"))} (m²)</label><input type="number" id="wFl" min="0" value="${esc(wizD.flaeche||"")}"><p class="fehler" id="feFlaeche"></p></div><div class="fld"><label for="wJahr">${esc(t("w_baujahrOpt"))}</label><input type="number" id="wJahr" min="1800" max="2030" value="${esc(wizD.jahr||"")}"></div>`; }
+    else if (S.key==="preis") h = `<div class="fld"><label for="wPreis">${esc(wizD.trans==="rent"?t("w_nettomieteMonat"):t("w_kaufpreisLabel"))}</label><input type="number" id="wPreis" min="0" value="${esc(wizD.preis||"")}"><p class="fehler" id="fePreis"></p></div><div class="fld"><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--ink)"><input type="checkbox" id="wPaA" ${wizD.preisAufAnfrage?"checked":""} style="width:auto;min-height:0"> ${esc(t("w_preisAufAnfrage"))}</label></div><div class="hinweisbox">${esc(t("w_bewertungHinweis"))}</div>`;
+    else if (S.key==="text") h = `<div class="fld"><label for="wTitel">${esc(t("w_titelLabel"))}</label><input type="text" id="wTitel" maxlength="70" placeholder="${esc(t("w_titelPlaceholder"))}" value="${esc(wizD.titel||"")}"><p class="fehler" id="feTitel"></p></div><div class="fld"><label for="wBeschr">${esc(t("w_beschreibungLabel"))}</label><textarea id="wBeschr" placeholder="${esc(t("w_beschreibungPlaceholder"))}">${esc(wizD.beschreibung||"")}</textarea><p class="fehler" id="feBeschreibung"></p></div>`;
+    else if (S.key==="bilder"){ const a = wizD.bilder||[]; h = `<p style="color:var(--leise);font-size:.86rem">${esc(t("w_bilderHinweis"))}</p><div class="fld"><div class="bildwahl">${["condo-modern-1","interior-bright-1","kitchen-1","family-house-1","zurich-altbau-1","chalet-2"].map(k => `<button data-b="${k}" aria-pressed="${a.includes(k)}" aria-label="${esc(t("w_bildWort2"))} ${k}">${FWP.pic(k,{sizes:"120px"})}</button>`).join("")}</div></div>`; }
+    else if (S.key==="kontakt") h = `<div class="fld"><label for="wName">${esc(t("w_nameLabel"))}</label><input type="text" id="wName" value="${esc(wizD.name||"")}"><p class="fehler" id="feName"></p></div><div class="fld"><label for="wMail">${esc(t("w_emailLabel"))}</label><input type="email" id="wMail" value="${esc(wizD.email||"")}"><p class="fehler" id="feEmail"></p></div><div class="fld"><label for="wTel">${esc(t("w_telefonOpt"))}</label><input type="text" id="wTel" value="${esc(wizD.telefon||"")}"></div>`;
+    else if (S.key==="pruefen"){ const b0 = (wizD.bilder||[])[0]; h = `<div class="vorschau"><div class="kz">${esc(t("w_vorschauTitel"))}</div><article class="karte" style="border:0"><div class="bild">${b0?FWP.pic(b0,{sizes:"600px"}):""}</div><div class="lauf"><div class="preis">${wizD.preisAufAnfrage?t("aufAnfrage"):wizD.preis?FWP.chf(+wizD.preis)+(wizD.trans==="rent"?".– "+t("proMonat"):".–"):"—"}</div><div class="tit">${esc(wizD.titel||"")}</div><div class="ort">${esc((wizD.plz||"")+" "+(wizD.stadt||""))}</div><div class="fakten"><span>${esc(wizD.zimmer?wizD.zimmer+" "+t("o_ziKurz"):"")}</span><span>${esc(wizD.flaeche?wizD.flaeche+" m²":"")}</span><span>${esc(typLabel(wizD.typ)||"")}</span><span class="q">${esc(wizD.rolle?t(wizD.rolle):t("privat"))}</span></div></div></article></div><div class="hinweisbox">${esc(t("w_veroeffentlichenHinweis"))}</div>`; }
     $("wizInhalt").innerHTML = h;
     $("wizInhalt").querySelectorAll(".grosswahl button").forEach(b => b.addEventListener("click", () => { b.closest(".grosswahl").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); if (b.dataset.rolle) wizD.rolle = b.dataset.rolle; else if (S.key==="absicht") wizD.trans = b.dataset.w; else if (S.key==="typ") wizD.typ = b.dataset.w; FWP.entwurf.speichern(wizD); }));
     $("wizInhalt").querySelectorAll(".bildwahl button").forEach(b => b.addEventListener("click", () => { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); wizD.bilder = [...$("wizInhalt").querySelectorAll('.bildwahl [aria-pressed="true"]')].map(x => x.dataset.b); FWP.entwurf.speichern(wizD); }));
@@ -988,11 +999,9 @@
         const rg = rgId ? GEO.region(rgId) : null;
         wizD.kanton = ort.kt; wizD.region = rgId || null;
         wizD.lat = ort.lat; wizD.lng = ort.lng;
-        status.innerHTML = `Erkannt: <b>${esc(ort.name)}</b> · Kanton ${esc(FWP.KANTON_NAME[ort.kt] || ort.kt)}${rg ? " · " + esc(rg.label) : ""}`;
+        status.innerHTML = `${esc(t("w_erkannt"))} <b>${esc(ort.name)}</b> · ${esc(t("o_kantonWort"))} ${esc(FWP.KANTON_NAME[ort.kt] || ort.kt)}${rg ? " · " + esc(rg.label) : ""}`;
       } else {
-        status.textContent = quelle === "leer"
-          ? "Geben Sie die PLZ ein — Gemeinde, Kanton und Region ergänzen wir aus dem Ortsverzeichnis."
-          : "Diesen Ort führen wir noch nicht im Verzeichnis. Das Inserat lässt sich trotzdem einreichen; wir ordnen die Gemeinde von Hand zu.";
+        status.textContent = quelle === "leer" ? t("w_geoStatusLeer") : t("w_geoStatusUnbekannt");
       }
       FWP.entwurf.speichern(wizD);
       malWizKarte();
@@ -1018,7 +1027,7 @@
   async function malWizKarte(){
     const box = $("wizKarte"); if (!box) return;
     const ort = wizD.ortId ? GEO.ort(wizD.ortId) : null;
-    if (!ort) { box.classList.remove("da"); box.innerHTML = `<p class="leerhin">Sobald der Ort feststeht, sehen Sie hier, wie Ihre Lage öffentlich erscheint.</p>`; return; }
+    if (!ort) { box.classList.remove("da"); box.innerHTML = `<p class="leerhin">${esc(t("w_kartenVorschauLeer"))}</p>`; return; }
     if (wizKarteLaeuft) return;
     wizKarteLaeuft = true;
     try {
@@ -1026,14 +1035,14 @@
       box.innerHTML = ""; box.classList.add("da");
       wizKarteInstanz = await UKARTE.detail("wizKarte", {
         lat:ort.lat, lng:ort.lng, genauigkeitM:GENAU_M[wizD.genauigkeit || "ungefaehr"] });
-    } catch (e) { box.classList.remove("da"); box.innerHTML = `<p class="leerhin">Die Vorschau lässt sich gerade nicht laden. Ihre Auswahl ist gespeichert.</p>`; }
+    } catch (e) { box.classList.remove("da"); box.innerHTML = `<p class="leerhin">${esc(t("w_kartenVorschauFehler"))}</p>`; }
     wizKarteLaeuft = false;
   }
   function wizLese(){ const g = id => { const e = document.getElementById(id); return e ? e.value : undefined; };
     ["strasse:wStrasse","plz:wPlz","stadt:wStadt","zimmer:wZi","flaeche:wFl","jahr:wJahr","preis:wPreis","titel:wTitel","beschreibung:wBeschr","name:wName","email:wMail","telefon:wTel"].forEach(p => { const [k,id] = p.split(":"); if (g(id) !== undefined) wizD[k] = g(id); });
     const paa = document.getElementById("wPaA"); if (paa) wizD.preisAufAnfrage = paa.checked; }
   $("wizWeiter").addEventListener("click", () => {
-    wizLese(); const S = FWP.WIZARD[wizI]; const fe = FWP.wizardPruefen(S.key, wizD);
+    wizLese(); const S = FWP.WIZARD()[wizI]; const fe = FWP.wizardPruefen(S.key, wizD);
     $("wizInhalt").querySelectorAll(".fehler").forEach(f => f.classList.remove("an"));
     if (Object.keys(fe).length){ Object.entries(fe).forEach(([k,v]) => { const el = document.getElementById("fe"+k.charAt(0).toUpperCase()+k.slice(1)); if (el){ el.textContent = v; el.classList.add("an"); } }); return; }
     FWP.entwurf.speichern(wizD);
@@ -1048,16 +1057,16 @@
     const ids = FWP.favs.alle(); const objs = FWP.alle().filter(l => ids.includes(l.id));
     $("merkGitter").innerHTML = objs.map(kartenHTML).join(""); $("merkLeer").style.display = objs.length ? "none" : "block"; verdrahte($("merkGitter"));
     const abos = FWP.suchen.alle();
-    $("aboListe").innerHTML = abos.map(a => `<div class="abo"><div><b>${esc(a.name||"Suche")}</b><br><span>angelegt ${esc(a.erstellt)} · Benachrichtigung bei neuen Treffern</span></div><div class="rechtsab"><button class="knopf" data-open="${a.id}">Öffnen</button><button class="knopf" data-del="${a.id}">Löschen</button></div></div>`).join("");
+    $("aboListe").innerHTML = abos.map(a => `<div class="abo"><div><b>${esc(a.name||t("k_sucheFallback"))}</b><br><span>${esc(t("k_angelegtWort"))} ${esc(a.erstellt)} · ${esc(t("k_angelegtBenachrichtigung"))}</span></div><div class="rechtsab"><button class="knopf" data-open="${a.id}">${esc(t("k_oeffnenBtn"))}</button><button class="knopf" data-del="${a.id}">${esc(t("k_loeschenBtn"))}</button></div></div>`).join("");
     $("aboLeer").style.display = abos.length ? "none" : "block";
     $("aboListe").querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => { FWP.suchen.loeschen(b.dataset.del); malKonto(); }));
     $("aboListe").querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => { const a = abos.find(x => x.id===b.dataset.open); if (a){ F = Object.assign({}, F, a.filter); syncSteuer(); location.hash = "suche"; such(); } }));
     let anfr = []; try{ anfr = JSON.parse(localStorage.getItem("fw-anfragen")||"[]"); }catch(e){}
-    $("anfrListe").innerHTML = anfr.map(a => `<div class="abo"><div><b>${esc(a.titel)}</b><br><span>${esc(a.ort)} · ${esc(a.datum)}</span></div><span class="status">${esc(a.status)}</span><div class="rechtsab"><a class="knopf" href="#objekt/${esc(a.slug)}">Objekt</a></div></div>`).join("");
+    $("anfrListe").innerHTML = anfr.map(a => `<div class="abo"><div><b>${esc(a.titel)}</b><br><span>${esc(a.ort)} · ${esc(a.datum)}</span></div><span class="status">${esc(a.status)}</span><div class="rechtsab"><a class="knopf" href="#objekt/${esc(a.slug)}">${esc(t("k_objektBtn"))}</a></div></div>`).join("");
     $("anfrLeer").style.display = anfr.length ? "none" : "block";
     const meine = FWP.entwurf.veroeffentlichte(), entw = FWP.entwurf.laden();
-    let mh = meine.map(m => `<div class="abo"><div><b>${esc(m.titel||"(ohne Titel)")}</b><br><span>${esc((m.plz||"")+" "+(m.stadt||""))} · eingereicht ${esc(m.publiziert)} · 0 Aufrufe · 0 Anfragen</span></div><span class="status">${esc(m.status)}</span></div>`).join("");
-    if (entw && Object.keys(entw).length) mh += `<div class="abo"><div><b>${esc(entw.titel||"Entwurf")}</b><br><span>Noch nicht eingereicht</span></div><div class="rechtsab"><button class="knopf" id="entwWeiter">Weiterbearbeiten</button></div></div>`;
+    let mh = meine.map(m => `<div class="abo"><div><b>${esc(m.titel||t("k_ohneTitel"))}</b><br><span>${esc((m.plz||"")+" "+(m.stadt||""))} · ${esc(t("k_eingereichtWort"))} ${esc(m.publiziert)} · ${esc(t("k_aufrufeAnfragen"))}</span></div><span class="status">${esc(m.status)}</span></div>`).join("");
+    if (entw && Object.keys(entw).length) mh += `<div class="abo"><div><b>${esc(entw.titel||t("k_entwurfFallback"))}</b><br><span>${esc(t("k_nochNichtEingereicht"))}</span></div><div class="rechtsab"><button class="knopf" id="entwWeiter">${esc(t("k_weiterbearbeiten"))}</button></div></div>`;
     $("meineListe").innerHTML = mh; $("meineLeer").style.display = mh ? "none" : "block";
     const ew = $("entwWeiter"); if (ew) ew.addEventListener("click", () => { wizAktiv = true; location.hash = "neu"; });
   }

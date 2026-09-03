@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P5.3 — Marktplatz-Migration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#141210;--pap:#1c1916;--ink:#EDE6DA;--leise:#A69B8C;--linie:#332D27;--gold:#B8923F;--gut:#7FA66B;--warn:#C4838A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+.h{max-width:980px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:300;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.06}
+h2{font-size:1.6rem;margin:56px 0 16px;padding-top:26px;border-top:1px solid var(--linie)}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:500}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin-bottom:14px}
+.lead{font-size:1.12rem;color:#D9D0C3;max-width:64ch}
+p{max-width:68ch}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.status div{background:var(--pap);padding:15px 17px}
+.status b{display:block;font-family:"Fraunces",serif;font-weight:300;font-size:1.5rem;line-height:1.1}
+.status span{font-size:.75rem;color:var(--leise);letter-spacing:.05em;text-transform:uppercase}
+.knopf{display:inline-block;margin:22px 8px 0 0;padding:.85em 1.3em;border:1px solid var(--gold);color:var(--ink);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.knopf.voll{background:var(--gold);color:#141210}
+ul{padding-left:1.1em;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:14px 0;font-size:.93rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--linie);text-align:left;vertical-align:top}
+th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);font-weight:500}
+td.z{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+figure{margin:22px 0}figure img{width:100%;height:auto;display:block;border:1px solid var(--linie)}
+figcaption{font-size:.8rem;color:var(--leise);margin-top:8px}
+.hinweis{border-left:3px solid var(--gold);padding:12px 18px;background:var(--pap);margin:18px 0;max-width:72ch}
+.klein{font-size:.85rem;color:var(--leise)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:#D9D0C3}
+.ok::before{content:"✓ ";color:var(--gut)}
+.off::before{content:"→ ";color:var(--gold)}
+.nein::before{content:"✗ ";color:var(--warn)}
+.scroll{overflow-x:auto}
+pre{background:var(--pap);border:1px solid var(--linie);padding:12px 14px;margin:14px 0;max-width:72ch;font-size:.85rem;overflow-x:auto}
+pre code{color:#D9D0C3}
+</style>
+</head>
+<body>
+<div class="h">
+<div class="eyebrow">Fourwalls · Phase 5.3 · 4. September 2026</div>
+<h1>Der Marktplatz läuft aus der Datenbank.</h1>
+<p class="lead">P5.2 hatte eine Objektseite bewiesen. P5.3 verlangte den ganzen öffentlichen Marktplatz: Einstieg → Suche → Filter → Karte → Objekt → Ähnliche → Merken → Suchabo-Grenze → Anfrage — alles über die Produktionsarchitektur, ohne dass der alte statische Katalog zur Laufzeit noch gebraucht wird. Das ist geschehen, mit dem vollständigen Demo-Bestand.</p>
+
+<div class="status">
+  <div><b>Steht</b><span>Marktplatz-Migration</span></div>
+  <div><b>304 + 3</b><span>Inserate importiert (= Prototyp)</span></div>
+  <div><b>1 176 / 1 176</b><span>Kanonische Routen · 4 Sprachen</span></div>
+  <div><b>0</b><span>Geo-Lecks in Liste, Karte, HTML, RSC, Bundle</span></div>
+  <div><b>≤ 0.21 %</b><span>Bildabweichung Suche, Objekt, 390 px</span></div>
+</div>
+<a class="knopf voll" href="ufer/index.html">UFER (Prototyp, unverändert)</a>
+<a class="knopf" href="p5.2-bericht.html">P5.2-Bericht</a>
+
+<h2>Status der Marktplatz-Migration</h2>
+<table>
+<tr><th>Bedingung (§90)</th><th>Beleg</th></tr>
+<tr><td class="ok">Demo-Bestand in Postgres</td><td>Importer <code>app/scripts/import-demo.mjs</code>: 289 synthetische + 15 Mandate + 3 Testinserate, eine Transaktion, 5 s, Qualitätsbericht (Abschnitt 1–2)</td></tr>
+<tr><td class="ok">Alle veröffentlichten Inserate haben echte Routen</td><td>294 öffentliche Inserate × 4 Sprachen = 1 176 Routen mit 200, 588 Umleitungen (308) geprüft, 13 nicht-öffentliche → 404 (Abschnitt 3)</td></tr>
+<tr><td class="ok">Suche serverseitig</td><td><code>server/search.ts</code>: eine SQL-Umsetzung des P3-Vertrags über <code>listing_public</code>; die Seite rendert Treffer auf dem Server, Filter navigieren (Abschnitt 4–5)</td></tr>
+<tr><td class="ok">Umkreis in PostGIS</td><td><code>ST_DWithin</code> auf <code>geom_public</code>, 5/10/20/50 km um Luzern geprüft, Distanzen und Monotonie stimmen (Abschnitt 6)</td></tr>
+<tr><td class="ok">Ausschnittsuche serverseitig</td><td><code>ST_MakeEnvelope</code>; «In diesem Kartenausschnitt suchen» ist ein Server-Aufruf, der Ausschnitt steht in der Adresse (<code>?box=</code>) (Abschnitt 7)</td></tr>
+<tr><td class="ok">Karte mit öffentlicher Geografie vom Server</td><td>Kartenmodus liefert alle Punkte (gerastert) und die 60 Karten der Seitenliste; Liste und Karte stimmen für fünf Anfragen überein (Abschnitt 7)</td></tr>
+<tr><td class="ok">Ähnliche Objekte sind echt</td><td><code>server/similar.ts</code>: Prototyp-Punkte in SQL, deterministisch, nur Veröffentlichtes (Abschnitt 8)</td></tr>
+<tr><td class="ok">Kein Altbestand zur Laufzeit</td><td><code>listings.js</code>/<code>properties.js</code> werden nur vom Importer gelesen; Client-Bundle ohne Titel, Signaturen, Koordinaten, Geheimnisse (Abschnitt 10)</td></tr>
+<tr><td class="ok">Geo-Privatsphäre in der Breite</td><td>289 ungenaue Inserate: keine exakte Koordinate in Liste, Karte, 25 Objektseiten (HTML + RSC), Bundle; Ausschnitt filtert über den öffentlichen Punkt (Abschnitt 9)</td></tr>
+<tr><td class="ok">UFER bleibt</td><td>Suche Tag/Abend 0.14 %, 390 px 0.03 %, Standard-Objekt 0.21 %, Exclusive 0.05 %; Karte 7.6 % erklärt (Abschnitt 12)</td></tr>
+</table>
+<p>Nicht gebaut, wie beauftragt: Konto, Anmeldung, Moderation, Herausgeber-Werkzeuge, echter Objektspeicher, echter Mailversand, Staging-Host. Der Prototyp unter <code>final/</code> ist unverändert; das P5.2-Tag <code>p5.2-vertikale-scheibe</code> ist unangetastet.</p>
+<p class="klein">Speicherplatz zu Beginn 5.3 GB frei, keine Bereinigung nötig, keine Installation über den P5.2-Satz hinaus (eine Abhängigkeit weniger: Tests laufen mit <code>node:test</code>). Während der Phase wurde ausserhalb dieser Arbeit Platz freigegeben (Ende: 19 GB).</p>
+
+<h2>1. Bestand und Import</h2>
+<p>Der Prototyp zeigt nicht 320 Inserate: <code>FWP.alle()</code> ersetzt die 31 synthetischen «Exclusive» durch die 15 echten Mandate — <b>304</b> sind der Massstab. Der Importer liest <code>listings.js</code>, <code>properties.js</code>, <code>detail-data.js</code> und <code>geo.js</code> im Sandkasten, bildet sie ab (die Entscheide stehen im Dateikopf, Abschnitt «Abbildung») und schreibt alles in einer Transaktion. Ein Fehler → nichts geschrieben; jeder Lauf räumt seinen eigenen Bestand zuerst weg.</p>
+<table>
+<tr><th>Zählung</th><th>Prototyp (alle())</th><th>Datenbank</th><th>Befund</th></tr>
+<tr><td>Inserate</td><td class="z">304</td><td class="z">304 + 3 Test</td><td class="ok">gleich</td></tr>
+<tr><td>Quelle privat / agentur / verwaltung / entwickler / fourwalls</td><td class="z">108 / 113 / 29 / 20 / 34</td><td class="z">108 / 114 / 28 / 20 / 34</td><td class="off">ein Inserat wechselt agentur←verwaltung: das handgeschriebene Dossier <code>haus-zrich-2</code> bestimmt die Quelle — genau wie in <code>portal.html</code></td></tr>
+<tr><td>Transaktion Kauf / Miete</td><td class="z">198 / 106</td><td class="z">198 / 106</td><td class="ok">gleich</td></tr>
+<tr><td>Objektart wohnung / haus / villa / chalet / mfh / gewerbe / grundstück / parkplatz</td><td class="z">131 / 56 / 15 / 17 / 19 / 25 / 22 / 19</td><td class="z">gleich</td><td class="ok">gleich</td></tr>
+<tr><td>Status publiziert / reserviert / archiviert</td><td class="z">274 / 18 / 12</td><td class="z">274 / 18 / 12 (+1 Entwurf)</td><td class="ok">gleich — die 13 «verkauft/vermietet» des Prototyps sind alle zugleich archiviert (12 im Bestand) und werden als <code>archived</code> geführt</td></tr>
+<tr><td>Genauigkeit exakt / ungefähr / gemeinde</td><td class="z">4 / 197 / 103</td><td class="z">4 / 197 / 103 (+ Test 1/1/1)</td><td class="ok">gleich</td></tr>
+<tr><td>Exclusive (Mandate mit featured)</td><td class="z">5</td><td class="z">5</td><td class="ok">gleich</td></tr>
+<tr><td>Orte (Gemeinden / Kantone / Regionen)</td><td class="z">38 / 26 / 9</td><td class="z">38 / 26 / 9</td><td class="ok">in <code>place</code>, mit Mittelpunkt und Hüllrechteck</td></tr>
+</table>
+<p>Kennungen sind aus der Altkennung abgeleitet (FWL-1000 → FWL-2026-101000, Mandat 002 → FWL-2026-200002), darum bei jedem Lauf gleich. Das Seehaus behält FWL-2026-000142. Strassen werden nie importiert. Die exakte Lage geht nach <code>geom_exact</code>; den öffentlichen Punkt rastert der Trigger — das Produktionsmodell gilt, nicht die <code>anzeige</code>-Koordinaten des Prototyps.</p>
+
+<h2>2. Datenqualität</h2>
+<p>Der Importer prüft, bevor er schreibt, und verschweigt nichts. Nichts davon wurde durch erfundene Fakten «repariert».</p>
+<table>
+<tr><th>Kategorie</th><th>Anzahl</th><th>Umgang</th></tr>
+<tr><td>Anbieter mit mehreren Quellen (derselbe Name als Makler und Verwaltung)</td><td class="z">11</td><td>eine Organisation je Name, Art nach erstem Vorkommen; berichtet</td></tr>
+<tr><td>Anbieter mit uneinheitlichem Prüfstatus</td><td class="z">8</td><td>Prüfstatus ist im Produktionsmodell eine Eigenschaft der Organisation (<code>verified_at</code>) — geprüft, wenn mindestens ein Inserat geprüft war; darum tragen einige Karten zusätzlich «geprüft» (Abschnitt 12)</td></tr>
+<tr><td>Status doppelt (archiviert + verkauft/vermietet)</td><td class="z">12</td><td>als <code>archived</code> geführt — im Prototyp ohnehin unsichtbar</td></tr>
+<tr><td>Ort ohne Eintrag im Ortsindex (Montagnola, Grimentz, Andermatt)</td><td class="z">3</td><td>Mandate ohne <code>place_id</code>: nur über Kanton, Region, Umkreis oder Ausschnitt findbar — wie im Prototyp</td></tr>
+<tr><td>Bild ohne Varianten (<code>mat-eiche</code>, Materialbild eines Dossiers)</td><td class="z">1</td><td>übersprungen, berichtet</td></tr>
+<tr><td>Lage exakt auf einem Rasterpunkt</td><td class="z">1</td><td>berichtet — verrät nicht mehr als jeder Rasterpunkt (± halbe Zelle)</td></tr>
+<tr><td>Fehlende Fläche / Baujahr / Zimmer (ausser Land und Parkplatz), ungültige Zimmerzahlen, Miete mit Kaufpreis</td><td class="z">0</td><td>—</td></tr>
+</table>
+<p class="klein">Verworfen, weil es dafür keine Tabelle gibt und sie nichts über das Objekt aussagen: <code>views</code>, <code>favoritesCount</code>, <code>inquiryCount</code>; <code>neu</code> entsteht zur Laufzeit aus <code>published_at</code> (14 Tage). Bericht: <code>app/var/import-bericht.json</code>.</p>
+
+<h2>3. Echte Routen für den ganzen Bestand</h2>
+<p><code>app/scripts/routen-test.mjs</code> prüft alle 307 Inserate über HTTP gegen den Produktions-Build — nicht fünf Stichproben:</p>
+<table>
+<tr><th>Prüfung</th><th>Ergebnis</th></tr>
+<tr><td>Kanonische Route in de, fr, it, en (294 öffentliche Inserate)</td><td class="ok">1 176 / 1 176 → 200, Titel und Abschnitte im HTML</td></tr>
+<tr><td>Falscher Slug → 308 auf die kanonische Adresse</td><td class="ok">294 / 294</td></tr>
+<tr><td>Falsches Transaktionssegment (mieten/kaufen) → 308</td><td class="ok">294 / 294</td></tr>
+<tr><td>Nicht-öffentlich (Entwurf, archiviert) → 404</td><td class="ok">13 / 13</td></tr>
+<tr><td>Erfundene Referenz, Unsinn → 404</td><td class="ok">2 / 2</td></tr>
+<tr><td>Serverfehler</td><td class="ok">0 · Dauer 14 s</td></tr>
+</table>
+<p>Jede Karte, jeder Kartenpunkt, jede Objektseite und jedes «Ähnliche» kennt dieselbe Identität: die öffentliche Referenz. Die Merkliste ist darauf verschlüsselt, auf allen drei Oberflächen.</p>
+
+<h2>4. Suche — Architektur</h2>
+<p><b>Eine Umsetzung, drei Oberflächen.</b> <code>server/search.ts</code> erfüllt den P3-Vertrag (<code>SearchQuery</code> → <code>SearchResult</code>) als eine SQL-Abfrage über die Sicht <code>listing_public</code>. Liste, Karte, Startseite (Exclusive-Auswahl) und die Vorschau-Zahl im Filterfeld fragen alle hier; «Ähnliche» hat seine eigene, dokumentierte Abfrage (Abschnitt 8), keine zweite Filterlogik.</p>
+<ul>
+<li><b>Adresse ist Zustand.</b> Die Suchseite <code>/de/immobilien/kaufen?ort=ort-zuerich&amp;um=10&amp;typ=wohnung</code> rendert die Treffer auf dem Server. Filter sind Client-Inseln, die navigieren (React-Transition: die alten Treffer bleiben stehen, nichts blitzt). Zurück/Vor, Teilen, Aktualisieren funktionieren damit von selbst — Reise A geprüft: Filter → Objekt → Zurück, Zustand erhalten.</li>
+<li><b>Dieselben Parameternamen wie P2</b> (<code>ort, um, typ, pmin, pmax, zi, zimax, fl, flmax, gr, bjv, bjb, et, vf, feat, quelle, alle, sort, seite</code>), dazu <code>ansicht=karte</code> und <code>box=</code>. Die Seite liest nachsichtig (ungültiger Einzelwert → Standard), die API streng (422 mit Feldfehlern).</li>
+<li><b>Ortsentitäten</b> kommen aus <code>place</code> (<code>server/geo.ts</code>): Gemeinde über <code>place_id</code>, PLZ, Kanton, Region über Spalten; Vorschläge über <code>/api/orte</code> in vier Sprachen. Ein Sprachwechsel ändert das Label, nie die Entität.</li>
+<li><b>Kartenmodus</b> ist ein Modus derselben Anfrage (<code>modus=map</code>), kein zweiter Dienst: gleiche WHERE-Klausel, andere Auslieferung — alle Punkte (zehn Felder) plus die 60 Karten der Seitenliste. Das hält eine Geschäftsregel an einem Ort. Ab etwa 2 000 Punkten je Antwort wäre serverseitige Aggregation fällig; heute sind es höchstens 178.</li>
+<li><b>Seiten:</b> 24 + «Weitere anzeigen». Die Adresse merkt sich die geladene Seitenzahl (<code>?seite=2</code>), der Server rendert dann 48 — Zurück von einem Objekt beginnt nicht wieder bei 24.</li>
+<li><b>Sortierung</b> entscheidet der Server aus einer Allowlist. «Neuste» stellt höchstens drei Exclusive-Mandate zuoberst — das Prototyp-Verhalten, als Geschäftsregel in <code>policy.ts</code> als <code>demo</code> markiert, nicht bestätigt. «Empfohlen» gibt Exclusive keinen Bonus.</li>
+<li><b>SEO-Grenze:</b> Bereichsseiten (kaufen/mieten je Sprache, mit Ort) sind indexierbar mit hreflang; alles mit weiteren Filtern trägt <code>noindex, follow</code> und Canonical auf die Bereichsseite mit Ort.</li>
+</ul>
+
+<h2>5. Filter</h2>
+<table>
+<tr><th>Filter</th><th>Umsetzung</th></tr>
+<tr><td>Transaktion, Ort (Gemeinde, PLZ, Kanton, Region), Umkreis, Ausschnitt</td><td>Segment/Spalten, <code>place_id</code>, <code>ST_DWithin</code>, <code>ST_MakeEnvelope</code></td></tr>
+<tr><td>Objektart, Preis von/bis, Zimmer von/bis, Wohnfläche von/bis, Grundstück ab, Baujahr von/bis</td><td>Spalten der Sicht; Preis je Transaktion (<code>price_chf</code> / <code>rent_net_chf</code>, in Rappen)</td></tr>
+<tr><td>Etage (EG, nicht EG, ab 2., Dach), Verfügbarkeit (sofort, in 3 Monaten)</td><td>Ausdrücke wie im Prototyp (<code>floor</code>, <code>available_immediately</code>, <code>available_from ≤ heute + 92</code>)</td></tr>
+<tr><td>Ausstattung (18 Merkmale, UND-verknüpft), Anbieter, nur Fourwalls, auch reservierte</td><td><code>property_feature</code>, <code>publisher_kind</code>, Status</td></tr>
+<tr><td>Nullzustand</td><td>die Seite zählt Auswege mit derselben Suche (Umkreis 10/20/50, Budget +25 %, ein Zimmer weniger, Filter weg, Kanton, alles) und bietet sie als Links an — nichts wird stillschweigend geändert (Reise geprüft: der Weg-Link liefert Treffer)</td></tr>
+</table>
+<p>Ohne Datenmodell-Gegenstück blieb nichts weg. Etage wird nur bei Wohnung/Gewerbe angeboten, Grundstück nicht bei Wohnung/Parkplatz; CHF/m² nur bei Kauf eines Wohnobjekts, auf 100 gerundet; Tragbarkeit nur bei Kauf eines Wohnobjekts — Miete, Land, Parkplatz und Gewerbe zeigen keinen Finanzierungsblock (geprüft).</p>
+
+<h2>6. PostGIS</h2>
+<p><code>app/scripts/skalen-test.mjs</code> misst die Datenbank (EXPLAIN ANALYZE, Median aus drei Läufen) mit synthetischen Beständen, die es danach restlos wieder entfernt (Ist-Bestand 307 vorher und nachher):</p>
+<div class="scroll"><table>
+<tr><th>Abfrage</th><th>320</th><th>2 000</th><th>10 000</th><th>50 000</th><th>Index (50k)</th></tr>
+<tr><td>Standard «Neuste», Kauf</td><td class="z">0.2 ms</td><td class="z">0.2</td><td class="z">0.2</td><td class="z">2.1</td><td>listing_aktiv_neu</td></tr>
+<tr><td>Preis + Zimmer, Preis aufsteigend</td><td class="z">0.7</td><td class="z">0.2</td><td class="z">0.9</td><td class="z">8.9</td><td>listing_aktiv_preis</td></tr>
+<tr><td>Umkreis 20 km Luzern</td><td class="z">0.2</td><td class="z">0.6</td><td class="z">2.1</td><td class="z">117</td><td>listing_geom_gix (GIST)</td></tr>
+<tr><td>Kartenausschnitt Miete (2 000 Punkte)</td><td class="z">0.3</td><td class="z">1.1</td><td class="z">0.4</td><td class="z">0.6</td><td>listing_geom_gix</td></tr>
+<tr><td>Zählung mit Facetten, Umkreis 10 km</td><td class="z">1.0</td><td class="z">0.6</td><td class="z">0.8</td><td class="z">0.6</td><td>listing_geom_gix</td></tr>
+<tr><td>Sortierung CHF/m²</td><td class="z">0.6</td><td class="z">5.5</td><td class="z">13</td><td class="z">139</td><td>kein Index (Sichtausdruck)</td></tr>
+<tr><td>Ähnliche Objekte</td><td class="z">1.2</td><td class="z">6.3</td><td class="z">21</td><td class="z">210</td><td>Seq Scan → Migration 0010</td></tr>
+</table></div>
+<p>Bis 10 000 Inserate ist alles interaktiv. Bei 50 000 fallen drei Abfragen auf: der Umkreis (117 ms, GIST-Index trägt, aber viele Kandidaten), CHF/m² (139 ms — <code>price_per_m2</code> ist ein Sichtausdruck, indexierbar erst als gespeicherte Spalte) und «Ähnliche» (210 ms, Seq Scan). Für Letzteres liefert <b>Migration 0010</b> einen Teilindex über veröffentlichte Inserate nach Objekt und Transaktion; die Plansätze der 50k-Stufe liegen in <code>app/var/skalen-bericht.json</code>. Das ist kein SLO, es sind beobachtete Zahlen; 50 000 liegen weit jenseits des Demo-Bestands.</p>
+<p>Verbindungen: postgres.js mit einem prozessweiten Pool (max. 10), im Entwicklungsmodus über <code>globalThis</code> gegen Hot-Reload-Stürme gesichert; Build und Laufzeit öffnen keine Verbindung vor der ersten Anfrage. Für mehrere Instanzen genügt das; ein externer Pooler wird erst mit Staging entschieden.</p>
+
+<h2>7. Karte und Liste</h2>
+<p>MapLibre aus P3 wurde <b>wörtlich</b> übernommen: <code>components/map/ukarte.js</code> ist <code>karte.js</code> als ES-Modul — swisstopo-Kacheln, Quellennennung, Abendumrechnung, Cluster, Preisschilder, alle Heilungen für die MapLibre-Fallstricke. Die Kartenansicht (<code>karten-ansicht.tsx</code>) ersetzt nur die Verdrahtung aus <code>portal.html</code>: Karte und Seitenliste über denselben Suchvertrag, Auswahl markiert die Liste, Mobil zeigt eine Vorschau (auch für Punkte ausserhalb der 60 Karten — die Zusammenfassung kommt per <code>?ref=</code> vom Server).</p>
+<table>
+<tr><th>Prüfung (Integrationslauf, Produktions-Build)</th><th>Ergebnis</th></tr>
+<tr><td>Liste ↔ Karte: <code>total</code> gleich, Punktmenge = Trefferliste (Zürich; Luzern +20 km; Miete Kanton Bern; Wohnung ≤ 1.2 Mio; Romandie)</td><td class="ok">5 / 5</td></tr>
+<tr><td>Umkreis 5/10/20/50 km: Zahlen monoton, Interpretation «umkreis», jeder öffentliche Punkt innerhalb (+2.5 km Rastertoleranz)</td><td class="ok"></td></tr>
+<tr><td>Ausschnitt: alle Punkte im Kasten, Interpretation «ausschnitt»</td><td class="ok"></td></tr>
+<tr><td>Reise B im Browser: Luzern +20 km → 10 Treffer → Karte → Zoom → «In diesem Ausschnitt suchen» → 127 Treffer, <code>?box=</code> in der Adresse, Liste folgt</td><td class="ok"></td></tr>
+<tr><td>Kartenfehler macht die Liste nicht unbrauchbar</td><td class="ok">Fehlerzustand mit Rückweg «Liste» (im Browser-Pane dieser Umgebung lädt der swisstopo-Stil nicht — beim Prototyp ebenso; in Headless-Chrome lädt die Karte)</td></tr>
+</table>
+<p>Ein Fehler auf dem Weg: karte.js liest seine Punkte aus <code>treffer</code>; die erste Fassung gab ihm nur die 60 Karten der Seitenliste — die Karte zeigte 60 statt 178 Punkte. Seither bekommt sie die vollständige Punktliste; der Bildvergleich der Karte fiel von 31.7 % auf 7.6 %.</p>
+
+<h2>8. Ähnliche Objekte</h2>
+<p>Die Punktzahl des Prototyps, in SQL (<code>server/similar.ts</code>): Pflicht sind gleiche Transaktion, gleiche Objektart, veröffentlicht, nicht das Objekt selbst, Preis innerhalb ±35 % (wenn beide einen haben). Punkte: Objektart 40, gleicher Kanton 20, gleiche Gemeinde 15, Preisnähe bis 20, Zimmer bis 10, Wohnfläche bis 10. Reihenfolge: Punkte, dann Referenz — für denselben Bestand immer dasselbe Ergebnis. Entwürfe können nicht erscheinen: gelesen wird <code>listing_public</code> mit <code>status = published</code>; geprüft für zehn Referenzen und die Entwurfsreferenz selbst (leer). Der Abschnitt «Ähnliche Objekte» entsteht auf der Objektseite nur, wenn es welche gibt.</p>
+
+<h2>9. Geo-Privatsphäre in der Breite</h2>
+<table>
+<tr><th>Wo gesucht (289 ungenaue Inserate, exakte Koordinaten aus der DB)</th><th>Treffer</th></tr>
+<tr><td>Vollständige Trefferlisten Kauf und Miete (alle Seiten, auch reservierte)</td><td class="ok">0</td></tr>
+<tr><td>Kartenantworten Kauf und Miete (alle Punkte)</td><td class="ok">0</td></tr>
+<tr><td>Objektseiten: SSR-HTML und RSC-Nutzlast (25 Inserate)</td><td class="ok">0</td></tr>
+<tr><td>Routen-Test: HTML aller 289 ungenauen Inserate</td><td class="ok">0</td></tr>
+<tr><td>Client-Bundle (<code>.next/static</code>): Koordinaten, Titel, <code>"listings":[</code>, <code>window.FWL</code>, <code>geom_exact</code>, DB-Zugang</td><td class="ok">0</td></tr>
+<tr><td>Ausschnitt 0.002° um die exakte Koordinate (10 Inserate mit versetztem öffentlichen Punkt)</td><td class="ok">Inserat nicht enthalten — der Ausschnitt filtert über <code>geom_public</code></td></tr>
+</table>
+
+<h2>10. Client-Nutzlast</h2>
+<p>Gemessen mit <code>tools/leistung.mjs</code> (Headless Chrome, 1440 px, 9 s nach Aufruf), Prototyp gegen Produktions-Build:</p>
+<table>
+<tr><th>Seite · Mass</th><th>Prototyp</th><th>Anwendung</th></tr>
+<tr><td>Suche · übertragene Bytes bis zum ersten Bild</td><td class="z">1 316 KB</td><td class="z">749 KB</td></tr>
+<tr><td>Suche · JavaScript</td><td class="z">667 KB</td><td class="z">188 KB</td></tr>
+<tr><td>Suche · Dokument (übertragen)</td><td class="z">86 KB</td><td class="z">36 KB</td></tr>
+<tr><td>Suche · Bilder (24 Karten)</td><td class="z">458 KB</td><td class="z">445 KB</td></tr>
+<tr><td>Suche · DOM-Knoten / LCP</td><td class="z">1 104 / 4.8 s</td><td class="z">1 041 / 4.1 s</td></tr>
+<tr><td>Suche · erste Suchantwort (JSON, 24 Treffer)</td><td class="z">— (im Bundle)</td><td class="z">22.5 KB</td></tr>
+<tr><td>Karte · Kartenantwort (178 Punkte + 60 Karten)</td><td class="z">—</td><td class="z">80 KB</td></tr>
+<tr><td>Karte · übertragene Bytes / JavaScript</td><td class="z">1 655 KB / 871 KB</td><td class="z">1 094 KB / 398 KB</td></tr>
+<tr><td>Karte · DOM-Knoten / LCP</td><td class="z">2 492 / 8.7 s</td><td class="z">1 716 / 4.9 s</td></tr>
+<tr><td>MapLibre auf der Listenseite geladen</td><td class="ok">nein</td><td class="ok">nein — erst im Kartenmodus</td></tr>
+</table>
+<p>Die Migration hat keine Megabyte zurückgeholt: der 320er-Katalog (359 KB) und die Dossierdaten sind aus dem Browser verschwunden; eine Suchantwort ist 22 KB. Der Bildanteil ist gleich — die Karten zeigen dieselben Fotos.</p>
+
+<h2>11. Datenbank und Abfragen — Werkzeuge</h2>
+<ul>
+<li><code>app/scripts/import-demo.mjs</code> — Importer (Abschnitt 1); <code>npm run db:import</code> oder <code>migrate.mjs --seed</code>; die alte Seed-SQL ist entfernt.</li>
+<li><code>db/migrations/0010_suchindex.sql</code> — Teilindex für Ähnliche; die 16 Schema-Zusagen laufen weiterhin gegen den vollen Bestand (Test 16 zählt nur eigene Inserate).</li>
+<li><code>app/scripts/skalen-test.mjs</code> — synthetische Bestände, EXPLAIN-Zeiten, Aufräumen (Abschnitt 6).</li>
+<li><code>app/scripts/routen-test.mjs</code> — alle Routen (Abschnitt 3); <code>app/scripts/marktplatz-test.mjs</code> — 76 Integrations- und Sicherheitsprüfungen (Abschnitte 7, 9, 14).</li>
+<li>Cache-Strategie: in P5.3 nichts gecacht (<code>force-dynamic</code>, <code>no-store</code>): jeder Statuswechsel — reserviert, verkauft, zurückgezogen — wirkt sofort in Suche, Karte, Ähnlichen und Route (geprüft: archiviert/verkauft/vermietet/Entwurf erscheinen nirgends). Für veröffentlichte Objektseiten und Ortsdaten ist eine kurze Serverseiten-Cache-Zeit mit Invalidierung per Referenz der nächste Schritt — Anfragen und Unveröffentlichtes bleiben immer ungecacht.</li>
+</ul>
+
+<h2>12. Design-Regression</h2>
+<figure><img src="img/p5-3-vergleich-suche.jpg" alt="Suche: Prototyp links, Anwendung rechts"><figcaption>Suche, Tag: links Prototyp (P4-Massstab), rechts die Anwendung aus der Datenbank — 0.14 %.</figcaption></figure>
+<table>
+<tr><th>Zustand (Produktions-Build gegen P4-Massstab)</th><th>Abweichung</th><th>Befund</th></tr>
+<tr><td>suche / suche-abend (1440)</td><td class="z">0.14 % / 0.14 %</td><td class="ok">gleich</td></tr>
+<tr><td>m-suche (390 px)</td><td class="z">0.03 %</td><td class="ok">gleich</td></tr>
+<tr><td>objekt-standard (Haus Luzern, Privatinserat) / m-objekt</td><td class="z">0.21 % / 0.15 %</td><td class="ok">gleich</td></tr>
+<tr><td>objekt-exclusive Tag / Abend / 390 px / 390 px Abend</td><td class="z">0.05 / 0.05 / 0.15 / 0.15 %</td><td class="ok">gleich (wie P5.2)</td></tr>
+<tr><td>m-karte (390 px)</td><td class="z">0.41 %</td><td class="off">Cluster-Zahlen: gerasterte öffentliche Punkte</td></tr>
+<tr><td>suche-gefiltert (Zürich +10 km, Wohnung, ≤ 1.5 Mio)</td><td class="z">4.4 %</td><td class="off">erklärt: ein Foto (das handgeschriebene Dossier <code>wohnung-zrich-1</code> bringt eigene Bilder mit) und «· geprüft» an Makler-Karten (Prüfstatus je Organisation, Abschnitt 2)</td></tr>
+<tr><td>karte / karte-abend (1440)</td><td class="z">7.6 % / 3.8 %</td><td class="off">erklärt: derselbe Ausschnitt, dieselben Cluster-Lagen; Zählungen weichen ab (gerasterte Punkte, 178 statt 177 Treffer)</td></tr>
+<tr><td>objekt-exclusive-fr / -it, objekt-lage</td><td class="z">1.0 % / 11.5 %</td><td class="off">wie in P5.2 erklärt (übersetzte Inhalte; Feld statt Punkt)</td></tr>
+</table>
+<figure><img src="img/p5-3-vergleich-karte.jpg" alt="Karte: Prototyp links, Anwendung rechts"><figcaption>Karte: gleicher Ausschnitt, gleiche Cluster — die Zahlen darin stammen aus gerasterten öffentlichen Punkten.</figcaption></figure>
+<figure><img src="img/p5-3-vergleich-mobil.jpg" alt="390 px Suche: Prototyp links, Anwendung rechts"><figcaption>390 px: Suche — 0.03 %.</figcaption></figure>
+<p>Korrekturen auf dem Weg: Hüllrechteck der Karte mit 12 % Luft wie im Prototyp (vorher zu eng, Karte zu nah), Punkte statt Seitenliste an karte.js, «Finanzierung» nicht bei Grundstücken. Eine gewollte Änderung: die Objektseite hat in ihrer Kopfleiste eine Sprachwahl (dieselbe Immobilie in der anderen Sprache, Reise E) — im Prototyp lag sie im Seitenkopf hinter dem Overlay. Sonst keine neuen Karten, Farben, Schriften, Kartenstile, Bewegungen.</p>
+
+<h2>13. Vier Sprachen und Mobil</h2>
+<table>
+<tr><th>Prüfung</th><th>Ergebnis</th></tr>
+<tr><td>Kauf- und Mietseite je Sprache mit Zürich: 200, <code>&lt;html lang&gt;</code>, Ortsname in der Sprache (Zürich / Zurich / Zurigo / Zurich)</td><td class="ok">8 / 8</td></tr>
+<tr><td>Nullzustand, Umkreis Luzern, Objektseite je Sprache</td><td class="ok">12 / 12</td></tr>
+<tr><td>hreflang der Objektseite zeigt auf dieselbe Referenz</td><td class="ok"></td></tr>
+<tr><td>390 px (Browser): Suche ohne horizontalen Überlauf, Filterblatt mit Vorschau-Zahl (32 → 9 mit «Balkon»), Anwenden → Adresse + Chips</td><td class="ok"></td></tr>
+<tr><td>Zugänglichkeit: Karten sind echte Links mit Namen «Titel, Preis, Ort»; Merken, Chips, Sortierung, Liste/Karte, Weitere sind Buttons/Selects; die Karte hat die Liste als gleichwertigen Weg</td><td class="ok">keine Nur-Maus-Elemente</td></tr>
+</table>
+
+<h2>14. Sicherheits-Falsifikation</h2>
+<table>
+<tr><th>Versuch</th><th>Ergebnis</th></tr>
+<tr><td>Entwurf über Suche, Karte, Route, Ähnliche, Anfrage (Reise F)</td><td class="ok">nirgends sichtbar; Route 404; Anfrage 404 ohne Zeile</td></tr>
+<tr><td>Archiviert / verkauft / vermietet in der Suche «auch reservierte»</td><td class="ok">nicht enthalten</td></tr>
+<tr><td>Private Koordinaten in Liste, Karte, HTML, RSC, Bundle</td><td class="ok">0 (Abschnitt 9)</td></tr>
+<tr><td><code>proSeite=1000000</code>, <code>um=999999</code>, leerer Kasten, <code>seite=999</code></td><td class="ok">422</td></tr>
+<tr><td><code>sort=id;DROP TABLE</code>, <code>ort=ort-x' OR 1=1--</code>, <code>feat=x</code>, <code>typ=&lt;script&gt;</code></td><td class="ok">422 — Allowlists; kein Wert erreicht den SQL-Text</td></tr>
+<tr><td>SQL in der Objektroute, XSS in <code>/api/orte</code></td><td class="ok">404 · keine Spur in der Antwort</td></tr>
+<tr><td>Anfrage mit Fremdempfänger (<code>recipientEmail</code>), Anfrage an privat / agentur / fourwalls</td><td class="ok">422 · Empfänger aus der Beziehung: <code>recipient_user_id</code> (privat) bzw. <code>recipient_org_id</code></td></tr>
+<tr><td>Kasten in Grösse der ganzen Schweiz (3.3° × 5.8°)</td><td class="off">200 — gewollt: die herausgezoomte Karte ist ein legitimer Ausschnitt; die Grenze liegt bei 4° × 7°, darüber 422</td></tr>
+<tr><td>Datenbank gestoppt</td><td class="ok">Suche 500 ohne Interna, APIs <code>INTERNAL</code>, nach Neustart sofort wieder 200</td></tr>
+<tr><td>Zeilenzahl <code>listing</code> nach allen Prüfungen</td><td class="ok">unverändert</td></tr>
+</table>
+<p class="klein">Integrationslauf: 76 Prüfungen, 75 bestanden, die eine «Abweichung» ist die dokumentierte Kastengrenze. Ein echter Befund wurde behoben: <code>publishedAt</code> kam als <code>Date.toString()</code> statt als ISO-Datum. Falsifikation durch die Bauenden, kein Penetrationstest.</p>
+
+<h2>15. Grenzen</h2>
+<ul>
+<li><b>Prüfstatus je Organisation</b>, nicht je Inserat — das Produktionsmodell; acht Anbieter des Prototyps waren uneinheitlich (Abschnitt 2).</li>
+<li><b>Drei Mandate ohne Ortsentität</b> (Montagnola, Grimentz, Andermatt): nur über Kanton, Region, Umkreis, Ausschnitt findbar — der Ortsindex des Prototyps kennt sie nicht.</li>
+<li><b>Startseite</b> ist ein Einstieg (Zahl, Wege, Exclusive-Auswahl aus der Datenbank), nicht der Prototyp-Held mit Wasser — bewusst ausserhalb von P5.3.</li>
+<li><b>Suchabo</b> speichert die normalisierte Anfrage nur im Browser und sagt das («Entwicklungsstand»). Keine E-Mail, kein Versprechen.</li>
+<li><b>Karte im Browser-Pane</b> dieser Entwicklungsumgebung lädt den swisstopo-Stil nicht (Prototyp ebenso); Headless-Aufnahmen und Integrationslauf zeigen die Karte funktionierend.</li>
+<li><b>Ratenlimit</b> je Prozess; <b>kein Cache</b>; <b>CHF/m²-Sortierung</b> ohne Index — bei 50 000 Inseraten spürbar, im Demo-Bestand nicht.</li>
+<li><b>Ohne Konto:</b> Merkliste und Suchabo bleiben lokal; die Verwaltung (Konto-Ansicht des Prototyps) ist nicht migriert.</li>
+</ul>
+
+<h2>16. Empfehlung für P5.4</h2>
+<p><b>Konto + privates Inserat + Moderation als vertikale Scheibe:</b> anonym → Konto → Entwurf → Autosave → Vorschau → Einreichen → Prüfung durch die Moderation → Veröffentlichung → das Inserat erscheint in genau dieser Suche. Die Zustandsmaschine, die Sicht, der Importer als Gegenprobe und die Suche stehen; was fehlt, ist der Mensch mit Sitzung. Erst danach lohnen Staging auf einem Schweizer Host, Objektspeicher und Mailanbieter — dann gibt es private Abläufe, die eine echte Umgebung brauchen.</p>
+
+<p class="klein" style="margin-top:56px">Belege: <code>app/</code>, <code>db/migrations/0010</code>, <code>app/scripts/{import-demo,routen-test,marktplatz-test,skalen-test}.mjs</code>, <code>app/var/*-bericht.json</code>, <code>tools/baseline.mjs --app</code>, <code>tools/leistung.mjs</code>, <code>baseline/p4</code> und <code>baseline/p5</code> im Repository. Der Prototyp unter <code>final/</code> ist unverändert; Tag <code>p5.2-vertikale-scheibe</code> unangetastet.</p>
+</div>
+</body>
+</html>

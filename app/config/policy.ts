@@ -12,6 +12,9 @@
 export type AussageStand = "bestaetigt" | "bestaetigt-technisch" | "teilweise" | "geplant" | "unbestaetigt" | "demo";
 
 export const AUSSAGEN = {
+  /* P5.3: Sortierung «Neuste» zeigt höchstens drei Exclusive-Mandate zuoberst — Verhalten des Prototyps,
+     als Geschäftsregel NICHT bestätigt. Kein bezahltes Ranking; in «Empfohlen» kein Bonus. */
+  exclusivePlatzierung: { stand: "demo", frage: "Dürfen bei Sortierung «Neuste» bis zu drei Fourwalls-Exclusive-Mandate zuoberst stehen? (Prototyp-Verhalten, kein bezahltes Ranking; Geschäftsregel offen)" },
   bewertungKostenlos:   { stand: "unbestaetigt", frage: "Ist die hedonische Bewertung tatsächlich kostenlos und unverbindlich?" },
   honorarNurBeiErfolg:  { stand: "unbestaetigt", frage: "Fällt das Verkaufshonorar ausschliesslich bei Erfolg an — und wie hoch ist es?" },
   mandatLaufzeit:       { stand: "unbestaetigt", frage: "Sechs Monate, danach monatlich kündbar? Kein Alleinverkaufsrecht gegenüber der Eigentümerschaft?" },

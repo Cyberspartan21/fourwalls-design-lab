@@ -58,5 +58,9 @@
   "zimmer": "Plus de pièces",
   "zimmerAb": "Pièces dès",
   "zimmerBis": "Pièces jusqu’à",
-  "zimmerFilter": "Pièces"
+  "zimmerFilter": "Pièces",
+  "k_landWort": "terrain",
+  "nurFourwalls": "Fourwalls uniquement",
+  "aboHinweisDev": "Version de développement : l'alerte est mémorisée uniquement dans ce navigateur. Les notifications par e-mail suivront avec le compte (P5.4).",
+  "aehnlicheKeine": "Il n'y a actuellement aucun bien comparable."
 }

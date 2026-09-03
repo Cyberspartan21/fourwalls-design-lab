@@ -67,7 +67,7 @@ export function verfuegbarLabel(d: ListingDetail, t: T): string {
   return t("nachVereinbarung");
 }
 
-export function baueDossier(d: ListingDetail, t: T, locale: Locale, typ: string): Dossier {
+export function baueDossier(d: ListingDetail, t: T, locale: Locale, typ: string, aehnlicheAnzahl = 0): Dossier {
   const s: Sections = d.sections;
   const p = d.property;
   const miete = d.transaction === "rent";
@@ -80,7 +80,9 @@ export function baueDossier(d: ListingDetail, t: T, locale: Locale, typ: string)
   const preisNebenzeile = miete
     ? (d.rentExtraChf != null ? `+ ${chf(d.rentExtraChf)} ${t("nebenkosten")}` : null)
     : (m2 ? `${zahl(m2)} ${t("proM2")}` : null);
-  const monatlich = !miete && d.priceChf && !d.priceOnRequest
+  /* Monatliche Kosten nur bei Kauf eines Wohnobjekts mit Preis — wie monatlichMoeglich() im Prototyp */
+  const wohnobjekt = ["apartment", "house", "villa", "chalet", "multi_family"].includes(p.kind);
+  const monatlich = !miete && d.priceChf && !d.priceOnRequest && wohnobjekt
     ? { total: "CHF " + zahl(finanz(d.priceChf, 0.2, 0.019).total) } : null;
   const verfuegbar = verfuegbarLabel(d, t);
 
@@ -134,6 +136,7 @@ export function baueDossier(d: ListingDetail, t: T, locale: Locale, typ: string)
   add("dokumente", t("o_secDokumente"), d.documents.length > 0);
   add("fragen", t("o_secFragen"), (s.faq?.length ?? 0) > 0);
   add("kontakt", t("o_secKontakt"), true);
+  add("aehnliche", t("o_secAehnliche"), aehnlicheAnzahl > 0);
 
   return { detail: d, preis, preisNebenzeile, monatlich, verfuegbar, typ, eck, fakten, gruppen, geakKlasse, kategorien, abschnitte, zeigeMedienAbschnitt, zeigeLageDossier };
 }

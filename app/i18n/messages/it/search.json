@@ -58,5 +58,9 @@
   "zimmer": "Più locali",
   "zimmerAb": "Locali da",
   "zimmerBis": "Locali fino a",
-  "zimmerFilter": "Locali"
+  "zimmerFilter": "Locali",
+  "k_landWort": "terreno",
+  "nurFourwalls": "Solo Fourwalls",
+  "aboHinweisDev": "Stato di sviluppo: la ricerca salvata resta solo in questo browser. Le notifiche e-mail arriveranno con l'account (P5.4).",
+  "aehnlicheKeine": "Al momento non c'è nessun annuncio comparabile."
 }

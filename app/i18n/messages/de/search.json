@@ -58,5 +58,9 @@
   "zimmer": "Meiste Zimmer",
   "zimmerAb": "Zimmer ab",
   "zimmerBis": "Zimmer bis",
-  "zimmerFilter": "Zimmer"
+  "zimmerFilter": "Zimmer",
+  "k_landWort": "Land",
+  "nurFourwalls": "Nur Fourwalls",
+  "aboHinweisDev": "Entwicklungsstand: Das Suchabo wird nur in diesem Browser gemerkt. E-Mail-Benachrichtigungen folgen mit dem Konto (P5.4).",
+  "aehnlicheKeine": "Zurzeit gibt es kein vergleichbares Inserat."
 }

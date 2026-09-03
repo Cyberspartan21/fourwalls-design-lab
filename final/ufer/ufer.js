@@ -44,11 +44,53 @@ window.UFER = (function () {
 
   /* Informationsarchitektur: vier Gruppen, alles Weitere darunter (Properti-Lektion: sichtbar, aber nicht gleichrangig) */
   const NAV = [
-    { key:"immobilien", href:"portal.html", items:[["kaufen","portal.html","sSuche"],["mieten","portal.html?trans=rent","sSuche"],["karte","portal.html#karte",""],["exclusive","portal.html?quelle=fourwalls","sMandate"],["neubau","portal.html?quelle=entwickler",""],["suchabo","portal.html#konto",""]] },
-    { key:"verkaufen", href:"verkaufen.html", items:[["bewertung","verkaufen.html#bewertung","sKostenlos"],["mitFW","verkaufen.html","sMandat"],["selbst","portal.html#neu","sKostenlos"],["vermieten","portal.html#neu",""]] },
-    { key:"verwalten", href:"verwalten.html", items:[["bewirtschaftung","verwalten.html",""],["report","verwalten.html#report",""],["erstvermietung","verwalten.html#erstvermietung",""],["offerte","verwalten.html#offerte",""]] },
-    { key:"wissen", href:"wissen.html", items:[["ratgeber","wissen.html",""],["tragbarkeit","wissen.html#tragbarkeit","sRechner"],["nebenkosten","wissen.html#nebenkosten","sRechner"],["markt","wissen.html#markt",""]] }
+    { key:"immobilien", href:"portal.html", items:[
+      ["kaufen","portal.html","sSuche","nKaufen"],
+      ["mieten","portal.html?trans=rent","sSuche","nMieten"],
+      ["karte","portal.html#karte","","nKarte"],
+      ["exclusive","portal.html?quelle=fourwalls","sMandate","nExclusive"],
+      ["neubau","portal.html?quelle=entwickler","","nNeubau"],
+      ["suchabo","portal.html#konto","","nSuchabo"]] },
+    { key:"verkaufen", href:"verkaufen.html", items:[
+      ["bewertung","verkaufen.html#bewertung","sKostenlos","nBewertung"],
+      ["mitFW","verkaufen.html","sMandat","nMitFW"],
+      ["selbst","portal.html#neu","sKostenlos","nSelbst"],
+      ["vermieten","verwalten.html#erstvermietung","","nVermieten"]] },
+    { key:"verwalten", href:"verwalten.html", items:[
+      ["bewirtschaftung","verwalten.html","","nBewirt"],
+      ["report","verwalten.html#report","","nReport"],
+      ["erstvermietung","verwalten.html#erstvermietung","","nErst"],
+      ["offerte","verwalten.html#offerte","","nOfferte"]] },
+    { key:"wissen", href:"wissen.html", items:[
+      ["ratgeber","wissen.html","","nRatgeber"],
+      ["tragbarkeit","wissen.html#tragbarkeit","sRechner","nTragbar"],
+      ["nebenkosten","wissen.html#nebenkosten","sRechner","nNeben"],
+      ["markt","wissen.html#markt","","nMarkt"]] }
   ];
+  /* Eine Zeile je Eintrag — sie unterscheidet die Reisen: suchen, verkaufen lassen,
+     selbst inserieren, bewerten, verwalten lassen. */
+  const BESCHR = {
+    nKaufen:{de:"Eigentum in der ganzen Schweiz",fr:"Propriétés dans toute la Suisse",it:"Proprietà in tutta la Svizzera",en:"Property across Switzerland"},
+    nMieten:{de:"Wohnungen und Häuser zur Miete",fr:"Appartements et maisons à louer",it:"Appartamenti e case in affitto",en:"Homes to rent"},
+    nKarte:{de:"Suchen, wo Sie wohnen wollen",fr:"Chercher là où vous voulez vivre",it:"Cercare dove volete vivere",en:"Search where you want to live"},
+    nExclusive:{de:"Objekte, die wir selbst vertreten",fr:"Biens que nous représentons",it:"Oggetti che rappresentiamo noi",en:"Properties we represent ourselves"},
+    nNeubau:{de:"Projekte von Bauträgern",fr:"Projets de promoteurs",it:"Progetti di costruttori",en:"Developer projects"},
+    nSuchabo:{de:"Neue Treffer zuerst sehen",fr:"Voir les nouveautés en premier",it:"Vedere prima le novità",en:"See new matches first"},
+    nBewertung:{de:"Was ist mein Objekt wert?",fr:"Quelle est la valeur de mon bien ?",it:"Quanto vale il mio immobile?",en:"What is my property worth?"},
+    nMitFW:{de:"Wir übernehmen den ganzen Verkauf",fr:"Nous gérons toute la vente",it:"Gestiamo l'intera vendita",en:"We handle the entire sale"},
+    nSelbst:{de:"Sie inserieren und betreuen selbst",fr:"Vous publiez et gérez vous-même",it:"Pubblicate e gestite voi stessi",en:"You publish and manage it yourself"},
+    nVermieten:{de:"Mieterschaft finden und prüfen",fr:"Trouver et vérifier les locataires",it:"Trovare e verificare gli inquilini",en:"Find and vet tenants"},
+    nBewirt:{de:"Laufende Betreuung Ihrer Liegenschaft",fr:"Gestion courante de votre immeuble",it:"Gestione corrente del vostro stabile",en:"Ongoing care for your property"},
+    nReport:{de:"Ihr Haus in einer Seite, monatlich",fr:"Votre bien en une page, chaque mois",it:"Il vostro immobile in una pagina, ogni mese",en:"Your property on one page, monthly"},
+    nErst:{de:"Erstvermietung mit Marktmiete",fr:"Première location au prix du marché",it:"Prima locazione a prezzo di mercato",en:"First letting at market rent"},
+    nOfferte:{de:"Schriftlich in 48 Stunden",fr:"Par écrit sous 48 heures",it:"Per iscritto entro 48 ore",en:"In writing within 48 hours"},
+    nRatgeber:{de:"Kurz, geprüft, ohne Verkaufsdruck",fr:"Bref, vérifié, sans pression",it:"Breve, verificato, senza pressione",en:"Short, checked, no sales pressure"},
+    nTragbar:{de:"Was darf mein Objekt kosten?",fr:"Quel prix puis-je me permettre ?",it:"Quanto posso permettermi?",en:"What can I afford?"},
+    nNeben:{de:"Was neben dem Preis anfällt",fr:"Ce qui s'ajoute au prix",it:"Cosa si aggiunge al prezzo",en:"What comes on top of the price"},
+    nMarkt:{de:"Preise und Tempo nach Region",fr:"Prix et rythme par région",it:"Prezzi e ritmo per regione",en:"Prices and pace by region"}
+  };
+  const beschr = k => k ? ((BESCHR[k] && (BESCHR[k][FWP.lang] || BESCHR[k].de)) || "") : "";
+
   const SUB = { sSuche:{de:"Suche",fr:"Recherche",it:"Ricerca",en:"Search"}, sMandate:{de:"Mandate",fr:"Mandats",it:"Mandati",en:"Mandates"}, sMandat:{de:"Mandat",fr:"Mandat",it:"Mandato",en:"Mandate"}, sKostenlos:{de:"kostenlos",fr:"gratuit",it:"gratis",en:"free"}, sRechner:{de:"Rechner",fr:"Calculateur",it:"Calcolatore",en:"Calculator"} };
   const sub = k => k ? (SUB[k] && (SUB[k][FWP.lang] || SUB[k].de)) || k : "";
 
@@ -56,7 +98,7 @@ window.UFER = (function () {
     opt = opt || {};
     const esc = FWP.esc;
     const nav = NAV.map(g => `<div><a href="${g.href}" data-grp="${g.key}" aria-haspopup="true" aria-expanded="false" ${aktuell===g.key?'aria-current="true"':''}>${esc(u(g.key))}</a>
-      <div class="tafel" id="tafel-${g.key}"><div class="tk">${esc(u(g.key))}</div>${g.items.map(([k,h,s]) => `<a href="${h}">${esc(u(k))}${s?`<small>${esc(sub(s))}</small>`:""}</a>`).join("")}</div></div>`).join("");
+      <div class="tafel" id="tafel-${g.key}"><div class="tk">${esc(u(g.key))}</div>${g.items.map(([k,h,s,b]) => `<a href="${h}"><span class="wa"><b>${esc(u(k))}</b>${b?`<em>${esc(beschr(b))}</em>`:""}</span>${s?`<small>${esc(sub(s))}</small>`:""}</a>`).join("")}</div></div>`).join("");
     return `<a href="index.html" class="fw" aria-label="Fourwalls"><i class="k"></i><i class="s"></i></a>
       <nav class="haupt" aria-label="Hauptnavigation">${nav}</nav>
       <div class="rechts">
@@ -70,7 +112,7 @@ window.UFER = (function () {
   function blattHTML() {
     const esc = FWP.esc;
     return `<div class="bk"><span class="fw"><i class="k"></i><i class="s"></i></span><button class="knopf" id="blattZu">${esc(u("schliessen"))} ×</button></div>
-      ${NAV.map(g => `<div class="gruppe"><div class="tk">${esc(u(g.key))}</div>${g.items.map(([k,h,s]) => `<a href="${h}">${esc(u(k))}${s?`<small>${esc(sub(s))}</small>`:""}</a>`).join("")}</div>`).join("")}
+      ${NAV.map(g => `<div class="gruppe"><div class="tk">${esc(u(g.key))}</div>${g.items.map(([k,h,s,b]) => `<a href="${h}"><span class="wa"><b>${esc(u(k))}</b>${b?`<em>${esc(beschr(b))}</em>`:""}</span>${s?`<small>${esc(sub(s))}</small>`:""}</a>`).join("")}</div>`).join("")}
       <div class="unten"><a class="knopf voll" href="portal.html#neu">${esc(u("inserieren"))}</a><a class="knopf" href="portal.html#konto">${esc(u("gemerkt"))}</a>
       <div class="sprache" style="display:flex;margin-left:auto">${["de","fr","it","en"].map(l => `<button data-l="${l}" aria-pressed="${FWP.lang===l}">${l.toUpperCase()}</button>`).join("")}</div></div>`;
   }

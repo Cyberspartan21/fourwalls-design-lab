@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { env } from "@/server/env";
 import { log } from "@/lib/log";
+import { SmtpMailProvider } from "./mail-smtp";
 
 /* E-Mail hinter einer Schnittstelle.
 
@@ -15,10 +16,18 @@ import { log } from "@/lib/log";
    var/mail/ und ins Protokoll. Es verlässt nichts den Rechner. env.ts
    verweigert diesen Anbieter ausserhalb der Entwicklung. */
 
+/* Die Art einer Nachricht — dieselben sechs Werte wie mail_outbox.kind
+   (db/migrations/0013_outbox.sql) und lib/mailtext.ts. */
+export type MailArt = "verification" | "password_reset" | "listing_submitted" | "changes_requested" | "listing_published" | "inquiry";
+
 export interface Nachricht {
   an: string;
   betreff: string;
   text: string;
+  /* Sprache der Empfängerin, Rückfall 'de'. */
+  locale: "de" | "fr" | "it" | "en";
+  /* Art der Nachricht — für die Outbox und die Nachvollziehbarkeit. */
+  art: MailArt;
   /* Bezug für die Nachvollziehbarkeit, nie für den Inhalt. */
   bezug?: { art: string; kennung: string };
 }
@@ -48,6 +57,7 @@ let instanz: MailProvider | null = null;
 export function mail(): MailProvider {
   if (instanz) return instanz;
   if (env().MAIL_PROVIDER === "dev") instanz = new DevMailProvider();
+  else if (env().MAIL_PROVIDER === "smtp") instanz = new SmtpMailProvider();
   else throw new Error("Der produktive Mailversand ist in P5.2 noch nicht angebunden");
   return instanz;
 }

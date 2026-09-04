@@ -3,7 +3,9 @@ import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { Pool } from "pg";
 import { env, istProduktion } from "./env";
-import { mail } from "@/services/mail";
+import { sql } from "./db";
+import { einreihenOhneTx } from "./outbox";
+import { mailtext } from "@/lib/mailtext";
 import { log } from "@/lib/log";
 
 /* Authentifizierung — Better Auth 1.7.2, auf das FOURWALLS-Datenmodell gelegt.
@@ -30,6 +32,14 @@ const pool = new Pool({ connectionString: env().DATABASE_URL, max: 5, idleTimeou
 
 /* Die Adresse, an die Bestätigungs- und Zurücksetzungslinks zeigen. */
 const basis = () => env().NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+
+/* Sprache der Empfängerin frisch aus der Datenbank — nicht aus dem
+   Better-Auth-Nutzerobjekt, dessen Typ die Zusatzfelder nicht kennt. */
+async function locale(userId: string): Promise<"de" | "fr" | "it" | "en"> {
+  const z = await sql`SELECT locale FROM app_user WHERE id = ${userId}`;
+  const l = z[0]?.locale;
+  return l === "fr" || l === "it" || l === "en" ? l : "de";
+}
 
 export const auth = betterAuth({
   appName: "Fourwalls",
@@ -94,12 +104,9 @@ export const auth = betterAuth({
     resetPasswordTokenExpiresIn: 60 * 60,
     revokeSessionsOnPasswordReset: true,
     async sendResetPassword({ user, url }) {
-      await mail().senden({
-        an: user.email,
-        betreff: "Fourwalls — Passwort zurücksetzen",
-        text: `Sie haben ein neues Passwort angefordert.\n\n${url}\n\nDer Link gilt eine Stunde. Wenn Sie das nicht waren, können Sie diese Nachricht ignorieren — Ihr Passwort bleibt unverändert.`,
-        bezug: { art: "passwort-zuruecksetzen", kennung: user.id }
-      });
+      const l = await locale(user.id);
+      const { betreff, text } = mailtext("password_reset", l, { name: user.name || user.email, url });
+      await einreihenOhneTx({ an: user.email, betreff, text, locale: l, art: "password_reset", bezug: { art: "user", kennung: user.id } });
     }
   },
   emailVerification: {
@@ -107,12 +114,9 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     expiresIn: 60 * 60 * 24,
     async sendVerificationEmail({ user, url }) {
-      await mail().senden({
-        an: user.email,
-        betreff: "Fourwalls — E-Mail bestätigen",
-        text: `Willkommen bei Fourwalls.\n\nBitte bestätigen Sie diese Adresse:\n${url}\n\nDer Link gilt 24 Stunden.`,
-        bezug: { art: "email-bestaetigung", kennung: user.id }
-      });
+      const l = await locale(user.id);
+      const { betreff, text } = mailtext("verification", l, { name: user.name || user.email, url });
+      await einreihenOhneTx({ an: user.email, betreff, text, locale: l, art: "verification", bezug: { art: "user", kennung: user.id } });
     }
   },
 

@@ -1,0 +1,26 @@
+{
+  "verification": {
+    "betreff": "Fourwalls — Confermare l'indirizzo e-mail",
+    "text": "Gentile {name}\n\nConfermi il Suo indirizzo e-mail:\n{url}\n\nIl link è valido 24 ore. Se non ha effettuato Lei questa registrazione, può ignorare questo messaggio."
+  },
+  "password_reset": {
+    "betreff": "Fourwalls — Reimpostare la password",
+    "text": "Gentile {name}\n\nHa richiesto una nuova password:\n{url}\n\nIl link è valido un'ora. Se non è stato Lei, può ignorare questo messaggio — la Sua password resta invariata."
+  },
+  "listing_submitted": {
+    "betreff": "Fourwalls — Il Suo annuncio è stato inviato ({referenz})",
+    "text": "Gentile {name}\n\nIl Suo annuncio «{titel}» ({referenz}) è stato inviato e verrà ora esaminato. La informeremo non appena sarà presa una decisione."
+  },
+  "changes_requested": {
+    "betreff": "Fourwalls — Modifica richiesta per il Suo annuncio ({referenz})",
+    "text": "Gentile {name}\n\nPer il Suo annuncio «{titel}» ({referenz}) chiediamo una modifica:\n\n{nachricht}\n\nLa preghiamo di adattare l'annuncio e di inviarlo nuovamente."
+  },
+  "listing_published": {
+    "betreff": "Fourwalls — Il Suo annuncio è pubblicato ({referenz})",
+    "text": "Gentile {name}\n\nIl Suo annuncio «{titel}» ({referenz}) è ora visibile pubblicamente:\n{url}"
+  },
+  "inquiry": {
+    "betreff": "Fourwalls — Richiesta su {titel} ({referenz})",
+    "text": "Richiesta su {referenz} ({titel})\nDa: {name}\n\n{nachricht}"
+  }
+}

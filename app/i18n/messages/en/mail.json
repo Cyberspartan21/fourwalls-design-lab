@@ -1,0 +1,26 @@
+{
+  "verification": {
+    "betreff": "Fourwalls — Confirm your email address",
+    "text": "Hello {name}\n\nPlease confirm your email address:\n{url}\n\nThe link is valid for 24 hours. If you did not sign up, you can ignore this message."
+  },
+  "password_reset": {
+    "betreff": "Fourwalls — Reset your password",
+    "text": "Hello {name}\n\nYou requested a new password:\n{url}\n\nThe link is valid for one hour. If this wasn't you, you can ignore this message — your password stays unchanged."
+  },
+  "listing_submitted": {
+    "betreff": "Fourwalls — Your listing has been submitted ({referenz})",
+    "text": "Hello {name}\n\nYour listing “{titel}” ({referenz}) has been submitted and is now under review. We'll let you know as soon as a decision has been made."
+  },
+  "changes_requested": {
+    "betreff": "Fourwalls — Change requested for your listing ({referenz})",
+    "text": "Hello {name}\n\nFor your listing “{titel}” ({referenz}) we're asking for a change:\n\n{nachricht}\n\nPlease adjust your listing and submit it again."
+  },
+  "listing_published": {
+    "betreff": "Fourwalls — Your listing is published ({referenz})",
+    "text": "Hello {name}\n\nYour listing “{titel}” ({referenz}) is now publicly visible:\n{url}"
+  },
+  "inquiry": {
+    "betreff": "Fourwalls — Inquiry about {titel} ({referenz})",
+    "text": "Inquiry about {referenz} ({titel})\nFrom: {name}\n\n{nachricht}"
+  }
+}

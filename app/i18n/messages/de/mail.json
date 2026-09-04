@@ -1,0 +1,26 @@
+{
+  "verification": {
+    "betreff": "Fourwalls — E-Mail bestätigen",
+    "text": "Guten Tag {name}\n\nBitte bestätigen Sie Ihre E-Mail-Adresse:\n{url}\n\nDer Link gilt 24 Stunden. Wenn Sie sich nicht registriert haben, können Sie diese Nachricht ignorieren."
+  },
+  "password_reset": {
+    "betreff": "Fourwalls — Passwort zurücksetzen",
+    "text": "Guten Tag {name}\n\nSie haben ein neues Passwort angefordert:\n{url}\n\nDer Link gilt eine Stunde. Wenn Sie das nicht waren, können Sie diese Nachricht ignorieren — Ihr Passwort bleibt unverändert."
+  },
+  "listing_submitted": {
+    "betreff": "Fourwalls — Ihr Inserat ist eingereicht ({referenz})",
+    "text": "Guten Tag {name}\n\nIhr Inserat «{titel}» ({referenz}) wurde eingereicht und wird nun geprüft. Wir melden uns, sobald ein Entscheid vorliegt."
+  },
+  "changes_requested": {
+    "betreff": "Fourwalls — Änderung an Ihrem Inserat ({referenz})",
+    "text": "Guten Tag {name}\n\nZu Ihrem Inserat «{titel}» ({referenz}) bitten wir um eine Änderung:\n\n{nachricht}\n\nBitte passen Sie Ihr Inserat an und reichen Sie es erneut ein."
+  },
+  "listing_published": {
+    "betreff": "Fourwalls — Ihr Inserat ist veröffentlicht ({referenz})",
+    "text": "Guten Tag {name}\n\nIhr Inserat «{titel}» ({referenz}) ist jetzt öffentlich sichtbar:\n{url}"
+  },
+  "inquiry": {
+    "betreff": "Fourwalls — Anfrage zu {titel} ({referenz})",
+    "text": "Anfrage zu {referenz} ({titel})\nVon: {name}\n\n{nachricht}"
+  }
+}

@@ -2,7 +2,8 @@ import "server-only";
 import { z } from "zod";
 import { sql } from "./db";
 import { env } from "./env";
-import { mail } from "@/services/mail";
+import { einreihen } from "./outbox";
+import { mailtext } from "@/lib/mailtext";
 import { AppError } from "@/lib/errors";
 import { log } from "@/lib/log";
 
@@ -36,7 +37,8 @@ export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; ua
   const nurEcht = env().APP_ENV === "production";
   /* Nur ein veröffentlichtes Inserat kann eine Anfrage empfangen. */
   const inserate = await sql`
-    SELECT l.id, l.title, l.published_by_org_id, l.contact_user_id, u.email AS kontakt_email, o.email AS org_email
+    SELECT l.id, l.title, l.published_by_org_id, l.contact_user_id,
+           u.email AS kontakt_email, u.locale AS kontakt_locale, o.email AS org_email
       FROM listing l
       LEFT JOIN app_user u ON u.id = l.contact_user_id
       LEFT JOIN organization o ON o.id = l.published_by_org_id
@@ -47,30 +49,32 @@ export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; ua
   const ins = inserate[0];
   if (!ins) throw new AppError("NOT_FOUND", "Dieses Inserat ist nicht erreichbar");
 
-  const zeilen = await sql`
-    INSERT INTO inquiry (kind, listing_id, sender_name, sender_email, sender_phone, recipient_user_id, recipient_org_id, message, wants_alert, source, ip_hash, user_agent_hash)
-    VALUES (${a.art}, ${ins.id}, ${glatt(a.name)}, ${a.email}, ${a.telefon ? glatt(a.telefon) : null},
-            ${ins.contact_user_id ?? null}, ${ins.published_by_org_id ?? null},
-            ${a.nachricht.replace(/\r\n?/g, "\n")}, ${a.suchabo === true}, 'web', ${herkunft.ipHash}, ${herkunft.uaHash})
-    RETURNING public_ref`;
-  const publicRef = String(zeilen[0]?.public_ref);
-  log.info("inquiry.angenommen", { inquiry: publicRef, listing: a.publicRef, art: a.art });
-
   /* Empfänger aus der Beziehung Inserat → Ansprechperson → Organisation.
      In der Entwicklung landet alles in der Senke; kein echtes Postfach ist
      Teil der Fachlogik. */
   const e = env();
   const an = e.APP_ENV === "development" ? e.MAIL_DEV_SINK : (ins.kontakt_email ?? ins.org_email);
-  if (!an) { log.warn("inquiry.ohneEmpfaenger", { inquiry: publicRef }); return { publicRef }; }
-  try {
-    await mail().senden({
-      an, betreff: `Anfrage ${publicRef} · ${ins.title}`,
-      text: `Anfrage zu ${a.publicRef} (${ins.title})\nArt: ${a.art}\nVon: ${glatt(a.name)} <${a.email}>${a.telefon ? `\nTelefon: ${glatt(a.telefon)}` : ""}\n\n${a.nachricht}`,
-      bezug: { art: "inquiry", kennung: publicRef }
-    });
-  } catch (err) {
-    /* Die Anfrage steht in der Datenbank; der Versand ist nachholbar. */
-    log.error("inquiry.mailFehler", { inquiry: publicRef, fehler: err instanceof Error ? err.message : String(err) });
-  }
+  const l = ins.kontakt_locale === "fr" || ins.kontakt_locale === "it" || ins.kontakt_locale === "en" ? ins.kontakt_locale : "de";
+
+  const publicRef = await sql.begin(async tx => {
+    const zeilen = await tx`
+      INSERT INTO inquiry (kind, listing_id, sender_name, sender_email, sender_phone, recipient_user_id, recipient_org_id, message, wants_alert, source, ip_hash, user_agent_hash)
+      VALUES (${a.art}, ${ins.id}, ${glatt(a.name)}, ${a.email}, ${a.telefon ? glatt(a.telefon) : null},
+              ${ins.contact_user_id ?? null}, ${ins.published_by_org_id ?? null},
+              ${a.nachricht.replace(/\r\n?/g, "\n")}, ${a.suchabo === true}, 'web', ${herkunft.ipHash}, ${herkunft.uaHash})
+      RETURNING public_ref`;
+    const ref = String(zeilen[0]?.public_ref);
+
+    /* Die Nachricht an die Anbieterin steht in derselben Transaktion wie die
+       Anfrage — steht die Zeile, steht auch die Nachricht in der Outbox. */
+    if (an) {
+      const kontaktinfo = `Art: ${a.art}\nVon: ${glatt(a.name)} <${a.email}>${a.telefon ? `\nTelefon: ${glatt(a.telefon)}` : ""}\n\n${a.nachricht}`;
+      const { betreff, text } = mailtext("inquiry", l, { titel: ins.title ?? "", referenz: ref, name: glatt(a.name), nachricht: kontaktinfo });
+      await einreihen(tx, { an, betreff, text, locale: l, art: "inquiry", bezug: { art: "inquiry", kennung: ref } });
+    }
+    return ref;
+  });
+  log.info("inquiry.angenommen", { inquiry: publicRef, listing: a.publicRef, art: a.art });
+  if (!an) log.warn("inquiry.ohneEmpfaenger", { inquiry: publicRef });
   return { publicRef };
 }

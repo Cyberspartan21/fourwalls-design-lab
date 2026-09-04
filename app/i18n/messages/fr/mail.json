@@ -1,0 +1,26 @@
+{
+  "verification": {
+    "betreff": "Fourwalls — Confirmer votre adresse e-mail",
+    "text": "Bonjour {name}\n\nVeuillez confirmer votre adresse e-mail :\n{url}\n\nCe lien est valable 24 heures. Si vous n'êtes pas à l'origine de cette inscription, vous pouvez ignorer ce message."
+  },
+  "password_reset": {
+    "betreff": "Fourwalls — Réinitialiser le mot de passe",
+    "text": "Bonjour {name}\n\nVous avez demandé un nouveau mot de passe :\n{url}\n\nCe lien est valable une heure. Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce message — votre mot de passe reste inchangé."
+  },
+  "listing_submitted": {
+    "betreff": "Fourwalls — Votre annonce a été soumise ({referenz})",
+    "text": "Bonjour {name}\n\nVotre annonce « {titel} » ({referenz}) a été soumise et sera examinée. Nous vous informerons dès qu'une décision sera prise."
+  },
+  "changes_requested": {
+    "betreff": "Fourwalls — Modification demandée pour votre annonce ({referenz})",
+    "text": "Bonjour {name}\n\nPour votre annonce « {titel} » ({referenz}), nous vous demandons une modification :\n\n{nachricht}\n\nVeuillez adapter votre annonce et la soumettre à nouveau."
+  },
+  "listing_published": {
+    "betreff": "Fourwalls — Votre annonce est publiée ({referenz})",
+    "text": "Bonjour {name}\n\nVotre annonce « {titel} » ({referenz}) est maintenant visible publiquement :\n{url}"
+  },
+  "inquiry": {
+    "betreff": "Fourwalls — Demande concernant {titel} ({referenz})",
+    "text": "Demande concernant {referenz} ({titel})\nDe : {name}\n\n{nachricht}"
+  }
+}

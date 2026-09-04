@@ -3,6 +3,7 @@ import { sql } from "./db";
 import { env } from "./env";
 import { getPlace, SCHWEIZ_BOX, type OrtEntitaet } from "./geo";
 import { alsMedia } from "@/services/storage";
+type MediaVariante = { storage_key: string; width: number; format: "jpeg" | "webp" | "avif" };
 import type { Locale } from "@/i18n";
 import { TYP_ZU_KIND, QUELLE_ZU_KIND, KIND_ZU_TYP, KIND_ZU_QUELLE, DB_ZU_TRANS, TRANS_ZU_DB,
   type Suchanfrage, type Suchergebnis, type Treffer, type Punkt, type GeoAntwort, type VerfArt } from "@/domain/marktplatz";
@@ -93,7 +94,9 @@ export async function suche(q: Suchanfrage, locale: Locale = "de"): Promise<Such
            ST_X(lp.geom_public::geometry) AS lng, ST_Y(lp.geom_public::geometry) AS lat, lp.geo_precision, lp.geo_radius_m,
            lp.price_chf, lp.price_on_request, lp.rent_net_chf, lp.rent_extra_chf, lp.rooms, lp.living_area_m2, lp.plot_area_m2, lp.floor, lp.built_year,
            lp.publisher_kind, lp.represented_by_org_id, lp.status, lp.available_immediately, lp.available_from, lp.published_at,
-           (SELECT regexp_replace(a.storage_key, '^demo/(.*)-\\d+\\.[a-z]+$', '\\1') FROM listing_image li JOIN media_asset a ON a.id = li.asset_id WHERE li.listing_id = lp.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1) AS img,
+           (SELECT json_agg(json_build_object('storage_key', v.storage_key, 'width', v.width, 'format', v.format) ORDER BY v.width)
+              FROM media_variant v
+             WHERE v.asset_id = (SELECT li.asset_id FROM listing_image li WHERE li.listing_id = lp.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1)) AS bild_varianten,
            EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verified_at IS NOT NULL) AS verified
       FROM listing_public lp ${wo}
      ORDER BY ${order}
@@ -105,7 +108,9 @@ export async function suche(q: Suchanfrage, locale: Locale = "de"): Promise<Such
            ST_X(lp.geom_public::geometry) AS lng, ST_Y(lp.geom_public::geometry) AS lat, lp.geo_precision, lp.geo_radius_m,
            lp.price_chf, lp.price_on_request, lp.rent_net_chf, lp.rent_extra_chf, lp.rooms, lp.living_area_m2, lp.plot_area_m2, lp.floor, lp.built_year,
            lp.publisher_kind, lp.represented_by_org_id, lp.status, lp.available_immediately, lp.available_from, lp.published_at,
-           (SELECT regexp_replace(a.storage_key, '^demo/(.*)-\\d+\\.[a-z]+$', '\\1') FROM listing_image li JOIN media_asset a ON a.id = li.asset_id WHERE li.listing_id = lp.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1) AS img,
+           (SELECT json_agg(json_build_object('storage_key', v.storage_key, 'width', v.width, 'format', v.format) ORDER BY v.width)
+              FROM media_variant v
+             WHERE v.asset_id = (SELECT li.asset_id FROM listing_image li WHERE li.listing_id = lp.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1)) AS bild_varianten,
            EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verified_at IS NOT NULL) AS verified
       FROM listing_public lp WHERE lp.public_ref = ${q.ref} AND (${nurEcht} = false OR lp.is_demo = false) LIMIT 1`;
     const t = z.map(alsTreffer);
@@ -146,7 +151,11 @@ export function alsTreffer(z: Record<string, unknown>): Treffer {
     rentNet: z.rent_net_chf == null ? null : Number(z.rent_net_chf) / 100, rentNK: z.rent_extra_chf == null ? null : Number(z.rent_extra_chf) / 100,
     rooms: z.rooms == null ? null : Number(z.rooms), livingArea: z.living_area_m2 == null ? null : Number(z.living_area_m2), plotArea: z.plot_area_m2 == null ? null : Number(z.plot_area_m2),
     floor: z.floor == null ? null : Number(z.floor), yearBuilt: z.built_year == null ? null : Number(z.built_year),
-    bild: z.img ? alsMedia(String(z.img), String(z.title), null, [480, 960, 1600].flatMap(w => [{ storage_key: `demo/${z.img}-${w}.webp`, width: w, format: "webp" as const }, { storage_key: `demo/${z.img}-${w}.jpg`, width: w, format: "jpeg" as const }])).sources : null, listingSource: quelle, listingTier: exklusiv ? "exclusive" : (z.verified || quelle === "fourwalls") ? "verified" : "standard",
+    /* Die Bildadressen kommen aus den tatsächlich vorhandenen Varianten —
+       für Demo-Fixtures sind das sechs, für ein hochgeladenes Bild eine. */
+    bild: (z.bild_varianten as MediaVariante[] | null)?.length
+      ? alsMedia("", String(z.title), null, z.bild_varianten as MediaVariante[]).sources : null,
+    listingSource: quelle, listingTier: exklusiv ? "exclusive" : (z.verified || quelle === "fourwalls") ? "verified" : "standard",
     verificationStatus: (z.verified || quelle === "fourwalls") ? "verified" : "none",
     availability: { art, datum: z.available_from ? String(z.available_from).slice(0, 10) : null },
     neu: pub ? (Date.now() - new Date(pub).getTime()) < 14 * 86400000 : false, fw: quelle === "fourwalls",

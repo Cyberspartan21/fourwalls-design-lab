@@ -102,11 +102,11 @@ export default async function Suche({ params, searchParams }: { params: Promise<
           </section>
         ) : (
           <section className="ansicht an" id="a-suche">
-            <Wasserlinie key={JSON.stringify(q)} q={q} ort={ort ? { id: ort.id, label: ort.label, typ: ort.typ } : null} w={w} locale={locale} basis={{ kaufen: basisPfad(locale, "buy"), mieten: basisPfad(locale, "rent") }} seiteVon="" ansichtKarte={false} total={antwort.total} />
+            <Wasserlinie key={"filter:" + JSON.stringify(q)} q={q} ort={ort ? { id: ort.id, label: ort.label, typ: ort.typ } : null} w={w} locale={locale} basis={{ kaufen: basisPfad(locale, "buy"), mieten: basisPfad(locale, "rent") }} seiteVon="" ansichtKarte={false} total={antwort.total} />
             <Chips q={q} ortLabel={ort?.label ?? null} w={w} basis={basis} />
             <ResultKopf q={q} titel={titel} total={antwort.total} w={w} basis={basis} />
             {antwort.total > 0 && <div className="gitter" id="gitter">{antwort.treffer.map(l => <Karte key={l.id} l={l} w={w} locale={locale} href={objektPfad(locale, pfad, l)} />)}</div>}
-            <MehrLaden key={JSON.stringify(q)} q={q} total={antwort.total} geladen={antwort.treffer.length} w={w} locale={locale} pfad={pfad} basis={basis} />
+            <MehrLaden key={"mehr:" + JSON.stringify(q)} q={q} total={antwort.total} geladen={antwort.treffer.length} w={w} locale={locale} pfad={pfad} basis={basis} />
             {antwort.total === 0 && <Leer q={q} wege={wege} w={w} basis={basis} />}
             <AboZeile q={q} zusammenfassung={zusammenfassung || (trans === "rent" ? w.mieten! : w.kaufen!)} total={antwort.total} w={w} />
           </section>

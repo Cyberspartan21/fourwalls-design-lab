@@ -107,6 +107,18 @@ const wD = ladeQuelle("ufer/detail-data.js");
 const wG = ladeQuelle("ufer/geo.js", { FWP: { lang: "de" } });
 const L = wL.FWL.listings, MANDATE = wP.FW.properties, BROKER = wP.FW.brokers || wP.FW.team || [], FWD = wD.FWD, GEO = wG.FWGEO;
 
+/* Drei Orte, die der Prototyp-Ortsindex nicht kennt, obwohl Mandate dort liegen
+   (P5.4 §2B). Koordinaten sind öffentlich bekannte Ortsmitten, keine Adressen.
+   Montagnola und Grimentz sind Ortsteile grösserer Gemeinden (Collina d'Oro TI,
+   Anniviers VS); sie stehen hier auf der Gemeindeebene, weil der Ortsindex diese
+   Ebene für Ortsnamen führt. Ein amtliches Gemeindeverzeichnis bildet das später
+   genauer ab. */
+const ORTE_ERGAENZUNG = [
+  { id: "ort-montagnola", name: "Montagnola", kt: "TI", plz: ["6926"], lat: 45.9736, lng: 8.9319, gemeinde: "Collina d'Oro" },
+  { id: "ort-grimentz",   name: "Grimentz",   kt: "VS", plz: ["3961"], lat: 46.1806, lng: 7.5722, gemeinde: "Anniviers" },
+  { id: "ort-andermatt",  name: "Andermatt",  kt: "UR", plz: ["6490"], lat: 46.6339, lng: 8.5942 }
+];
+
 /* ---------- Abbildungstabellen ---------- */
 const ART = { wohnung: "apartment", haus: "house", villa: "villa", chalet: "chalet", mfh: "multi_family", gewerbe: "commercial", grundstueck: "land", parkplatz: "parking" };
 const ART_MANDAT = { apartment: "apartment", house: "house", villa: "villa", chalet: "chalet", multifamily: "multi_family", "multi-family": "multi_family", commercial: "commercial", land: "land" };
@@ -220,7 +232,7 @@ async function main() {
                 ST_SetSRID(ST_MakePoint(${k.mitte[1]}, ${k.mitte[0]}), 4326)::geography, ST_GeogFromText(${boxWkt(k.box)}), ${region ? placeId["rg-" + region] : null}) RETURNING id`;
       placeId["kt-" + kt] = row[0].id;
     }
-    for (const o of GEO.ORTE) {
+    for (const o of [...GEO.ORTE, ...ORTE_ERGAENZUNG]) {
       const n = o.n || {};
       const row = await sql`INSERT INTO place (key, kind, canton, name_de, name_fr, name_it, name_en, aliases, postal_codes, centroid, parent_id)
         VALUES (${o.id}, 'municipality', ${o.kt}, ${o.name}, ${n.fr ?? null}, ${n.it ?? null}, ${n.en ?? null}, ${Array.from(new Set(o.alt || []))}, ${o.plz},
@@ -343,7 +355,8 @@ async function main() {
       const seehaus = p.slug === "seehaus-walensee";
       const refL = seehaus ? "FWL-2026-000142" : `FWL-2026-2${nr.slice(1)}`, refP = seehaus ? "FWI-DEMO-000001" : `FWI-2026-2${nr.slice(1)}`;
       const kind = ART_MANDAT[p.propertyType] || (p.rooms == null ? "multi_family" : "apartment");
-      const ortsId = GEO.GeoProvider.ortNachName(p.city)?.id;
+      const ortsId = GEO.GeoProvider.ortNachName(p.city)?.id
+        ?? ORTE_ERGAENZUNG.find(o => o.name.toLowerCase() === String(p.city).toLowerCase())?.id;
       if (!ortsId) warn("ort-unbekannt", `${p.id}: ${p.city}`);
       const prz = seehaus ? "approximate" : "approximate"; const radius = 450;
       const prop = await sql`INSERT INTO property (public_ref, kind, postal_code, city, canton, place_id, geom_exact, geo_precision, geo_radius_m, rooms, living_area_m2, usable_area_m2, plot_area_m2, volume_m3, bedrooms, bathrooms, floor, floors_total, built_year, ceiling_height_m)
@@ -451,4 +464,4 @@ async function main() {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch(async e => { console.error("IMPORT ABGEBROCHEN — nichts geschrieben:", e.message); await sql.end(); process.exit(1); });
 } else if (sql) { await sql.end(); }
-export { ART, ART_MANDAT, HERAUSGEBER, PRAEZISION, abgeleiteteAbschnitte, slugify, rp, synthetisch, MANDATE, L };
+export { ORTE_ERGAENZUNG, ART, ART_MANDAT, HERAUSGEBER, PRAEZISION, abgeleiteteAbschnitte, slugify, rp, synthetisch, MANDATE, L };

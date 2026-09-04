@@ -572,7 +572,11 @@ async function main() {
       ["proSeite=1000000 → 422", "/api/search?proSeite=1000000", 422],
       ["um=999999 → 422", "/api/search?um=999999", 422],
       ["box=1,2,3,4 → 422", "/api/search?ansicht=karte&box=1,2,3,4", 422],
-      ["box=48.4,45.1,10.9,5.1 (zu gross) → 422", "/api/search?ansicht=karte&box=48.4,45.1,10.9,5.1", 422],
+      /* Ein herausgezoomter Ausschnitt über die ganze Schweiz (3.3° × 5.8°) ist legitim und muss
+         beantwortet werden. Die wirksame Schranke sind die Koordinatengrenzen (45–48.5 / 5–11),
+         nicht die zusätzliche Spannenprüfung. */
+      ["box=48.4,45.1,10.9,5.1 (ganze Schweiz, legitim) → 200", "/api/search?ansicht=karte&box=48.4,45.1,10.9,5.1", 200],
+      ["box=49,44,12,4 (ausserhalb der Schweiz-Hülle) → 422", "/api/search?ansicht=karte&box=49,44,12,4", 422],
       ["sort=id;DROP TABLE listing → 422", "/api/search?" + new URLSearchParams({ sort: "id;DROP TABLE listing" }).toString(), 422],
       ["ort=ort-x' OR 1=1-- → 422", "/api/search?" + new URLSearchParams({ ort: "ort-x' OR 1=1--" }).toString(), 422],
       ["feat=x → 422", "/api/search?feat=x", 422],

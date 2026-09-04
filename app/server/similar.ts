@@ -48,7 +48,9 @@ export async function aehnliche(publicRef: string, n = 3): Promise<Treffer[]> {
            ST_X(p.geom_public::geometry) AS lng, ST_Y(p.geom_public::geometry) AS lat, p.geo_precision, p.geo_radius_m,
            p.price_chf, p.price_on_request, p.rent_net_chf, p.rent_extra_chf, p.rooms, p.living_area_m2, p.plot_area_m2, p.floor, p.built_year,
            p.publisher_kind, p.represented_by_org_id, p.status, p.available_immediately, p.available_from, p.published_at,
-           (SELECT regexp_replace(a.storage_key, '^demo/(.*)-\\d+\\.[a-z]+$', '\\1') FROM listing_image li JOIN media_asset a ON a.id = li.asset_id WHERE li.listing_id = p.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1) AS img,
+           (SELECT json_agg(json_build_object('storage_key', v.storage_key, 'width', v.width, 'format', v.format) ORDER BY v.width)
+              FROM media_variant v
+             WHERE v.asset_id = (SELECT li.asset_id FROM listing_image li WHERE li.listing_id = p.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1)) AS bild_varianten,
            EXISTS (SELECT 1 FROM organization o WHERE o.id = p.published_by_org_id AND o.verified_at IS NOT NULL) AS verified,
            p.p AS punkte
       FROM punkte p

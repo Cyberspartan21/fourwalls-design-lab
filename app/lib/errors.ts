@@ -36,8 +36,17 @@ export class AppError extends Error {
 
 export const isAppError = (e: unknown): e is AppError => e instanceof AppError;
 
-/* Alles, was kein AppError ist, wird zu INTERNAL — ohne dass die Ursache
-   nach aussen dringt. */
+/* Ein fehlgeschlagener Schema-Abgleich ist ein Eingabefehler, kein Serverfehler:
+   Zod-Fehler werden zu VALIDATION mit Feldnamen. Alles Übrige wird zu INTERNAL —
+   ohne dass die Ursache nach aussen dringt. */
+interface ZodAehnlich { name?: string; issues?: { path: (string | number)[]; message: string }[] }
 export function asAppError(e: unknown): AppError {
-  return isAppError(e) ? e : new AppError("INTERNAL");
+  if (isAppError(e)) return e;
+  const z = e as ZodAehnlich;
+  if (z && Array.isArray(z.issues) && (z.name === "ZodError" || z.name === "$ZodError")) {
+    const felder: Record<string, string> = {};
+    for (const i of z.issues.slice(0, 20)) felder[i.path.join(".") || "_"] = i.message;
+    return new AppError("VALIDATION", "Bitte prüfen Sie Ihre Angaben", felder);
+  }
+  return new AppError("INTERNAL");
 }

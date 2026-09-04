@@ -1,4 +1,6 @@
 import "server-only";
+import { mkdir, writeFile, readFile, rm } from "node:fs/promises";
+import { join } from "node:path";
 import { env } from "@/server/env";
 import type { Media, MediaSource } from "@/domain/listing";
 
@@ -14,6 +16,12 @@ import type { Media, MediaSource } from "@/domain/listing";
 
 export interface StorageProvider {
   readonly name: string;
+  /* Ein Objekt ablegen. Der Schlüssel kommt aus der Anwendung, nie aus dem
+     Browser — sonst wäre ein Pfadwechsel möglich (P5.4 §33). */
+  speichern(storageKey: string, daten: Uint8Array, mimeType: string): Promise<void>;
+  /* Die Bytes zurücklesen — für die geprüfte Auslieferung eigener Uploads. */
+  lesen(storageKey: string): Promise<Uint8Array | null>;
+  loeschen(storageKey: string): Promise<void>;
   /* Dauerhafte Adresse einer öffentlichen Ableitung. */
   publicUrl(storageKey: string): string;
   /* Kurzlebige Adresse für ein geschütztes Objekt — erst nach erfolgter
@@ -23,9 +31,30 @@ export interface StorageProvider {
 
 class LocalDevStorage implements StorageProvider {
   readonly name = "local";
+  /* Fixtures des Demo-Bestands liegen unter public/media und sind öffentlich.
+     Hochgeladenes liegt daneben in var/uploads — NICHT im öffentlichen Ordner:
+     Bilder eines Entwurfs dürfen erst mit der Veröffentlichung sichtbar werden
+     (§36). Ausgeliefert werden sie über /api/medien/<id> mit Prüfung. */
+  private readonly ablage = join(process.cwd(), "var", "uploads");
+  private pfad(storageKey: string) {
+    const datei = storageKey.replace(/^upload\//, "");
+    if (!/^[a-f0-9-]{36}\.(jpg|png|webp)$/i.test(datei)) throw new Error("Unzulässiger Speicherschlüssel");
+    return join(this.ablage, datei);
+  }
+  async speichern(storageKey: string, daten: Uint8Array, _mime: string) {
+    void _mime;
+    await mkdir(this.ablage, { recursive: true });
+    await writeFile(this.pfad(storageKey), daten);
+  }
+  async lesen(storageKey: string) {
+    try { return new Uint8Array(await readFile(this.pfad(storageKey))); } catch { return null; }
+  }
+  async loeschen(storageKey: string) {
+    try { await rm(this.pfad(storageKey)); } catch { /* schon weg */ }
+  }
   publicUrl(storageKey: string) {
-    /* Fixtures liegen flach unter public/media; der Präfix `demo/` aus der
-       Datenbank wird abgestreift. Nur Dateinamen ohne Pfadanteile. */
+    /* Hochgeladenes läuft über die geprüfte Route, Demo-Fixtures direkt. */
+    if (storageKey.startsWith("upload/")) return `/api/medien/${storageKey.slice(7).replace(/\.[a-z]+$/i, "")}`;
     const datei = storageKey.replace(/^demo\//, "");
     if (!/^[a-z0-9][a-z0-9._-]*$/i.test(datei)) throw new Error("Unzulässiger Speicherschlüssel");
     return `/media/${datei}`;

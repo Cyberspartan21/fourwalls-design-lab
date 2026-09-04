@@ -5,7 +5,15 @@
 
    Aufruf:
      set -a; . ./.env.local; set +a
-     node scripts/sicherheit-test.mjs [Basis-URL]
+     FW_TEST_MOD_EMAIL=... FW_TEST_MOD_PASSWORT=... [FW_TEST_STORAGE=s3] [FW_TEST_MAIL_QUELLE=dev|mailpit|imap] node scripts/sicherheit-test.mjs [Basis-URL]
+
+   Mailquelle (P5.5 §53/§54/§63) — siehe scripts/lib/mailquelle.mjs:
+     FW_TEST_MAIL_QUELLE   dev (Standard) | mailpit | imap
+     FW_TEST_MAIL_DIR      dev: Ordner statt var/mail
+     FW_TEST_MAILPIT_URL   mailpit: Basis-URL, Standard http://localhost:58026
+     FW_TEST_IMAP_HOST/_PORT/_USER/_PASSWORD   imap: Zugang (Port Standard 993)
+     FW_TEST_MAIL_BASIS    Persona-Adressen per Plus-Adressierung auf einem
+                            echten Postfach, z. B. staging-persona@beispiel.ch
 
    Schreibt eine Tabelle auf stdout und var/sicherheit-bericht.json.
    Exit 1, sobald irgendeine Prüfung FEHLER meldet.
@@ -18,6 +26,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
 import { execFileSync } from "node:child_process";
+import { mailquelle, testadresse } from "./lib/mailquelle.mjs";
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = join(HIER, "..");
@@ -31,11 +40,15 @@ if (!DATABASE_URL) { console.error("DATABASE_URL fehlt (set -a; . ./.env.local; 
 const sql = postgres(DATABASE_URL, { max: 4, onnotice: () => {} });
 
 /* ---------- Kennungen für Personen und Ergebnisse ---------- */
-const EMAIL_A = `a+${TS}@example.com`;
-const EMAIL_B = `b+${TS}@example.com`;
-const PASSWORT = "TestPasswort123!";
-const MOD_EMAIL_STANDARD = "mod@fourwalls.example";
-const MOD_PASSWORT_STANDARD = "moderation-langes-passwort";
+const EMAIL_A = testadresse("a", TS);
+const EMAIL_B = testadresse("b", TS);
+const PASSWORT = "Lauf-" + randomBytes(12).toString("base64url");
+const MOD_EMAIL_STANDARD = process.env.FW_TEST_MOD_EMAIL;
+const MOD_PASSWORT_STANDARD = process.env.FW_TEST_MOD_PASSWORT;
+if (!MOD_EMAIL_STANDARD || !MOD_PASSWORT_STANDARD) {
+  console.error("FW_TEST_MOD_EMAIL und FW_TEST_MOD_PASSWORT fehlen — Zugangsdaten des Moderationskontos kommen aus der Umgebung, nie aus dem Skript.");
+  process.exit(2);
+}
 
 const BILD_PFAD = join(APP_ROOT, "public", "media", "zurich-altbau-1-960.jpg");
 
@@ -113,22 +126,12 @@ async function uploadBytes(cookie, bytes, dateiname, mime) {
 }
 const uploadDatei = (cookie, pfad, dateiname, mime) => uploadBytes(cookie, readFileSync(pfad), dateiname, mime);
 
-/* ---------- Mail: die neueste Bestätigungsmail für eine Adresse finden und aufrufen ---------- */
-const MAIL_ORDNER = join(APP_ROOT, "var", "mail");
-function neuesteMailFuer(email) {
-  const dateien = readdirSync(MAIL_ORDNER).filter(f => f.endsWith(".json"));
-  let beste = null, besteZeit = -1;
-  for (const f of dateien) {
-    let j; try { j = JSON.parse(readFileSync(join(MAIL_ORDNER, f), "utf8")); } catch { continue; }
-    if (j.an !== email) continue;
-    const z = new Date(j.zeit).getTime();
-    if (z > besteZeit) { besteZeit = z; beste = j; }
-  }
-  return beste;
-}
+/* ---------- Mail: die neueste Bestätigungsmail für eine Adresse finden und aufrufen ----------
+   Quelle austauschbar über FW_TEST_MAIL_QUELLE (scripts/lib/mailquelle.mjs). */
+const MAILQUELLE = mailquelle();
 async function bestaetigeMail(email) {
-  const mail = neuesteMailFuer(email);
-  if (!mail) throw new Error(`Keine Mail für ${email} in var/mail gefunden`);
+  const mail = await MAILQUELLE.warte(email, null);
+  if (!mail) throw new Error(`Keine Mail für ${email} über Mailquelle "${MAILQUELLE.name}" gefunden (30 s gewartet)`);
   const treffer = mail.text.match(/https?:\/\/\S+/);
   if (!treffer) throw new Error(`Keine URL in der Mail an ${email} gefunden`);
   const res = await fetch(treffer[0], { redirect: "manual" });
@@ -330,7 +333,7 @@ await pruef("A12", "Anonym: GET Entwurf → 401, GET Moderationswarteschlange �
    ============================================================ */
 
 await pruef("B13", "Registrierung mit platform_role:'admin' im Body → 400/422, Konto (falls angelegt) hat platform_role='user'", async () => {
-  const email = `esc13+${TS}@example.com`;
+  const email = testadresse("esc13", TS);
   const r = await registrieren(email, PASSWORT, "Esc13", "esc13-signup", { platform_role: "admin" });
   assertTrue(r.status === 400 || r.status === 422, `erwartet 400/422, erhalten ${r.status}`);
   const zeilen = await sql`SELECT platform_role FROM app_user WHERE email = ${email}`;
@@ -339,7 +342,7 @@ await pruef("B13", "Registrierung mit platform_role:'admin' im Body → 400/422,
 });
 
 await pruef("B14", "Registrierung mit role:'admin' → Konto hat platform_role='user'", async () => {
-  const email = `esc14+${TS}@example.com`;
+  const email = testadresse("esc14", TS);
   const r = await registrieren(email, PASSWORT, "Esc14", "esc14-signup", { role: "admin" });
   assertTrue(r.status === 200 || r.status === 400 || r.status === 422, `unerwarteter Status ${r.status}`);
   const zeilen = await sql`SELECT platform_role FROM app_user WHERE email = ${email}`;
@@ -495,9 +498,12 @@ await pruef("E30", "Dateiname mit Pfadwechsel — kein Datei-Escape, Speichernam
     const id = r.json.id;
     const [zeile] = await sql`SELECT storage_key FROM media_asset WHERE id = ${id}`;
     assertTrue(!!zeile, "media_asset-Zeile nicht gefunden");
-    assertTrue(/^upload\/[a-f0-9-]{36}\.(jpg|png|webp)$/i.test(zeile.storage_key), `storage_key entspricht nicht dem Muster: ${zeile.storage_key}`);
-    const dateiName = zeile.storage_key.replace(/^upload\//, "");
-    assertTrue(existsSync(join(APP_ROOT, "var", "uploads", dateiName)), "Datei liegt nicht in var/uploads");
+    assertTrue(/^(upload|orig)\/[a-f0-9-]{36}\.(jpg|png|webp)$/i.test(zeile.storage_key), `storage_key entspricht nicht dem Muster: ${zeile.storage_key}`);
+    const dateiName = zeile.storage_key.replace(/^(upload|orig)\//, "");
+    /* Bei lokalem Speicher liegt das Original in var/uploads; bei S3
+       (FW_TEST_STORAGE=s3, Staging) liegt es im privaten Behälter — dann
+       entfällt nur diese eine Dateiprüfung, die Schlüsselform bleibt geprüft. */
+    if (process.env.FW_TEST_STORAGE !== "s3") assertTrue(existsSync(join(APP_ROOT, "var", "uploads", dateiName)), "Datei liegt nicht in var/uploads");
     details.push(`storage_key=${zeile.storage_key}`);
   }
   /* Ausserhalb von var/uploads darf nichts entstanden sein. */

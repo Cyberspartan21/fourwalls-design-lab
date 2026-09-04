@@ -11,7 +11,15 @@
 
    Aufruf:
      set -a; . ./.env.local; set +a
-     node scripts/lieferkette-test.mjs [Basis-URL]      Standard: http://localhost:3007
+     FW_TEST_MOD_EMAIL=... FW_TEST_MOD_PASSWORT=... node scripts/lieferkette-test.mjs [Basis-URL]      Standard: http://localhost:3007
+
+   Mailquelle (P5.5 §53/§54/§63) — siehe scripts/lib/mailquelle.mjs:
+     FW_TEST_MAIL_QUELLE   dev (Standard) | mailpit | imap
+     FW_TEST_MAIL_DIR      dev: Ordner statt var/mail
+     FW_TEST_MAILPIT_URL   mailpit: Basis-URL, Standard http://localhost:58026
+     FW_TEST_IMAP_HOST/_PORT/_USER/_PASSWORD   imap: Zugang (Port Standard 993)
+     FW_TEST_MAIL_BASIS    Persona-Adressen per Plus-Adressierung auf einem
+                            echten Postfach, z. B. staging-persona@beispiel.ch
 
    Ausgabe:
      - nummerierte Tabelle auf stdout (Schritt → OK/FEHLER + Detail)
@@ -21,10 +29,12 @@
    Die Datei ändert an der Anwendung nichts — sie meldet nur Befunde.
    ============================================================ */
 import postgres from "postgres";
-import { readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
+import { mailquelle, testadresse } from "./lib/mailquelle.mjs";
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = join(HIER, "..");
@@ -38,11 +48,15 @@ if (!DATABASE_URL) { console.error("DATABASE_URL fehlt (set -a; . ./.env.local; 
 const sql = postgres(DATABASE_URL, { max: 4, onnotice: () => {} });
 
 /* ---------- Kennungen ---------- */
-const EMAIL_A = `lka+${TS}@example.com`;
-const EMAIL_B = `lkb+${TS}@example.com`;
-const PASSWORT = "TestPasswort123!";
-const MOD_EMAIL_STANDARD = "mod@fourwalls.example";
-const MOD_PASSWORT_STANDARD = "moderation-langes-passwort";
+const EMAIL_A = testadresse("lka", TS);
+const EMAIL_B = testadresse("lkb", TS);
+const PASSWORT = "Lauf-" + randomBytes(12).toString("base64url");
+const MOD_EMAIL_STANDARD = process.env.FW_TEST_MOD_EMAIL;
+const MOD_PASSWORT_STANDARD = process.env.FW_TEST_MOD_PASSWORT;
+if (!MOD_EMAIL_STANDARD || !MOD_PASSWORT_STANDARD) {
+  console.error("FW_TEST_MOD_EMAIL und FW_TEST_MOD_PASSWORT fehlen — Zugangsdaten des Moderationskontos kommen aus der Umgebung, nie aus dem Skript.");
+  process.exit(2);
+}
 const BILD_PFAD = join(APP_ROOT, "public", "media", "zurich-altbau-1-960.jpg");
 const ORT_ID = "ort-bern";
 const STRASSE = `Teststrasse-${TS}`;
@@ -143,22 +157,16 @@ async function uploadBytes(cookie, bytes, dateiname, mime) {
 }
 const uploadDatei = (cookie, pfad, dateiname, mime) => uploadBytes(cookie, readFileSync(pfad), dateiname, mime);
 
-/* ---------- Mail: die neueste Bestätigungsmail für eine Adresse finden und aufrufen ---------- */
-const MAIL_ORDNER = join(APP_ROOT, "var", "mail");
-function neuesteMailFuer(email) {
-  const dateien = readdirSync(MAIL_ORDNER).filter(f => f.endsWith(".json"));
-  let beste = null, besteZeit = -1;
-  for (const f of dateien) {
-    let j; try { j = JSON.parse(readFileSync(join(MAIL_ORDNER, f), "utf8")); } catch { continue; }
-    if (j.an !== email) continue;
-    const z = new Date(j.zeit).getTime();
-    if (z > besteZeit) { besteZeit = z; beste = j; }
-  }
-  return beste;
-}
+/* ---------- Mail: die neueste Bestätigungsmail für eine Adresse finden und aufrufen ----------
+   Quelle austauschbar über FW_TEST_MAIL_QUELLE (scripts/lib/mailquelle.mjs).
+   Die Mail entsteht nicht mehr sofort: sie steht zunächst in der Outbox
+   (mail_outbox) und wird erst vom Arbeiter aus instrumentation.ts abgeholt
+   (erster Lauf nach 3 s, danach alle OUTBOX_INTERVAL_MS). Bis zu 30 s warten,
+   bevor «keine Mail gefunden» gilt. */
+const MAILQUELLE = mailquelle();
 async function bestaetigeMail(email) {
-  const mail = neuesteMailFuer(email);
-  if (!mail) throw new Error(`Keine Mail für ${email} in var/mail gefunden`);
+  const mail = await MAILQUELLE.warte(email, null);
+  if (!mail) throw new Error(`Keine Mail für ${email} über Mailquelle "${MAILQUELLE.name}" gefunden (30 s gewartet)`);
   const treffer = mail.text.match(/https?:\/\/\S+/);
   if (!treffer) throw new Error(`Keine URL in der Mail an ${email} gefunden`);
   const res = await fetch(treffer[0], { redirect: "manual" });

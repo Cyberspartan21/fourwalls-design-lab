@@ -1,9 +1,8 @@
-import { dbErreichbar } from "@/server/db";
 import { env } from "@/server/env";
 
-/* Lebt die Anwendung, erreicht sie die Datenbank. Keine Interna. */
+/* Lebt der Prozess? Keine Datenbankprüfung — das ist Aufgabe von /api/ready.
+   Immer 200, solange der Node-Prozess Anfragen beantwortet (P5.5 §43). */
 export const dynamic = "force-dynamic";
 export async function GET() {
-  const db = await dbErreichbar();
-  return Response.json({ status: db ? "ok" : "degraded", db: db ? "reachable" : "unreachable", env: env().APP_ENV }, { status: db ? 200 : 503 });
+  return Response.json({ status: "alive", env: env().APP_ENV }, { status: 200, headers: { "cache-control": "no-store" } });
 }

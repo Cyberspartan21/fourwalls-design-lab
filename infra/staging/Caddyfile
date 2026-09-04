@@ -1,0 +1,22 @@
+# FOURWALLS — Staging: TLS-Terminierung (P5.5 §71–§72).
+#
+# {$STAGING_HOST} wird aus der Umgebung von Caddy selbst gelesen (systemd-
+# Unit oder Startaufruf setzt STAGING_HOST, z. B. staging.fourwalls.example).
+# Eine Domain-Adresse (kein "http://"-Schema) genügt für automatisches TLS:
+# Caddy holt und erneuert das Let's-Encrypt-Zertifikat selbst und leitet
+# unaufgefordert von Port 80 auf 443 um — dafür ist keine zusätzliche
+# Umleitungsregel nötig.
+{$STAGING_HOST} {
+	# Derselbe Docker-Netzwerkname wie in docker-compose.yml (fourwalls_edge),
+	# damit der Dienstname "app" auflösbar ist.
+	reverse_proxy app:3000
+
+	encode zstd gzip
+
+	# Next.js/next.config.ts setzt bereits CSP, HSTS, X-Frame-Options etc. auf
+	# der Anwendung selbst — Caddy fügt dem nichts hinzu und entfernt nur, was
+	# die eigene Software preisgibt.
+	header {
+		-Server
+	}
+}

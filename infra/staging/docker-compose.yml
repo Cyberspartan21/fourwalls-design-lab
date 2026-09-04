@@ -1,0 +1,25 @@
+# FOURWALLS — Staging: die Anwendung (P5.5 §71–§72).
+#
+# Geheimnisse liegen NICHT in diesem Repo, sondern in /etc/fourwalls/staging.env
+# auf dem Host (siehe README.md). Das Abbild kommt über die Umgebungsvariable
+# APP_IMAGE (deploy.sh setzt sie beim Aufruf).
+#
+# Der Dienst heisst "app", weil das Caddyfile daneben ihn unter genau diesem
+# Namen anspricht (reverse_proxy app:3000). Caddy selbst läuft nicht in dieser
+# Datei — es ist der TLS-Terminierer vor mehreren Diensten auf demselben Host
+# und hängt im selben, extern angelegten Docker-Netzwerk (siehe README.md,
+# Abschnitt Ersteinrichtung: `docker network create fourwalls_edge`).
+services:
+  app:
+    image: ${APP_IMAGE:?APP_IMAGE ist Pflicht — siehe deploy.sh}
+    env_file:
+      - /etc/fourwalls/staging.env
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - fourwalls_edge
+
+networks:
+  fourwalls_edge:
+    external: true

@@ -1,0 +1,25 @@
+# FOURWALLS — Docker-Build-Kontext ist das Repository-Wurzelverzeichnis
+# (siehe Kopfkommentar in app/Dockerfile — db/ liegt neben app/ und muss im
+# selben Kontext liegen, damit die Laufzeit-Stufe sie kopieren kann).
+#
+# WICHTIG: Docker matcht ein Muster ohne "**/"-Präfix NUR auf der Wurzel des
+# Build-Kontexts, nicht auf jeder Tiefe (anders als .gitignore — geprüft:
+# ein bare "var" liess app/var unversehrt durch, erst "**/var" hat gegriffen,
+# ein echter Fund während dieser Aufgabe: app/var enthielt echte
+# Entwicklungs-/Testartefakte — Mail-Mitschnitte, hochgeladene Testbilder —
+# und landete ungefiltert im Abbild, bis "**/var" das behoben hat).
+#
+# Ausnahme bei den Tests: "app/tests" statt "**/tests" — ein rekursives
+# **/tests träfe auch db/tests, das die Laufzeit-Stufe für
+# migrate.mjs --test explizit braucht (P5.5 §44).
+**/node_modules
+**/.next
+**/var
+**/.env
+**/.env.*
+**/.git
+app/tests
+baseline
+docs
+**/*.md
+**/.github

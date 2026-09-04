@@ -10,6 +10,10 @@ export const SuchanfrageSchema = z.object({
   trans: z.enum(["buy", "rent"]).default("buy"),
   ort: z.string().regex(/^(ort|plz|kt|rg)-[A-Za-z0-9-]{1,40}$/).nullable().optional().transform(v => v ?? null),
   umkreisKm: z.coerce.number().min(0).max(50).default(0),
+  /* Der Ausschnitt ist auf das Schweizer Fenster begrenzt (45–48.5 N, 5–11 O). Das ist die
+     wirksame Schranke gegen unbegrenzte Arbeit: mehr als 3.5° × 6° kann eine gültige Anfrage
+     gar nicht umfassen. Die Spannenprüfung darunter ist die zweite Verteidigungslinie, falls
+     das Fenster je geweitet wird — sie greift innerhalb des heutigen Fensters nie. */
   bounds: z.object({ n: z.number().min(45).max(48.5), s: z.number().min(45).max(48.5), o: z.number().min(5).max(11), w: z.number().min(5).max(11) })
     .refine(b => b.n > b.s && b.o > b.w, "Ausschnitt leer").refine(b => (b.n - b.s) <= 4 && (b.o - b.w) <= 7, "Ausschnitt zu gross").nullable().optional().transform(v => v ?? null),
   typ: z.enum(TYPEN as [string, ...string[]]).or(z.literal("")).default(""),

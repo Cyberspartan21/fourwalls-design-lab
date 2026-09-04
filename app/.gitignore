@@ -8,3 +8,6 @@ next-env.d.ts
 .env.*.local
 var/
 .DS_Store
+
+# Öffentliche Bildableitungen des lokalen Speichers (Entwicklungsdaten)
+public/pub/

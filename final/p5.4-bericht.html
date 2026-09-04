@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P5.4 — Konto, privates Inserat, Moderation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#141210;--pap:#1c1916;--ink:#EDE6DA;--leise:#A69B8C;--linie:#332D27;--gold:#B8923F;--gut:#7FA66B;--warn:#C4838A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+.h{max-width:980px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:300;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.06}
+h2{font-size:1.6rem;margin:56px 0 16px;padding-top:26px;border-top:1px solid var(--linie)}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:500}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin-bottom:14px}
+.lead{font-size:1.12rem;color:#D9D0C3;max-width:64ch}
+p{max-width:68ch}
+.status{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1px;background:var(--linie);border:1px solid var(--linie)}
+.status div{background:var(--pap);padding:15px 17px}
+.status b{display:block;font-family:"Fraunces",serif;font-weight:300;font-size:1.5rem;line-height:1.1}
+.status span{font-size:.75rem;color:var(--leise);letter-spacing:.05em;text-transform:uppercase}
+.knopf{display:inline-block;margin:22px 8px 0 0;padding:.85em 1.3em;border:1px solid var(--gold);color:var(--ink);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.knopf.voll{background:var(--gold);color:#141210}
+ul{padding-left:1.1em;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:14px 0;font-size:.93rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--linie);text-align:left;vertical-align:top}
+th{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);font-weight:500}
+td.z{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+figure{margin:22px 0}figure img{width:100%;height:auto;display:block;border:1px solid var(--linie)}
+figcaption{font-size:.8rem;color:var(--leise);margin-top:8px}
+.hinweis{border-left:3px solid var(--gold);padding:12px 18px;background:var(--pap);margin:18px 0;max-width:72ch}
+.klein{font-size:.85rem;color:var(--leise)}
+code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:#D9D0C3}
+.ok::before{content:"✓ ";color:var(--gut)}
+.off::before{content:"→ ";color:var(--gold)}
+.nein::before{content:"✗ ";color:var(--warn)}
+.scroll{overflow-x:auto}
+pre{background:var(--pap);border:1px solid var(--linie);padding:12px 14px;margin:14px 0;max-width:72ch;font-size:.85rem;overflow-x:auto}
+pre code{color:#D9D0C3}
+.kette{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 4px;align-items:stretch}
+.kette span{background:var(--pap);border:1px solid var(--linie);border-left:2px solid var(--gut);padding:9px 12px;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:#D9D0C3}
+</style>
+</head>
+<body>
+<div class="h">
+<div class="eyebrow">Fourwalls · Phase 5.4 · 4. September 2026</div>
+<h1>Die Lieferkette steht.</h1>
+<p class="lead">P5.2 hat ein Objekt bewiesen, P5.3 die Nachfrageseite. P5.4 musste zeigen, dass eine echte Person ein Objekt sicher an Fourwalls liefern kann: Konto, Entwurf, Autosave, Vorschau, Einreichung, Prüfung durch die Moderation, Veröffentlichung — und danach steht das Inserat in genau der Suche aus P5.3, ohne dass die Suche angefasst wurde. Diese Kette läuft.</p>
+
+<h2 style="border:0;padding:0;margin:44px 0 6px">Status der Lieferkette</h2>
+<div class="kette">
+  <span>Besucherin</span><span>Konto</span><span>Entwurf</span><span>Autosave</span><span>Vorschau</span><span>Einreichen</span><span>Moderation</span><span>Freigabe</span><span>Veröffentlichung</span><span>Suche</span><span>Objektseite</span>
+</div>
+<p class="klein">Alle elf Stationen laufen als eine zusammenhängende Reise über HTTP gegen den Produktionsbau, nachweisbar in <code>app/scripts/lieferkette-test.mjs</code>.</p>
+
+<div class="status">
+  <div><b>Steht</b><span>Vollständige Lieferkette</span></div>
+  <div><b>33 / 33</b><span>Schritte der Ende-zu-Ende-Reise</span></div>
+  <div><b>39 / 39</b><span>Sicherheitsprüfungen</span></div>
+  <div><b>0.00 %</b><span>UFER-Abweichung, 16 Aufnahmen</span></div>
+  <div><b>178 → 179</b><span>Suche nach der Veröffentlichung</span></div>
+</div>
+<a class="knopf voll" href="ufer/index.html">UFER (Prototyp, unverändert)</a>
+<a class="knopf" href="p5.3-bericht.html">P5.3-Bericht</a>
+
+<table>
+<tr><th>Bedingung (§91)</th><th>Beleg</th></tr>
+<tr><td class="ok">Eine echte Person kann ein Konto anlegen und bestätigen</td><td>Better Auth 1.7.2 auf dem bestehenden <code>app_user</code>-Modell; Registrierung, Bestätigungsmail, Anmeldung, Abmeldung, Passwort zurücksetzen (Abschnitt 1–4, 16)</td></tr>
+<tr><td class="ok">Sie kann ein Inserat als Entwurf erfassen</td><td>Neun Assistentenschritte gegen einen Server-Entwurf, <code>listing.draft_data</code>, Autosave nach 900 ms, Versionszähler (Abschnitt 5–7)</td></tr>
+<tr><td class="ok">Nur sie sieht diesen Entwurf</td><td>Fremdzugriff auf Entwurf, Vorschau, Bild und Aktion antwortet <b>404</b>, nicht 403 — keine Existenzauskunft (Abschnitt 9, 15)</td></tr>
+<tr><td class="ok">Die Moderation entscheidet, nicht die Einreichende</td><td><code>veroeffentlichen</code> durch die Eigentümerin → 403; Statuswechsel nur serverseitig über erlaubte Übergänge (Abschnitt 10, 12)</td></tr>
+<tr><td class="ok">Jeder Entscheid ist nachvollziehbar</td><td>8 Zeilen <code>audit_log</code> für drei Inserate, mit Akteur, Vorher-, Nachher-Zustand und Grund (Abschnitt 11)</td></tr>
+<tr><td class="ok">Das veröffentlichte Inserat erscheint in der bestehenden Suche</td><td>Suche 178 → 179, Karte +1 Punkt, Objektseite in vier Sprachen mit 200 — ohne eine Zeile Suchcode zu ändern (Abschnitt 13)</td></tr>
+<tr><td class="ok">Die private Adresse bleibt privat</td><td>Strasse und exakte Koordinate in keiner Antwort: Liste, Karte, Objektseite, RSC-Nutzlast, Bündel (Abschnitt 14)</td></tr>
+<tr><td class="ok">UFER bleibt unangetastet</td><td>16 von 16 Aufnahmen bei gleichem Datenbestand exakt gleich (0.00 %); die einzige spätere Abweichung ist das neue Inserat selbst (Abschnitt 17)</td></tr>
+</table>
+<p>Nicht gebaut, weil ausdrücklich untersagt: gekaufter Hosting-, Mail- oder Objektspeicherdienst; bezahlte Platzierung; Schweizer Staging. Nicht gebaut, weil ausserhalb des Auftrags: soziale Anmeldung, Passkeys, Zweitfaktor, Einmalanmeldung, ein neu gestalteter Assistent, ein Verwaltungsbereich für Rollen.</p>
+
+<figure>
+<img src="img/p5-4-suche-nachher.jpg" alt="Suchergebnisse mit dem neu veröffentlichten Privatinserat an vierter Stelle">
+<figcaption>Der entscheidende Beleg: «Helle Altbauwohnung im Berner Kirchenfeld», CHF 890 000, 3011 Bern, Kennzeichnung <b>Privatinserat · Neu</b>. Das Inserat entstand über Konto und Assistent, wurde von der Moderation freigegeben und steht seither in derselben Suche wie die 178 Demo-Inserate. An der Suche wurde dafür nichts geändert. Es steht an vierter Stelle, weil die drei Exclusive-Plätze der Demo-Rangfolge vorgehen (Abschnitt 13).</figcaption>
+</figure>
+
+<h2>1. Entscheid zur Anmeldung und genaue Version</h2>
+<p>Geprüft wurden <b>Better Auth</b> und <b>Lucia</b> als zweite glaubwürdige Möglichkeit. Lucia ist seit 2025 keine Bibliothek mehr, sondern eine Anleitung: Man schreibt Sitzungen, Hashing und Zurücksetzen selbst. Das kollidiert mit §7 («niemals selbst bauen: Passwort-Hashing, Sitzungssignierung, Zurücksetz-Marken»). Damit fiel der Entscheid auf Better Auth, wie im Auftrag als Vorzug genannt.</p>
+<table>
+<tr><th>Abhängigkeit</th><th>Version</th><th>Art</th></tr>
+<tr><td><code>better-auth</code></td><td class="z">1.7.2</td><td>exakt gepinnt, kein <code>^</code>, kein <code>latest</code></td></tr>
+<tr><td><code>pg</code></td><td class="z">8.16.3</td><td>zweiter Verbindungspool, den Better Auth verlangt</td></tr>
+<tr><td colspan="3" class="klein">Unverändert aus P5.1–P5.3: <code>next</code> 16.3.4, <code>react</code> 19.2.0, <code>postgres</code> 3.4.7, <code>zod</code> 3.25.76, <code>typescript</code> 5.8.3, <code>eslint</code> 9.39.5.</td></tr>
+</table>
+<p>Zwei Abhängigkeiten kamen hinzu, sonst nichts. <code>zod</code> 4 liegt unter <code>better-auth</code> in dessen eigenem Baum; die Anwendung bleibt bei 3.25.76 — beide Versionen stören sich nicht, weil sie nie dieselbe Schemaobjekt-Instanz teilen.</p>
+
+<h2>2. Personen- und Sitzungsmodell</h2>
+<p>Das Konto ist die bestehende Zeile in <code>app_user</code> aus P5.1, nicht eine zweite Personentabelle daneben. Better Auth wurde darauf abgebildet, statt seine Namen zu übernehmen:</p>
+<pre><code>user: { modelName: "app_user",
+  fields: { name: "display_name", emailVerified: "email_verified",
+            image: "image_url", createdAt: "created_at", updatedAt: "updated_at" },
+  additionalFields: {
+    platform_role: { type: "string", required: false, input: false, returned: true },
+    locale:        { type: "string", required: false, input: false, returned: true } } }</code></pre>
+<p><code>input: false</code> ist die Stelle, die verhindert, dass jemand bei der Registrierung eine Rolle mitschickt (§66). Die Sitzung liegt in <code>auth_session</code> mit Verweis auf die Person, Ablaufzeitpunkt, IP und Browserkennung.</p>
+<table>
+<tr><th>Eigenschaft</th><th>Umsetzung</th></tr>
+<tr><td>Cookie</td><td><code>fw.session_token</code>; <code>HttpOnly; SameSite=Lax; Path=/; Max-Age=604800</code>, in Produktion zusätzlich <code>Secure</code></td></tr>
+<tr><td>Speicherung im Browser</td><td class="ok">keine — kein Token im <code>localStorage</code>, keine Kopie in <code>sessionStorage</code> (§9)</td></tr>
+<tr><td>Rolle und Bestätigungsstand</td><td class="ok">bei jeder Anfrage frisch aus der Datenbank, nie aus dem Cookie gelesen (<code>server/sitzung.ts</code>, 66 Zeilen)</td></tr>
+<tr><td>Passwort</td><td>scrypt aus der Bibliothek; Mindestlänge 10 Zeichen, keine Sonderzeichenpflicht, keine Höchstlänge unter 128 (§18)</td></tr>
+<tr><td>Abmelden</td><td>serverseitiger Widerruf; dasselbe Cookie antwortet danach 401 (Prüfung H37)</td></tr>
+<tr><td>Fremder Widerruf</td><td>Zeile in <code>auth_session</code> gelöscht → dasselbe Cookie antwortet 401 (Prüfung H38)</td></tr>
+</table>
+
+<h2>3. Berechtigungsmodell</h2>
+<p>Es gibt keinen <code>isAdmin</code>-Schalter. <code>app/domain/rechte.ts</code> (140 Zeilen, ohne Datenbank, ohne Netz) hält <b>13 Rechte</b> und vier Rollen, und jede Entscheidung braucht <b>zwei</b> Zustimmungen: das Recht der Rolle <i>und</i> die Ressource (Eigentum plus Zustand).</p>
+<table>
+<tr><th>Rolle</th><th>Rechte</th><th>Bemerkung</th></tr>
+<tr><td>visitor (keine Sitzung)</td><td class="z">0</td><td>öffentliche Suche, öffentliche Objektseiten, Anfrage</td></tr>
+<tr><td>user</td><td class="z">6</td><td>eigene Inserate anlegen, bearbeiten, einreichen, ansehen, in Vorschau öffnen, zurückziehen</td></tr>
+<tr><td>staff</td><td class="z">6</td><td>wie <code>user</code>; ausdrücklich <b>keine</b> Moderationsrechte</td></tr>
+<tr><td>moderator</td><td class="z">13</td><td>zusätzlich Warteschlange, Prüfung, Freigabe, Änderung verlangen, Ablehnung, Veröffentlichung, Pausieren</td></tr>
+<tr><td>admin</td><td class="z">13</td><td>in P5.4 dieselben Rechte wie <code>moderator</code>; die Rollenvergabe läuft nicht über die Oberfläche, sondern über die Konsole</td></tr>
+</table>
+<p>Die zweite Achse ist die, die zählt. Eine Moderatorin darf die Warteschlange sehen — ihr <i>eigenes</i> Inserat aber trotzdem nicht freigeben, weil die Ressourcenprüfung <code>eigenes-inserat</code> zurückgibt. Ein Entwurf ist selbst für die Moderation unsichtbar, solange er nicht eingereicht ist. Die Ablehnungsgründe sind benannt (<code>kein-recht</code>, <code>nicht-eigentuemer</code>, <code>falscher-zustand</code>, <code>email-unbestaetigt</code>, <code>eigenes-inserat</code>, <code>keine-sitzung</code>) und in <code>tests/rechte.test.ts</code> einzeln geprüft.</p>
+
+<h2>4. Anbindung an die Datenbank</h2>
+<p>Die Bibliothek durfte das Schema nicht übernehmen (§6). Es gibt <b>keine</b> Schemaänderung zur Laufzeit, keinen <code>db:push</code>-Aufruf im Start, kein automatisches Anlegen von Tabellen. Stattdessen zwei Wanderungen von Hand:</p>
+<table>
+<tr><th>Wanderung</th><th>Zeilen</th><th>Inhalt</th></tr>
+<tr><td><code>db/migrations/0011_auth.sql</code></td><td class="z">106</td><td><code>app_user.email_verified</code> und <code>image_url</code>; Auslöser, der <code>email_verified_at</code> mitführt; <code>auth_session</code>, <code>auth_account</code>, <code>auth_verification</code> mit UUID-Vorgaben und Fremdschlüsseln mit <code>ON DELETE CASCADE</code></td></tr>
+<tr><td><code>db/migrations/0012_entwurf.sql</code></td><td class="z">49</td><td><code>listing.draft_data jsonb</code> mit Prüfbedingung «ist ein Objekt», <code>listing.submitted_at</code>, zwei Indizes (Warteschlange, eigene Inserate), <code>moderation_case.message_to_owner</code> und <code>.reason</code></td></tr>
+</table>
+<p>Das genaue Sollschema kam nicht aus der Anleitung, sondern aus der Bibliothek selbst: <code>getAuthTables()</code> mit der eigenen Abbildung aufgerufen und Spalte für Spalte verglichen. So kam <code>auth_account.issuer NOT NULL</code> zum Vorschein — in der Anleitung nicht erwähnt, ohne diese Spalte scheitert jede Registrierung. <code>advanced.database.generateId: false</code> überlässt die Schlüsselvergabe den <code>uuid</code>-Vorgaben der Datenbank.</p>
+
+<h2>5. Aufbau des Entwurfs</h2>
+<p>Ein Entwurf ist eine Zeile in <code>listing</code> mit Status <code>draft</code> und einem <code>draft_data</code>-Objekt. Die Richtung ist immer dieselbe: <b>Eingabe → Entwurf → veröffentlichte Form</b>, nie zurück. <code>listing</code> und <code>property</code> tragen weiterhin nur, was veröffentlicht wurde; die getippten Spalten werden erst bei der Veröffentlichung aus dem Entwurf gefüllt (<code>materialisieren()</code>).</p>
+<p>Das Schema in <code>app/domain/entwurf.ts</code> ist zugleich die Erlaubnisliste. Es endet auf <code>.strict()</code>, kennt nur Assistentenfelder und weist alles andere ab — <code>status</code>, <code>ownerId</code>, <code>platform_role</code>, <code>published_at</code> führen zu 422, nicht zu einem stillen Verwerfen.</p>
+<table>
+<tr><th>Feld der Zeile</th><th>Bedeutung</th></tr>
+<tr><td><code>owner_user_id</code> / <code>contact_user_id</code></td><td>die Person, die den Entwurf angelegt hat — vom Server gesetzt, nie aus dem Körper der Anfrage</td></tr>
+<tr><td><code>version</code></td><td>Zähler, den ein Auslöser bei jeder Änderung erhöht</td></tr>
+<tr><td><code>created_at</code> / <code>updated_at</code> / <code>submitted_at</code></td><td>Zeitstempel; <code>submitted_at</code> ordnet die Warteschlange</td></tr>
+<tr><td><code>status</code></td><td>der bestehende Zustandsautomat aus P5.1, unverändert</td></tr>
+</table>
+<p>Die Lage ist strukturiert wie in P3 und P5.3: eine Ortsentität aus dem Index, kein freier Text. Strasse und Hausnummer bleiben ungeprüft und privat, weil es keinen Adressdienst gibt — es wurde keiner erfunden und keine Koordinate geraten. Die Genauigkeit wählt die Person zwischen <i>ungefähr</i> und <i>Gemeinde</i>; <i>exakt</i> ist gesperrt, solange keine geprüfte Adresse vorliegt. Der öffentliche Punkt entsteht auf dem Server aus dem Gemeindemittelpunkt.</p>
+
+<h2>6. Autosave und gleichzeitiges Arbeiten</h2>
+<p>Das Speichern ist echt: nach 900 ms Ruhe geht der Stand an <code>PATCH /api/entwuerfe/&lt;ref&gt;</code>, mit der zuletzt gelesenen Version. Der Server schreibt nur, wenn diese Version noch stimmt:</p>
+<pre><code>UPDATE listing SET draft_data = $neu, content_locale = $sprache
+ WHERE public_ref = $ref AND version = $gelesen
+RETURNING version;
+-- keine Zeile zurück → 409 CONFLICT, nichts überschrieben</code></pre>
+<p>Die Oberfläche zeigt drei Zustände: <i>Speichern …</i>, <i>Gespeichert</i>, <i>Nicht gespeichert</i>. Der Fehlerfall wurde im Browser vorgeführt, indem die Datenbank angehalten wurde: Die Anzeige sprang auf <b>NICHT GESPEICHERT</b> und blieb dort, bis der Server wieder antwortete — sie hat zu keinem Zeitpunkt «Gespeichert» behauptet (§76). Der Versionsverlauf einer Sitzung ist im Reisebericht nachlesbar: 1 → 2 → 3 → 4, jede Antwort mit höherer Zahl als die vorige.</p>
+
+<h2>7. Übernahme des Assistenten</h2>
+<p>Der neunstufige Assistent aus P4 wurde nicht neu gestaltet, sondern angeschlossen: Absicht, Objektart, Lage, Fakten, Preis, Text, Bilder, Kontakt, Prüfen. Dieselbe Reihenfolge, dieselben Begriffe, dieselbe Optik.</p>
+<figure>
+<img src="img/p5-4-assistent.jpg" alt="Assistent im Schritt Lage mit Ortsauswahl und Genauigkeit">
+<figcaption>Der Assistent schreibt in einen Server-Entwurf. Rechts oben der Speicherzustand, unten die Schrittleiste aus P4.</figcaption>
+</figure>
+<p>Vollständigkeit ist objektartabhängig, wie im Prototyp: kein Zimmerzwang bei Parkplätzen, keine Wohnfläche bei Land, kein Kaufpreis bei Miete, dafür eine Grundstücksfläche beim Grundstück. Fehlt etwas, nennt der Server Feld <i>und</i> Schritt, damit die Oberfläche dorthin springen kann. Ein anonymer Anfang bleibt erhalten: Wer ohne Konto beginnt, findet seinen Stand nach der Registrierung wieder; der Übergabespeicher liegt im <code>sessionStorage</code> und enthält keine fremden Kennungen.</p>
+
+<h2>8. Bildstrecke in der Entwicklungsumgebung</h2>
+<p>Es wurde kein Objektspeicher gekauft (§79). Die Bilder liegen unter <code>app/var/uploads</code> und werden ausschliesslich über <code>/api/medien/&lt;id&gt;</code> ausgeliefert, nie über einen öffentlichen Pfad.</p>
+<table>
+<tr><th>Prüfung beim Hochladen</th><th>Regel</th></tr>
+<tr><td>Art</td><td class="ok">aus dem <b>Inhalt</b> bestimmt (Magic Bytes), nicht aus Endung oder MIME-Angabe; JPEG, PNG, WebP</td></tr>
+<tr><td>SVG</td><td class="nein">abgewiesen — SVG ist ausführbares Markup</td></tr>
+<tr><td>Grösse</td><td>höchstens 8 MB, mindestens 400 × 300 Punkte, höchstens 60 Bilder je Person</td></tr>
+<tr><td>Dateiname</td><td class="ok">aus der UUID gebildet (<code>&lt;uuid&gt;.jpg</code>); die Eingabe wird nie Teil des Pfads — <code>../../etc/passwd</code> erzeugt einen gewöhnlichen UUID-Namen</td></tr>
+<tr><td>Metadaten</td><td class="ok">EXIF, GPS und XMP werden entfernt, bevor die Datei geschrieben wird (<code>lib/bild.ts</code>, 152 Zeilen, ohne native Abhängigkeit)</td></tr>
+<tr><td>Eigentum</td><td class="ok">beim Anhängen prüft der Server, dass jede Bildkennung von dieser Person hochgeladen wurde</td></tr>
+</table>
+<p>Das Entfernen der Metadaten arbeitet auf der Behälterebene: Bei JPEG fallen alle APPn- und COM-Abschnitte weg, bei PNG bleibt nur eine Liste erlaubter Blöcke stehen, bei WebP werden EXIF- und XMP-Blöcke ausgeschnitten. Der Test in <code>tests/bild.test.ts</code> setzt einem echten Bild ein EXIF-Segment mit Ortsangabe vor, entfernt es und prüft danach dreierlei: keine Marke mehr, immer noch ein lesbares JPEG, unveränderte Abmessungen.</p>
+
+<h2>9. Schutz der Vorschau</h2>
+<p>Die Vorschau zeigt das Inserat, wie es öffentlich aussehen würde — und ist trotzdem privat. Sie hängt nicht an <code>noindex</code>, sondern an einer Berechtigungsprüfung vor dem Rendern (§36).</p>
+<table>
+<tr><th>Wer</th><th>Antwort</th></tr>
+<tr><td>Eigentümerin</td><td class="ok">200 mit vollem Inhalt</td></tr>
+<tr><td>Angemeldete fremde Person</td><td class="ok">404 — nicht 403, damit die Existenz nicht bestätigt wird</td></tr>
+<tr><td>Ohne Sitzung</td><td class="ok">307 auf die Anmeldung, mit <code>?weiter=</code> zurück zur Vorschau</td></tr>
+<tr><td>Moderation, Inserat noch Entwurf</td><td class="ok">404 — ein Entwurf ist auch für die Prüfung unsichtbar, bis er eingereicht ist</td></tr>
+</table>
+
+<h2>10. Ablauf der Moderation</h2>
+<p>Die Moderationsoberfläche ist klein gehalten: eine Warteschlange nach Einreichungszeit und eine Fallansicht mit drei Entscheiden.</p>
+<figure>
+<img src="img/p5-4-moderation.jpg" alt="Warteschlange der Moderation">
+<figcaption>Warteschlange und Fallansicht sind eigene Routen unter <code>/&lt;sprache&gt;/moderation</code>; ohne das Recht <code>VIEW_MODERATION_QUEUE</code> antwortet der Server 403.</figcaption>
+</figure>
+<table>
+<tr><th>Entscheid</th><th>Wirkung</th><th>Bedingung</th></tr>
+<tr><td>Freigeben</td><td><code>submitted</code> → <code>in_review</code> → <code>approved</code></td><td>Recht, fremdes Inserat, richtiger Zustand</td></tr>
+<tr><td>Freigeben und veröffentlichen</td><td>zusätzlich → <code>published</code> mit Slug</td><td>eine Transaktion, siehe Abschnitt 12</td></tr>
+<tr><td>Änderung verlangen</td><td>→ <code>changes_required</code></td><td>Nachricht an die Eigentümerin, mindestens 10 Zeichen, sonst 422</td></tr>
+<tr><td>Ablehnen</td><td>→ <code>rejected</code></td><td>Grund aus einer Liste von neun benannten Gründen plus Nachricht</td></tr>
+</table>
+<figure>
+<img src="img/p5-4-fall.jpg" alt="Fallansicht der Moderation mit Angaben, Bildern, Entscheiden und Verlauf">
+<figcaption>Die Fallansicht zeigt, was für einen Entscheid nötig ist: wer inseriert und ob die Adresse bestätigt ist, wann eingereicht wurde, wie genau die Lage veröffentlicht wird, ob die Angaben vollständig sind, die Bilder, den Text, die vier Entscheide und den bisherigen Verlauf.</figcaption>
+</figure>
+<p>Die Gründe sind: unvollständig, irreführender Preis, falsche Lage, unzulässiger Inhalt, fremde Bilder, Dublette, Spam, Betrugsverdacht, sonstiges. Die Nachricht erscheint der Eigentümerin unter «Meine Inserate» als Rückmeldung; danach kann sie bearbeiten und erneut einreichen.</p>
+<figure>
+<img src="img/p5-4-konto.jpg" alt="Meine Inserate mit drei Inseraten in verschiedenen Zuständen">
+<figcaption>«Meine Inserate»: ein Inserat in Prüfung, eines mit Rückmeldung der Moderation, eines veröffentlicht. Zustand, Referenz und die möglichen Handlungen stehen je Zeile.</figcaption>
+</figure>
+<p>Eine Moderatorin entsteht nicht durch Registrierung. Die Rolle vergibt <code>app/scripts/rolle.mjs</code> auf der Konsole; in Produktion verlangt das Skript zusätzlich <code>FW_ALLOW_ROLE_BOOTSTRAP=ja</code> <b>und</b> dass noch keine erhöhte Rolle existiert — sonst bricht es ab. Fehlt die Umgebungsvariable, passiert nichts (§49, «fail closed»).</p>
+
+<h2>11. Prüfspur</h2>
+<p>Jeder Statuswechsel schreibt eine Zeile in <code>audit_log</code>. Das übernimmt der Auslöser aus P5.1; die Anwendung setzt vorher <code>app.actor_id</code> und <code>app.reason</code> in derselben Transaktion. Ohne Akteur kein Wechsel.</p>
+<div class="scroll">
+<table>
+<tr><th>Zeitpunkt</th><th>Vorher</th><th>Nachher</th><th>Akteurin</th><th>Grund</th></tr>
+<tr><td>09:22:32</td><td>draft</td><td>submitted</td><td>Anna Beispiel</td><td>eingereicht</td></tr>
+<tr><td>09:22:33</td><td>submitted</td><td>in_review</td><td>Moderation</td><td>geprüft und freigegeben</td></tr>
+<tr><td>09:22:33</td><td>in_review</td><td>approved</td><td>Moderation</td><td>geprüft und freigegeben</td></tr>
+<tr><td>09:22:33</td><td>approved</td><td>published</td><td>Moderation</td><td>veröffentlicht</td></tr>
+<tr><td>09:22:33</td><td>draft</td><td>submitted</td><td>Anna Beispiel</td><td>eingereicht</td></tr>
+<tr><td>09:22:45</td><td>submitted</td><td>in_review</td><td>Moderation</td><td>Änderung verlangt: incomplete</td></tr>
+<tr><td>09:22:45</td><td>in_review</td><td>changes_required</td><td>Moderation</td><td>Änderung verlangt: incomplete</td></tr>
+<tr><td>09:44:48</td><td>draft</td><td>submitted</td><td>Anna Beispiel</td><td>eingereicht</td></tr>
+</table>
+</div>
+<p>Die Zeile speichert die Kennung der Person, nicht ihren Namen oder ihre Adresse — die Zuordnung oben entsteht erst durch eine Verknüpfung beim Lesen. Kein Passwort, keine Zurücksetz-Marke, kein Sitzungstoken erscheint im Protokoll oder in einer Fehlermeldung (§71).</p>
+
+<h2>12. Veröffentlichung</h2>
+<p>Die Veröffentlichung ist ein Übergang der bestehenden Zustandsmaschine, kein Sonderweg. Sie läuft vollständig in einer Transaktion; scheitert ein Teil, ist nichts geschehen.</p>
+<ol>
+<li>Berechtigung prüfen: Recht <code>PUBLISH_LISTING</code>, fremdes Inserat, Zustand <code>approved</code>.</li>
+<li><code>materialisieren()</code>: aus <code>draft_data</code> werden <code>property</code> (Objektart, Fakten, öffentlicher und interner Geopunkt), <code>listing</code> (Preis in Rappen, Transaktionsart), <code>listing_feature</code>, <code>listing_image</code> und <code>listing_content</code> in der verfassten Sprache.</li>
+<li>Slug erzeugen und mit der Referenz zur öffentlichen Adresse verbinden.</li>
+<li>Status auf <code>published</code>, <code>published_at</code> setzen, Prüfspur schreiben.</li>
+</ol>
+<p>Ein Client, der <code>status: "published"</code> mitschickt, veröffentlicht nichts: Das Entwurfsschema kennt das Feld nicht und antwortet 422; der Status in der Datenbank bleibt unverändert (Prüfung C15). Auch die Eigentümerin selbst erhält auf <code>veroeffentlichen</code> ein 403.</p>
+
+<h2>13. Beweis in Suche und Karte</h2>
+<p>Das ist der Kern der Phase. Nach der Veröffentlichung erscheint das Inserat in der Suche aus P5.3 — <b>ohne dass am Suchcode etwas geändert wurde</b>.</p>
+<table>
+<tr><th>Ort</th><th>Vorher</th><th>Nachher</th><th>Befund</th></tr>
+<tr><td>Suche «Kaufen», Anzahl</td><td class="z">178</td><td class="z">179</td><td class="ok">genau ein Inserat mehr</td></tr>
+<tr><td>Position in «Neuste zuerst»</td><td>—</td><td class="z">4</td><td class="ok">hinter den drei Exclusive-Plätzen der Demo-Rangfolge</td></tr>
+<tr><td>Kennzeichnung auf der Karte</td><td>—</td><td>Privatinserat · Neu</td><td class="ok">Quelle <code>privat</code>, kein Prüfsiegel</td></tr>
+<tr><td>Kartenpunkte</td><td class="z">n</td><td class="z">n + 1</td><td class="ok">der neue Punkt liegt im Gemeindegebiet</td></tr>
+<tr><td>Objektseite de / fr / it / en</td><td>—</td><td class="z">200 / 200 / 200 / 200</td><td class="ok">kanonische Adresse <code>&lt;slug&gt;-&lt;referenz&gt;</code></td></tr>
+<tr><td>Anfrage einer anonymen Besucherin</td><td>—</td><td class="z">201</td><td class="ok"><code>inquiry.recipient_user_id</code> ist die Eigentümerin</td></tr>
+</table>
+<p>Zur Rangfolge: Die Demo-Regel «höchstens drei Exclusive über Neuste zuerst» steht weiterhin ausdrücklich als <b>unbestätigte Geschäftsregel</b> im System und wurde in P5.4 nicht bestätigt und nicht ausgebaut. Es gibt keine bezahlte Platzierung und keine Verwaltung dafür. Die Berechtigungs- und Moderationsarchitektur hängt an keiner Stelle von dieser Regel ab.</p>
+
+<h2>14. Geo-Privatsphäre</h2>
+<p>Die Eingaben, die eine private Anbieterin am meisten preisgibt, sind Strasse und Hausnummer. Sie verlassen den Server nicht.</p>
+<table>
+<tr><th>Gesucht in</th><th>Strasse</th><th>Exakte Koordinate</th></tr>
+<tr><td>Suchergebnis (JSON)</td><td class="ok">nicht enthalten</td><td class="ok">nicht enthalten</td></tr>
+<tr><td>Kartenpunkte</td><td class="ok">nicht enthalten</td><td class="ok">nicht enthalten</td></tr>
+<tr><td>Öffentliche Objektseite (HTML)</td><td class="ok">nicht enthalten</td><td class="ok">nicht enthalten</td></tr>
+<tr><td>RSC-Nutzlast der Objektseite</td><td class="ok">nicht enthalten</td><td class="ok">nicht enthalten</td></tr>
+<tr><td>Öffentliches JavaScript-Bündel</td><td class="ok">nicht enthalten</td><td class="ok">nicht enthalten</td></tr>
+</table>
+<p>Der interne Punkt <code>geom_exact</code> ist bei einem privat erfassten Inserat der Gemeindemittelpunkt, nicht eine geratene Hausadresse — es gibt keinen Adressdienst, also wird auch keine Präzision behauptet. Die Kontaktangaben der Eigentümerin sind Personendaten und stehen nicht im Quelltext der öffentlichen Seite; eine Anfrage geht über den Server an die Eigentümerin.</p>
+
+<h2>15. Falsifikation: fremder Zugriff und Rechteanmassung</h2>
+<p><code>app/scripts/sicherheit-test.mjs</code> (652 Zeilen) fährt 39 Angriffe gegen den laufenden Server. <b>39 von 39 verhalten sich wie verlangt, keine Ausnahme.</b> Es wurden zwei echte Konten (A und B) und ein Moderationskonto verwendet.</p>
+<div class="scroll">
+<table>
+<tr><th>Gruppe</th><th>Anzahl</th><th>Ergebnis</th></tr>
+<tr><td>A · Fremdzugriff über die Kennung (Entwurf lesen, speichern, einreichen, zurückziehen, Bild anhängen, Bild löschen, Bild abrufen, anonym abrufen, Warteschlange, fremder Fall, Freigabe, anonym)</td><td class="z">12</td><td class="ok">alle 404 bzw. 403/401 — keine Auskunft über Existenz</td></tr>
+<tr><td>B · Rechteanmassung und Massenzuweisung (<code>platform_role</code> bei der Registrierung, <code>role</code>, <code>status: published</code>, <code>ownerId</code>, gefälschtes Cookie)</td><td class="z">5</td><td class="ok">400/422; Rolle bleibt <code>user</code>, Eigentümer und Status unverändert</td></tr>
+<tr><td>C · Zustandsmaschine (Selbstveröffentlichung, Änderung ohne Nachricht, Rückmeldung sichtbar, erneutes Einreichen, Prüfspur vollständig, eigenes Inserat freigeben)</td><td class="z">6</td><td class="ok">403 bzw. 422, wo es verboten ist; 200, wo es erlaubt ist</td></tr>
+<tr><td>D · Herkunft und CSRF (fremde <code>Origin</code>, <code>Sec-Fetch-Site: cross-site</code>)</td><td class="z">3</td><td class="ok">403 auf allen Änderungswegen</td></tr>
+<tr><td>E · Dateiangriffe (SVG mit Skript als .jpg, Shell-Skript als .jpg, über 9 MB, Pfadwechsel im Namen, fremde Bildkennung)</td><td class="z">5</td><td class="ok">422/413; kein Ausbruch aus dem Ablageordner</td></tr>
+<tr><td>F · Einschleusung (<code>&lt;script&gt;</code> und <code>onerror</code> in Titel und Beschreibung, SQL in der Referenz)</td><td class="z">2</td><td class="ok">maskiert ausgegeben; 404 ohne Wirkung auf die Datenbank</td></tr>
+<tr><td>G · Kontoauskunft (unbekannte gegen bekannte Adresse bei Anmeldung und Zurücksetzen, doppelte Registrierung)</td><td class="z">3</td><td class="ok">gleicher Status, gleiche Antwortzeitklasse, kein zweites Konto</td></tr>
+<tr><td>H · Sitzungsende (Abmeldung, serverseitiger Widerruf)</td><td class="z">2</td><td class="ok">401 mit demselben Cookie</td></tr>
+<tr><td>Z · Gegenprobe: Zeilenzahl <code>listing</code> vorher/nachher</td><td class="z">1</td><td class="ok">312 → 316, genau die vier selbst erzeugten Entwürfe</td></tr>
+</table>
+</div>
+<p>Die negative Reise im Ende-zu-Ende-Lauf prüft dieselbe Grenze noch einmal aus der Sicht einer zweiten angemeldeten Person: Lesen, Bearbeiten, Einreichen und Vorschau eines fremden Inserats antworten <b>404</b>, Warteschlange und Freigabe <b>403</b>, und ein leerer Entwurf ist in der öffentlichen Suche nicht auffindbar.</p>
+<div class="hinweis"><b>Zum Rang dieser Aussage:</b> Das ist eine Falsifikation durch die Bauenden in der Entwicklungsumgebung, kein Penetrationstest. Sie ersetzt keine unabhängige Prüfung vor einem echten Betrieb.</div>
+
+<h2>16. Falsifikation: Anmeldung</h2>
+<table>
+<tr><th>Eigenschaft</th><th>Befund</th></tr>
+<tr><td>Auskunft über bestehende Konten</td><td class="ok">keine — unbekannte und bekannte Adresse liefern denselben Status, bei Anmeldung wie beim Zurücksetzen</td></tr>
+<tr><td>Automatische Anmeldung nach Registrierung</td><td class="ok">abgeschaltet (<code>autoSignIn: false</code>), damit die Antwort nichts über die Adresse verrät</td></tr>
+<tr><td>Registrierung mit vergebener Adresse</td><td class="ok">kein zweites Konto; das ursprüngliche Passwort gilt weiter</td></tr>
+<tr><td>Bestätigungsmail</td><td>geht an einen <code>DevMailProvider</code>, der die Nachricht als Datei unter <code>app/var/mail</code> ablegt — es wird nicht so getan, als sei etwas versandt worden (§17)</td></tr>
+<tr><td>Einreichen ohne bestätigte Adresse</td><td class="ok">abgelehnt mit Grund <code>email-unbestaetigt</code></td></tr>
+<tr><td>Zurücksetzen</td><td>Marke aus der Bibliothek, Gültigkeit 1 Stunde, danach werden alle Sitzungen der Person widerrufen</td></tr>
+</table>
+<h3>Ratengrenzen</h3>
+<div class="scroll">
+<table>
+<tr><th>Weg</th><th>Höchstzahl</th><th>Fenster</th></tr>
+<tr><td>Anmeldung</td><td class="z">8</td><td>5 Minuten</td></tr>
+<tr><td>Registrierung</td><td class="z">5</td><td>1 Stunde</td></tr>
+<tr><td>Passwort vergessen · Bestätigung erneut senden</td><td class="z">5</td><td>1 Stunde</td></tr>
+<tr><td>Passwort setzen</td><td class="z">8</td><td>1 Stunde</td></tr>
+<tr><td>Alle übrigen Anmeldewege</td><td class="z">30</td><td>1 Minute</td></tr>
+<tr><td>Entwurf anlegen · Aktion · Autosave · Bild · Moderation</td><td class="z">20 · 60 · 600 · 80 · 300</td><td>je 1 Stunde, je Person</td></tr>
+</table>
+</div>
+<p class="klein">Die Grenze wurde beim Erstellen dieses Berichts unfreiwillig vorgeführt: Nach mehreren Anmeldungen desselben Kontos in kurzer Folge antwortete der Server 429, und die Aufnahme der Moderationsansicht musste warten.</p>
+<p>Die Anmeldebibliothek sichert nur ihre eigenen Wege. Alle übrigen Änderungswege der Anwendung führen deshalb durch <code>lib/route-schutz.ts</code>: Herkunft prüfen, Rate prüfen, Körper mit Obergrenze lesen, Fehler einheitlich beantworten. Der Proxy vor den Seiten ist kein Sicherheitsrand — er leitet nur um; ob jemand etwas darf, entscheidet immer der Server beim Laden der Ressource (§10).</p>
+
+<h2>17. Leistung und Rückwirkungen auf das Bündel</h2>
+<p>Zuerst die Bildregression. Bei <b>gleichem Datenbestand</b> — also vor der Veröffentlichung des neuen Inserats — sind alle 16 Aufnahmen des öffentlichen Marktplatzes gegenüber dem P5.3-Stand <b>exakt gleich</b>:</p>
+<table>
+<tr><th>Vergleich</th><th>Aufnahmen gleich</th><th>Grösste Abweichung</th></tr>
+<tr><td>P5.3 gegen P5.4, gleicher Datenbestand</td><td class="z">16 / 16</td><td class="z">0.00 %</td></tr>
+<tr><td>P5.3 gegen P5.4, nach der Veröffentlichung</td><td class="z">11 / 16</td><td class="z">19.40 %</td></tr>
+</table>
+<p>Die zweite Zeile ist kein Rückschritt, sondern der Nachweis aus Abschnitt 13. Es weichen genau die fünf Ansichten ab, in denen das neue Inserat vorkommt:</p>
+<table>
+<tr><th>Ansicht</th><th>Abweichung</th><th>Ursache</th></tr>
+<tr><td>Suche Tag · Suche Abend</td><td class="z">19.40 % · 19.38 %</td><td>eine Karte mehr in der Liste, alle folgenden rücken auf</td></tr>
+<tr><td>Karte Tag · Karte Abend</td><td class="z">4.10 % · 4.10 %</td><td>ein Punkt mehr, Beschriftungen weichen aus</td></tr>
+<tr><td>Karte 390 px</td><td class="z">0.49 %</td><td>derselbe Punkt</td></tr>
+<tr><td>Objektseiten (6), gefilterte Suche, Lageansicht, mobile Objektseiten</td><td class="z">0.00 %</td><td class="ok">unverändert</td></tr>
+<tr><td>Suche 390 px</td><td class="z">0.01 %</td><td class="ok">das neue Inserat liegt dort unterhalb des sichtbaren Bereichs</td></tr>
+</table>
+<h3>Bündeltrennung</h3>
+<table>
+<tr><th>Seite</th><th>JavaScript</th><th>Befund</th></tr>
+<tr><td>Öffentliche Suche</td><td class="z">12 Dateien · 740 KB</td><td class="ok">keine Fundstelle für <code>better-auth</code>, <code>entwuerfe</code>, <code>moderation</code>, <code>EntwurfSchema</code>, <code>forgetPassword</code></td></tr>
+<tr><td>Anmeldung</td><td class="z">595 KB</td><td>Anmeldecode nur hier</td></tr>
+<tr><td>Assistent</td><td class="z">642 KB</td><td>Assistentencode nur hier</td></tr>
+</table>
+<h3>Serverzeiten (Produktionsbau, warm, lokal)</h3>
+<table>
+<tr><th>Seite</th><th>Zeit</th></tr>
+<tr><td>Suche «Kaufen»</td><td class="z">18 ms</td></tr>
+<tr><td>Kartenmodus</td><td class="z">16 ms</td></tr>
+<tr><td>Meine Inserate</td><td class="z">11 ms</td></tr>
+<tr><td>Assistent mit geladenem Entwurf</td><td class="z">13 ms</td></tr>
+<tr><td>Geschützte Vorschau</td><td class="z">16 ms</td></tr>
+</table>
+
+<h2>18. Mobil, Sprachen, Zugänglichkeit</h2>
+<p>Die ganze Reise wurde bei <b>390 px</b> abgefahren. Keine der neuen Seiten erzeugt seitliches Scrollen: gemessene Dokumentbreite gleich Sichtbreite auf Anmeldung, Registrierung, Passwort, Meine Inserate, Assistent, geladenem Entwurf, Vorschau und Suche.</p>
+<figure>
+<img src="img/p5-4-mobil-assistent.jpg" alt="Assistent bei 390 Punkten Breite" style="max-width:390px">
+<figcaption>Der Assistent bei 390 px. Bedienflächen bleiben mindestens 44 px hoch, die Schrittleiste scrollt in ihrem eigenen Streifen.</figcaption>
+</figure>
+<table>
+<tr><th>Gegenstand</th><th>Stand</th></tr>
+<tr><td>Sprachen der Oberfläche</td><td class="ok">Deutsch, Französisch, Italienisch, Englisch — 176 neue Schlüssel je Sprache, 618 insgesamt, keine Lücke</td></tr>
+<tr><td>Text des Inserats</td><td class="ok">bleibt in der verfassten Sprache; es wird <b>nicht</b> automatisch übersetzt (§55). Die Sprache wird gespeichert, nicht geraten.</td></tr>
+<tr><td>Beschriftungen</td><td>jedes Feld hat ein <code>label</code> mit <code>for</code>; Fehler stehen im Text, nicht nur in einer Farbe</td></tr>
+<tr><td>Tastatur</td><td>Formulare sind ohne Maus bedienbar, der Sichtfokus bleibt sichtbar</td></tr>
+<tr><td>Ausfüllhilfen</td><td><code>autocomplete</code> für E-Mail, aktuelles und neues Passwort, Name</td></tr>
+</table>
+<p class="klein">Ein Befund aus der Bildabnahme wurde behoben: Passwortfelder erbten die Breitenregel des Assistenten nicht und standen schmaler als das E-Mail-Feld daneben. Die Regel gilt jetzt auch für <code>password</code> und <code>date</code>.</p>
+
+<h2>19. Verbleibende Grenzen für den Betrieb</h2>
+<ul>
+<li><b>Kein echter Mailversand.</b> Bestätigung und Zurücksetzen landen als Datei unter <code>app/var/mail</code>. Ohne Anbieter kommt keine Nachricht bei einer echten Person an.</li>
+<li><b>Kein Objektspeicher.</b> Bilder liegen im Dateisystem des Servers. Es gibt keine Sicherung, keine zweite Kopie, kein Auslieferungsnetz.</li>
+<li><b>Keine Adressprüfung.</b> Strasse und Hausnummer sind unbestätigt; die Lage ist höchstens gemeindegenau. «Exakt» bleibt gesperrt, bis ein geprüfter Dienst vorliegt.</li>
+<li><b>Kein Bildzuschnitt und keine Formatstaffel</b> beim Hochladen: Es wird eine Variante gespeichert, verkleinert vom Browser. Für den Betrieb braucht es eine serverseitige Staffel wie beim Demo-Bestand.</li>
+<li><b>Ratengrenzen je Prozess.</b> Bei mehreren Servern zählt jeder für sich; das braucht einen gemeinsamen Zähler.</li>
+<li><b>Rollenvergabe nur auf der Konsole.</b> Das ist bewusst so, verlangt aber vor dem Betrieb eine Verwaltungsansicht mit eigener Prüfspur.</li>
+<li><b>Kontoseiten haben unlokalisierte Pfade</b> (<code>/fr/konto/anmelden</code>). Die Inhalte sind übersetzt, die Adresssegmente noch nicht.</li>
+<li><b>Bezahlte Platzierung, Erfolgshonorar, «gratis inserieren», kostenlose Schätzung</b> sind Aussagen aus dem Prototyp und in P5.4 <b>nicht</b> bestätigt worden. Der Text steht unverändert in der Oberfläche; die Geschäftsregel dahinter ist offen.</li>
+<li><b>Ein Nebenbefund aus P5.3 wurde behoben:</b> Zwei Geschwisterelemente der Suchseite trugen denselben React-Schlüssel. Der Fehler war in der Entwicklungsansicht sichtbar und ist jetzt weg.</li>
+</ul>
+
+<h2>20. Empfehlung für P5.5</h2>
+<p><b>Schweizer Staging mit echter Infrastruktur</b> — jetzt lohnt es sich, weil es private Abläufe gibt, die eine echte Umgebung brauchen. In dieser Reihenfolge:</p>
+<ol>
+<li><b>Transaktionaler Mailversand</b> zuerst. Ohne ihn ist die Kette an genau einer Stelle unecht, und es ist die Stelle, an der eine fremde Person zum ersten Mal etwas von Fourwalls bekommt.</li>
+<li><b>Verwalteter PostgreSQL mit PostGIS</b> in der Schweiz, mit Sicherung und geprüfter Rückspielung. Die Wanderungen 0001–0012 laufen unverändert.</li>
+<li><b>S3-kompatibler Objektspeicher</b> plus serverseitige Bildstaffel; die Auslieferung bleibt hinter der Berechtigungsprüfung.</li>
+<li><b>Staging-Domäne und Geheimnisse</b> ausserhalb des Repositoriums, <code>Secure</code>-Cookies, <code>FW_ALLOW_ROLE_BOOTSTRAP</code> nur für den ersten Start.</li>
+<li><b>Überwachung</b> und ein gemeinsamer Ratenzähler.</li>
+</ol>
+<p>Vor dem Staging gehört ein Entscheid des Auftraggebers auf den Tisch, keine technische Frage: die Geschäftsregeln zu Platzierung, Kosten und Prüfsiegel. Sie sind bisher Demo-Annahmen und dürfen nicht durch Gewohnheit zu Zusagen werden.</p>
+
+<h2>Prüfläufe dieser Phase</h2>
+<div class="scroll">
+<table>
+<tr><th>Lauf</th><th>Umfang</th><th>Ergebnis</th></tr>
+<tr><td>Ende-zu-Ende-Reise <code>scripts/lieferkette-test.mjs</code></td><td class="z">33 Schritte</td><td class="ok">33 OK, 0 Fehler</td></tr>
+<tr><td>Sicherheit <code>scripts/sicherheit-test.mjs</code></td><td class="z">39 Prüfungen</td><td class="ok">39 OK, 0 Fehler</td></tr>
+<tr><td>Marktplatz <code>scripts/marktplatz-test.mjs</code></td><td class="z">77 Prüfungen</td><td class="ok">77 OK, 0 Fehler</td></tr>
+<tr><td>Routen <code>scripts/routen-test.mjs</code></td><td class="z">307 Routen</td><td class="ok">0 Fehler</td></tr>
+<tr><td>Einheitstests <code>node:test</code></td><td class="z">28 Tests</td><td class="ok">28 bestanden</td></tr>
+<tr><td>Typen <code>tsc --noEmit</code> · Stil <code>eslint</code></td><td class="z">—</td><td class="ok">ohne Befund</td></tr>
+<tr><td>Bildregression <code>tools/vergleich.mjs</code></td><td class="z">16 Aufnahmen</td><td class="ok">0.00 % bei gleichem Bestand</td></tr>
+</table>
+</div>
+<p>Es gibt in dieser Phase <b>keine</b> Prüfung, die als «erwarteter Fehlschlag» geführt wird. Die eine absichtlich falsche Prüfung aus P5.3 wurde aufgelöst: Die dortige Ausschnittsgrenze konnte nie greifen, weil die Koordinatengrenzen den Ausschnitt vorher kappen. Sie steht jetzt als zwei ehrliche Fälle da — ein zulässiger Ausschnitt mit 200 und ein unzulässiger mit 422 — und der Lauf ist vollständig grün.</p>
+
+<p class="klein" style="margin-top:56px">Belege: <code>app/domain/{rechte,entwurf}.ts</code>, <code>app/server/{auth,sitzung,entwuerfe,moderation,medien,vorschau}.ts</code>, <code>app/lib/{bild,route-schutz,auth-client}.ts</code>, <code>db/migrations/{0011_auth,0012_entwurf}.sql</code>, <code>app/scripts/{lieferkette-test,sicherheit-test,rolle}.mjs</code>, <code>app/var/{lieferkette,sicherheit,marktplatz,routen}-bericht.json</code>, <code>tests/{rechte,entwurf,bild}.test.ts</code>, <code>baseline/p5</code> gegen <code>baseline/p54-regression</code> und <code>baseline/p54-nachher</code>. Der Prototyp unter <code>final/</code> ist unverändert; die Tags <code>p5.2-vertikale-scheibe</code> und <code>p5.3-marktplatz</code> sind unangetastet. P5.5 ist nicht begonnen.</p>
+</div>
+</body>
+</html>

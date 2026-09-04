@@ -127,7 +127,7 @@
 .wiz h2{font-family:var(--d);font-weight:300;font-size:clamp(1.5rem,3vw,2.3rem);margin-top:8px;letter-spacing:-.015em}
 .wiz .fld{margin-top:18px}
 .wiz label{display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);margin-bottom:7px}
-.wiz input[type="text"],.wiz input[type="number"],.wiz input[type="email"],.wiz textarea,.wiz select{width:100%;background:var(--gr2);border:1px solid var(--linie2);border-radius:var(--r);padding:.72em .9em;font-size:.9rem;min-height:44px}
+.wiz input[type="text"],.wiz input[type="number"],.wiz input[type="email"],.wiz input[type="password"],.wiz input[type="date"],.wiz textarea,.wiz select{width:100%;background:var(--gr2);border:1px solid var(--linie2);border-radius:var(--r);padding:.72em .9em;font-size:.9rem;min-height:44px}
 .wiz textarea{min-height:120px;resize:vertical}
 .wiz .fehler{color:var(--warn);font-size:.76rem;margin-top:6px;display:none}
 .wiz .fehler.an{display:block}

@@ -20,7 +20,7 @@ jobs:
     env:
       APP_ENV: test
       DATABASE_URL: postgres://fourwalls:fourwalls_ci@localhost:5432/fourwalls
-      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_URL: http://localhost:3007
       STORAGE_PROVIDER: local
       MAIL_PROVIDER: dev
       MAIL_FROM: noreply@fourwalls.example
@@ -39,3 +39,14 @@ jobs:
       - name: Seed (Entwicklungsbestand) lädt
         run: node scripts/migrate.mjs --seed
       - run: npm run build
+      # Die Reise- und Sicherheitsprüfungen brauchen einen laufenden Server.
+      # Sie sind schnell (rund eine Minute) und decken genau das ab, was bei
+      # einer Änderung an Rechten oder Zuständen zuerst bricht.
+      - name: Anwendung starten
+        run: |
+          npx next start -p 3007 &
+          for i in $(seq 1 60); do curl -sf http://localhost:3007/api/health && break; sleep 2; done
+      - name: Lieferkette (Registrierung → Entwurf → Moderation → Veröffentlichung → Suche)
+        run: node scripts/lieferkette-test.mjs http://localhost:3007
+      - name: Sicherheit (IDOR, Rechteausweitung, Herkunft, Dateien, Aufzählung)
+        run: node scripts/sicherheit-test.mjs http://localhost:3007

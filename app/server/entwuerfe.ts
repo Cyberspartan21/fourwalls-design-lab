@@ -1,6 +1,9 @@
 import "server-only";
 import { sql } from "./db";
 import { env } from "./env";
+import { einreihen } from "./outbox";
+import { medienZurueckziehen } from "./medien";
+import { mailtext } from "@/lib/mailtext";
 import { AppError } from "@/lib/errors";
 import { log } from "@/lib/log";
 import { EntwurfSchema, LEERER_ENTWURF, fehlend, type Entwurf } from "@/domain/entwurf";
@@ -168,6 +171,14 @@ export async function entwurfEinreichen(person: Person, publicRef: string): Prom
     /* Ein offener Fall der Moderation: einer je Durchgang. */
     await tx`UPDATE moderation_case SET closed_at = now() WHERE listing_id = ${r.id} AND closed_at IS NULL`;
     await tx`INSERT INTO moderation_case (listing_id) VALUES (${r.id})`;
+
+    /* Benachrichtigung an die Eigentümerin — in derselben Transaktion. */
+    const [eigentuemerin] = await tx`SELECT email, locale FROM app_user WHERE id = ${person.id}`;
+    if (eigentuemerin?.email) {
+      const owLocale = eigentuemerin.locale === "fr" || eigentuemerin.locale === "it" || eigentuemerin.locale === "en" ? eigentuemerin.locale : "de";
+      const { betreff, text } = mailtext("listing_submitted", owLocale, { titel: d.titel ?? "", referenz: publicRef });
+      await einreihen(tx, { an: String(eigentuemerin.email), betreff, text, locale: owLocale, art: "listing_submitted", bezug: { art: "listing", kennung: publicRef } });
+    }
   });
   log.info("entwurf.eingereicht", { listing: publicRef, actor: person.id });
   const nach = await laden(publicRef);
@@ -249,7 +260,10 @@ export async function entwurfZurueckziehen(person: Person, publicRef: string): P
     /* Aus jedem Zustand führt ein erlaubter Weg ins Archiv; die Zustandsprüfung
        der Datenbank entscheidet, ob ein Zwischenschritt nötig ist. */
     const s = r.status as Status;
-    if (s === "published" || s === "reserved") await tx`UPDATE listing SET status = 'paused' WHERE id = ${r.id}`;
+    if (s === "published" || s === "reserved") {
+      await tx`UPDATE listing SET status = 'paused' WHERE id = ${r.id}`;
+      await medienZurueckziehen(tx, String(r.id));
+    }
     if (s === "submitted" || s === "in_review") await tx`UPDATE listing SET status = 'changes_required' WHERE id = ${r.id}`;
     if (s === "approved") await tx`UPDATE listing SET status = 'archived' WHERE id = ${r.id}`;
     else await tx`UPDATE listing SET status = 'archived' WHERE id = ${r.id}`;

@@ -1,9 +1,19 @@
 import "server-only";
 import { sql } from "./db";
+import { env } from "./env";
+import { einreihen } from "./outbox";
+import { medienVeroeffentlichen, medienZurueckziehen } from "./medien";
+import { mailtext } from "@/lib/mailtext";
 import { AppError } from "@/lib/errors";
 import { log } from "@/lib/log";
+import { PFAD } from "@/i18n";
 import { EntwurfSchema, type Entwurf } from "@/domain/entwurf";
+import { DB_ZU_TRANS } from "@/domain/marktplatz";
 import { darfFreigeben, darfAenderungVerlangen, darfAblehnen, darfVeroeffentlichen, darfPausieren, darfPruefen, type Person, type Status } from "@/domain/rechte";
+
+/* Sprache der Eigentümerin für Mail und URL, Rückfall 'de'. */
+type MailLocale = "de" | "fr" | "it" | "en";
+const alsLocale = (v: unknown): MailLocale => v === "fr" || v === "it" || v === "en" ? v : "de";
 
 /* Moderation — Prüfen, Ändern verlangen, Ablehnen, Freigeben, Veröffentlichen.
 
@@ -69,9 +79,9 @@ export interface Fall {
 async function fallLaden(publicRef: string) {
   if (!/^FWL-\d{4}-\d{6}$/.test(publicRef)) return null;
   const z = await sql`
-    SELECT l.id, l.public_ref, l.status, l.version, l.draft_data, l.published_by_user_id, l.submitted_at,
+    SELECT l.id, l.public_ref, l.status, l.version, l.draft_data, l.published_by_user_id, l.submitted_at, l.transaction, l.title,
            p.city, p.geo_precision,
-           u.display_name, u.email, u.email_verified,
+           u.display_name, u.email, u.email_verified, u.locale AS owner_locale,
            (SELECT count(*)::int FROM listing l2 WHERE l2.published_by_user_id = l.published_by_user_id) AS inserate
       FROM listing l JOIN property p ON p.id = l.property_id
       LEFT JOIN app_user u ON u.id = l.published_by_user_id
@@ -158,6 +168,13 @@ export async function aenderungVerlangen(person: Person, publicRef: string, nach
     await tx`UPDATE moderation_case SET assigned_to = ${person.id}, message_to_owner = ${text}, reason = ${grund},
                     outcome = 'aenderung_verlangt', closed_at = now()
               WHERE listing_id = ${r.id} AND closed_at IS NULL`;
+
+    /* Benachrichtigung an die Eigentümerin — in derselben Transaktion. */
+    if (r.email) {
+      const l = alsLocale(r.owner_locale);
+      const { betreff, text: mailKoerper } = mailtext("changes_requested", l, { titel: String(r.title ?? ""), referenz: publicRef, nachricht: text });
+      await einreihen(tx, { an: String(r.email), betreff, text: mailKoerper, locale: l, art: "changes_requested", bezug: { art: "listing", kennung: publicRef } });
+    }
   });
   log.info("moderation.aenderung", { listing: publicRef, actor: person.id, grund });
 }
@@ -192,8 +209,22 @@ export async function veroeffentlichen(person: Person, publicRef: string): Promi
              ON CONFLICT (slug) DO NOTHING`;
     await tx`UPDATE listing SET slug = ${slug}, status = 'published', published_at = now(), is_indexable = true
               WHERE id = ${r.id}`;
+    /* Erst jetzt werden die Ableitungen der Bilder öffentlich (abl/ → pub/);
+       bis hierher hatte kein Bild eine dauerhafte Adresse (P5.5 §20/§21). */
+    await medienVeroeffentlichen(tx, String(r.id));
     await tx`UPDATE moderation_case SET assigned_to = ${person.id}, outcome = 'veröffentlicht', closed_at = now()
               WHERE listing_id = ${r.id} AND closed_at IS NULL`;
+
+    /* Benachrichtigung an die Eigentümerin — mit der öffentlichen Adresse. */
+    if (r.email) {
+      const l = alsLocale(r.owner_locale);
+      const trans = DB_ZU_TRANS[r.transaction as "sale" | "rent"];
+      const pfad = PFAD[l];
+      const basis = env().NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+      const url = `${basis}/${l}/${pfad.immobilien}/${trans === "rent" ? pfad.mieten : pfad.kaufen}/${slug}`;
+      const { betreff, text: mailKoerper } = mailtext("listing_published", l, { titel: d.titel ?? "", referenz: publicRef, url });
+      await einreihen(tx, { an: String(r.email), betreff, text: mailKoerper, locale: l, art: "listing_published", bezug: { art: "listing", kennung: publicRef } });
+    }
   });
   log.info("moderation.veroeffentlicht", { listing: publicRef, actor: person.id });
 }
@@ -203,6 +234,8 @@ export async function pausieren(person: Person, publicRef: string, grund?: strin
   await sql.begin(async tx => {
     await tx`SELECT set_config('app.actor_id', ${person.id}, true), set_config('app.reason', ${grund ?? "pausiert"}, true)`;
     await tx`UPDATE listing SET status = 'paused', is_indexable = false WHERE id = ${r.id}`;
+    /* Pausiert heisst: keine öffentliche Adresse mehr für die Bilder. */
+    await medienZurueckziehen(tx, String(r.id));
   });
   log.info("moderation.pausiert", { listing: publicRef, actor: person.id });
 }

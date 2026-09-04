@@ -9,11 +9,26 @@ import { herkunftPruefen, fehlerAntwort } from "@/lib/route-schutz";
 export const dynamic = "force-dynamic";
 type P = { params: Promise<{ id: string }> };
 
-export async function GET(_req: NextRequest, { params }: P) {
+export async function GET(req: NextRequest, { params }: P) {
   try {
     const { id } = await params;
-    const b = await bildAusliefern(await personOderNull(), id);
+    const url = new URL(req.url);
+    const wRoh = url.searchParams.get("w");
+    const w = wRoh != null && /^\d+$/.test(wRoh) ? Number(wRoh) : undefined;
+    const fRoh = url.searchParams.get("f");
+    const f = fRoh === "webp" ? "webp" : fRoh === "jpeg" ? "jpeg" : undefined;
+
+    const b = await bildAusliefern(await personOderNull(), id, w, f);
     if (!b) return new Response("Nicht gefunden", { status: 404 });
+
+    if ("umleitung" in b) {
+      /* Die Variante ist bereits öffentlich (pub/): dorthin umleiten statt
+         die Bytes selbst noch einmal auszuliefern. */
+      return new Response(null, {
+        status: 302,
+        headers: { location: b.umleitung, "cache-control": "private, max-age=60" }
+      });
+    }
     return new Response(b.bytes as unknown as BodyInit, {
       headers: {
         "content-type": b.typ,

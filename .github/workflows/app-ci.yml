@@ -1,0 +1,136 @@
+# FOURWALLS — Anwendung: Lint, Typen, Tests, Migrationen + Schema-Zusagen, Build.
+# Läuft gegen echtes PostGIS (Dienstcontainer).
+#
+# Befund P5.5: Diese Datei lag bis zum 4. September 2026 unter app/.github/ —
+# dort liest GitHub sie nicht. Sie ist deshalb NIE gelaufen. Jetzt liegt sie
+# an der Repo-Wurzel; die Jobs arbeiten mit working-directory: app.
+#
+# Auslöseregeln (P5.5 §86–§88):
+#   - push/pull_request auf app/** oder db/**: "pruefen" und "migrationstor"
+#     laufen immer — sie brauchen nichts ausserhalb dieses Repos.
+#   - "image" (Docker-Abbild bauen, kein Push) läuft zusätzlich nur bei einem
+#     push auf main — dort existiert ein geprüfter Stand.
+#   - "deploy-staging" läuft AUSSCHLIESSLICH über einen manuellen
+#     workflow_dispatch mit dem Eingabewert image_tag, und nur nach
+#     Genehmigung im GitHub-Environment "staging". Kein push- oder
+#     pull_request-Ereignis löst einen Deploy aus, und es gibt keinen
+#     Produktionsdeploy in dieser Datei — der Staging-Host existiert noch
+#     nicht, die Schritte sind bewusst Platzhalter (echo).
+name: app-ci
+on:
+  push:
+    paths: ["app/**", "db/**", ".github/workflows/app-ci.yml"]
+  pull_request:
+    paths: ["app/**", "db/**"]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Abbild-Tag, das nach Staging ausgerollt werden soll (z. B. registry/fourwalls-app:2026-09-04)"
+        required: true
+        type: string
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    services:
+      postgis:
+        image: postgis/postgis:16-3.4
+        env: { POSTGRES_USER: fourwalls, POSTGRES_PASSWORD: fourwalls_ci, POSTGRES_DB: fourwalls }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U fourwalls" --health-interval 5s --health-timeout 5s --health-retries 20
+    defaults: { run: { working-directory: app } }
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://fourwalls:fourwalls_ci@localhost:5432/fourwalls
+      NEXT_PUBLIC_SITE_URL: http://localhost:3007
+      STORAGE_PROVIDER: local
+      MAIL_PROVIDER: dev
+      MAIL_FROM: noreply@fourwalls.example
+      MAIL_DEV_SINK: dev-sink@fourwalls.example
+      APP_SECRET: ci-only-nicht-geheim-0000000000000000
+      # Die Reise- und Sicherheitsprüfungen lesen das Moderationskonto aus der
+      # Umgebung (P5.5 §2). In CI legen sie es bei Bedarf selbst an und stufen
+      # es über scripts/rolle.mjs hoch — der Wert ist CI-lokal und kein Geheimnis.
+      FW_TEST_MOD_EMAIL: ci-moderation@fourwalls.example
+      FW_TEST_MOD_PASSWORT: ci-only-nicht-geheim-moderation-0000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: Migrationen von null + 16 Schema-Zusagen
+        run: node scripts/migrate.mjs && node scripts/migrate.mjs --test
+      - name: Seed (Entwicklungsbestand) lädt
+        run: node scripts/migrate.mjs --seed
+      - run: npm run build
+      # Die Reise- und Sicherheitsprüfungen brauchen einen laufenden Server.
+      # Sie sind schnell (rund eine Minute) und decken genau das ab, was bei
+      # einer Änderung an Rechten oder Zuständen zuerst bricht.
+      - name: Anwendung starten
+        run: |
+          npx next start -p 3007 &
+          for i in $(seq 1 60); do curl -sf http://localhost:3007/api/health && break; sleep 2; done
+      - name: Lieferkette (Registrierung → Entwurf → Moderation → Veröffentlichung → Suche)
+        run: node scripts/lieferkette-test.mjs http://localhost:3007
+      - name: Sicherheit (IDOR, Rechteausweitung, Herkunft, Dateien, Aufzählung)
+        run: node scripts/sicherheit-test.mjs http://localhost:3007
+
+  # Migrationstor (P5.5 §37): eine frische Datenbank, Migrationen von null,
+  # die 16 Schema-Zusagen — und ein zweiter Lauf, der beweisen muss, dass
+  # nichts mehr zu tun ist. Getrennt von "pruefen", weil hier NICHT geseedet
+  # und NICHT gebaut wird — reine Migrationsprüfung.
+  migrationstor:
+    runs-on: ubuntu-latest
+    services:
+      postgis:
+        image: postgis/postgis:16-3.4
+        env: { POSTGRES_USER: fourwalls, POSTGRES_PASSWORD: fourwalls_ci, POSTGRES_DB: fourwalls }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U fourwalls" --health-interval 5s --health-timeout 5s --health-retries 20
+    defaults: { run: { working-directory: app } }
+    env:
+      DATABASE_URL: postgres://fourwalls:fourwalls_ci@localhost:5432/fourwalls
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - run: npm ci
+      - name: Migrationen von null
+        run: node scripts/migrate.mjs
+      - name: 16 Schema-Zusagen
+        run: node scripts/migrate.mjs --test
+      - name: Zweiter Lauf muss "Schema aktuell" melden — kein Migrationstor ohne Beweis
+        run: |
+          AUSGABE="$(node scripts/migrate.mjs)"
+          echo "$AUSGABE"
+          echo "$AUSGABE" | grep -q "Schema aktuell" || { echo "::error::Zweiter Migrationslauf hat nicht «Schema aktuell» gemeldet — Migrationen sind nicht idempotent."; exit 1; }
+
+  # Docker-Abbild bauen, ohne es zu veröffentlichen (P5.5 §44). Nur auf main:
+  # dort ist bereits geprüft, dass Lint/Typen/Tests/Migrationen/Build/
+  # Lieferkette/Sicherheit grün sind (Job "pruefen" auf demselben Ereignis).
+  image:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker-Abbild bauen (kein Push) — Kontext ist die Repo-Wurzel (db/ liegt neben app/)
+        run: docker build -f app/Dockerfile -t fourwalls-app:${{ github.sha }} .
+
+  # Staging-Deploy: ausschliesslich manuell (workflow_dispatch), mit dem
+  # Eingabewert image_tag, und nur nach Genehmigung im GitHub-Environment
+  # "staging" (dort ist die Freigabe hinterlegt, nicht in dieser Datei). Der
+  # Staging-Host existiert noch nicht — deshalb sind die Schritte bewusst
+  # Platzhalter. Kein automatischer Deploy, kein Produktionsdeploy.
+  deploy-staging:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Platzhalter — der Staging-Host existiert noch nicht (P5.5 §86–§88)
+        run: |
+          echo "Würde APP_IMAGE=${{ inputs.image_tag }} auf dem Staging-Host ausrollen (infra/staging/deploy.sh)."
+          echo "Kein Host verbunden — dieser Schritt tut absichtlich nichts ausser dies zu protokollieren."

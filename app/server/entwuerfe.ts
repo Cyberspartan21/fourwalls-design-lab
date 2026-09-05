@@ -283,8 +283,15 @@ async function materialisieren(tx: Tx, listingId: string, propertyId: string, d:
   await tx`DELETE FROM listing_image WHERE listing_id = ${listingId}`;
   for (const [i, assetId] of d.bilder.entries()) {
     /* Nur eigene Medien: ein fremder Bezeichner findet keine Zeile (§35). */
-    const ok = await tx`SELECT 1 FROM media_asset WHERE id = ${assetId} AND uploaded_by = ${person.id}`;
-    if (!ok[0]) throw new AppError("FORBIDDEN", "Ein gewähltes Bild gehört nicht zu Ihrem Konto");
+    /* Ein Bild gehört der hochladenden Person — oder, bei einem Inserat der
+       Organisation, einem aktiven Mitglied desselben Teams (P5.7 §22/§24:
+       A lädt hoch, B reicht ein). Fremde Bilder nie. */
+    const ok = orgId
+      ? await tx`SELECT 1 FROM media_asset a WHERE a.id = ${assetId}
+                   AND (a.uploaded_by = ${person.id}
+                        OR EXISTS (SELECT 1 FROM org_membership m WHERE m.organization_id = ${orgId} AND m.user_id = a.uploaded_by AND m.is_active))`
+      : await tx`SELECT 1 FROM media_asset WHERE id = ${assetId} AND uploaded_by = ${person.id}`;
+    if (!ok[0]) throw new AppError("FORBIDDEN", "Ein gewähltes Bild gehört nicht zu Ihrem Konto oder Team");
     await tx`INSERT INTO listing_image (listing_id, asset_id, sort_order, category, is_cover)
              VALUES (${listingId}, ${assetId}, ${i}, 'wohnen', ${i === 0})`;
   }

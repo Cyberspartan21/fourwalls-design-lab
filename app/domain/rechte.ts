@@ -33,20 +33,29 @@ export const RECHTE = [
   "REQUEST_CHANGES",
   "REJECT_LISTING",
   "PUBLISH_LISTING",
-  "PAUSE_PUBLISHED_LISTING"
+  "PAUSE_PUBLISHED_LISTING",
+  /* FOURWALLS-Geschäft: Anliegen von Eigentümerinnen (P5.8 §24–§28, §56).
+     Bewusst NICHT an die Moderation gebunden — Prüfen von Inseraten und
+     Maklergeschäft sind zwei Verantwortungen. */
+  "VIEW_SERVICE_LEADS",
+  "MANAGE_SERVICE_LEADS",
+  "ASSIGN_SERVICE_LEAD"
 ] as const;
 export type Recht = (typeof RECHTE)[number];
 
 const EIGENE: Recht[] = ["CREATE_OWN_LISTING", "EDIT_OWN_DRAFT", "SUBMIT_OWN_LISTING", "VIEW_OWN_LISTINGS", "PREVIEW_OWN_LISTING", "WITHDRAW_OWN_LISTING"];
 const MODERATION: Recht[] = ["VIEW_MODERATION_QUEUE", "REVIEW_LISTING", "APPROVE_LISTING", "REQUEST_CHANGES", "REJECT_LISTING", "PUBLISH_LISTING", "PAUSE_PUBLISHED_LISTING"];
+const GESCHAEFT: Recht[] = ["VIEW_SERVICE_LEADS", "MANAGE_SERVICE_LEADS", "ASSIGN_SERVICE_LEAD"];
 
 /* Rollen sind Bündel von Rechten, nicht Fähigkeiten für sich.
-   `staff` ist heute Fourwalls-Personal ohne Moderationsauftrag — die
-   Herausgeber-Werkzeuge der Agenturen kommen später und erweitern diese
-   Tabelle, nicht die Prüfstellen. */
+   `staff` ist Fourwalls-Personal ohne Moderationsauftrag; seit P5.8 trägt
+   es die Geschäftsrechte (Anliegen von Eigentümerinnen). Teamrechte der
+   Agenturen leben getrennt in domain/orgrechte.ts. */
 export const ROLLE_RECHTE: Record<Rolle, readonly Recht[]> = {
   user: EIGENE,
-  staff: EIGENE,
+  /* staff = FOURWALLS-Personal: bearbeitet Anliegen, moderiert nicht. */
+  staff: [...EIGENE, ...GESCHAEFT],
+  /* moderator prüft Inserate, sieht keine Geschäftsanliegen (§56). */
   moderator: [...EIGENE, ...MODERATION],
   admin: RECHTE
 };

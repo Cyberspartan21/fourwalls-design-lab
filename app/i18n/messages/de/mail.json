@@ -38,5 +38,13 @@
   "org_member_removed": {
     "betreff": "Fourwalls — Sie wurden aus dem Team von {org} entfernt",
     "text": "Guten Tag\n\nSie sind nicht mehr Mitglied des Teams von {org}. Bereits zugewiesene Inserate bleiben Eigentum der Organisation."
+  },
+  "service_lead_intern": {
+    "betreff": "Fourwalls — Neues Anliegen: {dienst} — {ort} ({referenz})",
+    "text": "Neues Anliegen an FOURWALLS\n\nDienst: {dienst}\nReferenz: {referenz}\nOrt: {ort}\n\nKontakt: {name}\nE-Mail: {email}\nTelefon: {telefon}\n\n{fakten}\n\nNachricht:\n{nachricht}\n\n{url}"
+  },
+  "service_lead_bestaetigung": {
+    "betreff": "Fourwalls — Ihr Anliegen ist eingegangen ({referenz})",
+    "text": "Guten Tag {name}\n\nVielen Dank für Ihr Anliegen «{dienst}» ({referenz}). Wir haben es erhalten und melden uns bei Ihnen."
   }
 }

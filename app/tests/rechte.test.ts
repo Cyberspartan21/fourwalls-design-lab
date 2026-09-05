@@ -92,3 +92,14 @@ test("Zuweisen braucht das Teamrecht; Moderation nie durch das eigene Büro", ()
   assert.equal(darfFreigeben(mod, orgInserat, { orgId: "org-alpha", rolle: "viewer" }).erlaubt, false);
   assert.equal(darfFreigeben(mod, orgInserat, null).erlaubt, true);
 });
+
+/* ---------- P5.8: Geschäftsrechte ---------- */
+test("Anliegen an FOURWALLS bearbeitet das Personal, nicht die Moderation", () => {
+  assert.equal(darf("staff", "VIEW_SERVICE_LEADS"), true);
+  assert.equal(darf("staff", "MANAGE_SERVICE_LEADS"), true);
+  assert.equal(darf("staff", "VIEW_MODERATION_QUEUE"), false);
+  assert.equal(darf("moderator", "VIEW_SERVICE_LEADS"), false, "Moderation ist kein Maklergeschäft (§56)");
+  assert.equal(darf("user", "VIEW_SERVICE_LEADS"), false);
+  assert.equal(darf("admin", "ASSIGN_SERVICE_LEAD"), true);
+});
+

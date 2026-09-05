@@ -38,5 +38,13 @@
   "org_member_removed": {
     "betreff": "Fourwalls — Vous avez été retiré·e de l'équipe de {org}",
     "text": "Bonjour\n\nVous n'êtes plus membre de l'équipe de {org}. Les annonces déjà attribuées restent la propriété de l'organisation."
+  },
+  "service_lead_intern": {
+    "betreff": "Fourwalls — Nouvelle demande : {dienst} — {ort} ({referenz})",
+    "text": "Nouvelle demande adressée à FOURWALLS\n\nService : {dienst}\nRéférence : {referenz}\nLieu : {ort}\n\nContact : {name}\nE-mail : {email}\nTéléphone : {telefon}\n\n{fakten}\n\nMessage :\n{nachricht}\n\n{url}"
+  },
+  "service_lead_bestaetigung": {
+    "betreff": "Fourwalls — Votre demande a bien été reçue ({referenz})",
+    "text": "Bonjour {name}\n\nMerci pour votre demande « {dienst} » ({referenz}). Nous l'avons bien reçue et reviendrons vers vous."
   }
 }

@@ -38,5 +38,13 @@
   "org_member_removed": {
     "betreff": "Fourwalls — You were removed from the {org} team",
     "text": "Hello\n\nYou are no longer a member of the {org} team. Listings already assigned to you remain the property of the organization."
+  },
+  "service_lead_intern": {
+    "betreff": "Fourwalls — New request: {dienst} — {ort} ({referenz})",
+    "text": "New request to FOURWALLS\n\nService: {dienst}\nReference: {referenz}\nLocation: {ort}\n\nContact: {name}\nEmail: {email}\nPhone: {telefon}\n\n{fakten}\n\nMessage:\n{nachricht}\n\n{url}"
+  },
+  "service_lead_bestaetigung": {
+    "betreff": "Fourwalls — We've received your request ({referenz})",
+    "text": "Hello {name}\n\nThank you for your request “{dienst}” ({referenz}). We've received it and will get back to you."
   }
 }

@@ -19,6 +19,10 @@ const Schema = z.object({
   MAIL_PROVIDER: z.enum(["dev", "smtp"]).default("dev"),
   MAIL_FROM: z.string().email().default("noreply@fourwalls.example"),
   MAIL_DEV_SINK: z.string().email().default("dev-sink@fourwalls.example"),
+  /* Posteingang für Anliegen an FOURWALLS (P5.8 §20/§21): Geschäftskonfiguration,
+     keine Personenadresse im Code. In Entwicklung/Test fällt sie auf MAIL_DEV_SINK
+     zurück; in Staging/Produktion ist sie Pflicht. */
+  SERVICE_LEAD_INBOX: z.string().email().optional(),
   APP_SECRET: z.string().min(32).optional(),
 
   /* ---------- S3-kompatibler Objektspeicher (STORAGE_PROVIDER=s3) ----------
@@ -84,6 +88,7 @@ const Schema = z.object({
   if (!/sslmode=(require|verify-ca|verify-full)/.test(e.DATABASE_URL)) fehlt("DATABASE_URL", `In ${e.APP_ENV} muss die Datenbankverbindung verschlüsselt sein (sslmode=verify-full)`);
   if (!e.NEXT_PUBLIC_SITE_URL.startsWith("https://")) fehlt("NEXT_PUBLIC_SITE_URL", "muss https sein");
   if (e.S3_ENDPOINT && !e.S3_ENDPOINT.startsWith("https://")) fehlt("S3_ENDPOINT", "muss https sein");
+  if (!e.SERVICE_LEAD_INBOX) fehlt("SERVICE_LEAD_INBOX", `In ${e.APP_ENV} braucht es einen Posteingang für Anliegen (SERVICE_LEAD_INBOX)`);
   if (e.APP_ENV === "staging" && (!e.STAGING_GATE_USER || !e.STAGING_GATE_PASSWORD)) fehlt("STAGING_GATE_USER", "Staging braucht die Zugangsschleuse (STAGING_GATE_USER/STAGING_GATE_PASSWORD)");
   if (e.APP_ENV === "production" && (e.STAGING_GATE_USER || e.STAGING_GATE_PASSWORD)) fehlt("STAGING_GATE_USER", "Die Staging-Schleuse gehört nicht in die Produktion");
 });

@@ -30,6 +30,12 @@ export interface Werte {
   org?: string;
   rolle?: string;
   ablauf?: string;
+  /* Anliegen von Eigentümerinnen (P5.8) */
+  dienst?: string;
+  email?: string;
+  telefon?: string;
+  ort?: string;
+  fakten?: string;
 }
 
 function ersetzen(vorlage: string, werte: Werte): string {
@@ -45,7 +51,12 @@ function ersetzen(vorlage: string, werte: Werte): string {
     .replaceAll("{abmeldeUrl}", werte.abmeldeUrl ?? "")
     .replaceAll("{org}", werte.org ?? "")
     .replaceAll("{rolle}", werte.rolle ?? "")
-    .replaceAll("{ablauf}", werte.ablauf ?? "");
+    .replaceAll("{ablauf}", werte.ablauf ?? "")
+    .replaceAll("{dienst}", werte.dienst ?? "")
+    .replaceAll("{email}", werte.email ?? "")
+    .replaceAll("{telefon}", werte.telefon ?? "")
+    .replaceAll("{ort}", werte.ort ?? "")
+    .replaceAll("{fakten}", werte.fakten ?? "");
 }
 
 /* Betreff und Text für eine Mailart in einer Sprache, mit eingesetzten Werten.

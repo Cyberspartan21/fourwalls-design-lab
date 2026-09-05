@@ -7,6 +7,9 @@ import { arbeitstitel } from "@/domain/entwurf";
 import { darf } from "@/domain/rechte";
 import { KontoRahmen } from "./kopfzeile";
 import { AbmeldeKnopf, BestaetigungErneut } from "@/components/konto/formulare";
+import { meineAnfragen } from "@/server/inquiries";
+import { listeFavoriten } from "@/server/favoriten";
+import { meineSuchen } from "@/server/gespeicherteSuchen";
 
 /* Meine Inserate — die Liste, aus der jede weitere Handlung startet.
 
@@ -22,6 +25,18 @@ const AMPEL: Record<string, string> = {
   paused: "var(--leise)", rejected: "var(--warn)", archived: "var(--leise)"
 };
 
+/* Eine Kachel der Übersicht — Zahl + Beschriftung, verlinkt auf die
+   zugehörige Kontounterseite. Nur reale, aus der Datenbank gezählte Zahlen
+   (§Auftrag) — nichts, was es serverseitig nicht gibt. */
+function Kachel({ href, zahl, label }: { href: string; zahl: number; label: string }) {
+  return (
+    <a href={href} style={{ display: "block", padding: "14px 16px", border: "1px solid var(--linie)", borderRadius: "var(--r)", textDecoration: "none", color: "inherit" }}>
+      <div style={{ fontSize: "1.6rem", fontWeight: 500, fontVariantNumeric: "tabular-nums" }}>{zahl}</div>
+      <div style={{ fontSize: ".78rem", color: "var(--leise)", marginTop: 2 }}>{label}</div>
+    </a>
+  );
+}
+
 export default async function Konto({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: roh } = await params;
   const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
@@ -30,6 +45,13 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
   const t = uebersetzer(locale);
   const inserate = await meineInserate(s.person);
   const p = PFAD[locale];
+  const anfragen = await meineAnfragen(s.person.id);
+  const merkliste = await listeFavoriten(s.person.id);
+  const suchabos = await meineSuchen(s.person.id);
+
+  const statusZaehlung = new Map<string, number>();
+  for (const i of inserate) statusZaehlung.set(i.status, (statusZaehlung.get(i.status) ?? 0) + 1);
+  const statusText = [...statusZaehlung.entries()].map(([st, n]) => `${n} ${t("st_" + st)}`).join(" · ");
 
   const orte = new Map<string, string>();
   for (const i of inserate) {
@@ -40,11 +62,21 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
   }
 
   return (
-    <KontoRahmen locale={locale} titel={t("k_meineInserate")} breit>
+    <KontoRahmen locale={locale} titel={t("k_meineInserate")} breit nav>
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginTop: 6 }}>
         <span style={{ color: "var(--leise)", fontSize: ".85rem" }}>{s.name} · {s.email}</span>
+        <a className="knopf" href={`/${locale}/konto/favoriten`}>{t("fv_navLink")}</a>
         {darf(s.person.rolle, "VIEW_MODERATION_QUEUE") && <a className="knopf" href={`/${locale}/moderation`}>{t("m_titel")}</a>}
+        <a className="knopf" href={`/${locale}/konto/suchabos`}>{t("k_gespeicherteSuchen")}</a>
         <AbmeldeKnopf t={{ k_abmelden: t("k_abmelden") }} weiter={`/${locale}`} />
+      </div>
+
+      <h3 style={{ marginTop: 30, fontSize: ".95rem" }}>{t("k_uebersicht")}</h3>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 14, marginTop: 12 }}>
+        <Kachel href={`/${locale}/konto`} zahl={inserate.length} label={statusText ? `${t("k_meineInserate")} — ${statusText}` : t("k_meineInserate")} />
+        <Kachel href={`/${locale}/konto/favoriten`} zahl={merkliste.length} label={t("fv_navLink")} />
+        <Kachel href={`/${locale}/konto/anfragen`} zahl={anfragen.length} label={t("af_titel")} />
+        <Kachel href={`/${locale}/konto/suchabos`} zahl={suchabos.length} label={t("k_gespeicherteSuchen")} />
       </div>
 
       {!s.person.emailBestaetigt && (

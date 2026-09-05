@@ -1,0 +1,15 @@
+{
+  "af_titel": "Le mie richieste",
+  "af_leer": "Nessuna richiesta inviata finora",
+  "af_objektNichtVerfuegbar": "Annuncio non più disponibile",
+  "af_art_viewing_request": "Visita",
+  "af_art_listing_question": "Domanda sull'oggetto",
+  "af_art_valuation": "Valutazione",
+  "af_art_management_quote": "Amministrazione",
+  "af_art_general": "Generale",
+  "af_status_new": "Nuova",
+  "af_status_seen": "Vista",
+  "af_status_answered": "Risposta data",
+  "af_status_closed": "Chiusa",
+  "af_status_spam": "Contrassegnata come spam"
+}

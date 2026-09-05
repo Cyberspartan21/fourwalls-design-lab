@@ -12,6 +12,10 @@ import de_property from "./messages/de/property.json";
 import de_listing from "./messages/de/listing.json";
 import de_account from "./messages/de/account.json";
 import de_konto from "./messages/de/konto.json";
+import de_favoriten from "./messages/de/favoriten.json";
+import de_verlauf from "./messages/de/verlauf.json";
+import de_vergleich from "./messages/de/vergleich.json";
+import de_anfragen from "./messages/de/anfragen.json";
 import fr_common from "./messages/fr/common.json";
 import fr_navigation from "./messages/fr/navigation.json";
 import fr_search from "./messages/fr/search.json";
@@ -19,6 +23,10 @@ import fr_property from "./messages/fr/property.json";
 import fr_listing from "./messages/fr/listing.json";
 import fr_account from "./messages/fr/account.json";
 import fr_konto from "./messages/fr/konto.json";
+import fr_favoriten from "./messages/fr/favoriten.json";
+import fr_verlauf from "./messages/fr/verlauf.json";
+import fr_vergleich from "./messages/fr/vergleich.json";
+import fr_anfragen from "./messages/fr/anfragen.json";
 import it_common from "./messages/it/common.json";
 import it_navigation from "./messages/it/navigation.json";
 import it_search from "./messages/it/search.json";
@@ -26,6 +34,10 @@ import it_property from "./messages/it/property.json";
 import it_listing from "./messages/it/listing.json";
 import it_account from "./messages/it/account.json";
 import it_konto from "./messages/it/konto.json";
+import it_favoriten from "./messages/it/favoriten.json";
+import it_verlauf from "./messages/it/verlauf.json";
+import it_vergleich from "./messages/it/vergleich.json";
+import it_anfragen from "./messages/it/anfragen.json";
 import en_common from "./messages/en/common.json";
 import en_navigation from "./messages/en/navigation.json";
 import en_search from "./messages/en/search.json";
@@ -33,6 +45,10 @@ import en_property from "./messages/en/property.json";
 import en_listing from "./messages/en/listing.json";
 import en_account from "./messages/en/account.json";
 import en_konto from "./messages/en/konto.json";
+import en_favoriten from "./messages/en/favoriten.json";
+import en_verlauf from "./messages/en/verlauf.json";
+import en_vergleich from "./messages/en/vergleich.json";
+import en_anfragen from "./messages/en/anfragen.json";
 
 export const LOCALES = ["de", "fr", "it", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -43,10 +59,10 @@ export const istLocale = (s: string): s is Locale => (LOCALES as readonly string
 type Katalog = Record<string, string>;
 
 const KATALOGE: Record<Locale, Katalog> = {
-  de: { ...de_common, ...de_navigation, ...de_search, ...de_property, ...de_listing, ...de_account, ...de_konto },
-  fr: { ...fr_common, ...fr_navigation, ...fr_search, ...fr_property, ...fr_listing, ...fr_account, ...fr_konto },
-  it: { ...it_common, ...it_navigation, ...it_search, ...it_property, ...it_listing, ...it_account, ...it_konto },
-  en: { ...en_common, ...en_navigation, ...en_search, ...en_property, ...en_listing, ...en_account, ...en_konto }
+  de: { ...de_common, ...de_navigation, ...de_search, ...de_property, ...de_listing, ...de_account, ...de_konto, ...de_favoriten, ...de_verlauf, ...de_vergleich, ...de_anfragen },
+  fr: { ...fr_common, ...fr_navigation, ...fr_search, ...fr_property, ...fr_listing, ...fr_account, ...fr_konto, ...fr_favoriten, ...fr_verlauf, ...fr_vergleich, ...fr_anfragen },
+  it: { ...it_common, ...it_navigation, ...it_search, ...it_property, ...it_listing, ...it_account, ...it_konto, ...it_favoriten, ...it_verlauf, ...it_vergleich, ...it_anfragen },
+  en: { ...en_common, ...en_navigation, ...en_search, ...en_property, ...en_listing, ...en_account, ...en_konto, ...en_favoriten, ...en_verlauf, ...en_vergleich, ...en_anfragen }
 };
 
 /* Übersetzer für eine Sprache. Unbekannter Schlüssel → Deutsch → Schlüssel

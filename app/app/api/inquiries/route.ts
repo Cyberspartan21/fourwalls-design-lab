@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { AnfrageSchema, anfrageAnnehmen } from "@/server/inquiries";
 import { env } from "@/server/env";
+import { personOderNull } from "@/server/sitzung";
 import { AppError, asAppError } from "@/lib/errors";
 import { log } from "@/lib/log";
 import { speicherLimiter, herkunftHash } from "@/lib/ratelimit";
@@ -57,7 +58,8 @@ export async function POST(req: NextRequest) {
     if (!(await jeInserat.erlaubt(p.data.publicRef))) throw new AppError("RATE_LIMIT", "Zu viele Anfragen zu diesem Inserat");
 
     const ua = req.headers.get("user-agent");
-    const ergebnis = await anfrageAnnehmen(p.data, { ipHash, uaHash: ua ? await herkunftHash(ua, salz) : null });
+    const senderUserId = (await personOderNull())?.id ?? null;
+    const ergebnis = await anfrageAnnehmen(p.data, { ipHash, uaHash: ua ? await herkunftHash(ua, salz) : null }, senderUserId);
     return Response.json({ angenommen: true, publicRef: ergebnis.publicRef }, { status: 201 });
   } catch (e) {
     const err = asAppError(e);

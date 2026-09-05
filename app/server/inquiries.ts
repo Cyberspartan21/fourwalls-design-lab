@@ -33,7 +33,7 @@ export type Anfrage = z.infer<typeof AnfrageSchema>;
 /* Steuerzeichen und Zeilenumbrüche im Namen sind nie gewollt. */
 const glatt = (s: string) => s.replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim();
 
-export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; uaHash: string | null }): Promise<{ publicRef: string }> {
+export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; uaHash: string | null }, senderUserId: string | null = null): Promise<{ publicRef: string }> {
   const nurEcht = env().APP_ENV === "production";
   /* Nur ein veröffentlichtes Inserat kann eine Anfrage empfangen. */
   const inserate = await sql`
@@ -58,8 +58,8 @@ export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; ua
 
   const publicRef = await sql.begin(async tx => {
     const zeilen = await tx`
-      INSERT INTO inquiry (kind, listing_id, sender_name, sender_email, sender_phone, recipient_user_id, recipient_org_id, message, wants_alert, source, ip_hash, user_agent_hash)
-      VALUES (${a.art}, ${ins.id}, ${glatt(a.name)}, ${a.email}, ${a.telefon ? glatt(a.telefon) : null},
+      INSERT INTO inquiry (kind, listing_id, sender_user_id, sender_name, sender_email, sender_phone, recipient_user_id, recipient_org_id, message, wants_alert, source, ip_hash, user_agent_hash)
+      VALUES (${a.art}, ${ins.id}, ${senderUserId}, ${glatt(a.name)}, ${a.email}, ${a.telefon ? glatt(a.telefon) : null},
               ${ins.contact_user_id ?? null}, ${ins.published_by_org_id ?? null},
               ${a.nachricht.replace(/\r\n?/g, "\n")}, ${a.suchabo === true}, 'web', ${herkunft.ipHash}, ${herkunft.uaHash})
       RETURNING public_ref`;
@@ -77,4 +77,42 @@ export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; ua
   log.info("inquiry.angenommen", { inquiry: publicRef, listing: a.publicRef, art: a.art });
   if (!an) log.warn("inquiry.ohneEmpfaenger", { inquiry: publicRef });
   return { publicRef };
+}
+
+export interface MeineAnfrage {
+  publicRef: string;
+  kind: string;
+  status: string;
+  message: string;
+  createdAt: string;
+  listing: { publicRef: string; title: string; slug: string | null; transaction: "sale" | "rent" | null } | null;
+}
+
+/* Die eigenen Anfragen einer angemeldeten Person — unabhängig davon, ob das
+   Inserat später gelöscht wurde (ON DELETE SET NULL auf listing_id). Ein
+   gelöschtes Inserat lässt die Anfrage nicht verschwinden, nur `listing`
+   wird dann `null`.
+
+   slug/transaction zusätzlich zur Basisabfrage, nur um den Link zur
+   Objektseite bauen zu können ([bereich]/[art]/[slug] löst Abweichungen
+   selbst per Redirect auf — die genaue Art hier ist trotzdem besser als
+   geraten). */
+export async function meineAnfragen(personId: string): Promise<MeineAnfrage[]> {
+  const z = await sql`
+    SELECT i.public_ref, i.kind, i.status, i.message, i.created_at,
+           l.public_ref AS listing_ref, l.title AS listing_title, l.slug AS listing_slug, l.transaction AS listing_transaction
+      FROM inquiry i
+      LEFT JOIN listing l ON l.id = i.listing_id
+     WHERE i.sender_user_id = ${personId}
+     ORDER BY i.created_at DESC LIMIT 100`;
+  return z.map(r => ({
+    publicRef: String(r.public_ref),
+    kind: String(r.kind),
+    status: String(r.status),
+    message: String(r.message),
+    createdAt: new Date(r.created_at).toISOString(),
+    listing: r.listing_ref
+      ? { publicRef: String(r.listing_ref), title: String(r.listing_title ?? ""), slug: r.listing_slug ? String(r.listing_slug) : null, transaction: r.listing_transaction === "rent" ? "rent" : r.listing_transaction === "sale" ? "sale" : null }
+      : null
+  }));
 }

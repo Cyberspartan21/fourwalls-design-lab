@@ -1,0 +1,15 @@
+{
+  "af_titel": "My inquiries",
+  "af_leer": "No inquiry sent yet",
+  "af_objektNichtVerfuegbar": "Listing no longer available",
+  "af_art_viewing_request": "Viewing",
+  "af_art_listing_question": "Question about the property",
+  "af_art_valuation": "Valuation",
+  "af_art_management_quote": "Property management",
+  "af_art_general": "General",
+  "af_status_new": "New",
+  "af_status_seen": "Seen",
+  "af_status_answered": "Answered",
+  "af_status_closed": "Closed",
+  "af_status_spam": "Marked as spam"
+}

@@ -77,6 +77,17 @@ jobs:
         run: node scripts/lieferkette-test.mjs http://localhost:3007
       - name: Sicherheit (IDOR, Rechteausweitung, Herkunft, Dateien, Aufzählung)
         run: node scripts/sicherheit-test.mjs http://localhost:3007
+      # P5.6 — Kundenerlebnis: Merkliste, Suchabo+Alarm, Verlauf/Vergleich, Anfragen-Bezug.
+      # Kein MAIL_PROVIDER=smtp nötig — scripts/lib/mailquelle.mjs fällt ohne
+      # FW_TEST_MAIL_QUELLE auf die dev-Mailsenke (var/mail) zurück.
+      - name: Merkliste (Favoriten)
+        run: node scripts/favoriten-test.mjs http://localhost:3007
+      - name: Gespeicherte Suchen + Suchabo-Alarm
+        run: node scripts/suchabo-test.mjs http://localhost:3007
+      - name: Zuletzt angesehen + Vergleich
+        run: node scripts/verlauf-vergleich-test.mjs http://localhost:3007
+      - name: Anfragen-Kontobezug
+        run: node scripts/anfragen-test.mjs http://localhost:3007
 
   # Migrationstor (P5.5 §37): eine frische Datenbank, Migrationen von null,
   # die 16 Schema-Zusagen — und ein zweiter Lauf, der beweisen muss, dass

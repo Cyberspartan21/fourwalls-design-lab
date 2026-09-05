@@ -1,0 +1,15 @@
+{
+  "af_titel": "Meine Anfragen",
+  "af_leer": "Noch keine Anfrage gesendet",
+  "af_objektNichtVerfuegbar": "Inserat nicht mehr verfügbar",
+  "af_art_viewing_request": "Besichtigung",
+  "af_art_listing_question": "Frage zum Objekt",
+  "af_art_valuation": "Bewertung",
+  "af_art_management_quote": "Bewirtschaftung",
+  "af_art_general": "Allgemein",
+  "af_status_new": "Neu",
+  "af_status_seen": "Gesehen",
+  "af_status_answered": "Beantwortet",
+  "af_status_closed": "Abgeschlossen",
+  "af_status_spam": "Als Spam markiert"
+}

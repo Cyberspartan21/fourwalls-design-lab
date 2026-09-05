@@ -53,6 +53,10 @@ jobs:
       # es über scripts/rolle.mjs hoch — der Wert ist CI-lokal und kein Geheimnis.
       FW_TEST_MOD_EMAIL: ci-moderation@fourwalls.example
       FW_TEST_MOD_PASSWORT: ci-only-nicht-geheim-moderation-0000
+      # Kurzer Takt für die Suchabo-Alarmprüfung (P5.6) — mit dem Standardtakt
+      # (30 s) reicht das Wartefenster des Prüfskripts in einer frisch
+      # gestarteten CI-Umgebung nicht zuverlässig für zwei Durchläufe.
+      ALERT_INTERVAL_MS: "5000"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

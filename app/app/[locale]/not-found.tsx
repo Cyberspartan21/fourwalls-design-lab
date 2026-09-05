@@ -10,7 +10,7 @@ export default async function NichtGefunden() {
   const TXT = { de: ["Diese Seite gibt es nicht.", "Das Inserat wurde vielleicht zurückgezogen, oder die Adresse stimmt nicht."], fr: ["Cette page n'existe pas.", "L'annonce a peut-être été retirée, ou l'adresse est erronée."], it: ["Questa pagina non esiste.", "L'annuncio potrebbe essere stato ritirato, oppure l'indirizzo non è corretto."], en: ["This page does not exist.", "The listing may have been withdrawn, or the address is wrong."] } as const;
   const [titel, text] = TXT[locale];
   return (
-    <main className="blatt" style={{ padding: "clamp(48px,10vh,120px) var(--pad)", minHeight: "60vh" }}>
+    <main style={{ padding: "clamp(48px,10vh,120px) var(--pad)", minHeight: "60vh" }}>
       <p style={{ fontSize: ".62rem", letterSpacing: ".18em", textTransform: "uppercase", color: "var(--leise)" }}>404</p>
       <h1 style={{ fontFamily: "var(--d)", fontWeight: 300, fontSize: "clamp(1.8rem,4vw,2.8rem)", margin: "12px 0 18px" }}>{titel}</h1>
       <p style={{ maxWidth: "56ch", color: "var(--leise)" }}>{text}</p>

@@ -8,7 +8,8 @@ import { AppError } from "@/lib/errors";
 import { log } from "@/lib/log";
 import { EntwurfSchema, LEERER_ENTWURF, fehlend, type Entwurf } from "@/domain/entwurf";
 import { TYP_ZU_KIND, type Typ } from "@/domain/marktplatz";
-import { darfEntwurfBearbeiten, darfEntwurfSehen, darfEinreichen, darfZurueckziehen, type Person, type Status } from "@/domain/rechte";
+import { darfEntwurfBearbeiten, darfEntwurfSehen, darfEinreichen, darfZurueckziehen, darfZuweisen, type Person, type Status } from "@/domain/rechte";
+import { mitgliedFuerInserat, type OrgKontext } from "./org-kontext";
 
 /* Entwürfe — anlegen, lesen, speichern, einreichen.
 
@@ -28,6 +29,11 @@ export interface EntwurfZeile {
   version: number;
   daten: Entwurf;
   ownerId: string | null;
+  /* Organisationsinserat (P5.7): gehört der Organisation, nicht der
+     anlegenden Person. null bei Privatinseraten. */
+  orgId: string | null;
+  assignedUserId: string | null;
+  externalRef: string | null;
   aktualisiert: string;
   eingereicht: string | null;
   rueckmeldung: { nachricht: string; grund: string | null; zeit: string } | null;
@@ -41,6 +47,7 @@ async function laden(publicRef: string) {
   if (!REF.test(publicRef)) return null;
   const z = await sql`
     SELECT l.id, l.public_ref, l.status, l.version, l.draft_data, l.published_by_user_id, l.property_id,
+           l.published_by_org_id, l.assigned_user_id, l.external_ref,
            l.updated_at, l.submitted_at, l.slug, l.content_locale,
            (SELECT json_build_object('nachricht', m.message_to_owner, 'grund', m.reason, 'zeit', m.closed_at)
               FROM moderation_case m
@@ -56,32 +63,71 @@ const alsZeile = (r: Record<string, unknown>): EntwurfZeile => ({
   version: Number(r.version),
   daten: EntwurfSchema.parse(r.draft_data ?? {}),
   ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null,
+  orgId: r.published_by_org_id ? String(r.published_by_org_id) : null,
+  assignedUserId: r.assigned_user_id ? String(r.assigned_user_id) : null,
+  externalRef: r.external_ref ? String(r.external_ref) : null,
   aktualisiert: r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at),
   eingereicht: r.submitted_at ? (r.submitted_at instanceof Date ? r.submitted_at.toISOString() : String(r.submitted_at)) : null,
   rueckmeldung: (r.rueckmeldung as EntwurfZeile["rueckmeldung"]) ?? null
 });
+
+/* Das Inserat für die Rechteprüfung — samt der Organisationszugehörigkeit der
+   handelnden Person (null bei Privatinseraten oder Fremden). */
+async function alsRechteInserat(person: Person, r: Record<string, unknown>) {
+  const orgId = r.published_by_org_id ? String(r.published_by_org_id) : null;
+  const m = await mitgliedFuerInserat(person.id, orgId);
+  return { inserat: { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, orgId, status: r.status as Status }, m };
+}
 
 /* ---------- Anlegen ----------
    Ein Entwurf ist sofort ein echtes Inserat im Zustand `draft`. Die
    Liegenschaft daneben trägt vorerst leere Pflichtfelder — sie bekommt ihre
    Werte beim Einreichen aus den Assistentendaten. Sichtbar ist davon nichts:
    `listing_public` kennt nur veröffentlichte Zustände. */
-export async function entwurfAnlegen(person: Person, uebernehmen?: Entwurf): Promise<EntwurfZeile> {
+export async function entwurfAnlegen(person: Person, uebernehmen?: Entwurf, org?: { kontext: OrgKontext }): Promise<EntwurfZeile> {
   const daten = uebernehmen ? EntwurfSchema.parse(uebernehmen) : LEERER_ENTWURF;
+
+  /* Ein Organisationsinserat: der Aufrufer hat bereits `verlangeOrgRecht(...,
+     "CREATE_LISTING")` geprüft. Herausgeberin ist nie «fourwalls» — das
+     bleibt der eigenen Vertretung vorbehalten (§42/§26). */
+  if (org && org.kontext.org.kind === "fourwalls") {
+    throw new AppError("VALIDATION", "Diese Organisation kann kein Inserat als Anbieterin herausgeben");
+  }
+  const orgKind = org ? org.kontext.org.kind : null;
+  const orgId = org ? org.kontext.org.id : null;
+  /* Standard: wer selbst im Team arbeitet, ist zuständig — sonst bleibt die
+     Zuweisung offen und wird später gesetzt (§24). */
+  const zustaendig = org && (["agent", "admin", "owner"] as string[]).includes(org.kontext.mitglied.rolle) ? person.id : null;
+
   const zeile = await sql.begin(async tx => {
     await tx`SELECT set_config('app.actor_id', ${person.id}, true), set_config('app.reason', 'entwurf-angelegt', true)`;
     const p = await tx`
       INSERT INTO property (kind, postal_code, city, canton, geo_precision, geo_radius_m)
       VALUES ('apartment', '', '', '', 'approximate', 450) RETURNING id`;
+
+    /* Vorbelegung aus dem öffentlichen Profil der Organisation (§23) — der
+       Assistent zeigt sie, die Person darf sie überschreiben. */
+    let vorbelegung = daten;
+    if (org) {
+      const [o] = await tx`SELECT display_name, public_email, public_phone FROM organization WHERE id = ${orgId}`;
+      vorbelegung = EntwurfSchema.parse({
+        ...daten,
+        name: daten.name ?? o?.display_name ?? null,
+        email: daten.email ?? o?.public_email ?? null,
+        telefon: daten.telefon ?? o?.public_phone ?? null
+      });
+    }
+
     const l = await tx`
-      INSERT INTO listing (property_id, transaction, publisher_kind, published_by_user_id, contact_user_id,
-                           content_locale, price_on_request, available_immediately, is_demo, draft_data)
-      VALUES (${p[0]!.id}, 'sale', 'private_person', ${person.id}, ${person.id},
-              ${daten.sprache}, false, false, false, ${sql.json(daten)})
-      RETURNING public_ref, status, version, draft_data, published_by_user_id, updated_at, submitted_at`;
+      INSERT INTO listing (property_id, transaction, publisher_kind, published_by_user_id, published_by_org_id,
+                           contact_user_id, assigned_user_id, content_locale, price_on_request, available_immediately, is_demo, draft_data)
+      VALUES (${p[0]!.id}, 'sale', ${orgKind ?? "private_person"}, ${person.id}, ${orgId},
+              ${org ? null : person.id}, ${zustaendig},
+              ${vorbelegung.sprache}, false, false, false, ${sql.json(vorbelegung)})
+      RETURNING public_ref, status, version, draft_data, published_by_user_id, published_by_org_id, assigned_user_id, external_ref, updated_at, submitted_at`;
     return l[0]!;
   });
-  log.info("entwurf.angelegt", { listing: String(zeile.public_ref), actor: person.id });
+  log.info("entwurf.angelegt", { listing: String(zeile.public_ref), actor: person.id, org: orgId });
   return alsZeile({ ...zeile, rueckmeldung: null });
 }
 
@@ -89,7 +135,8 @@ export async function entwurfAnlegen(person: Person, uebernehmen?: Entwurf): Pro
 export async function entwurfLesen(person: Person, publicRef: string): Promise<EntwurfZeile> {
   const r = await laden(publicRef);
   if (!r) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const e = darfEntwurfSehen(person, { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, status: r.status as Status });
+  const { inserat, m } = await alsRechteInserat(person, r);
+  const e = darfEntwurfSehen(person, inserat, m);
   /* Fremdes Inserat: dieselbe Antwort wie ein nicht vorhandenes. */
   if (!e.erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
   return alsZeile(r);
@@ -102,9 +149,9 @@ export async function entwurfLesen(person: Person, publicRef: string): Promise<E
 export async function entwurfSpeichern(person: Person, publicRef: string, teil: unknown, version: number): Promise<EntwurfZeile> {
   const r = await laden(publicRef);
   if (!r) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const inserat = { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, status: r.status as Status };
-  if (!darfEntwurfSehen(person, inserat).erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const e = darfEntwurfBearbeiten(person, inserat);
+  const { inserat, m } = await alsRechteInserat(person, r);
+  if (!darfEntwurfSehen(person, inserat, m).erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
+  const e = darfEntwurfBearbeiten(person, inserat, m);
   if (!e.erlaubt) {
     throw new AppError("FORBIDDEN", e.grund === "falscher-zustand"
       ? "Dieses Inserat ist gerade in Prüfung und kann nicht bearbeitet werden"
@@ -119,7 +166,7 @@ export async function entwurfSpeichern(person: Person, publicRef: string, teil: 
   const z = await sql`
     UPDATE listing SET draft_data = ${sql.json(neu)}, content_locale = ${neu.sprache}
      WHERE public_ref = ${publicRef} AND version = ${version}
-     RETURNING public_ref, status, version, draft_data, published_by_user_id, updated_at, submitted_at`;
+     RETURNING public_ref, status, version, draft_data, published_by_user_id, published_by_org_id, assigned_user_id, external_ref, updated_at, submitted_at`;
   if (!z[0]) {
     const jetzt = await laden(publicRef);
     throw new AppError("CONFLICT", "Dieser Entwurf wurde inzwischen an anderer Stelle geändert", { version: String(jetzt?.version ?? "?") });
@@ -135,7 +182,7 @@ export async function meineInserate(person: Person): Promise<EntwurfZeile[]> {
               FROM moderation_case m WHERE m.listing_id = l.id AND m.message_to_owner IS NOT NULL
              ORDER BY m.opened_at DESC LIMIT 1) AS rueckmeldung
       FROM listing l
-     WHERE l.published_by_user_id = ${person.id}
+     WHERE l.published_by_user_id = ${person.id} AND l.published_by_org_id IS NULL
      ORDER BY l.updated_at DESC LIMIT 100`;
   return z.map(alsZeile);
 }
@@ -147,9 +194,9 @@ export async function meineInserate(person: Person): Promise<EntwurfZeile[]> {
 export async function entwurfEinreichen(person: Person, publicRef: string): Promise<EntwurfZeile> {
   const r = await laden(publicRef);
   if (!r) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const inserat = { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, status: r.status as Status };
-  if (!darfEntwurfSehen(person, inserat).erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const e = darfEinreichen(person, inserat);
+  const { inserat, m } = await alsRechteInserat(person, r);
+  if (!darfEntwurfSehen(person, inserat, m).erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
+  const e = darfEinreichen(person, inserat, m);
   if (!e.erlaubt) {
     if (e.grund === "email-unbestaetigt") throw new AppError("FORBIDDEN", "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse");
     if (e.grund === "falscher-zustand") throw new AppError("CONFLICT", "Dieses Inserat wurde bereits eingereicht");
@@ -165,7 +212,7 @@ export async function entwurfEinreichen(person: Person, publicRef: string): Prom
 
   await sql.begin(async tx => {
     await tx`SELECT set_config('app.actor_id', ${person.id}, true), set_config('app.reason', 'eingereicht', true)`;
-    await materialisieren(tx, r.id as string, r.property_id as string, d, person);
+    await materialisieren(tx, r.id as string, r.property_id as string, d, person, inserat.orgId);
     /* Der Zustandsautomat der Datenbank lässt nur draft/changes_required/rejected → submitted zu. */
     await tx`UPDATE listing SET status = 'submitted', submitted_at = now() WHERE id = ${r.id}`;
     /* Ein offener Fall der Moderation: einer je Durchgang. */
@@ -190,7 +237,7 @@ export async function entwurfEinreichen(person: Person, publicRef: string): Prom
    Adressdienst gibt es keine genauere, und wir erfinden keine (§29). Der
    öffentliche Punkt entsteht daraus im Trigger — nie im Browser (§30). */
 type Tx = typeof sql;
-async function materialisieren(tx: Tx, listingId: string, propertyId: string, d: Entwurf, person: Person) {
+async function materialisieren(tx: Tx, listingId: string, propertyId: string, d: Entwurf, person: Person, orgId: string | null = null) {
   const ort = await tx`SELECT id, canton, name_de, postal_codes, ST_Y(centroid::geometry) AS lat, ST_X(centroid::geometry) AS lng
                          FROM place WHERE key = ${d.ortId!} AND kind = 'municipality' LIMIT 1`;
   const o = ort[0];
@@ -223,7 +270,10 @@ async function materialisieren(tx: Tx, listingId: string, propertyId: string, d:
       price_on_request = ${d.preisAufAnfrage},
       available_immediately = ${d.sofortVerfuegbar},
       available_from = ${d.verfuegbarAb},
-      contact_user_id = ${person.id}
+      /* Organisationsinserate routen über die Organisation, nie über eine
+         einzelne Person (§34/§42); represented_by_org_id bleibt unberührt —
+         die Exclusive-Vertretung setzt nie der Anbieter selbst (§42). */
+      contact_user_id = ${orgId ? null : person.id}
     WHERE id = ${listingId}`;
 
   /* Merkmale und Bilder ersetzen, nicht anhäufen. */
@@ -252,9 +302,9 @@ async function materialisieren(tx: Tx, listingId: string, propertyId: string, d:
 export async function entwurfZurueckziehen(person: Person, publicRef: string): Promise<void> {
   const r = await laden(publicRef);
   if (!r) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const inserat = { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, status: r.status as Status };
-  if (!darfEntwurfSehen(person, inserat).erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  if (!darfZurueckziehen(person, inserat).erlaubt) throw new AppError("FORBIDDEN", "Sie können dieses Inserat nicht zurückziehen");
+  const { inserat, m } = await alsRechteInserat(person, r);
+  if (!darfEntwurfSehen(person, inserat, m).erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
+  if (!darfZurueckziehen(person, inserat, m).erlaubt) throw new AppError("FORBIDDEN", "Sie können dieses Inserat nicht zurückziehen");
   await sql.begin(async tx => {
     await tx`SELECT set_config('app.actor_id', ${person.id}, true), set_config('app.reason', 'zurueckgezogen', true)`;
     /* Aus jedem Zustand führt ein erlaubter Weg ins Archiv; die Zustandsprüfung
@@ -270,6 +320,35 @@ export async function entwurfZurueckziehen(person: Person, publicRef: string): P
     await tx`UPDATE moderation_case SET closed_at = now(), outcome = 'zurueckgezogen' WHERE listing_id = ${r.id} AND closed_at IS NULL`;
   });
   log.info("entwurf.zurueckgezogen", { listing: publicRef, actor: person.id });
+}
+
+/* ---------- Zuweisen ----------
+   Operative Verantwortung im Team wechselt — die Herausgeberschaft bleibt bei
+   der Organisation (§24). Nur ein aktives Mitglied DERSELBEN Organisation
+   kann Ziel sein; ein fremdes Inserat sieht wie ein nicht vorhandenes aus. */
+export async function zuweisen(person: Person, publicRef: string, zielUserId: string | null): Promise<EntwurfZeile> {
+  const r = await laden(publicRef);
+  if (!r) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
+  const { inserat, m } = await alsRechteInserat(person, r);
+  const e = darfZuweisen(inserat, m);
+  if (!e.erlaubt) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
+
+  if (zielUserId) {
+    const ziel = await sql`
+      SELECT 1 FROM org_membership WHERE organization_id = ${inserat.orgId} AND user_id = ${zielUserId} AND is_active LIMIT 1`;
+    if (!ziel[0]) throw new AppError("VALIDATION", "Diese Person ist kein aktives Mitglied dieser Organisation", { userId: "unbekannt" });
+  }
+
+  await sql.begin(async tx => {
+    await tx`SELECT set_config('app.actor_id', ${person.id}, true), set_config('app.reason', 'zuweisung geändert', true)`;
+    await tx`UPDATE listing SET assigned_user_id = ${zielUserId} WHERE id = ${r.id}`;
+    await tx`INSERT INTO audit_log (actor_user_id, action, entity_type, entity_id, previous_state, new_state)
+             VALUES (${person.id}, 'listing.assigned', 'listing', ${r.id},
+                     ${r.assigned_user_id ? String(r.assigned_user_id) : null}, ${zielUserId})`;
+  });
+  log.info("entwurf.zugewiesen", { listing: publicRef, actor: person.id, ziel: zielUserId });
+  const nach = await laden(publicRef);
+  return alsZeile(nach!);
 }
 
 /* Für die Demo-Abgrenzung: in der Produktion erscheinen Demo-Inserate nicht.

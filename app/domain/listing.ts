@@ -43,6 +43,10 @@ export interface Publisher {
   kind: PublisherKind;
   orgName: string | null;
   orgVerified: boolean;
+  /* Der Slug der herausgebenden Organisation — für den Link zum öffentlichen
+     Anbieterprofil (P5.7). null bei Privatinseraten oder Fourwalls-Mandaten
+     ohne eigenes Profil. */
+  orgSlug: string | null;
   personName: string | null;
   personTitle: string | null;
   phone: string | null;

@@ -103,7 +103,7 @@ function alsDetail(d: Entwurf, r: Zeile, ort: Zeile | null | undefined, bilder: 
       postalCode: String((ort?.postal_codes as string[] | undefined)?.[0] ?? ""), city: name(ort), canton: String(ort?.canton ?? "")
     },
     publisher: {
-      kind: "private_person", orgName: null, orgVerified: false,
+      kind: "private_person", orgName: null, orgVerified: false, orgSlug: null,
       /* In der Vorschau steht der eigene Name; öffentlich erscheint er nur,
          soweit die Objektseite ihn zeigt — Kontaktdaten nie (§56). */
       personName: String(r.person_name ?? d.name ?? ""), personTitle: null, phone: null,

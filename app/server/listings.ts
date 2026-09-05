@@ -36,16 +36,16 @@ export async function findePubliziertesInserat(publicRef: string, locale: Locale
            ST_X(lp.geom_public::geometry) AS lng, ST_Y(lp.geom_public::geometry) AS lat,
            lp.geo_precision, lp.geo_radius_m,
            p.usable_area_m2, p.volume_m3, p.bedrooms, p.bathrooms, p.floors_total, p.renovated_year, p.ceiling_height_m,
-           o.display_name AS org_name, o.kind AS org_kind, (o.verified_at IS NOT NULL) AS org_verified,
+           o.display_name AS org_name, o.kind AS org_kind, o.slug AS org_slug, (o.verification_state = 'verified') AS org_verified,
            ro.kind AS rep_kind,
-           u.display_name AS person_name, m.public_title AS person_title, o.phone AS org_phone,
+           u.display_name AS person_name, m.public_title AS person_title, o.public_phone AS org_phone,
            c.title AS c_title, c.tagline AS c_tagline, c.sections AS c_sections, c.locale AS c_locale
       FROM listing_public lp
       JOIN listing l  ON l.id = lp.id
       JOIN property p ON p.id = lp.property_id
       LEFT JOIN organization o  ON o.id = lp.published_by_org_id
       LEFT JOIN organization ro ON ro.id = lp.represented_by_org_id
-      LEFT JOIN app_user u ON u.id = l.contact_user_id
+      LEFT JOIN app_user u ON u.id = COALESCE(l.assigned_user_id, l.contact_user_id)
       LEFT JOIN org_membership m ON m.user_id = u.id AND m.organization_id = o.id
       /* Inhalt in der gewünschten Sprache, sonst in der Verfassungssprache. */
       LEFT JOIN LATERAL (
@@ -117,6 +117,7 @@ export async function findePubliziertesInserat(publicRef: string, locale: Locale
     },
     publisher: {
       kind: z.publisher_kind as PublisherKind, orgName: z.org_name ?? null, orgVerified: Boolean(z.org_verified),
+      orgSlug: z.org_slug ?? null,
       personName: z.person_name ?? null, personTitle: z.person_title ?? null, phone: z.org_phone ?? null,
       representedByFourwalls: z.rep_kind === "fourwalls"
     },

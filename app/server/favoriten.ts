@@ -73,7 +73,7 @@ export async function treffernachRefs(publicRefs: string[]): Promise<Treffer[]> 
            (SELECT json_agg(json_build_object('storage_key', v.storage_key, 'width', v.width, 'format', v.format) ORDER BY v.width)
               FROM media_variant v
              WHERE v.asset_id = (SELECT li.asset_id FROM listing_image li WHERE li.listing_id = lp.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1)) AS bild_varianten,
-           EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verified_at IS NOT NULL) AS verified
+           EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verification_state = 'verified') AS verified
       FROM listing_public lp WHERE lp.public_ref = ANY(${refs})`;
   return z.map(alsTreffer);
 }

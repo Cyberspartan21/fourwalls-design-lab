@@ -76,7 +76,7 @@ export async function suche(q: Suchanfrage, locale: Locale = "de"): Promise<Such
   /* Sortierung aus der Allowlist — nie aus der Eingabe zusammengesetzt */
   const exklusiv = sql`(lp.represented_by_org_id IS NOT NULL AND lp.publisher_kind = 'fourwalls')`;
   const vollstaendigkeit = sql`((SELECT count(*) FROM listing_image li WHERE li.listing_id = lp.id) > 3)::int * 3 + (lp.living_area_m2 IS NOT NULL)::int * 2 + (lp.rooms IS NOT NULL)::int + (lp.built_year IS NOT NULL)::int
-    + EXISTS (SELECT 1 FROM property_feature pf WHERE pf.property_id = lp.property_id)::int + EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verified_at IS NOT NULL)::int * 2`;
+    + EXISTS (SELECT 1 FROM property_feature pf WHERE pf.property_id = lp.property_id)::int + EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verification_state = 'verified')::int * 2`;
   const order = ({
     "preis-auf": sql`${preis} ASC NULLS LAST, lp.public_ref`,
     "preis-ab": sql`${preis} DESC NULLS LAST, lp.public_ref`,
@@ -97,7 +97,7 @@ export async function suche(q: Suchanfrage, locale: Locale = "de"): Promise<Such
            (SELECT json_agg(json_build_object('storage_key', v.storage_key, 'width', v.width, 'format', v.format) ORDER BY v.width)
               FROM media_variant v
              WHERE v.asset_id = (SELECT li.asset_id FROM listing_image li WHERE li.listing_id = lp.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1)) AS bild_varianten,
-           EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verified_at IS NOT NULL) AS verified
+           EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verification_state = 'verified') AS verified
       FROM listing_public lp ${wo}
      ORDER BY ${order}
      LIMIT ${limit} OFFSET ${offset}`;
@@ -111,7 +111,7 @@ export async function suche(q: Suchanfrage, locale: Locale = "de"): Promise<Such
            (SELECT json_agg(json_build_object('storage_key', v.storage_key, 'width', v.width, 'format', v.format) ORDER BY v.width)
               FROM media_variant v
              WHERE v.asset_id = (SELECT li.asset_id FROM listing_image li WHERE li.listing_id = lp.id ORDER BY li.is_cover DESC, li.sort_order LIMIT 1)) AS bild_varianten,
-           EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verified_at IS NOT NULL) AS verified
+           EXISTS (SELECT 1 FROM organization o WHERE o.id = lp.published_by_org_id AND o.verification_state = 'verified') AS verified
       FROM listing_public lp WHERE lp.public_ref = ${q.ref} AND (${nurEcht} = false OR lp.is_demo = false) LIMIT 1`;
     const t = z.map(alsTreffer);
     return { treffer: t, total: t.length, seite: 1, proSeite: 1, hatMehr: false, geo, facetten: { typ: {}, quelle: {} }, dauerMs: Date.now() - t0, quelle: "server" };

@@ -10,6 +10,7 @@ import { PFAD } from "@/i18n";
 import { EntwurfSchema, type Entwurf } from "@/domain/entwurf";
 import { DB_ZU_TRANS } from "@/domain/marktplatz";
 import { darfFreigeben, darfAenderungVerlangen, darfAblehnen, darfVeroeffentlichen, darfPausieren, darfPruefen, type Person, type Status } from "@/domain/rechte";
+import { mitgliedFuerInserat } from "./org-kontext";
 
 /* Sprache der Eigentümerin für Mail und URL, Rückfall 'de'. */
 type MailLocale = "de" | "fr" | "it" | "en";
@@ -47,22 +48,28 @@ export async function warteschlange(person: Person): Promise<WarteEintrag[]> {
     SELECT l.public_ref, l.status, l.title, l.submitted_at, l.transaction, l.price_chf, l.rent_net_chf,
            l.draft_data, p.city, p.geo_precision, p.kind,
            u.display_name AS herausgeber, u.email AS herausgeber_email,
+           o.display_name AS org_name, o.kind AS org_kind, coalesce(o.public_email, o.email) AS org_email,
            (SELECT count(*)::int FROM listing_image li WHERE li.listing_id = l.id) AS bilder,
            (SELECT count(*)::int FROM moderation_case m WHERE m.listing_id = l.id) AS durchgang
       FROM listing l
       JOIN property p ON p.id = l.property_id
       LEFT JOIN app_user u ON u.id = l.published_by_user_id
+      LEFT JOIN organization o ON o.id = l.published_by_org_id
      WHERE l.status IN ('submitted', 'in_review')
      ORDER BY l.submitted_at NULLS LAST, l.public_ref`;
   void person;
   return z.map(r => {
     const d = EntwurfSchema.parse(r.draft_data ?? {});
+    /* Organisationsinserat: die Herausgeberin ist die Organisation, nicht die
+       anlegende Person (P5.7 §26) — die Warteschlange zeigt Name und Art. */
+    const herausgeber = r.org_name ? `${String(r.org_name)} (${String(r.org_kind)})` : String(r.herausgeber ?? "—");
+    const herausgeberEmail = r.org_name ? String(r.org_email ?? "—") : String(r.herausgeber_email ?? "—");
     return {
       publicRef: String(r.public_ref), status: r.status as Status, titel: r.title ?? d.titel,
       eingereicht: r.submitted_at instanceof Date ? r.submitted_at.toISOString() : (r.submitted_at ? String(r.submitted_at) : null),
       ort: r.city || null, typ: r.kind ?? null, trans: String(r.transaction),
       preis: r.price_chf != null ? Number(r.price_chf) / 100 : (r.rent_net_chf != null ? Number(r.rent_net_chf) / 100 : null),
-      herausgeber: String(r.herausgeber ?? "—"), herausgeberEmail: String(r.herausgeber_email ?? "—"),
+      herausgeber, herausgeberEmail,
       bilder: Number(r.bilder), genauigkeit: String(r.geo_precision), durchgang: Number(r.durchgang)
     };
   });
@@ -79,12 +86,15 @@ export interface Fall {
 async function fallLaden(publicRef: string) {
   if (!/^FWL-\d{4}-\d{6}$/.test(publicRef)) return null;
   const z = await sql`
-    SELECT l.id, l.public_ref, l.status, l.version, l.draft_data, l.published_by_user_id, l.submitted_at, l.transaction, l.title,
+    SELECT l.id, l.public_ref, l.status, l.version, l.draft_data, l.published_by_user_id, l.published_by_org_id, l.submitted_at, l.transaction, l.title,
            p.city, p.geo_precision,
            u.display_name, u.email, u.email_verified, u.locale AS owner_locale,
-           (SELECT count(*)::int FROM listing l2 WHERE l2.published_by_user_id = l.published_by_user_id) AS inserate
+           o.display_name AS org_name, o.kind AS org_kind, coalesce(o.public_email, o.email) AS org_email,
+           (SELECT count(*)::int FROM listing l2 WHERE l2.published_by_user_id = l.published_by_user_id AND l2.published_by_org_id IS NULL) AS inserate_person,
+           (SELECT count(*)::int FROM listing l3 WHERE l3.published_by_org_id = l.published_by_org_id) AS inserate_org
       FROM listing l JOIN property p ON p.id = l.property_id
       LEFT JOIN app_user u ON u.id = l.published_by_user_id
+      LEFT JOIN organization o ON o.id = l.published_by_org_id
      WHERE l.public_ref = ${publicRef} LIMIT 1`;
   return z[0] ?? null;
 }
@@ -92,10 +102,12 @@ async function fallLaden(publicRef: string) {
 export async function fallLesen(person: Person, publicRef: string): Promise<Fall> {
   const r = await fallLaden(publicRef);
   if (!r) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const inserat = { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, status: r.status as Status };
+  const orgId = r.published_by_org_id ? String(r.published_by_org_id) : null;
+  const m = await mitgliedFuerInserat(person.id, orgId);
+  const inserat = { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, orgId, status: r.status as Status };
   /* Zur Ansicht genügt das Prüfrecht — auch für bereits freigegebene oder
      veröffentlichte Inserate, damit die Moderation ihre Entscheide nachsehen kann. */
-  const pruefbar = darfPruefen(person, inserat).erlaubt || darfVeroeffentlichen(person, inserat).erlaubt || darfPausieren(person, inserat).erlaubt;
+  const pruefbar = darfPruefen(person, inserat, m).erlaubt || darfVeroeffentlichen(person, inserat, m).erlaubt || darfPausieren(person, inserat, m).erlaubt;
   if (!pruefbar) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
 
   const [bilder, verlauf] = await Promise.all([
@@ -108,10 +120,16 @@ export async function fallLesen(person: Person, publicRef: string): Promise<Fall
          ORDER BY al.created_at DESC LIMIT 50`
   ]);
 
+  /* Organisationsinserat: Herausgeberin ist die Organisation (§26) — Name und
+     Art statt der anlegenden Person. */
+  const herausgeber = r.org_name
+    ? { name: `${String(r.org_name)} (${String(r.org_kind)})`, email: String(r.org_email ?? "—"), bestaetigt: true, inserate: Number(r.inserate_org ?? 0) }
+    : { name: String(r.display_name ?? "—"), email: String(r.email ?? "—"), bestaetigt: Boolean(r.email_verified), inserate: Number(r.inserate_person ?? 0) };
+
   return {
     publicRef: String(r.public_ref), status: r.status as Status, version: Number(r.version),
     daten: EntwurfSchema.parse(r.draft_data ?? {}),
-    herausgeber: { name: String(r.display_name ?? "—"), email: String(r.email ?? "—"), bestaetigt: Boolean(r.email_verified), inserate: Number(r.inserate) },
+    herausgeber,
     eingereicht: r.submitted_at instanceof Date ? r.submitted_at.toISOString() : (r.submitted_at ? String(r.submitted_at) : null),
     ort: r.city || null, genauigkeit: String(r.geo_precision),
     bilder: bilder.map(b => ({ id: String(b.id), url: b.storage_key ? "/media/" + String(b.storage_key).replace(/^demo\//, "") : "" })),
@@ -129,9 +147,11 @@ type Absicht = "freigeben" | "aenderung" | "ablehnen" | "veroeffentlichen" | "pa
 async function pruefeUndLade(person: Person, publicRef: string, absicht: Absicht) {
   const r = await fallLaden(publicRef);
   if (!r) throw new AppError("NOT_FOUND", "Dieses Inserat gibt es nicht");
-  const inserat = { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, status: r.status as Status };
+  const orgId = r.published_by_org_id ? String(r.published_by_org_id) : null;
+  const m = await mitgliedFuerInserat(person.id, orgId);
+  const inserat = { ownerId: r.published_by_user_id ? String(r.published_by_user_id) : null, orgId, status: r.status as Status };
   const e = { freigeben: darfFreigeben, aenderung: darfAenderungVerlangen, ablehnen: darfAblehnen,
-    veroeffentlichen: darfVeroeffentlichen, pausieren: darfPausieren }[absicht](person, inserat);
+    veroeffentlichen: darfVeroeffentlichen, pausieren: darfPausieren }[absicht](person, inserat, m);
   if (!e.erlaubt) {
     if (e.grund === "kein-recht") throw new AppError("FORBIDDEN", "Dafür fehlt Ihnen die Berechtigung");
     if (e.grund === "eigenes-inserat") throw new AppError("FORBIDDEN", "Ihr eigenes Inserat kann jemand anderes prüfen");

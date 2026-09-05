@@ -37,10 +37,16 @@ export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; ua
   const nurEcht = env().APP_ENV === "production";
   /* Nur ein veröffentlichtes Inserat kann eine Anfrage empfangen. */
   const inserate = await sql`
-    SELECT l.id, l.title, l.published_by_org_id, l.contact_user_id,
-           u.email AS kontakt_email, u.locale AS kontakt_locale, o.email AS org_email
+    SELECT l.id, l.title, l.published_by_org_id, l.contact_user_id, l.assigned_user_id,
+           au.email AS zugewiesen_email, au.locale AS zugewiesen_locale,
+           EXISTS (SELECT 1 FROM org_membership om JOIN organization oo ON oo.id = om.organization_id
+                    WHERE om.organization_id = l.published_by_org_id AND om.user_id = l.assigned_user_id
+                      AND om.is_active AND oo.is_active AND oo.archived_at IS NULL) AS zugewiesen_aktiv,
+           cu.email AS kontakt_email, cu.locale AS kontakt_locale,
+           o.email AS org_email, o.public_email AS org_public_email, o.locale AS org_locale
       FROM listing l
-      LEFT JOIN app_user u ON u.id = l.contact_user_id
+      LEFT JOIN app_user au ON au.id = l.assigned_user_id
+      LEFT JOIN app_user cu ON cu.id = l.contact_user_id
       LEFT JOIN organization o ON o.id = l.published_by_org_id
      WHERE l.public_ref = ${a.publicRef}
        AND l.status IN ('published','reserved')
@@ -49,18 +55,44 @@ export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; ua
   const ins = inserate[0];
   if (!ins) throw new AppError("NOT_FOUND", "Dieses Inserat ist nicht erreichbar");
 
-  /* Empfänger aus der Beziehung Inserat → Ansprechperson → Organisation.
-     In der Entwicklung landet alles in der Senke; kein echtes Postfach ist
-     Teil der Fachlogik. */
+  /* Empfängeradresse — deterministisch, nie aus dem Formular (§34/§37):
+     1. Organisationsinserat mit aktiver Zuweisung → die zugewiesene Person.
+     2. Organisationsinserat ohne (aktive) Zuweisung → das öffentliche
+        Postfach der Organisation.
+     3. Privatinserat → die Ansprechperson des Inserats.
+     `recipient_org_id` wird bei Organisationsinseraten immer gesetzt — der
+     Posteingang der Organisation sieht die Anfrage auch dann, wenn sie an
+     eine Person adressiert ist. In der Entwicklung landet der tatsächliche
+     Versand immer in der Senke; die recipient_*-Spalten bleiben ehrlich. */
+  let empfaengerEmail: string | null = null;
+  let recipientUserId: string | null = null;
+  let recipientOrgId: string | null = null;
+  let zielLocale: string | null | undefined = null;
+  if (ins.published_by_org_id) {
+    recipientOrgId = String(ins.published_by_org_id);
+    if (ins.assigned_user_id && ins.zugewiesen_aktiv && ins.zugewiesen_email) {
+      empfaengerEmail = String(ins.zugewiesen_email);
+      recipientUserId = String(ins.assigned_user_id);
+      zielLocale = ins.zugewiesen_locale;
+    } else {
+      empfaengerEmail = (ins.org_public_email ?? ins.org_email) ? String(ins.org_public_email ?? ins.org_email) : null;
+      zielLocale = ins.org_locale;
+    }
+  } else {
+    empfaengerEmail = ins.kontakt_email ? String(ins.kontakt_email) : null;
+    recipientUserId = ins.contact_user_id ? String(ins.contact_user_id) : null;
+    zielLocale = ins.kontakt_locale;
+  }
+
   const e = env();
-  const an = e.APP_ENV === "development" ? e.MAIL_DEV_SINK : (ins.kontakt_email ?? ins.org_email);
-  const l = ins.kontakt_locale === "fr" || ins.kontakt_locale === "it" || ins.kontakt_locale === "en" ? ins.kontakt_locale : "de";
+  const an = e.APP_ENV === "development" ? e.MAIL_DEV_SINK : empfaengerEmail;
+  const l = zielLocale === "fr" || zielLocale === "it" || zielLocale === "en" ? zielLocale : "de";
 
   const publicRef = await sql.begin(async tx => {
     const zeilen = await tx`
       INSERT INTO inquiry (kind, listing_id, sender_user_id, sender_name, sender_email, sender_phone, recipient_user_id, recipient_org_id, message, wants_alert, source, ip_hash, user_agent_hash)
       VALUES (${a.art}, ${ins.id}, ${senderUserId}, ${glatt(a.name)}, ${a.email}, ${a.telefon ? glatt(a.telefon) : null},
-              ${ins.contact_user_id ?? null}, ${ins.published_by_org_id ?? null},
+              ${recipientUserId}, ${recipientOrgId},
               ${a.nachricht.replace(/\r\n?/g, "\n")}, ${a.suchabo === true}, 'web', ${herkunft.ipHash}, ${herkunft.uaHash})
       RETURNING public_ref`;
     const ref = String(zeilen[0]?.public_ref);

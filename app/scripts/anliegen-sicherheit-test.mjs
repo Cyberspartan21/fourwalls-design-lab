@@ -31,6 +31,7 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { mailquelle, testadresse } from "./lib/mailquelle.mjs";
 
 const HIER = dirname(fileURLToPath(import.meta.url));
@@ -141,6 +142,26 @@ async function bestaetigeMail(email, seitMs = null) {
 }
 
 /* ---------- Registrieren / Anmelden ---------- */
+/* Moderationskonto anmelden — mit Rückfall wie in lieferkette-test.mjs und
+   org-sicherheit-test.mjs: existiert das Konto aus FW_TEST_MOD_EMAIL nicht
+   (CI legt es nicht vorab an), wird ein eigenes registriert, bestätigt und über
+   scripts/rolle.mjs zur Moderatorin gemacht. Befund CI-Lauf nach 33993756973:
+   anliegen-test 9.3 «sign-in Moderatorin: erwartet 200, erhalten 401». */
+async function moderatorAnmelden(tagPrefix) {
+  let r = await anmelden(MOD_EMAIL, MOD_PASSWORT, `${tagPrefix}-auth`);
+  let modEmail = MOD_EMAIL;
+  if (r.status !== 200 || !r.cookie) {
+    modEmail = `${tagPrefix}mod+${TS}@fourwalls.example`;
+    const su = await registrieren(modEmail, MOD_PASSWORT, "Moderatorin (Anliegen)", `${tagPrefix}-signup`);
+    assertGleich(su.status, 200, "sign-up Moderatorin (Rückfall)");
+    await bestaetigeMail(modEmail);
+    execFileSync(process.execPath, [join(APP_ROOT, "scripts", "rolle.mjs"), modEmail, "moderator"], { stdio: "inherit", env: process.env });
+    r = await anmelden(modEmail, MOD_PASSWORT, `${tagPrefix}-auth`);
+    assertGleich(r.status, 200, "sign-in Moderatorin (Rückfall)");
+  }
+  return { email: modEmail, cookie: r.cookie, id: r.json.user.id };
+}
+
 async function registrieren(email, passwort, name, xffTag) {
   return post("/api/auth/sign-up/email", { origin: BASIS, xffTag, body: { email, password: passwort, name } });
 }
@@ -211,9 +232,7 @@ try {
     return `id=${STAFF.id}`;
   });
   await schritt("1.5", "Moderationskonto anmelden", async () => {
-    const r = await anmelden(MOD_EMAIL, MOD_PASSWORT, "mod-auth");
-    assertGleich(r.status, 200, "sign-in Moderatorin");
-    MOD = { email: MOD_EMAIL, cookie: r.cookie, id: r.json.user.id };
+    MOD = await moderatorAnmelden("as");
     return `id=${MOD.id}`;
   });
   await schritt("1.6", "Agentur-Besitzerin (Seed-Persona) anmelden", async () => {

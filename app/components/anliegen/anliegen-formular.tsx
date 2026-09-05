@@ -243,7 +243,7 @@ export function AnliegenFormular({ dienst, angemeldet, locale, t }: AnliegenForm
       {S === "objekt" && (
         <>
           <ObjektBlock dienst={dienst} objekt={objekt} aendern={aendernObjekt} t={t} locale={locale} fehlt={fehltObjekt} />
-          {dienst === "valuation" && <SituationBlock dienst={dienst} objekt={objekt} aendern={aendernObjekt} t={t} />}
+          {/* valuation: kein Situationsblock — Zeitpunkt und Belegung würden nicht mitgesendet (siehe objektNutzlast); die Nachricht lebt im Objektblock. */}
         </>
       )}
       {S === "situation" && <SituationBlock dienst={dienst} objekt={objekt} aendern={aendernObjekt} t={t} />}

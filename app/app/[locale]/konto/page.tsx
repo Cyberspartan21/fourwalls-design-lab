@@ -71,6 +71,7 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
         <span style={{ color: "var(--leise)", fontSize: ".85rem" }}>{s.name} · {s.email}</span>
         <a className="knopf" href={`/${locale}/konto/favoriten`}>{t("fv_navLink")}</a>
         {darf(s.person.rolle, "VIEW_MODERATION_QUEUE") && <a className="knopf" href={`/${locale}/moderation`}>{t("m_titel")}</a>}
+        {darf(s.person.rolle, "VIEW_SERVICE_LEADS") && <a className="knopf" href={`/${locale}/intern/anliegen`}>{t("in_titelListe")}</a>}
         <a className="knopf" href={`/${locale}/konto/suchabos`}>{t("k_gespeicherteSuchen")}</a>
         <AbmeldeKnopf t={{ k_abmelden: t("k_abmelden") }} weiter={`/${locale}`} />
       </div>

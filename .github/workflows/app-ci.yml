@@ -12,6 +12,16 @@
 # fiktiven Organisationen für die öffentliche Anbieterseite — es braucht dafür
 # nur den laufenden Server und die dev-Mailsenke, kein Mailpit.
 #
+# P5.8 §82: Anliegen von Eigentümerinnen an FOURWALLS — Lieferkette
+# (scripts/anliegen-test.mjs), Sicherheitsmatrix (scripts/anliegen-sicherheit-test.mjs,
+# §55/§57/§47/§54), vier Ende-zu-Ende-Reisen (scripts/anliegen-reisen-test.mjs,
+# §60–§67) und Skalentest (scripts/skalen-anliegen-test.mjs, nur N=1000,
+# Zeitgründe — wie beim Organisations-Skalentest). Brauchen die Seed-Personas
+# alpha-owner/alpha-agent aus scripts/seed-profis.mjs (läuft bereits für P5.7)
+# und das Moderationskonto aus FW_TEST_MOD_EMAIL/_PASSWORT (siehe oben).
+# SERVICE_LEAD_INBOX bleibt in CI ungesetzt: server/env.ts verlangt es nur in
+# staging/production, in test fällt es auf MAIL_DEV_SINK zurück.
+#
 # Auslöseregeln (P5.5 §86–§88):
 #   - push/pull_request auf app/** oder db/**: "pruefen" und "migrationstor"
 #     laufen immer — sie brauchen nichts ausserhalb dieses Repos.
@@ -116,6 +126,16 @@ jobs:
         run: node scripts/org-reisen-test.mjs http://localhost:3007
       - name: Skalentest der Organisations-Übersicht (nur N=1000, Zeitgründe)
         run: node scripts/skalen-org-test.mjs 1000
+      # P5.8 — Anliegen von Eigentümerinnen an FOURWALLS: Lieferkette,
+      # Sicherheitsmatrix, vier Ende-zu-Ende-Reisen, Skalentest (§82).
+      - name: Anliegen — Lieferkette (Annahme, Validierung, Konto, Intern)
+        run: node scripts/anliegen-test.mjs http://localhost:3007
+      - name: Anliegen — Sicherheitsmatrix (§55/§57/§47/§54)
+        run: node scripts/anliegen-sicherheit-test.mjs http://localhost:3007
+      - name: Anliegen — sieben Ende-zu-Ende-Reisen (§60–§67)
+        run: node scripts/anliegen-reisen-test.mjs http://localhost:3007
+      - name: Skalentest der Anliegen-Übersicht (nur N=1000, Zeitgründe)
+        run: node scripts/skalen-anliegen-test.mjs 1000
 
   # Migrationstor (P5.5 §37): eine frische Datenbank, Migrationen von null,
   # die 16 Schema-Zusagen — und ein zweiter Lauf, der beweisen muss, dass

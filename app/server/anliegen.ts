@@ -292,7 +292,7 @@ export async function leadLesen(publicRef: string): Promise<LeadDetail> {
    qualified → closed | declined
    Jeder andere Wechsel ist ein Konflikt, kein Validierungsfehler — der
    Zustand existiert, der Übergang nicht (§26). */
-const UEBERGAENGE: Record<LeadStatus, LeadStatus[]> = {
+export const UEBERGAENGE: Record<LeadStatus, LeadStatus[]> = {
   new: ["contacted", "declined", "closed"],
   contacted: ["qualified", "closed", "declined"],
   qualified: ["closed", "declined"],
@@ -324,6 +324,18 @@ export async function statusSetzen(person: Person, publicRef: string, status: st
   });
   log.info("anliegen.status_geaendert", { anliegen: publicRef, von: vorher, nach: naechster, actor: person.id });
   return { status: naechster };
+}
+
+/* ---------- Intern: Personal für die Zuweisung ----------
+   Nur FOURWALLS-Personal (staff/admin), nie gelöschte Konten — dieselbe
+   Bedingung wie in `zuweisen()`, hier für die Auswahlliste im Formular. */
+export interface PersonalEintrag { id: string; name: string }
+export async function personalListe(): Promise<PersonalEintrag[]> {
+  const z = await sql`
+    SELECT id, display_name FROM app_user
+     WHERE platform_role IN ('staff', 'admin') AND deleted_at IS NULL
+     ORDER BY display_name`;
+  return z.map(r => ({ id: String(r.id), name: String(r.display_name ?? "—") }));
 }
 
 export async function zuweisen(person: Person, publicRef: string, staffUserId: string | null): Promise<{ assignedStaffId: string | null }> {

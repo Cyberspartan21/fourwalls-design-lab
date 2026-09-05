@@ -10,9 +10,11 @@ import { ZEITPUNKTE, BELEGUNGEN, LEISTUNGEN_LET, LEISTUNGEN_PM } from "./typen";
             (tenant_search|full_management|advice)
    property_management  Einheiten, Belegung, gewünschte Leistungen
             (full_management|accounting|maintenance|advice), Übergabe (=Zeitpunkt)
-   valuation  hat keinen eigenen Schritt — nur die Nachricht dazu lebt im
+   valuation  wird hier NIE gerendert — die Nachricht dazu lebt im
             Objekt-Schritt (objekt-block.tsx), weil der Vertrag hierfür kein
-            eigenes Feld über den Zustand hinaus vorsieht.
+            eigenes Feld über den Zustand hinaus vorsieht. (Befund P5.8-Prüfung:
+            das Bewertungsformular zeigte die Verwaltungs-Terminfrage, deren
+            Antwort nie mitgesendet wurde.)
    owner_consultation  nur eine Nachricht — gerendert im Kontakt-Schritt. */
 
 export function SituationBlock({ dienst, objekt, aendern, t }:

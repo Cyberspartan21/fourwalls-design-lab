@@ -1,0 +1,58 @@
+### FOURWALLS — lokale, kostenlose Infrastruktur (Postgres/PostGIS, MinIO, Mailpit)
+#
+# Ersetzt die bisherigen Ad-hoc-`docker run`-Aufrufe durch feste, benannte
+# Dienste. Zweck (P5.6 §2B — Projekt-Isolation): jeder Container trägt einen
+# `fw-`-Namen UND das Kennzeichen `com.fourwalls.project=true`. Aufräum- und
+# Prüfwerkzeuge dürfen sich NUR auf Ressourcen mit diesem Namen ODER diesem
+# Kennzeichen richten — nie auf generische Muster wie eine Portziffer oder
+# einen halben Prozessnamen (siehe docs/PROJECT-ISOLATION-RULE.md, Anlass:
+# ein P5.5-Prüfauftrag hat mit `pkill -f "next start -p 30"` versehentlich
+# einen fremden Prozess eines anderen Projekts beendet).
+#
+# Aufruf:
+#   docker compose -f infra/local/docker-compose.yml up -d
+#   docker compose -f infra/local/docker-compose.yml down        # stoppt NUR diese drei
+#
+# Ersetzt NICHT die Kostenfreiheit-Regel: alle drei Dienste laufen nur lokal,
+# nichts davon ist ein bezahlter Dienst.
+
+services:
+  fw-dev-db:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: fw-dev-db
+    labels: { com.fourwalls.project: "true" }
+    environment:
+      POSTGRES_USER: fourwalls
+      POSTGRES_PASSWORD: fourwalls_dev
+      POSTGRES_DB: fourwalls
+    ports: ["55433:5432"]
+    volumes: ["fw-dev-db-data:/var/lib/postgresql/data"]
+    restart: unless-stopped
+
+  fw-dev-s3:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: fw-dev-s3
+    labels: { com.fourwalls.project: "true" }
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: fwdev
+      MINIO_ROOT_PASSWORD: fwdev-nur-lokal-0000
+    ports: ["59000:9000", "59001:9001"]
+    volumes: ["fw-dev-s3-data:/data"]
+    restart: unless-stopped
+
+  fw-dev-mail:
+    image: axllent/mailpit:v1.28.0
+    container_name: fw-dev-mail
+    labels: { com.fourwalls.project: "true" }
+    environment:
+      MP_SMTP_AUTH: "fwdev:fwdev-nur-lokal"
+      MP_SMTP_TLS_CERT: /tls/cert.pem
+      MP_SMTP_TLS_KEY: /tls/key.pem
+    volumes: ["./mail-tls:/tls:ro"]
+    ports: ["58025:1025", "58026:8025"]
+    restart: unless-stopped
+
+volumes:
+  fw-dev-db-data:
+  fw-dev-s3-data:

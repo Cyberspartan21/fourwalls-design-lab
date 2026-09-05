@@ -1,0 +1,3 @@
+
+# Lokales, selbstsigniertes Mailpit-Zertifikat (kein Geheimnis, aber unnötig zu versionieren)
+infra/local/mail-tls/

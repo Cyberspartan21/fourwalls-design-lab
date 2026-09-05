@@ -30,5 +30,13 @@
   "search_alert_match": {
     "betreff": "Fourwalls — {anzahl} nuovi risultati per «{label}»",
     "text": "Gentile utente\n\nPer il Suo avviso di ricerca «{label}» ci sono {anzahl} nuovi risultati:\n\n{treffer}\n\nDisiscriversi da questo avviso:\n{abmeldeUrl}"
+  },
+  "org_invitation": {
+    "betreff": "Fourwalls — Invito a entrare nel team di {org}",
+    "text": "Gentile utente\n\nÈ stato invitato a entrare nel team di {org} come {rolle}:\n{url}\n\nL'invito è valido fino al {ablauf}. Se non si aspettava questo invito, può ignorare questo messaggio."
+  },
+  "org_member_removed": {
+    "betreff": "Fourwalls — È stato rimosso dal team di {org}",
+    "text": "Gentile utente\n\nNon è più membro del team di {org}. Gli annunci già assegnati restano di proprietà dell'organizzazione."
   }
 }

@@ -27,6 +27,9 @@ export interface Werte {
   anzahl?: string;
   treffer?: string;
   abmeldeUrl?: string;
+  org?: string;
+  rolle?: string;
+  ablauf?: string;
 }
 
 function ersetzen(vorlage: string, werte: Werte): string {
@@ -39,7 +42,10 @@ function ersetzen(vorlage: string, werte: Werte): string {
     .replaceAll("{label}", werte.label ?? "")
     .replaceAll("{anzahl}", werte.anzahl ?? "")
     .replaceAll("{treffer}", werte.treffer ?? "")
-    .replaceAll("{abmeldeUrl}", werte.abmeldeUrl ?? "");
+    .replaceAll("{abmeldeUrl}", werte.abmeldeUrl ?? "")
+    .replaceAll("{org}", werte.org ?? "")
+    .replaceAll("{rolle}", werte.rolle ?? "")
+    .replaceAll("{ablauf}", werte.ablauf ?? "");
 }
 
 /* Betreff und Text für eine Mailart in einer Sprache, mit eingesetzten Werten.

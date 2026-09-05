@@ -116,12 +116,22 @@ function cookieAus(setCookies) {
 
 /* ---------- Mail ---------- */
 const MAILQUELLE = mailquelle();
+/* Bestätigungslink je Konto von einer eigenen (fiktiven) Adresse abrufen: die
+   allgemeine Auth-Ratenbegrenzung (30/min je IP) zählt sonst alle Bestätigungen
+   der gesamten CI-Kette auf 127.0.0.1 zusammen — Befund Lauf 33993756973
+   (org-sicherheit V3: 429 statt 302). Verschiedene Personen kommen von
+   verschiedenen Adressen; genau das bildet der Kopf ab. */
+function bestaetigungsAdresse(email) {
+  let h = 0; for (const c of String(email)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return `10.${(h >>> 16) & 255}.${(h >>> 8) & 255}.${(h & 253) + 1}`;
+}
+
 async function bestaetigeMail(email, seitMs = null) {
   const mail = await MAILQUELLE.warte(email, seitMs);
   if (!mail) throw new Error(`Keine Mail für ${email} über Mailquelle "${MAILQUELLE.name}" gefunden (30 s gewartet)`);
   const treffer = mail.text.match(/https?:\/\/\S+/);
   if (!treffer) throw new Error(`Keine URL in der Mail an ${email} gefunden`);
-  const res = await fetch(treffer[0], { redirect: "manual" });
+  const res = await fetch(treffer[0], { redirect: "manual", headers: { "x-forwarded-for": bestaetigungsAdresse(email) } });
   return res.status;
 }
 

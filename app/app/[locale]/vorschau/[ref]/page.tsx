@@ -42,7 +42,7 @@ export default async function Vorschau({ params }: { params: Promise<{ locale: s
             </span>
           </div>
         </div>
-        <ObjektSeite d={dossier} t={t} locale={locale} aehnliche={[]} w={w} sprachLinks={sprachLinks} />
+        <ObjektSeite d={dossier} t={t} locale={locale} aehnliche={[]} w={w} sprachLinks={sprachLinks} angemeldet={!!s} zuletzt={[]} />
       </>
     );
   }

@@ -15,6 +15,8 @@ import { LageKarte } from "./lage-karte";
 import { Finanzierung } from "./finanzierung";
 import { Begleiter } from "./begleiter";
 import { LichtKnopf, AnfrageKnopf, AnkerLink } from "./knoepfe";
+import { VerlaufEintragen } from "./verlauf-eintragen";
+import { VerlaufListe } from "@/components/verlauf-liste";
 
 /* Die Objektseite — Server-Markup mit denselben Klassen wie objekt.js.
    Übersicht zuerst, Tiefe auf Abruf. Abschnitte ohne Inhalt entstehen nicht
@@ -47,7 +49,8 @@ function Kompass({ ausrichtung, locale, label }: { ausrichtung: string; locale: 
   );
 }
 
-export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks }: { d: Dossier; t: T; locale: Locale; aehnliche: Treffer[]; w: Woerter; sprachLinks: Record<Locale, string> }) {
+export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks, angemeldet, zuletzt }:
+  { d: Dossier; t: T; locale: Locale; aehnliche: Treffer[]; w: Woerter; sprachLinks: Record<Locale, string>; angemeldet: boolean; zuletzt: Treffer[] }) {
   const L = d.detail, p = L.property, s = L.sections, med = s.medien ?? {};
   const istEx = L.isExclusive, wir = L.publisher.representedByFourwalls;
   const ort = `${p.postalCode} ${p.city}`;
@@ -74,8 +77,9 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks }: { d: Do
 
   return (
     <div className="detail seite an" id="detail">
+      {!angemeldet && <VerlaufEintragen publicRef={L.publicRef} />}
       <Kopf publicRef={L.publicRef} quelle={quelleLabel} titel={L.title} exklusiv={istEx} wirVertreten={wir} zurueck={zurueck} sprachLinks={sprachLinks} locale={locale}
-        tx={{ merken: t("merken"), gemerkt: t("gemerktOk"), teilen: t("teilen"), kopiert: t("o_linkKopiert"), schliessen: t("schliessen") }} />
+        tx={{ merken: t("merken"), gemerkt: t("gemerktOk"), teilen: t("teilen"), kopiert: t("o_linkKopiert"), schliessen: t("schliessen"), vergleichen: t("vg_vergleichen"), imVergleich: t("vg_imVergleich"), vergleichVoll: t("vg_voll") }} />
 
       {istEx && b0 ? (
         <div className="dheld premiere" id="premiere">
@@ -187,6 +191,13 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks }: { d: Do
           <Abs id="aehnliche" abschnitte={d.abschnitte}>
             <div className="aehnlich">{aehnliche.map(a => <Ergebniskarte key={a.id} l={a} w={w} locale={locale} href={objektPfad(locale, PFAD[locale], a)} />)}</div>
           </Abs>
+
+          {zuletzt.length > 0 && (
+            <section className="dabs" id="d-zuletzt">
+              <h2>{t("vl_titel")}</h2>
+              <VerlaufListe treffer={zuletzt} w={w} locale={locale} />
+            </section>
+          )}
         </div>
         <aside className="dseite">{begleiter("")}</aside>
       </div>

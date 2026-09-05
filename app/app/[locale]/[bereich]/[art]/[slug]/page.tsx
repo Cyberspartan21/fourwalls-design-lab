@@ -9,6 +9,10 @@ import type { ListingDetail } from "@/domain/listing";
 import { aehnliche } from "@/server/similar";
 import { sql } from "@/server/db";
 import { woerter, mitMerkmalen } from "@/components/marktplatz/labels";
+import { personOderNull } from "@/server/sitzung";
+import { eintragen, listeVerlauf } from "@/server/verlauf";
+import { listeFavoriten, treffernachRefs } from "@/server/favoriten";
+import { FavoritenInit } from "@/components/konto/favoriten-init";
 
 /* /de/immobilien/kaufen/seehaus-walensee-fwl-2026-000142
 
@@ -60,7 +64,16 @@ export default async function Seite({ params }: { params: Promise<Params> }) {
   const { locale, d, kanonisch, umleiten } = await laden(params);
   if (umleiten) permanentRedirect(kanonisch);
   const t = uebersetzer(locale);
-  const [aehn, merkmale] = await Promise.all([aehnliche(d.publicRef, 3), sql`SELECT key, coalesce(${sql("name_" + locale)}, name_de) AS name FROM feature ORDER BY sort_order`]);
+  const [aehn, merkmale, person] = await Promise.all([aehnliche(d.publicRef, 3), sql`SELECT key, coalesce(${sql("name_" + locale)}, name_de) AS name FROM feature ORDER BY sort_order`, personOderNull()]);
+  const favoritenRefs = person ? await listeFavoriten(person.id) : null;
+  /* Verlauf: nie kritisch — ein fehlgeschlagener Eintrag bringt die
+     Objektseite nie zum Absturz (§29). Die eigene Ansicht selbst herausfiltern. */
+  let zuletzt: Awaited<ReturnType<typeof treffernachRefs>> = [];
+  if (person) {
+    await eintragen(person.id, d.publicRef).catch(() => {});
+    const refs = (await listeVerlauf(person.id)).filter(r => r !== d.publicRef);
+    zuletzt = await treffernachRefs(refs);
+  }
   const w = mitMerkmalen(woerter(t), merkmale.map(m => ({ key: String(m.key), name: String(m.name) })));
   const dossier = baueDossier(d, t, locale, typLabel(d.property.kind, locale), aehn.length);
   const sprachLinks = Object.fromEntries(LOCALES.map(l => [l, pfad(l, d)])) as Record<Locale, string>;
@@ -82,7 +95,8 @@ export default async function Seite({ params }: { params: Promise<Params> }) {
     <>
       {/* eslint-disable-next-line react/no-danger -- JSON.stringify mit maskiertem «<»; das übliche, sichere Muster für JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldText }} />
-      <ObjektSeite d={dossier} t={t} locale={locale} aehnliche={aehn} w={w} sprachLinks={sprachLinks} />
+      {favoritenRefs && <FavoritenInit refs={favoritenRefs} />}
+      <ObjektSeite d={dossier} t={t} locale={locale} aehnliche={aehn} w={w} sprachLinks={sprachLinks} angemeldet={!!person} zuletzt={zuletzt} />
     </>
   );
 }

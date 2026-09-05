@@ -233,6 +233,11 @@
 .dmelde button{font-size:.62rem;color:var(--leise);letter-spacing:.1em;text-decoration:underline;padding:6px}
 .aehnlich{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 
+/* Horizontal scrollbare Reihe — Zuletzt angesehen (P5.6 §29), gleiches
+   overflow-x:auto-Muster wie .licht .lf */
+.hreihe{display:flex;gap:18px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.hreihe>.karte{flex:0 0 260px}
+
 /* Mobile CTA */
 .mobilcta{display:none}
 
@@ -284,13 +289,22 @@
   .mobilcta .p small{display:block;font-family:var(--t);font-size:.6rem;color:var(--leise);letter-spacing:.08em}
   .licht .lf button{flex:0 0 62px}
 }
+.dkopf .aktionen .knopf.ksym .ic{display:none}
 @media(max-width:600px){
   .dkopf{padding:8px 12px;gap:8px}
-  .dkopf .z{flex:0 1 auto;overflow:hidden}
+  .dkopf .z{flex:0 1 auto;overflow:hidden;min-width:22px}
   .dkopf .z .tt{display:none}
   .dkopf .z b{font-size:.56rem;letter-spacing:.12em;overflow:hidden;text-overflow:ellipsis}
-  .dkopf .aktionen{margin-left:auto;flex:0 0 auto}
+  .dkopf .aktionen{margin-left:auto;flex:0 0 auto;gap:4px}
   .dkopf .aktionen .knopf{padding:.45em .6em;font-size:.56rem;letter-spacing:.06em;min-height:32px}
+  /* Merken/Vergleichen/Teilen werden zu Symbolknöpfen: bei drei vollen
+     Textknöpfen plus Sprachwahl plus Schliessen lief die Kopfleiste bei
+     390px über den Bildschirmrand hinaus (gemessen: 396px statt 390px). */
+  .dkopf .aktionen .knopf.ksym{padding:.4em;min-width:32px;display:inline-flex;align-items:center;justify-content:center}
+  .dkopf .aktionen .knopf.ksym .txt{display:none}
+  .dkopf .aktionen .knopf.ksym .ic{display:inline-flex;width:16px;height:16px}
+  .dkopf .aktionen .knopf.ksym .ic svg{width:100%;height:100%}
+  .dkopf .aktionen .knopf.ksym[aria-pressed="true"] .ic{color:var(--licht)}
   .dtitel .preis{font-size:1.5rem}
   .licht .pf{width:38px;height:38px}
 }

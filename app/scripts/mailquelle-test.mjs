@@ -67,9 +67,15 @@ await pruef("dev: Mail in Testordner ablegen und mit mailquelle() finden", async
 /* ---------- mailpit ---------- */
 await pruef("mailpit: echte SMTP-Mail senden und mit mailquelle() wiederfinden", async () => {
   const empfaenger = `probe+${TS}@example.com`;
+  /* Zugangsdaten der lokalen Mail-Attrappe kommen aus der Umgebung, nicht aus
+     dem Skript — auch wenn es reine Entwicklungswerte ohne Aussenwirkung
+     sind, gehört ein Zugangsdatenpaar nicht als Literal in eine versionierte
+     Datei (Befund aus der P5.5-Geheimnisprüfung). */
   const transport = nodemailer.createTransport({
-    host: "localhost", port: 58025, secure: false, requireTLS: true,
-    auth: { user: "fwdev", pass: "fwdev-nur-lokal" },
+    host: process.env.FW_TEST_MAILPIT_HOST ?? "localhost",
+    port: Number(process.env.FW_TEST_MAILPIT_SMTP_PORT ?? 58025),
+    secure: false, requireTLS: true,
+    auth: { user: process.env.FW_TEST_MAILPIT_USER ?? "fwdev", pass: process.env.FW_TEST_MAILPIT_PASSWORD ?? "fwdev-nur-lokal" },
     tls: { rejectUnauthorized: false }
   });
   await transport.sendMail({

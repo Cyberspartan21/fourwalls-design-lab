@@ -26,7 +26,7 @@ import { SmtpMailProvider } from "./mail-smtp";
    einer dieser beiden Arten verletzt dort die CHECK-Bedingung, bis eine
    Migration die Liste erweitert (siehe P5.6-Bericht, dort bewusst nicht
    selbst angelegt). */
-export type MailArt = "verification" | "password_reset" | "listing_submitted" | "changes_requested" | "listing_published" | "inquiry" | "search_alert_confirm" | "search_alert_match";
+export type MailArt = "verification" | "password_reset" | "listing_submitted" | "changes_requested" | "listing_published" | "inquiry" | "search_alert_confirm" | "search_alert_match" | "org_invitation" | "org_member_removed";
 
 export interface Nachricht {
   an: string;

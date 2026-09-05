@@ -14,6 +14,8 @@
    sich ohne Server prüfen (tests/rechte.test.ts). Der Server ruft sie auf,
    nachdem er die Sitzung und das Objekt geladen hat — nie der Browser. */
 
+import { orgDarf, type OrgMitglied, type OrgRecht } from "./orgrechte.ts";
+
 export type Rolle = "user" | "staff" | "moderator" | "admin";
 
 export const RECHTE = [
@@ -67,6 +69,7 @@ export const OEFFENTLICH: Status[] = ["published", "reserved"];
 
 export interface Inserat {
   ownerId: string | null;      // listing.published_by_user_id
+  orgId?: string | null;       // listing.published_by_org_id — professionelles Inserat (P5.7)
   status: Status;
 }
 export interface Person {
@@ -86,55 +89,85 @@ const nein = (grund: Grund): Entscheid => ({ erlaubt: false, grund });
 
 export const istEigentuemer = (p: Person, l: Inserat) => l.ownerId != null && l.ownerId === p.id;
 
+/* Professionelles Inserat: gehört der Organisation, nicht der Person, die es
+   angelegt hat (P5.7 §26). Handeln darf, wer aktives Mitglied dieser
+   Organisation ist UND das Teamrecht hat. Die Zugehörigkeit lädt der Server
+   je Anfrage frisch — ein Organisations-Kennzeichen aus dem Browser zählt
+   nicht (§61). Ohne orgId greift diese Achse nie. */
+export const imTeam = (l: Inserat, m: OrgMitglied | null | undefined, recht: OrgRecht): boolean =>
+  !!l.orgId && !!m && m.orgId === l.orgId && orgDarf(m.rolle, recht);
+/* Für die Moderation zählt Teamzugehörigkeit wie Eigentum: niemand gibt das
+   Inserat des eigenen Büros frei. */
+const beteiligt = (p: Person, l: Inserat, m?: OrgMitglied | null) => istEigentuemer(p, l) || (!!l.orgId && !!m && m.orgId === l.orgId);
+
 /* Lesen und bearbeiten darf die Eigentümerin — und niemand sonst, auch keine
    Moderatorin: die sieht den Entwurf erst, wenn er eingereicht ist. */
-export function darfEntwurfSehen(p: Person, l: Inserat): Entscheid {
-  if (istEigentuemer(p, l)) return ja;
+export function darfEntwurfSehen(p: Person, l: Inserat, m?: OrgMitglied | null): Entscheid {
+  if (istEigentuemer(p, l) && !l.orgId) return ja;
+  if (imTeam(l, m, "VIEW_ORG_LISTINGS")) return ja;
   if (darf(p.rolle, "REVIEW_LISTING") && (IN_PRUEFUNG.includes(l.status) || l.status === "approved")) return ja;
   return nein("nicht-eigentuemer");
 }
-export function darfEntwurfBearbeiten(p: Person, l: Inserat): Entscheid {
-  if (!darf(p.rolle, "EDIT_OWN_DRAFT")) return nein("kein-recht");
-  if (!istEigentuemer(p, l)) return nein("nicht-eigentuemer");
+export function darfEntwurfBearbeiten(p: Person, l: Inserat, m?: OrgMitglied | null): Entscheid {
+  if (l.orgId) {
+    if (!imTeam(l, m, "EDIT_ORG_LISTING")) return nein("nicht-eigentuemer");
+  } else {
+    if (!darf(p.rolle, "EDIT_OWN_DRAFT")) return nein("kein-recht");
+    if (!istEigentuemer(p, l)) return nein("nicht-eigentuemer");
+  }
   if (!BEARBEITBAR.includes(l.status)) return nein("falscher-zustand");
   return ja;
 }
 /* Einreichen verlangt zusätzlich eine bestätigte E-Mail (§16): Entwerfen darf
    jede angemeldete Person sofort, in den Marktplatz kommt nur, wer erreichbar
    ist — die Anfragen der Interessierten gehen an diese Adresse. */
-export function darfEinreichen(p: Person, l: Inserat): Entscheid {
-  if (!darf(p.rolle, "SUBMIT_OWN_LISTING")) return nein("kein-recht");
-  if (!istEigentuemer(p, l)) return nein("nicht-eigentuemer");
+export function darfEinreichen(p: Person, l: Inserat, m?: OrgMitglied | null): Entscheid {
+  if (l.orgId) {
+    if (!imTeam(l, m, "SUBMIT_ORG_LISTING")) return nein("nicht-eigentuemer");
+  } else {
+    if (!darf(p.rolle, "SUBMIT_OWN_LISTING")) return nein("kein-recht");
+    if (!istEigentuemer(p, l)) return nein("nicht-eigentuemer");
+  }
   if (!EINREICHBAR.includes(l.status)) return nein("falscher-zustand");
   if (!p.emailBestaetigt) return nein("email-unbestaetigt");
   return ja;
 }
-export function darfZurueckziehen(p: Person, l: Inserat): Entscheid {
-  if (!darf(p.rolle, "WITHDRAW_OWN_LISTING")) return nein("kein-recht");
-  if (!istEigentuemer(p, l)) return nein("nicht-eigentuemer");
+export function darfZurueckziehen(p: Person, l: Inserat, m?: OrgMitglied | null): Entscheid {
+  if (l.orgId) {
+    if (!imTeam(l, m, "WITHDRAW_ORG_LISTING")) return nein("nicht-eigentuemer");
+  } else {
+    if (!darf(p.rolle, "WITHDRAW_OWN_LISTING")) return nein("kein-recht");
+    if (!istEigentuemer(p, l)) return nein("nicht-eigentuemer");
+  }
   if (l.status === "archived") return nein("falscher-zustand");
+  return ja;
+}
+/* Zuweisen an ein Teammitglied: ändert Verantwortung, nie Herausgeberschaft (§24). */
+export function darfZuweisen(l: Inserat, m?: OrgMitglied | null): Entscheid {
+  if (!l.orgId) return nein("nicht-eigentuemer");
+  if (!imTeam(l, m, "ASSIGN_LISTING")) return nein("kein-recht");
   return ja;
 }
 
 /* Moderation: Recht UND passender Zustand UND nicht das eigene Inserat.
    Die letzte Bedingung ist der Grund, warum Rollen allein nicht genügen — eine
    Moderatorin, die selbst inseriert, darf sich nicht selbst freigeben (§74). */
-function moderiert(p: Person, l: Inserat, recht: Recht, zustaende: Status[]): Entscheid {
+function moderiert(p: Person, l: Inserat, recht: Recht, zustaende: Status[], m?: OrgMitglied | null): Entscheid {
   if (!darf(p.rolle, recht)) return nein("kein-recht");
-  if (istEigentuemer(p, l)) return nein("eigenes-inserat");
+  if (beteiligt(p, l, m)) return nein("eigenes-inserat");
   if (!zustaende.includes(l.status)) return nein("falscher-zustand");
   return ja;
 }
-export const darfPruefen = (p: Person, l: Inserat) => moderiert(p, l, "REVIEW_LISTING", IN_PRUEFUNG);
-export const darfFreigeben = (p: Person, l: Inserat) => moderiert(p, l, "APPROVE_LISTING", IN_PRUEFUNG);
-export const darfAenderungVerlangen = (p: Person, l: Inserat) => moderiert(p, l, "REQUEST_CHANGES", IN_PRUEFUNG);
-export const darfAblehnen = (p: Person, l: Inserat) => moderiert(p, l, "REJECT_LISTING", IN_PRUEFUNG);
-export const darfVeroeffentlichen = (p: Person, l: Inserat) => moderiert(p, l, "PUBLISH_LISTING", ["approved"]);
-export const darfPausieren = (p: Person, l: Inserat) => moderiert(p, l, "PAUSE_PUBLISHED_LISTING", ["published", "reserved"]);
+export const darfPruefen = (p: Person, l: Inserat, m?: OrgMitglied | null) => moderiert(p, l, "REVIEW_LISTING", IN_PRUEFUNG, m);
+export const darfFreigeben = (p: Person, l: Inserat, m?: OrgMitglied | null) => moderiert(p, l, "APPROVE_LISTING", IN_PRUEFUNG, m);
+export const darfAenderungVerlangen = (p: Person, l: Inserat, m?: OrgMitglied | null) => moderiert(p, l, "REQUEST_CHANGES", IN_PRUEFUNG, m);
+export const darfAblehnen = (p: Person, l: Inserat, m?: OrgMitglied | null) => moderiert(p, l, "REJECT_LISTING", IN_PRUEFUNG, m);
+export const darfVeroeffentlichen = (p: Person, l: Inserat, m?: OrgMitglied | null) => moderiert(p, l, "PUBLISH_LISTING", ["approved"], m);
+export const darfPausieren = (p: Person, l: Inserat, m?: OrgMitglied | null) => moderiert(p, l, "PAUSE_PUBLISHED_LISTING", ["published", "reserved"], m);
 
 /* Vorschau eines unveröffentlichten Inserats: Eigentümerin immer, Moderation
    nur während der Prüfung. Niemand sonst, angemeldet oder nicht (§37). */
-export function darfVorschauSehen(p: Person | null, l: Inserat): Entscheid {
+export function darfVorschauSehen(p: Person | null, l: Inserat, m?: OrgMitglied | null): Entscheid {
   if (!p) return nein("keine-sitzung");
-  return darfEntwurfSehen(p, l);
+  return darfEntwurfSehen(p, l, m);
 }

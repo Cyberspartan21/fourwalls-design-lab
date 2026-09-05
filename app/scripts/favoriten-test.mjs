@@ -205,6 +205,31 @@ await schritt(10, "Merge zweimal hintereinander mit denselben refs → kein Dupl
   return `dbZeilen=${zeilen.length}, vorkommenInRefs=${vorkommen}`;
 });
 
+/* ---------- P5.7-Politur: anonyme Merkliste (/konto/favoriten ohne Sitzung) ---------- */
+let refAnonA, refAnonB;
+
+await schritt(11, "Zwei echte, öffentliche Demo-Referenzen für die anonyme Merkliste besorgen", async () => {
+  const zeilen = await sql`SELECT public_ref FROM listing WHERE is_demo AND status IN ('published','reserved') ORDER BY public_ref LIMIT 2`;
+  assertTrue(zeilen.length === 2, "nicht genug öffentliche Demo-Inserate gefunden");
+  refAnonA = zeilen[0].public_ref; refAnonB = zeilen[1].public_ref;
+  return `refAnonA=${refAnonA}, refAnonB=${refAnonB}`;
+});
+
+await schritt(12, "Anonym: GET /api/favoriten/aufloesen?refs=<2 echte Refs> → 200 mit 2 Treffern", async () => {
+  const r = await get(`/api/favoriten/aufloesen?refs=${encodeURIComponent(`${refAnonA},${refAnonB}`)}`, {});
+  assertGleich(r.status, 200, "status");
+  const ids = (r.json?.treffer ?? []).map(x => x.id);
+  assertGleich(ids.length, 2, "Anzahl Treffer");
+  assertTrue(ids.includes(refAnonA) && ids.includes(refAnonB), `beide Referenzen fehlen im Ergebnis (${ids.join(",")})`);
+  return `treffer=${ids.join(",")}`;
+});
+
+await schritt(13, "Anonym: GET /de/konto/favoriten → 200 (kein Redirect zur Anmeldung mehr)", async () => {
+  const r = await get("/de/konto/favoriten", {});
+  assertGleich(r.status, 200, "status");
+  return `status=${r.status}`;
+});
+
 /* ============================================================
    ABSCHLUSS
    ============================================================ */

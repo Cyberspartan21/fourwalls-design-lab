@@ -68,6 +68,7 @@
 .merk:hover{border-color:var(--licht)}
 .merk[aria-pressed="true"]{color:var(--licht)}
 .merk svg{width:15px;height:15px}
+.merk.vgl{right:49px}
 .karte .oeffnen{position:absolute;inset:0;z-index:1}
 .karte .lauf{padding:12px 2px 16px;display:flex;flex-direction:column;gap:4px;position:relative;z-index:2;pointer-events:none}
 .karte .preis{font-family:var(--d);font-weight:400;font-size:1.35rem;letter-spacing:-.01em;line-height:1.1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}

@@ -1,4 +1,4 @@
-import type { Locale } from "@/i18n";
+import type { Locale, T } from "@/i18n";
 import { LOCALES, uebersetzer } from "@/i18n";
 import { Kopf } from "@/components/site/kopf";
 
@@ -8,9 +8,21 @@ import { Kopf } from "@/components/site/kopf";
    `nav`: schmale Sekundärnavigation zu den Kundenfunktionen — bewusst
    opt-in (Standard aus), weil KontoRahmen auch die Anmelde-/Registrier-/
    Passwortseiten trägt, wo eine angemeldete Navigation nichts zu suchen hat.
-   Angemeldete Kontounterseiten reichen `nav` einfach mit. */
-export function KontoRahmen({ locale, titel, lead, breit = false, nav = false, children }:
-  { locale: Locale; titel: string; lead?: string; breit?: boolean; nav?: boolean; children: React.ReactNode }) {
+   Angemeldete Kontounterseiten reichen `nav` einfach mit. `aktiv` markiert den
+   aktuellen Eintrag (aria-current="page") — der Seitenschlüssel aus NAV_ITEMS.
+   Gleiche Reihenfolge auf allen fünf Seiten: Übersicht, Merkliste, Gespeicherte
+   Suchen, Zuletzt angesehen, Anfragen. «Meine Inserate» ist kein eigener
+   Nav-Eintrag, sondern der Listenabschnitt auf /konto (Übersicht) selbst. */
+const NAV_ITEMS: { key: string; href: (l: Locale) => string; label: (t: T) => string }[] = [
+  { key: "uebersicht", href: l => `/${l}/konto`, label: t => t("k_uebersicht") },
+  { key: "favoriten", href: l => `/${l}/konto/favoriten`, label: t => t("fv_navLink") },
+  { key: "suchabos", href: l => `/${l}/konto/suchabos`, label: t => t("k_gespeicherteSuchen") },
+  { key: "verlauf", href: l => `/${l}/konto/verlauf`, label: t => t("k_zuletztAngesehen") },
+  { key: "anfragen", href: l => `/${l}/konto/anfragen`, label: t => t("af_titel") }
+];
+
+export function KontoRahmen({ locale, titel, lead, breit = false, nav = false, aktiv, children }:
+  { locale: Locale; titel: string; lead?: string; breit?: boolean; nav?: boolean; aktiv?: string; children: React.ReactNode }) {
   const sprachLinks = Object.fromEntries(LOCALES.map(l => [l, `/${l}/konto`])) as Record<Locale, string>;
   const t = uebersetzer(locale);
   return (
@@ -21,11 +33,9 @@ export function KontoRahmen({ locale, titel, lead, breit = false, nav = false, c
         {lead && <p style={{ color: "var(--leise)", marginTop: 10, maxWidth: "56ch" }}>{lead}</p>}
         {nav && (
           <nav style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
-            <a className="knopf leise" href={`/${locale}/konto`}>{t("k_meineInserate")}</a>
-            <a className="knopf leise" href={`/${locale}/konto/favoriten`}>{t("fv_navLink")}</a>
-            <a className="knopf leise" href={`/${locale}/konto/suchabos`}>{t("k_gespeicherteSuchen")}</a>
-            <a className="knopf leise" href={`/${locale}/konto/verlauf`}>{t("k_zuletztAngesehen")}</a>
-            <a className="knopf leise" href={`/${locale}/konto/anfragen`}>{t("af_titel")}</a>
+            {NAV_ITEMS.map(it => (
+              <a key={it.key} className="knopf leise" href={it.href(locale)} aria-current={aktiv === it.key ? "page" : undefined}>{it.label(t)}</a>
+            ))}
           </nav>
         )}
         {children}

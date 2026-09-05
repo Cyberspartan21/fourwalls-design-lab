@@ -62,7 +62,7 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
   }
 
   return (
-    <KontoRahmen locale={locale} titel={t("k_meineInserate")} breit nav>
+    <KontoRahmen locale={locale} titel={t("k_meineInserate")} breit nav aktiv="uebersicht">
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginTop: 6 }}>
         <span style={{ color: "var(--leise)", fontSize: ".85rem" }}>{s.name} · {s.email}</span>
         <a className="knopf" href={`/${locale}/konto/favoriten`}>{t("fv_navLink")}</a>

@@ -2,7 +2,7 @@ import type { Locale } from "@/i18n";
 import type { Treffer } from "@/domain/marktplatz";
 import { verfuegbarFrei } from "@/domain/marktplatz";
 import { preisText, quelleLabel, typLabel, verfuegbarLabel, proM2, fmtIn, type Woerter } from "./labels";
-import { MerkKnopf } from "./merk-knopf";
+import { MerkKnopf, VergleichKnopf } from "./merk-knopf";
 
 /* Ergebniskarte — dieselben Klassen wie kartenHTML() im Prototyp.
    Reine Komponente ohne Server-Abhängigkeit: die Seite rendert sie, «Weitere
@@ -24,6 +24,7 @@ export function Karte({ l, w, locale, href, aktiv = false, onMouseEnter, onMouse
         <div className="etikett">{l.listingTier === "exclusive" ? <span className="exkl">{w.exclusive}</span> : <span>{quelleLabel(w, l)}</span>}{l.neu && <span>{w.neu}</span>}</div>
         {belegt ? <span className="status">{verfuegbarLabel(w, locale, l.availability)}</span> : va === "sofort" ? <span className="status frei">{w.sofort}</span> : null}
         <MerkKnopf publicRef={l.id} label={w.merken!} />
+        <VergleichKnopf publicRef={l.id} label={w.vg_vergleichen!} labelAktiv={w.vg_imVergleich!} labelVoll={w.vg_voll!} />
         {l.bild && (
           <picture>
             <source type="image/webp" srcSet={set(l.bild.webp)} sizes={sizes} />

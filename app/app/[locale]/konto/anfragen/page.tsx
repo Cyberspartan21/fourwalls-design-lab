@@ -37,7 +37,7 @@ export default async function MeineAnfragenSeite({ params }: { params: Promise<{
   const anfragen = await meineAnfragen(s.person.id);
 
   return (
-    <KontoRahmen locale={locale} titel={t("af_titel")} breit nav>
+    <KontoRahmen locale={locale} titel={t("af_titel")} breit nav aktiv="anfragen">
       {anfragen.length === 0 ? (
         <p style={{ color: "var(--leise)", marginTop: 16 }}>{t("af_leer")}</p>
       ) : (

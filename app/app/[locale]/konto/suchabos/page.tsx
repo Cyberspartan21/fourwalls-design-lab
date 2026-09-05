@@ -42,7 +42,7 @@ export default async function KontoSuchabos({ params }: { params: Promise<{ loca
   };
 
   return (
-    <KontoRahmen locale={locale} titel={t("k_gespeicherteSuchen")} breit nav>
+    <KontoRahmen locale={locale} titel={t("k_gespeicherteSuchen")} breit nav aktiv="suchabos">
       {suchen.length === 0 ? (
         <p style={{ color: "var(--leise)", marginTop: 16 }}>{t("sa_keine")}</p>
       ) : (

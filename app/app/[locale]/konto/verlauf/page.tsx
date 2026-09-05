@@ -22,7 +22,7 @@ export default async function KontoVerlauf({ params }: { params: Promise<{ local
   const treffer = await treffernachRefs(refs);
 
   return (
-    <KontoRahmen locale={locale} titel={t("vl_titel")} breit>
+    <KontoRahmen locale={locale} titel={t("vl_titel")} breit nav aktiv="verlauf">
       {treffer.length === 0
         ? <p style={{ color: "var(--leise)", marginTop: 16 }}>{t("vl_leer")}</p>
         : <VerlaufListe treffer={treffer} w={woerter(t)} locale={locale} />}

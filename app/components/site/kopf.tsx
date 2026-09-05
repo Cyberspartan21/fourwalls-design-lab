@@ -66,7 +66,7 @@ export function Kopf({ locale, aktuell, sprachLinks, schwebt = false }: { locale
         <nav className="haupt" aria-label="Hauptnavigation">{nav}</nav>
         <div className="rechts">
           {sprache}
-          <a className="knopf" href={`/${locale}`}><span>{u("gemerkt")}</span> <MerkZahl /></a>
+          <a className="knopf" href={`/${locale}/konto/favoriten`}><span>{u("gemerkt")}</span> <MerkZahl /></a>
           <a className="knopf voll" href={`/${locale}`}>{u("inserieren")}</a>
           <div className="gt" role="group" aria-label="Erscheinung"><button id="gtHell" aria-pressed="false" title={u("tag")}>T</button><button id="gtDunkel" aria-pressed="true" title={u("nacht")}>N</button></div>
           <button className="burger" id="burger" aria-label={u("menue")} aria-expanded="false"><i></i></button>
@@ -75,7 +75,7 @@ export function Kopf({ locale, aktuell, sprachLinks, schwebt = false }: { locale
       <div className="blatt" id="blatt">
         <div className="bk"><span className="fw"><i className="k"></i><i className="s"></i></span><button className="knopf" id="blattZu">{u("schliessen")} ×</button></div>
         {NAV.map(g => <div className="gruppe" key={g.key}><div className="tk">{u(g.key)}</div>{g.items.map(([k, h, s, b]) => <a key={k} href={h(locale)}><span className="wa"><b>{u(k)}</b>{b && <em>{BESCHR[b]?.[locale]}</em>}</span>{s && <small>{SUB[s]?.[locale]}</small>}</a>)}</div>)}
-        <div className="unten"><a className="knopf voll" href={`/${locale}`}>{u("inserieren")}</a><a className="knopf" href={`/${locale}`}>{u("gemerkt")}</a><div style={{ display: "flex", marginLeft: "auto" }}>{sprache}</div></div>
+        <div className="unten"><a className="knopf voll" href={`/${locale}`}>{u("inserieren")}</a><a className="knopf" href={`/${locale}/konto/favoriten`}>{u("gemerkt")}</a><div style={{ display: "flex", marginLeft: "auto" }}>{sprache}</div></div>
       </div>
       <KopfClient />
     </>

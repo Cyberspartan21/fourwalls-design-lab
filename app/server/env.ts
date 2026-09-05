@@ -56,7 +56,9 @@ const Schema = z.object({
   STAGING_GATE_PASSWORD: z.string().min(16).optional(),
 
   /* ---------- Hintergrundarbeit ---------- */
-  OUTBOX_INTERVAL_MS: z.coerce.number().int().min(1000).max(600000).default(15000)
+  OUTBOX_INTERVAL_MS: z.coerce.number().int().min(1000).max(600000).default(15000),
+  /* Suchabo-Alarmprüfung (P5.6) — eigenes Intervall neben der Outbox. */
+  ALERT_INTERVAL_MS: z.coerce.number().int().min(5000).max(3_600_000).default(30000)
 }).superRefine((e, ctx) => {
   const fehlt = (pfad: string, meldung: string) => ctx.addIssue({ code: "custom", path: [pfad], message: meldung });
   const scharf = e.APP_ENV === "staging" || e.APP_ENV === "production";

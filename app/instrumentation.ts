@@ -25,4 +25,22 @@ export async function register() {
 
   const intervall = setInterval(lauf, env().OUTBOX_INTERVAL_MS);
   intervall.unref();
+
+  /* Zweiter, unabhängiger Hintergrundarbeiter: die Suchabo-Alarmprüfung
+     (server/suchabo-matching.ts, P5.6). Eigenes Intervall, eigener
+     Fehlerpfad — ein Fehler hier stört den Outbox-Arbeiter oben nicht. */
+  const { alarmeVerarbeiten } = await import("@/server/suchabo-matching");
+  const alarmLauf = async () => {
+    try {
+      await alarmeVerarbeiten();
+    } catch (e) {
+      log.error("suchabo.alarm.arbeiterFehler", e);
+    }
+  };
+
+  const ersterAlarmLauf = setTimeout(alarmLauf, 5000);
+  ersterAlarmLauf.unref();
+
+  const alarmIntervall = setInterval(alarmLauf, env().ALERT_INTERVAL_MS);
+  alarmIntervall.unref();
 }

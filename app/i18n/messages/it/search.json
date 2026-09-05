@@ -61,6 +61,8 @@
   "zimmerFilter": "Locali",
   "k_landWort": "terreno",
   "nurFourwalls": "Solo Fourwalls",
-  "aboHinweisDev": "Stato di sviluppo: la ricerca salvata resta solo in questo browser. Le notifiche e-mail arriveranno con l'account (P5.4).",
+  "aboHinweisAnon": "Vi inviamo un'e-mail di conferma a questo indirizzo. Solo dopo la conferma riceverete le notifiche.",
+  "aboHinweisKonto": "Il vostro avviso è attivo subito — l'indirizzo del vostro account è già confermato.",
+  "suchaboFehler": "Non ha funzionato. Riprovate più tardi.",
   "aehnlicheKeine": "Al momento non c'è nessun annuncio comparabile."
 }

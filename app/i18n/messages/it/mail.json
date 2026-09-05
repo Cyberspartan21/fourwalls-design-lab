@@ -22,5 +22,13 @@
   "inquiry": {
     "betreff": "Fourwalls — Richiesta su {titel} ({referenz})",
     "text": "Richiesta su {referenz} ({titel})\nDa: {name}\n\n{nachricht}"
+  },
+  "search_alert_confirm": {
+    "betreff": "Fourwalls — Confermare l'avviso di ricerca",
+    "text": "Gentile utente\n\nConfermi il Suo avviso di ricerca «{label}»:\n{url}\n\nRiceverà le notifiche solo dopo la conferma. Se non ha creato Lei questo avviso, può ignorare questo messaggio."
+  },
+  "search_alert_match": {
+    "betreff": "Fourwalls — {anzahl} nuovi risultati per «{label}»",
+    "text": "Gentile utente\n\nPer il Suo avviso di ricerca «{label}» ci sono {anzahl} nuovi risultati:\n\n{treffer}\n\nDisiscriversi da questo avviso:\n{abmeldeUrl}"
   }
 }

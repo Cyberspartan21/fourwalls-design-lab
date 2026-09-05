@@ -90,21 +90,32 @@ export function MehrLaden({ q, total, geladen, w, locale, pfad, basis }:
   );
 }
 
-/* Suchabo-Grenze: dieselbe normalisierte Anfrage, die später ein Konto speichert.
-   Bis dahin nur in diesem Browser — und so beschriftet. Keine E-Mail, kein
-   Versprechen. */
-export function AboZeile({ q, zusammenfassung, total, w }: { q: Suchanfrage; zusammenfassung: string; total: number; w: Woerter }) {
+/* Suchabo-Zeile: dieselbe normalisierte Anfrage geht per POST an /api/suchabo.
+   Angemeldet ist das Abo sofort aktiv (Kontoadresse ist schon bestätigt);
+   ohne Konto verschickt der Server eine echte Bestätigungsmail (Double-Opt-in) —
+   erst danach wird je etwas zugestellt. */
+export function AboZeile({ q, zusammenfassung, total, w, locale, angemeldet = false }: { q: Suchanfrage; zusammenfassung: string; total: number; w: Woerter; locale: Locale; angemeldet?: boolean }) {
   const [offen, setOffen] = useState(false); const [mail, setMail] = useState(""); const [wie, setWie] = useState<"sofort" | "taeglich" | "woechentlich">("taeglich");
-  const [fertig, setFertig] = useState(false); const [fehler, setFehler] = useState(false);
-  const speichern = () => {
-    if (!mail.includes("@")) { setFehler(true); return; }
+  const [fertig, setFertig] = useState(false); const [fehler, setFehler] = useState(false); const [fehlerArt, setFehlerArt] = useState<"mail" | "allgemein">("mail");
+  const [laeuft, setLaeuft] = useState(false);
+  const hinweis = angemeldet ? w.aboHinweisKonto : w.aboHinweisAnon;
+  const speichern = async () => {
+    if (!mail.includes("@")) { setFehlerArt("mail"); setFehler(true); return; }
+    setLaeuft(true); setFehler(false);
     try {
-      const a = JSON.parse(localStorage.getItem("fw-suchabos") ?? "[]");
       const { seite: _s, modus: _m, bounds: _b, proSeite: _p, ...anfrage } = { ...LEER, ...q };
-      a.push({ id: Date.now().toString(36), name: zusammenfassung, anfrage, erstellt: new Date().toISOString().slice(0, 10), zustellung: { mail, wie }, stand: "nur-lokal" });
-      localStorage.setItem("fw-suchabos", JSON.stringify(a));
-    } catch { /* privater Modus */ }
-    setFertig(true);
+      const wie2 = wie === "sofort" ? "immediately" : wie === "taeglich" ? "daily" : "weekly";
+      const res = await fetch("/api/suchabo", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query: anfrage, label: zusammenfassung, email: mail, frequency: wie2, locale })
+      });
+      if (!res.ok) throw new Error("suchabo-fehlgeschlagen");
+      setFertig(true);
+    } catch {
+      setFehlerArt("allgemein"); setFehler(true);
+    } finally {
+      setLaeuft(false);
+    }
   };
   return (
     <>
@@ -118,17 +129,17 @@ export function AboZeile({ q, zusammenfassung, total, w }: { q: Suchanfrage; zus
                 <p className="abo-summe" id="aboSumme">{zusammenfassung} · {trefferLabel(w, total)}</p>
                 <label className="et" htmlFor="aboMail">{w.suchaboMail}</label>
                 <input className="feld" type="email" id="aboMail" placeholder="name@beispiel.ch" autoComplete="email" value={mail} onChange={e => { setMail(e.target.value); setFehler(false); }} />
-                <p className="abo-fehler" id="aboFehler" hidden={!fehler}>{w.mailFehler}</p>
+                <p className="abo-fehler" id="aboFehler" hidden={!fehler}>{fehlerArt === "mail" ? w.mailFehler : w.suchaboFehler}</p>
                 <label className="et" style={{ marginTop: 14 }}>{w.suchaboWie}</label>
                 <div className="chipwahl" id="aboWie">{(["sofort", "taeglich", "woechentlich"] as const).map(v => <button key={v} data-wie={v} aria-pressed={wie === v} onClick={() => setWie(v)}>{w[{ sofort: "wieSofort", taeglich: "wieTaeglich", woechentlich: "wieWoechentlich" }[v]]}</button>)}</div>
-                <p className="abo-fein" id="aboFein">{w.aboHinweisDev}</p>
-                <div className="abo-aktionen"><button className="knopf" id="aboAbbruch" onClick={() => setOffen(false)}>{w.abbrechen}</button><button className="knopf voll" id="aboSpeichern" onClick={speichern}>{w.speichern}</button></div>
+                <p className="abo-fein" id="aboFein">{hinweis}</p>
+                <div className="abo-aktionen"><button className="knopf" id="aboAbbruch" onClick={() => setOffen(false)}>{w.abbrechen}</button><button className="knopf voll" id="aboSpeichern" disabled={laeuft} onClick={speichern}>{w.speichern}</button></div>
               </div>
             ) : (
               <div id="aboFertig">
                 <p className="abo-ok"><b>{w.suchaboOk}</b></p>
                 <p className="abo-summe" id="aboSumme2">{zusammenfassung}</p>
-                <p className="abo-fein" id="aboFein2">{w.aboHinweisDev}</p>
+                <p className="abo-fein" id="aboFein2">{hinweis}</p>
                 <div className="abo-aktionen"><button className="knopf voll" id="aboFertigZu" onClick={() => setOffen(false)}>{w.schliessen}</button></div>
               </div>
             )}

@@ -61,6 +61,8 @@
   "zimmerFilter": "Pièces",
   "k_landWort": "terrain",
   "nurFourwalls": "Fourwalls uniquement",
-  "aboHinweisDev": "Version de développement : l'alerte est mémorisée uniquement dans ce navigateur. Les notifications par e-mail suivront avec le compte (P5.4).",
+  "aboHinweisAnon": "Nous vous envoyons un e-mail de confirmation à cette adresse. Vous ne recevrez des notifications qu'après confirmation.",
+  "aboHinweisKonto": "Votre alerte est active immédiatement — l'adresse de votre compte est déjà confirmée.",
+  "suchaboFehler": "Cela n'a pas fonctionné. Veuillez réessayer plus tard.",
   "aehnlicheKeine": "Il n'y a actuellement aucun bien comparable."
 }

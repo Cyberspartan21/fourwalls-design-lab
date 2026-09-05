@@ -23,6 +23,10 @@ export interface Werte {
   titel?: string;
   nachricht?: string;
   referenz?: string;
+  label?: string;
+  anzahl?: string;
+  treffer?: string;
+  abmeldeUrl?: string;
 }
 
 function ersetzen(vorlage: string, werte: Werte): string {
@@ -31,7 +35,11 @@ function ersetzen(vorlage: string, werte: Werte): string {
     .replaceAll("{url}", werte.url ?? "")
     .replaceAll("{titel}", werte.titel ?? "")
     .replaceAll("{nachricht}", werte.nachricht ?? "")
-    .replaceAll("{referenz}", werte.referenz ?? "");
+    .replaceAll("{referenz}", werte.referenz ?? "")
+    .replaceAll("{label}", werte.label ?? "")
+    .replaceAll("{anzahl}", werte.anzahl ?? "")
+    .replaceAll("{treffer}", werte.treffer ?? "")
+    .replaceAll("{abmeldeUrl}", werte.abmeldeUrl ?? "");
 }
 
 /* Betreff und Text für eine Mailart in einer Sprache, mit eingesetzten Werten.

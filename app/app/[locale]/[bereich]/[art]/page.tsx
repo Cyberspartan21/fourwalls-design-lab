@@ -5,6 +5,7 @@ import { env } from "@/server/env";
 import { sql } from "@/server/db";
 import { suche, anfrageAusParams, paramsAusAnfrage } from "@/server/search";
 import { getPlace } from "@/server/geo";
+import { sitzung } from "@/server/sitzung";
 import type { Suchanfrage } from "@/domain/marktplatz";
 import { woerter, mitMerkmalen, trefferLabel, typLabel, chfText } from "@/components/marktplatz/labels";
 import { Karte, objektPfad } from "@/components/marktplatz/karte";
@@ -68,6 +69,7 @@ export default async function Suche({ params, searchParams }: { params: Promise<
   const pfad = PFAD[locale];
   const ort = q.ort ? await getPlace(q.ort, locale) : null;
   const antwort = await suche(q, locale);
+  const s = await sitzung();
   const titel = (trans === "rent" ? w.mieten : w.kaufen) + (antwort.geo.label ? " · " + antwort.geo.label + (q.umkreisKm ? ` + ${q.umkreisKm} ${w.km}` : "") : "");
   const zusammenfassung = [ort?.label, trans === "rent" ? w.mieten : w.kaufen, q.typ ? typLabel(w, q.typ) : "", q.ziMin ? `${q.ziMin}+ ${w.o_ziKurz}` : "", q.pMax ? "≤ " + chfText(q.pMax) : ""].filter(Boolean).join(" · ");
   const sprachLinks = Object.fromEntries(LOCALES.map(l => { const p = paramsAusAnfrage({ ...q, seite: 1 }); return [l, basisPfad(l, trans) + (p.toString() ? "?" + p.toString() : "")]; })) as Record<Locale, string>;
@@ -108,7 +110,7 @@ export default async function Suche({ params, searchParams }: { params: Promise<
             {antwort.total > 0 && <div className="gitter" id="gitter">{antwort.treffer.map(l => <Karte key={l.id} l={l} w={w} locale={locale} href={objektPfad(locale, pfad, l)} />)}</div>}
             <MehrLaden key={"mehr:" + JSON.stringify(q)} q={q} total={antwort.total} geladen={antwort.treffer.length} w={w} locale={locale} pfad={pfad} basis={basis} />
             {antwort.total === 0 && <Leer q={q} wege={wege} w={w} basis={basis} />}
-            <AboZeile q={q} zusammenfassung={zusammenfassung || (trans === "rent" ? w.mieten! : w.kaufen!)} total={antwort.total} w={w} />
+            <AboZeile q={q} zusammenfassung={zusammenfassung || (trans === "rent" ? w.mieten! : w.kaufen!)} total={antwort.total} w={w} locale={locale} angemeldet={!!s} />
           </section>
         )}
       </main>

@@ -61,6 +61,8 @@
   "zimmerFilter": "Zimmer",
   "k_landWort": "Land",
   "nurFourwalls": "Nur Fourwalls",
-  "aboHinweisDev": "Entwicklungsstand: Das Suchabo wird nur in diesem Browser gemerkt. E-Mail-Benachrichtigungen folgen mit dem Konto (P5.4).",
+  "aboHinweisAnon": "Wir schicken Ihnen eine Bestätigungsmail an diese Adresse. Erst nach der Bestätigung erhalten Sie Benachrichtigungen.",
+  "aboHinweisKonto": "Ihr Suchabo ist sofort aktiv — Ihre Kontoadresse ist bereits bestätigt.",
+  "suchaboFehler": "Das hat nicht geklappt. Bitte versuchen Sie es später erneut.",
   "aehnlicheKeine": "Zurzeit gibt es kein vergleichbares Inserat."
 }

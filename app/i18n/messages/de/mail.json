@@ -22,5 +22,13 @@
   "inquiry": {
     "betreff": "Fourwalls — Anfrage zu {titel} ({referenz})",
     "text": "Anfrage zu {referenz} ({titel})\nVon: {name}\n\n{nachricht}"
+  },
+  "search_alert_confirm": {
+    "betreff": "Fourwalls — Suchabo bestätigen",
+    "text": "Guten Tag\n\nBitte bestätigen Sie Ihr Suchabo «{label}»:\n{url}\n\nErst nach der Bestätigung erhalten Sie Benachrichtigungen zu neuen Treffern. Wenn Sie dieses Suchabo nicht angelegt haben, können Sie diese Nachricht ignorieren."
+  },
+  "search_alert_match": {
+    "betreff": "Fourwalls — {anzahl} neue Treffer für «{label}»",
+    "text": "Guten Tag\n\nFür Ihr Suchabo «{label}» gibt es {anzahl} neue Treffer:\n\n{treffer}\n\nSuchabo abbestellen:\n{abmeldeUrl}"
   }
 }

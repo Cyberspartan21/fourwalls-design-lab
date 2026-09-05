@@ -16,9 +16,17 @@ import { SmtpMailProvider } from "./mail-smtp";
    var/mail/ und ins Protokoll. Es verlässt nichts den Rechner. env.ts
    verweigert diesen Anbieter ausserhalb der Entwicklung. */
 
-/* Die Art einer Nachricht — dieselben sechs Werte wie mail_outbox.kind
-   (db/migrations/0013_outbox.sql) und lib/mailtext.ts. */
-export type MailArt = "verification" | "password_reset" | "listing_submitted" | "changes_requested" | "listing_published" | "inquiry";
+/* Die Art einer Nachricht — dieselben Werte wie mail_outbox.kind
+   (db/migrations/0013_outbox.sql) und lib/mailtext.ts.
+
+   ACHTUNG (P5.6, Suchabos): "search_alert_confirm" und "search_alert_match"
+   sind hier bereits ergänzt, weil server/gespeicherteSuchen.ts und
+   server/suchabo-matching.ts sie brauchen — aber mail_outbox.kind
+   (0013_outbox.sql) kennt sie NOCH NICHT. Ein INSERT in mail_outbox mit
+   einer dieser beiden Arten verletzt dort die CHECK-Bedingung, bis eine
+   Migration die Liste erweitert (siehe P5.6-Bericht, dort bewusst nicht
+   selbst angelegt). */
+export type MailArt = "verification" | "password_reset" | "listing_submitted" | "changes_requested" | "listing_published" | "inquiry" | "search_alert_confirm" | "search_alert_match";
 
 export interface Nachricht {
   an: string;

@@ -8,6 +8,7 @@ import { darf } from "@/domain/rechte";
 import { KontoRahmen } from "./kopfzeile";
 import { AbmeldeKnopf, BestaetigungErneut } from "@/components/konto/formulare";
 import { meineAnfragen } from "@/server/inquiries";
+import { meineAnliegen } from "@/server/anliegen";
 import { listeFavoriten } from "@/server/favoriten";
 import { meineSuchen } from "@/server/gespeicherteSuchen";
 import { meineOrganisationen } from "@/server/org-kontext";
@@ -47,6 +48,7 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
   const inserate = await meineInserate(s.person);
   const p = PFAD[locale];
   const anfragen = await meineAnfragen(s.person.id);
+  const anliegen = await meineAnliegen(s.person.id);
   const merkliste = await listeFavoriten(s.person.id);
   const suchabos = await meineSuchen(s.person.id);
   const organisationen = await meineOrganisationen(s.person.id);
@@ -78,6 +80,7 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
         <Kachel href={`/${locale}/konto`} zahl={inserate.length} label={statusText ? `${t("k_meineInserate")} — ${statusText}` : t("k_meineInserate")} />
         <Kachel href={`/${locale}/konto/favoriten`} zahl={merkliste.length} label={t("fv_navLink")} />
         <Kachel href={`/${locale}/konto/anfragen`} zahl={anfragen.length} label={t("af_titel")} />
+        <Kachel href={`/${locale}/konto/anliegen`} zahl={anliegen.length} label={t("al_titel")} />
         <Kachel href={`/${locale}/konto/suchabos`} zahl={suchabos.length} label={t("k_gespeicherteSuchen")} />
       </div>
 

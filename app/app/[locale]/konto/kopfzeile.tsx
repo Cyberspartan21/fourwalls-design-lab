@@ -10,15 +10,20 @@ import { Kopf } from "@/components/site/kopf";
    Passwortseiten trägt, wo eine angemeldete Navigation nichts zu suchen hat.
    Angemeldete Kontounterseiten reichen `nav` einfach mit. `aktiv` markiert den
    aktuellen Eintrag (aria-current="page") — der Seitenschlüssel aus NAV_ITEMS.
-   Gleiche Reihenfolge auf allen fünf Seiten: Übersicht, Merkliste, Gespeicherte
-   Suchen, Zuletzt angesehen, Anfragen. «Meine Inserate» ist kein eigener
-   Nav-Eintrag, sondern der Listenabschnitt auf /konto (Übersicht) selbst. */
+   Gleiche Reihenfolge auf allen sechs Seiten: Übersicht, Merkliste, Gespeicherte
+   Suchen, Zuletzt angesehen, Anfragen, Anliegen. «Meine Inserate» ist kein
+   eigener Nav-Eintrag, sondern der Listenabschnitt auf /konto (Übersicht)
+   selbst. «Anfragen» sind Objektanfragen an ein Inserat (§inquiries),
+   «Anliegen» sind Bitten an FOURWALLS selbst (Verkauf, Vermietung, Bewertung,
+   Verwaltung, Beratung — §P5.8, domain/anliegen.ts) — zwei verschiedene
+   Dinge, zwei Einträge. */
 const NAV_ITEMS: { key: string; href: (l: Locale) => string; label: (t: T) => string }[] = [
   { key: "uebersicht", href: l => `/${l}/konto`, label: t => t("k_uebersicht") },
   { key: "favoriten", href: l => `/${l}/konto/favoriten`, label: t => t("fv_navLink") },
   { key: "suchabos", href: l => `/${l}/konto/suchabos`, label: t => t("k_gespeicherteSuchen") },
   { key: "verlauf", href: l => `/${l}/konto/verlauf`, label: t => t("k_zuletztAngesehen") },
-  { key: "anfragen", href: l => `/${l}/konto/anfragen`, label: t => t("af_titel") }
+  { key: "anfragen", href: l => `/${l}/konto/anfragen`, label: t => t("af_titel") },
+  { key: "anliegen", href: l => `/${l}/konto/anliegen`, label: t => t("al_titel") }
 ];
 
 export function KontoRahmen({ locale, titel, lead, breit = false, nav = false, aktiv, children }:

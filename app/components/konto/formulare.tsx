@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { migriereZuServer } from "@/components/favorites";
 
 /* Die vier Formulare rund um das Konto — Anmelden, Registrieren, Passwort
    vergessen, Passwort setzen.
@@ -35,6 +36,9 @@ export function AnmeldeFormular({ t, weiter, registrierenHref, passwortHref }: {
     setLaeuft(false);
     /* Eine Meldung für alle Fälle — kein Hinweis darauf, ob die Adresse bekannt ist. */
     if (error) { setFehler(t.k_falscheDaten!); return; }
+    /* Bestmöglicher Hintergrundvorgang: ein Netzwerkproblem hier darf die
+       Anmeldung nie blockieren oder eine Fehlermeldung zeigen (§P5.6). */
+    await migriereZuServer().catch(() => {});
     router.push(weiter); router.refresh();
   }
 
@@ -76,6 +80,7 @@ export function RegistrierFormular({ t, weiter, anmeldenHref }: { t: Texte; weit
     const an = await authClient.signIn.email({ email: email.trim(), password: passwort });
     setLaeuft(false);
     if (an.error) { router.push(anmeldenHref); return; }
+    await migriereZuServer().catch(() => {});
     router.push(weiter); router.refresh();
   }
 

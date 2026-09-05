@@ -9,7 +9,7 @@ const abo = (cb: () => void) => { addEventListener("fw:merkliste", cb); addEvent
 /* Merken auf der Ergebniskarte — Schlüssel ist die öffentliche Referenz, wie auf der Objektseite */
 export function MerkKnopf({ publicRef, label }: { publicRef: string; label: string }) {
   const an = useSyncExternalStore(abo, () => favorites().hat(publicRef), () => false);
-  return <button className="merk" data-fav={publicRef} aria-pressed={an} aria-label={label} onClick={e => { e.preventDefault(); e.stopPropagation(); favorites().kippen(publicRef); dispatchEvent(new Event("fw:merkliste")); }}>{HERZ}</button>;
+  return <button className="merk" data-fav={publicRef} aria-pressed={an} aria-label={label} onClick={e => { e.preventDefault(); e.stopPropagation(); favorites().kippen(publicRef); }}>{HERZ}</button>;
 }
 
 /* Zähler im Kopf */

@@ -8,6 +8,7 @@ import { log } from "@/lib/log";
 import { orgDarf, darfRolleVergeben, type OrgRolle } from "@/domain/orgrechte";
 import type { Person } from "@/domain/rechte";
 import type { OrgKontext } from "./org-kontext";
+import { medienLogoVeroeffentlichen } from "./medien";
 
 /* Organisationen — anlegen, Profil lesen/ändern, Stilllegen, Team.
 
@@ -46,7 +47,10 @@ const ProfilAendernSchema = z.object({
   street: z.string().trim().max(120).nullable().optional(),
   postalCode: z.string().trim().max(20).nullable().optional(),
   city: z.string().trim().max(120).nullable().optional(),
-  description: z.string().trim().max(2000).nullable().optional()
+  description: z.string().trim().max(2000).nullable().optional(),
+  /* Logo (P5.7 §11): dieselbe Kennung wie bei Inseratsbildern, aus
+     server/medien.ts — Eigentümerschaft prüft profilAendern selbst. */
+  logoAssetId: z.string().uuid().nullable().optional()
 }).strict();
 
 export interface OrgProfil {
@@ -68,6 +72,7 @@ export interface OrgProfil {
   postalCode: string | null;
   city: string | null;
   description: string | null;
+  logoAssetId: string | null;
   createdAt: string;
 }
 
@@ -87,11 +92,12 @@ const alsProfil = (r: Record<string, unknown>): OrgProfil => ({
   postalCode: r.postal_code != null ? String(r.postal_code) : null,
   city: r.city != null ? String(r.city) : null,
   description: r.description != null ? String(r.description) : null,
+  logoAssetId: r.logo_asset_id != null ? String(r.logo_asset_id) : null,
   createdAt: alsZeit(r.created_at)
 });
 
 const PROFIL_FELDER = `id, public_ref, slug, kind, display_name, legal_name, locale, verification_state, is_active,
-  archived_at, verified_at, website, public_email, public_phone, street, postal_code, city, description, created_at`;
+  archived_at, verified_at, website, public_email, public_phone, street, postal_code, city, description, logo_asset_id, created_at`;
 
 /* Ein lesbarer, eindeutiger Slug — dieselbe Herleitung wie bei Inseraten
    (server/moderation.ts:freierSlug), hier auf `organization.slug`. */
@@ -165,6 +171,13 @@ export async function profilAendern(kontext: OrgKontext, akteur: Person, roheEin
     throw new AppError("FORBIDDEN", "Firmenname und Sprache darf nur die Besitzerin ändern");
   }
 
+  /* Ein neu gesetztes Logo muss der handelnden Person gehören — dieselbe
+     Regel wie bei Inseratsbildern (server/entwuerfe.ts:materialisieren). */
+  if ("logoAssetId" in eingabe && eingabe.logoAssetId != null) {
+    const ok = await sql`SELECT 1 FROM media_asset WHERE id = ${eingabe.logoAssetId} AND uploaded_by = ${akteur.id}`;
+    if (!ok[0]) throw new AppError("FORBIDDEN", "Dieses Bild gehört nicht zu Ihrem Konto");
+  }
+
   const jetzt = await profilLesen(kontext);
   const naechste = {
     displayName: "displayName" in eingabe ? eingabe.displayName! : jetzt.displayName,
@@ -176,7 +189,8 @@ export async function profilAendern(kontext: OrgKontext, akteur: Person, roheEin
     street: "street" in eingabe ? (eingabe.street ?? null) : jetzt.street,
     postalCode: "postalCode" in eingabe ? (eingabe.postalCode ?? null) : jetzt.postalCode,
     city: "city" in eingabe ? (eingabe.city ?? null) : jetzt.city,
-    description: "description" in eingabe ? (eingabe.description ?? null) : jetzt.description
+    description: "description" in eingabe ? (eingabe.description ?? null) : jetzt.description,
+    logoAssetId: "logoAssetId" in eingabe ? (eingabe.logoAssetId ?? null) : jetzt.logoAssetId
   };
 
   const z = await sql`
@@ -184,9 +198,14 @@ export async function profilAendern(kontext: OrgKontext, akteur: Person, roheEin
       display_name = ${naechste.displayName}, legal_name = ${naechste.legalName}, locale = ${naechste.locale},
       website = ${naechste.website}, public_email = ${naechste.publicEmail}, public_phone = ${naechste.publicPhone},
       street = ${naechste.street}, postal_code = ${naechste.postalCode}, city = ${naechste.city},
-      description = ${naechste.description}
+      description = ${naechste.description}, logo_asset_id = ${naechste.logoAssetId}
     WHERE id = ${kontext.org.id}
     RETURNING ${sql.unsafe(PROFIL_FELDER)}`;
+  /* Ein gesetztes Logo wird öffentlich (abl/ → pub/). Nicht in der Transaktion
+     oben: der Objektspeicher ist kein Transaktionsteilnehmer, und ein neu
+     gesetztes Logo, dessen Kopie scheitert, ist ehrlicher als ein halb
+     zurückgerolltes Profil — der Fehler geht als 500 an den Aufrufer. */
+  if (naechste.logoAssetId) await medienLogoVeroeffentlichen(sql, naechste.logoAssetId);
   await sql`INSERT INTO audit_log (actor_user_id, actor_role, action, entity_type, entity_id)
             VALUES (${akteur.id}, ${akteur.rolle}, 'org.profile_changed', 'organization', ${kontext.org.id})`;
   log.info("organisation.profil_geaendert", { org: kontext.org.slug });

@@ -167,6 +167,19 @@
 .aboliste{display:flex;flex-direction:column;gap:8px}
 .abo{border:1px solid var(--linie);border-radius:var(--r);padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--gr2)}
 .abo b{font-weight:500;font-size:.92rem}
+
+/* ---- Organisation: Tabelle wird auf schmalen Bildschirmen zu Karten
+   (P5.7 §46) — keine Desktop-Tabelle, die auf dem Handy nur schrumpft. */
+.org-tabelle-wrap{margin-top:18px;overflow-x:auto}
+.org-tabelle{width:100%;border-collapse:collapse;font-size:.88rem}
+.org-tabelle th{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leise);text-align:left;padding:8px 10px 8px 0;white-space:nowrap}
+.org-tabelle td{padding:12px 10px 12px 0;border-top:1px solid var(--linie);vertical-align:top}
+.org-karten{display:none;list-style:none;margin:18px 0 0;padding:0}
+.org-karte{border-top:1px solid var(--linie);padding:16px 0}
+@media (max-width:640px){
+  .org-tabelle-wrap{display:none}
+  .org-karten{display:block}
+}
 .abo span{font-size:.72rem;color:var(--leise)}
 .abo .rechtsab{margin-left:auto;display:flex;gap:8px}
 .abo .status{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--licht);border:1px solid var(--linie2);padding:.3em .6em;border-radius:var(--r)}

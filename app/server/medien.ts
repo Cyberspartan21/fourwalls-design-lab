@@ -116,6 +116,20 @@ export async function bildHochladen(person: Person, roh: ArrayBuffer, gemeldeter
    (§20/§36) — der Aufruf erfolgt aus der Moderation, in derselben
    Transaktion wie der Statuswechsel. */
 
+/* Ein Organisationslogo (P5.7 §44) hängt an keinem Inserat, sondern an
+   organization.logo_asset_id. Es wird öffentlich, sobald es als Logo gesetzt
+   ist — dieselbe abl/ → pub/-Bewegung wie bei der Veröffentlichung, nur je
+   Bild statt je Inserat. Idempotent. */
+export async function medienLogoVeroeffentlichen(tx: Tx, assetId: string): Promise<void> {
+  const varianten = await tx`SELECT id, storage_key FROM media_variant WHERE asset_id = ${assetId} AND storage_key LIKE 'abl/%'`;
+  for (const v of varianten) {
+    const von = String(v.storage_key);
+    const nach = von.replace(/^abl\//, "pub/");
+    await storage().kopieren(von, nach);
+    await tx`UPDATE media_variant SET storage_key = ${nach} WHERE id = ${v.id}`;
+  }
+}
+
 export async function medienVeroeffentlichen(tx: Tx, listingId: string): Promise<void> {
   const varianten = await tx`
     SELECT v.id, v.storage_key
@@ -164,8 +178,9 @@ export async function bildAusliefern(person: Person | null, assetId: string, bre
   if (!/^[0-9a-f-]{36}$/i.test(assetId)) return null;
   const z = await sql`
     SELECT a.storage_key, a.mime_type, a.uploaded_by,
-           EXISTS (SELECT 1 FROM listing_image li JOIN listing l ON l.id = li.listing_id
-                    WHERE li.asset_id = a.id AND l.status IN ('published','reserved')) AS oeffentlich,
+           (EXISTS (SELECT 1 FROM listing_image li JOIN listing l ON l.id = li.listing_id
+                     WHERE li.asset_id = a.id AND l.status IN ('published','reserved'))
+            OR EXISTS (SELECT 1 FROM organization o WHERE o.logo_asset_id = a.id AND o.is_active AND o.archived_at IS NULL)) AS oeffentlich,
            EXISTS (SELECT 1 FROM listing_image li JOIN listing l ON l.id = li.listing_id
                     WHERE li.asset_id = a.id AND l.status IN ('submitted','in_review','approved')) AS in_pruefung
       FROM media_asset a WHERE a.id = ${assetId} LIMIT 1`;

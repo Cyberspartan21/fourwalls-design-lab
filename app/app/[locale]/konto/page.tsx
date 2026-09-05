@@ -10,6 +10,7 @@ import { AbmeldeKnopf, BestaetigungErneut } from "@/components/konto/formulare";
 import { meineAnfragen } from "@/server/inquiries";
 import { listeFavoriten } from "@/server/favoriten";
 import { meineSuchen } from "@/server/gespeicherteSuchen";
+import { meineOrganisationen } from "@/server/org-kontext";
 
 /* Meine Inserate — die Liste, aus der jede weitere Handlung startet.
 
@@ -28,7 +29,7 @@ const AMPEL: Record<string, string> = {
 /* Eine Kachel der Übersicht — Zahl + Beschriftung, verlinkt auf die
    zugehörige Kontounterseite. Nur reale, aus der Datenbank gezählte Zahlen
    (§Auftrag) — nichts, was es serverseitig nicht gibt. */
-function Kachel({ href, zahl, label }: { href: string; zahl: number; label: string }) {
+export function Kachel({ href, zahl, label }: { href: string; zahl: number; label: string }) {
   return (
     <a href={href} style={{ display: "block", padding: "14px 16px", border: "1px solid var(--linie)", borderRadius: "var(--r)", textDecoration: "none", color: "inherit" }}>
       <div style={{ fontSize: "1.6rem", fontWeight: 500, fontVariantNumeric: "tabular-nums" }}>{zahl}</div>
@@ -48,6 +49,7 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
   const anfragen = await meineAnfragen(s.person.id);
   const merkliste = await listeFavoriten(s.person.id);
   const suchabos = await meineSuchen(s.person.id);
+  const organisationen = await meineOrganisationen(s.person.id);
 
   const statusZaehlung = new Map<string, number>();
   for (const i of inserate) statusZaehlung.set(i.status, (statusZaehlung.get(i.status) ?? 0) + 1);
@@ -124,6 +126,32 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
           })}
         </ul>
       )}
+
+      {/* Getrennter Bereich (§19/§45): eigene Organisationen sind kein
+          zweites Login, nur eine andere Rolle innerhalb derselben Person.
+          Die Organisationsnavigation selbst lebt im OrgRahmen. */}
+      <div style={{ marginTop: 46, borderTop: "1px solid var(--linie)", paddingTop: 24 }}>
+        <h3 style={{ fontSize: ".95rem" }}>{t("og_professionell")}</h3>
+        {organisationen.length === 0 ? (
+          <p style={{ color: "var(--leise)", marginTop: 10 }}>
+            {t("og_keineOrganisation")} <a className="knopf" style={{ marginLeft: 8 }} href={`/${locale}/konto/org/neu`}>{t("og_organisationAnlegen")}</a>
+          </p>
+        ) : (
+          <>
+            <ul style={{ listStyle: "none", padding: 0, margin: "12px 0 0" }}>
+              {organisationen.map(o => (
+                <li key={o.org.slug} style={{ borderTop: "1px solid var(--linie)", padding: "12px 0", display: "flex", gap: 12, alignItems: "baseline", flexWrap: "wrap" }}>
+                  <a href={`/${locale}/konto/org/${o.org.slug}`} style={{ fontWeight: 500 }}>{o.org.displayName}</a>
+                  <span style={{ color: "var(--leise)", fontSize: ".78rem" }}>{t("og_rolle_" + o.rolle)}</span>
+                </li>
+              ))}
+            </ul>
+            <div style={{ marginTop: 16 }}>
+              <a className="knopf" href={`/${locale}/konto/org/neu`}>{t("og_organisationAnlegen")}</a>
+            </div>
+          </>
+        )}
+      </div>
     </KontoRahmen>
   );
 }

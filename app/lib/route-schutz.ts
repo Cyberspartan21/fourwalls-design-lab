@@ -57,6 +57,8 @@ export async function jsonLesen(req: NextRequest, maxBytes = 64 * 1024): Promise
 /* Ein Fehler wird zur Antwort — nie zu einem Stack oder einer SQL-Meldung. */
 export function fehlerAntwort(e: unknown, wo: string): Response {
   const err = asAppError(e);
-  if (err.code === "INTERNAL") log.error(wo, { fehler: e instanceof Error ? e.message : String(e) });
+  /* Das Fehlerobjekt selbst ins Protokoll — nicht in ein Feld verpackt, sonst
+     steht dort «[object Object]» (P5.7-Befund). */
+  if (err.code === "INTERNAL") log.error(wo, e);
   return Response.json(err.toResponseBody(), { status: err.status });
 }

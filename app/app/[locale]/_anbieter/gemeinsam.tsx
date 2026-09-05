@@ -95,6 +95,15 @@ export async function AnbieterSeiteRoute({ params, wort }: { params: Promise<Par
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
       <main className="wiz an" style={{ maxWidth: 980 }}>
+        {/* Logo: die kleinste WebP-Ableitung, JPEG als Rückfall — Adressen kommen
+            aus dem Speicheranbieter (pub/), nie aus einem Upload-Pfad (§44). */}
+        {profil.logo && profil.logo.sources.jpeg[0] && (
+          <picture>
+            {profil.logo.sources.webp[0] && <source type="image/webp" srcSet={profil.logo.sources.webp[0].url} />}
+            <img src={profil.logo.sources.jpeg[0].url} alt="" width={96} height={96}
+              style={{ width: 96, height: 96, objectFit: "contain", display: "block", marginBottom: 14 }} />
+          </picture>
+        )}
         <h2>
           {profil.displayName}
           {profil.verificationState === "verified" && <span className="q"> · {w.geprueft}</span>}

@@ -17,6 +17,7 @@ import de_verlauf from "./messages/de/verlauf.json";
 import de_vergleich from "./messages/de/vergleich.json";
 import de_anfragen from "./messages/de/anfragen.json";
 import de_anbieter from "./messages/de/anbieter.json";
+import de_org from "./messages/de/org.json";
 import fr_common from "./messages/fr/common.json";
 import fr_navigation from "./messages/fr/navigation.json";
 import fr_search from "./messages/fr/search.json";
@@ -29,6 +30,7 @@ import fr_verlauf from "./messages/fr/verlauf.json";
 import fr_vergleich from "./messages/fr/vergleich.json";
 import fr_anfragen from "./messages/fr/anfragen.json";
 import fr_anbieter from "./messages/fr/anbieter.json";
+import fr_org from "./messages/fr/org.json";
 import it_common from "./messages/it/common.json";
 import it_navigation from "./messages/it/navigation.json";
 import it_search from "./messages/it/search.json";
@@ -41,6 +43,7 @@ import it_verlauf from "./messages/it/verlauf.json";
 import it_vergleich from "./messages/it/vergleich.json";
 import it_anfragen from "./messages/it/anfragen.json";
 import it_anbieter from "./messages/it/anbieter.json";
+import it_org from "./messages/it/org.json";
 import en_common from "./messages/en/common.json";
 import en_navigation from "./messages/en/navigation.json";
 import en_search from "./messages/en/search.json";
@@ -53,6 +56,7 @@ import en_verlauf from "./messages/en/verlauf.json";
 import en_vergleich from "./messages/en/vergleich.json";
 import en_anfragen from "./messages/en/anfragen.json";
 import en_anbieter from "./messages/en/anbieter.json";
+import en_org from "./messages/en/org.json";
 
 export const LOCALES = ["de", "fr", "it", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -63,10 +67,10 @@ export const istLocale = (s: string): s is Locale => (LOCALES as readonly string
 type Katalog = Record<string, string>;
 
 const KATALOGE: Record<Locale, Katalog> = {
-  de: { ...de_common, ...de_navigation, ...de_search, ...de_property, ...de_listing, ...de_account, ...de_konto, ...de_favoriten, ...de_verlauf, ...de_vergleich, ...de_anfragen, ...de_anbieter },
-  fr: { ...fr_common, ...fr_navigation, ...fr_search, ...fr_property, ...fr_listing, ...fr_account, ...fr_konto, ...fr_favoriten, ...fr_verlauf, ...fr_vergleich, ...fr_anfragen, ...fr_anbieter },
-  it: { ...it_common, ...it_navigation, ...it_search, ...it_property, ...it_listing, ...it_account, ...it_konto, ...it_favoriten, ...it_verlauf, ...it_vergleich, ...it_anfragen, ...it_anbieter },
-  en: { ...en_common, ...en_navigation, ...en_search, ...en_property, ...en_listing, ...en_account, ...en_konto, ...en_favoriten, ...en_verlauf, ...en_vergleich, ...en_anfragen, ...en_anbieter }
+  de: { ...de_common, ...de_navigation, ...de_search, ...de_property, ...de_listing, ...de_account, ...de_konto, ...de_favoriten, ...de_verlauf, ...de_vergleich, ...de_anfragen, ...de_anbieter, ...de_org },
+  fr: { ...fr_common, ...fr_navigation, ...fr_search, ...fr_property, ...fr_listing, ...fr_account, ...fr_konto, ...fr_favoriten, ...fr_verlauf, ...fr_vergleich, ...fr_anfragen, ...fr_anbieter, ...fr_org },
+  it: { ...it_common, ...it_navigation, ...it_search, ...it_property, ...it_listing, ...it_account, ...it_konto, ...it_favoriten, ...it_verlauf, ...it_vergleich, ...it_anfragen, ...it_anbieter, ...it_org },
+  en: { ...en_common, ...en_navigation, ...en_search, ...en_property, ...en_listing, ...en_account, ...en_konto, ...en_favoriten, ...en_verlauf, ...en_vergleich, ...en_anfragen, ...en_anbieter, ...en_org }
 };
 
 /* Übersetzer für eine Sprache. Unbekannter Schlüssel → Deutsch → Schlüssel

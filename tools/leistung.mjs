@@ -10,7 +10,7 @@
 import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
 
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME = process.env.CHROME_BIN || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const [url, name = "seite"] = process.argv.slice(2);
 if (!url) { console.error("Aufruf: node tools/leistung.mjs <url> [name]"); process.exit(1); }
 const schlaf = ms => new Promise(r => setTimeout(r, ms));

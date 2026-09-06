@@ -227,7 +227,7 @@ async function inseratVeroeffentlichen({ cookie, userId, org, mod }) {
 }
 
 /* ---------- 390 px per CDP (dasselbe Muster wie scripts/intern-mobil-test.mjs) ---------- */
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME = process.env.CHROME_BIN || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const schlaf = ms => new Promise(r => setTimeout(r, ms));
 
 async function seite(port) {

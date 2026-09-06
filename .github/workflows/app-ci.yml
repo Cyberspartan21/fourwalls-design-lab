@@ -75,6 +75,8 @@ jobs:
       APP_ENV: test
       DATABASE_URL: postgres://fourwalls:fourwalls_ci@localhost:5432/fourwalls
       NEXT_PUBLIC_SITE_URL: http://localhost:3007
+      # Headless Chrome für CDP-Prüfungen (intern-mobil, Kontolöschung 390 px, Mobil, A11y, Sichtprüfung)
+      CHROME_BIN: /usr/bin/google-chrome
       STORAGE_PROVIDER: local
       MAIL_PROVIDER: dev
       MAIL_FROM: noreply@fourwalls.example
@@ -196,6 +198,8 @@ jobs:
       APP_ENV: test
       DATABASE_URL: postgres://fourwalls:fourwalls_ci@localhost:5432/fourwalls
       NEXT_PUBLIC_SITE_URL: http://localhost:3007
+      # Headless Chrome für CDP-Prüfungen (intern-mobil, Kontolöschung 390 px, Mobil, A11y, Sichtprüfung)
+      CHROME_BIN: /usr/bin/google-chrome
       STORAGE_PROVIDER: local
       MAIL_PROVIDER: dev
       MAIL_FROM: noreply@fourwalls.example

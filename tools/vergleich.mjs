@@ -17,7 +17,7 @@ import { readdirSync, existsSync, writeFileSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME = process.env.CHROME_BIN || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const [altOrdner, neuOrdner, schwelleArg] = process.argv.slice(2);
 const SCHWELLE = Number(schwelleArg ?? 0.2);   // Prozent abweichender Bildpunkte
 if (!altOrdner || !neuOrdner) { console.error("Aufruf: node tools/vergleich.mjs <alt> <neu> [schwelle%]"); process.exit(1); }

@@ -89,16 +89,26 @@ for (const datei of dateien) {
   bericht.push({ datei, zustand: p <= SCHWELLE ? "gleich" : "abweichend", wert:p });
 }
 
+/* Zustände, die es nur im neuen Ordner gibt (z. B. frisch ergänzte
+   Regressionszustände), sind kein Fehler — es gibt schlicht noch nichts zum
+   Vergleichen. Getrennt von "fehlt" (ein Zustand ist verschwunden), das
+   weiterhin als Abweichung zählt. */
+const dateienNeu = readdirSync(neuOrdner).filter(f => f.endsWith(".png")).sort();
+for (const datei of dateienNeu) {
+  if (!dateien.includes(datei)) bericht.push({ datei, zustand:"neu", wert:null });
+}
+
 ws.close(); kind.kill();
 setTimeout(() => { try { rmSync(`/tmp/fw-vergleich-${port}`, { recursive:true, force:true }); rmSync(arbeitsordner, { recursive:true, force:true }); } catch (e) {} }, 500);
 
 const breit = Math.max(...bericht.map(b => b.datei.length), 10);
 for (const b of bericht) {
-  const zeichen = b.zustand === "gleich" ? "✓" : b.zustand === "fehlt" ? "?" : "✗";
+  const zeichen = b.zustand === "gleich" ? "✓" : b.zustand === "neu" ? "＋" : b.zustand === "fehlt" ? "?" : "✗";
   const wert = b.wert === null ? "" : (typeof b.wert === "number" ? b.wert.toFixed(2) + " %" : b.wert);
   console.log(`${zeichen} ${b.datei.padEnd(breit)}  ${b.zustand.padEnd(13)} ${wert}`);
 }
-const abweichend = bericht.filter(b => b.zustand !== "gleich");
-console.log(`\n${bericht.length} verglichen · ${abweichend.length} abweichend · grösste Abweichung ${schlimmste.toFixed(2)} % · Schwelle ${SCHWELLE} %`);
+const abweichend = bericht.filter(b => b.zustand !== "gleich" && b.zustand !== "neu");
+const neu = bericht.filter(b => b.zustand === "neu");
+console.log(`\n${bericht.length - neu.length} verglichen · ${abweichend.length} abweichend · ${neu.length} neu (kein Vergleich) · grösste Abweichung ${schlimmste.toFixed(2)} % · Schwelle ${SCHWELLE} %`);
 writeFileSync(join(neuOrdner, "vergleich.json"), JSON.stringify({ alt:altOrdner, neu:neuOrdner, schwelle:SCHWELLE, bericht }, null, 2));
 process.exit(abweichend.length ? 1 : 0);

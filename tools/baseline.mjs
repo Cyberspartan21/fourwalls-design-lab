@@ -11,6 +11,18 @@
 
    Braucht Chrome und Node ≥ 22 (globales WebSocket). Echte Zeit über CDP —
    --virtual-time-budget liefert bei Karten und WebGL unbrauchbare Ergebnisse.
+
+   P5.9 Phase A §6: Startseite, 404-Seite und Service-Landeseiten (verkaufen,
+   bewertung, verwalten) sind jetzt eigene --app-Zustände, dazu das geöffnete
+   mobile Menü (kopf-mobil-offen) und die Fusszeile (fuss). Die Fehlerseite
+   (app/[locale]/error.tsx) hat bewusst KEINEN eigenen Zustand: es gibt keine
+   deterministische, nebenwirkungsfreie öffentliche Auslösung dafür (keine
+   eigens dafür erfundene Fehler-Route in der Anwendung) — das wäre reine
+   Testfixtur statt echtem Zustand. Das Next-Dev-Overlay (nextjs-portal) wird
+   vor jeder Aufnahme entfernt (in Prod-Builds ohne Wirkung, weil es dort gar
+   nicht existiert); zusätzlich wird auf document.fonts.ready und vollständig
+   geladene Bilder gewartet, bevor die bestehenden warten/nachher-Pausen
+   greifen.
    ============================================================ */
 import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
@@ -85,7 +97,21 @@ const ZUSTAENDE_APP = [
   { name:"objekt-standard",  pfad:`de/immobilien/kaufen/haus-luzern-1-fwl-2026-101001?mode=hell`, breite:1440, hoehe:1200, warten:7000 },
   { name:"m-suche",          pfad:`de/immobilien/kaufen?mode=hell`, breite:390, hoehe:844, mobil:true, warten:5000 },
   { name:"m-karte",          pfad:`de/immobilien/kaufen?ansicht=karte&mode=hell`, breite:390, hoehe:844, mobil:true, warten:12000, karte:true },
-  { name:"m-objekt",         pfad:`de/immobilien/kaufen/haus-luzern-1-fwl-2026-101001?mode=hell`, breite:390, hoehe:844, mobil:true, warten:7000 }
+  { name:"m-objekt",         pfad:`de/immobilien/kaufen/haus-luzern-1-fwl-2026-101001?mode=hell`, breite:390, hoehe:844, mobil:true, warten:7000 },
+  /* P5.9 Phase A §6: Startseite, 404, Service-Landeseiten, mobiles Menü, Fuss —
+     bisher nicht Teil der Regression (siehe Kopfkommentar). */
+  { name:"start",            pfad:`de?mode=hell`,   breite:1440, hoehe:900, voll:true },
+  { name:"start-abend",      pfad:`de?mode=dunkel`, breite:1440, hoehe:900, voll:true },
+  { name:"m-start",          pfad:`de?mode=hell`,   breite:390, hoehe:844, mobil:true, voll:true },
+  { name:"start-fr",         pfad:`fr?mode=hell`,   breite:1440, hoehe:900 },
+  { name:"404",              pfad:`de/diese-seite-gibt-es-nicht`, breite:1440, hoehe:900, erwarteterStatus:404 },
+  { name:"m-404",            pfad:`de/diese-seite-gibt-es-nicht`, breite:390, hoehe:844, mobil:true, erwarteterStatus:404 },
+  { name:"verkaufen",        pfad:`de/verkaufen`,   breite:1440, hoehe:1000, voll:true },
+  { name:"m-verkaufen",      pfad:`de/verkaufen`,   breite:390, hoehe:844, mobil:true },
+  { name:"bewertung",        pfad:`de/bewertung`,   breite:1440, hoehe:900 },
+  { name:"verwalten",        pfad:`de/verwalten`,   breite:1440, hoehe:900 },
+  { name:"kopf-mobil-offen", pfad:`de`,              breite:390, hoehe:844, mobil:true, menue:true },
+  { name:"fuss",             pfad:`de`,              breite:1440, hoehe:900, scrollEnde:true }
 ];
 
 const schlaf = ms => new Promise(r => setTimeout(r, ms));
@@ -112,18 +138,42 @@ async function aufnehmen(z) {
   const ws = new WebSocket(await seite(port));
   await new Promise(ok => ws.onopen = ok);
   let nr = 0; const offen = new Map();
-  ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id && offen.has(m.id)) { offen.get(m.id)(m); offen.delete(m.id); } };
+  /* Statuscode des Hauptdokuments merken — für 404-Zustände, bei denen ein
+     Nicht-200-Status erwartet und akzeptiert wird, statt als Fehler zu gelten. */
+  let hauptStatus = null;
+  ws.onmessage = e => {
+    const m = JSON.parse(e.data);
+    if (m.id && offen.has(m.id)) { offen.get(m.id)(m); offen.delete(m.id); return; }
+    if (m.method === "Network.responseReceived" && m.params?.type === "Document") hauptStatus = m.params.response.status;
+  };
   const cmd = (method, params) => new Promise(ok => { const id = ++nr; offen.set(id, ok); ws.send(JSON.stringify({ id, method, params })); });
   const js = async expr => {
     const r = await cmd("Runtime.evaluate", { expression:expr, awaitPromise:true, returnByValue:true });
     return r.result && r.result.result ? r.result.result.value : null;
   };
 
-  await cmd("Page.enable"); await cmd("Runtime.enable");
+  await cmd("Page.enable"); await cmd("Runtime.enable"); await cmd("Network.enable");
   await cmd("Emulation.setDeviceMetricsOverride", { width:z.breite, height:z.hoehe, deviceScaleFactor:z.mobil ? 2 : 1, mobile:!!z.mobil });
   if (z.mobil) await cmd("Emulation.setTouchEmulationEnabled", { enabled:true });
+  hauptStatus = null;
   await cmd("Page.navigate", { url:`${basis}/${z.pfad}` });
   await schlaf(z.warten || 3500);
+
+  if (z.erwarteterStatus && hauptStatus !== z.erwarteterStatus) {
+    throw new Error(`Status ${hauptStatus ?? "unbekannt"} statt erwartet ${z.erwarteterStatus}`);
+  }
+
+  /* Schriften und Bilder fertig laden lassen, bevor die bestehenden
+     warten/nachher-Pausen greifen — sonst hängt der Vergleich vom Zufall
+     ab, wie schnell Netz und Layout an diesem Tag waren. */
+  await js(`(async()=>{
+    try { await document.fonts.ready; } catch(e) {}
+    const bilder = [...document.images].filter(i => !i.complete);
+    await Promise.race([
+      Promise.all(bilder.map(i => new Promise(r => { i.onload = i.onerror = r; }))),
+      new Promise(r => setTimeout(r, 3000))
+    ]);
+  })()`);
 
   if (z.sprache) {
     await js(`(async()=>{ FWP.sprache("${z.sprache}");
@@ -147,6 +197,13 @@ async function aufnehmen(z) {
 
   /* Zu einem Abschnitt scrollen und der Karte Zeit geben (faule Grenze) */
   if (z.scrollZu) { await js(`document.querySelector("${z.scrollZu}").scrollIntoView(); true`); await schlaf(z.nachher || 6000); }
+  /* Ganz ans Seitenende scrollen — für Zustände, die nur die Fusszeile im
+     Viewport zeigen sollen (kein Vollseiten-Screenshot). */
+  if (z.scrollEnde) { await js(`window.scrollTo(0, document.body.scrollHeight); true`); await schlaf(z.nachher || 1200); }
+
+  /* Next-Dev-Overlay unmittelbar vor der Aufnahme entfernen — in Prod-Builds
+     existiert dieses Element nicht, der Aufruf ist dort wirkungslos. */
+  await js(`document.querySelector("nextjs-portal")?.remove(); true`);
 
   let clip = null;
   if (z.voll) {

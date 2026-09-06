@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Locale } from "@/i18n";
 import { LEER, SORTS, type Suchanfrage, type Sort, type Treffer } from "@/domain/marktplatz";
@@ -99,6 +99,31 @@ export function AboZeile({ q, zusammenfassung, total, w, locale, angemeldet = fa
   const [fertig, setFertig] = useState(false); const [fehler, setFehler] = useState(false); const [fehlerArt, setFehlerArt] = useState<"mail" | "allgemein">("mail");
   const [laeuft, setLaeuft] = useState(false);
   const hinweis = angemeldet ? w.aboHinweisKonto : w.aboHinweisAnon;
+  const ausloeserRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const warOffen = useRef(false);
+
+  /* Escape schliesst, Tab bleibt im Dialog (Fokusfalle), Fokus geht beim
+     Öffnen hinein und beim Schliessen zurück auf #sucheSpeichern (P5.10 §29). */
+  useEffect(() => {
+    if (offen && !warOffen.current) dialogRef.current?.querySelector<HTMLElement>("input, button")?.focus();
+    if (!offen && warOffen.current) ausloeserRef.current?.focus();
+    warOffen.current = offen;
+    if (!offen) return;
+    const k = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setOffen(false); return; }
+      if (e.key === "Tab" && dialogRef.current) {
+        const fokussierbar = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute("disabled"));
+        if (!fokussierbar.length) return;
+        const erst = fokussierbar[0]!, letzt = fokussierbar[fokussierbar.length - 1]!;
+        if (e.shiftKey && document.activeElement === erst) { e.preventDefault(); letzt.focus(); }
+        else if (!e.shiftKey && document.activeElement === letzt) { e.preventDefault(); erst.focus(); }
+      }
+    };
+    document.addEventListener("keydown", k);
+    return () => document.removeEventListener("keydown", k);
+  }, [offen]);
+
   const speichern = async () => {
     if (!mail.includes("@")) { setFehlerArt("mail"); setFehler(true); return; }
     setLaeuft(true); setFehler(false);
@@ -119,10 +144,10 @@ export function AboZeile({ q, zusammenfassung, total, w, locale, angemeldet = fa
   };
   return (
     <>
-      <div className="abozeile" id="abo"><span><b>{w.p_aboZeileB}</b> {w.p_aboZeileSpan}</span><button className="knopf" id="sucheSpeichern" style={{ marginLeft: "auto" }} onClick={() => { setOffen(true); setFertig(false); }}>{w.sucheSpeichern}</button></div>
+      <div className="abozeile" id="abo"><span><b>{w.p_aboZeileB}</b> {w.p_aboZeileSpan}</span><button ref={ausloeserRef} className="knopf" id="sucheSpeichern" style={{ marginLeft: "auto" }} onClick={() => { setOffen(true); setFertig(false); }}>{w.sucheSpeichern}</button></div>
       {offen && (
         <div className="abo-hg" id="aboHg" onClick={e => { if (e.target === e.currentTarget) setOffen(false); }}>
-          <div className="abo-blatt" role="dialog" aria-modal="true" aria-labelledby="aboH">
+          <div className="abo-blatt" ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="aboH">
             <div className="abo-kopf"><h2 id="aboH">{w.suchaboTitel}</h2><button className="knopf" id="aboZu" onClick={() => setOffen(false)}>{w.schliessen}</button></div>
             {!fertig ? (
               <div id="aboKoerper">

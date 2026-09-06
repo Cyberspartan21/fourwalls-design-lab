@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Media } from "@/domain/listing";
 import { Bild } from "./bild";
 import type { LichtWunsch } from "./ereignisse";
@@ -14,11 +14,25 @@ export function Galerie({ bilder, kategorien, katLabel, titel, medien, tx, zeige
   const [kat, setKat] = useState("alle");
   const [licht, setLicht] = useState<LichtWunsch | null>(null);
   const [lkat, setLkat] = useState("alle");
+  const lichtRef = useRef<HTMLDivElement>(null);
+  const geoeffnetVon = useRef<HTMLElement | null>(null);
+  const warOffen = useRef(false);
+
+  /* Öffnen immer über diesen Weg — der Auslöser (document.activeElement)
+     muss VOR dem Öffnen festgehalten werden: sobald der Dialoginhalt mit
+     dem autoFocus-Knopf «Schliessen» mountet, hat React den Fokus schon
+     dorthin verschoben (commitMount läuft vor jedem eigenen useEffect),
+     ein nachträgliches Auslesen in einem Effekt käme zu spät (P5.10-Befund). */
+  const oeffneLicht = useCallback((wunsch: LichtWunsch, lkatZuruecksetzen = false) => {
+    if (!licht) geoeffnetVon.current = document.activeElement as HTMLElement | null;
+    if (lkatZuruecksetzen) setLkat("alle");
+    setLicht(wunsch);
+  }, [licht]);
 
   useEffect(() => {
-    const h = (e: Event) => { const w = (e as CustomEvent<LichtWunsch>).detail; setLkat("alle"); setLicht(w); };
+    const h = (e: Event) => oeffneLicht((e as CustomEvent<LichtWunsch>).detail, true);
     addEventListener("fw:licht", h); return () => removeEventListener("fw:licht", h);
-  }, []);
+  }, [oeffneLicht]);
 
   const liste = bilder.map((b, i) => i).filter(i => lkat === "alle" || bilder[i]?.category === lkat);
   const aktIndex = licht && "index" in licht ? licht.index : 0;
@@ -28,9 +42,29 @@ export function Galerie({ bilder, kategorien, katLabel, titel, medien, tx, zeige
     setLicht({ index: liste[(p + d + liste.length) % liste.length] ?? 0 });
   }, [licht, liste]);
 
+  /* Fokus beim Schliessen zurückgeben — sonst fällt der Fokus auf <body>
+     und die Tastaturnutzung verliert ihre Position (P5.10 §29). */
+  useEffect(() => {
+    const offenJetzt = !!licht;
+    if (!offenJetzt && warOffen.current) { geoeffnetVon.current?.focus(); geoeffnetVon.current = null; }
+    warOffen.current = offenJetzt;
+  }, [licht]);
+
   useEffect(() => {
     if (!licht) return;
-    const k = (e: KeyboardEvent) => { if (e.key === "Escape") setLicht(null); if (e.key === "ArrowRight") sprung(1); if (e.key === "ArrowLeft") sprung(-1); };
+    const k = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setLicht(null); return; }
+      if (e.key === "ArrowRight") sprung(1);
+      if (e.key === "ArrowLeft") sprung(-1);
+      /* Fokusfalle: Tab am Rand des Dialogs zum jeweils anderen Ende springen lassen */
+      if (e.key === "Tab" && lichtRef.current) {
+        const fokussierbar = Array.from(lichtRef.current.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute("disabled"));
+        if (!fokussierbar.length) return;
+        const erst = fokussierbar[0]!, letzt = fokussierbar[fokussierbar.length - 1]!;
+        if (e.shiftKey && document.activeElement === erst) { e.preventDefault(); letzt.focus(); }
+        else if (!e.shiftKey && document.activeElement === letzt) { e.preventDefault(); erst.focus(); }
+      }
+    };
     addEventListener("keydown", k); return () => removeEventListener("keydown", k);
   }, [licht, sprung]);
 
@@ -39,6 +73,13 @@ export function Galerie({ bilder, kategorien, katLabel, titel, medien, tx, zeige
      Reihenfolge hier, damit das <img> selbst das Verhältnis kennt (P5.9
      Entscheid 23 §4), auch wenn die Zellenklasse es schon absichert. */
   const G_RATIO = ["16 / 10", "4 / 5", "1 / 1", "16 / 9", "3 / 2", "3 / 2"];
+  /* .gal: 12-spaltiges Raster, g0..g5 haben feste Spannweiten (7/5/4/8/6/6 von
+     12), ab 960px wird jede Kachel volle Breite (span 12). Die Werte unten
+     nähern die real gemessenen Kachelbreiten an (P5.10 §27-Audit). */
+  const G_SIZES = [
+    "(max-width:960px) 100vw, 36vw", "(max-width:960px) 100vw, 26vw", "(max-width:960px) 100vw, 20vw",
+    "(max-width:960px) 100vw, 42vw", "(max-width:960px) 100vw, 31vw", "(max-width:960px) 100vw, 31vw",
+  ];
   const gross = (m: Media) => m.sources.jpeg.find(s => s.width === 1600)?.url ?? m.sources.jpeg[m.sources.jpeg.length - 1]?.url;
   const klein = (m: Media) => m.sources.jpeg.find(s => s.width === 480)?.url ?? m.sources.jpeg[0]?.url;
 
@@ -62,22 +103,22 @@ export function Galerie({ bilder, kategorien, katLabel, titel, medien, tx, zeige
           )}
           <div className="gal" id="galGitter">
             {teil.map((x, n) => (
-              <figure key={x.i} className={`g${n % 6}`} data-li={x.i} onClick={() => { setLkat("alle"); setLicht({ index: x.i }); }}>
-                <Bild m={x.b} sizes="(max-width:960px) 100vw, 50vw" alt={x.b.alt || titel} aspectRatio={G_RATIO[n % 6]} />
+              <figure key={x.i} className={`g${n % 6}`} data-li={x.i} onClick={() => oeffneLicht({ index: x.i }, true)}>
+                <Bild m={x.b} sizes={G_SIZES[n % 6]!} eager={n === 0} alt={x.b.alt || titel} aspectRatio={G_RATIO[n % 6]} />
                 {x.b.alt && <figcaption>{x.b.alt}</figcaption>}
               </figure>
             ))}
           </div>
           <div className="medienknoepfe">
-            <button className="knopf" id="alleBilder" onClick={() => { setLkat("alle"); setLicht({ index: 0 }); }}>{tx.zeigeAlle} · {tx.bildLabel}</button>
-            {medien.video && <button className="knopf" onClick={() => setLicht({ medium: "video" })}>{medien.video.titel || tx.o_video}{medien.video.dauer ? " · " + medien.video.dauer : ""}</button>}
-            {medien.tour360 && <button className="knopf" onClick={() => setLicht({ medium: "360" })}>{medien.tour360.titel || "360°-Rundgang"}</button>}
-            {medien.modell3d && <button className="knopf" onClick={() => setLicht({ medium: "3d" })}>{medien.modell3d.titel || "3D-Modell"}</button>}
+            <button className="knopf" id="alleBilder" onClick={() => oeffneLicht({ index: 0 }, true)}>{tx.zeigeAlle} · {tx.bildLabel}</button>
+            {medien.video && <button className="knopf" onClick={() => oeffneLicht({ medium: "video" })}>{medien.video.titel || tx.o_video}{medien.video.dauer ? " · " + medien.video.dauer : ""}</button>}
+            {medien.tour360 && <button className="knopf" onClick={() => oeffneLicht({ medium: "360" })}>{medien.tour360.titel || "360°-Rundgang"}</button>}
+            {medien.modell3d && <button className="knopf" onClick={() => oeffneLicht({ medium: "3d" })}>{medien.modell3d.titel || "3D-Modell"}</button>}
           </div>
         </>
       )}
 
-      <div className={`licht ${licht ? "an" : ""}`} id="licht" role="dialog" aria-modal="true" aria-label={tx.medienLabel ?? "Medien"}>
+      <div className={`licht ${licht ? "an" : ""}`} id="licht" ref={lichtRef} role="dialog" aria-modal="true" aria-label={tx.medienLabel ?? "Medien"}>
         {licht && medium && (
           <>
             <div className="lk"><span>{M[medium]?.[0]} · {titel}</span><button className="knopf" id="lichtZu" onClick={() => setLicht(null)} autoFocus>{tx.schliessen} ×</button></div>

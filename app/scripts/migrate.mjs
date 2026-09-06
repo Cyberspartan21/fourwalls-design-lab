@@ -3,7 +3,7 @@
 
    node scripts/migrate.mjs           Migrationen
    node scripts/migrate.mjs --seed    zusätzlich den Entwicklungsbestand über den Demo-Importer (nie in Produktion)
-   node scripts/migrate.mjs --test    die 16 Zusagen aus db/tests prüfen
+   node scripts/migrate.mjs --test    die 19 Zusagen aus db/tests prüfen
 
    Kein Docker-Aufruf: läuft gegen DATABASE_URL, also lokal wie in CI wie in
    Staging. */
@@ -55,8 +55,8 @@ async function testen() {
   await t.end();
   const ok = meldungen.filter(m => m.startsWith("✓"));
   ok.forEach(m => console.log(m));
-  console.log(`${ok.length} von 16 Zusagen geprüft`);
-  if (ok.length !== 16) process.exit(4);
+  console.log(`${ok.length} von 19 Zusagen geprüft`);
+  if (ok.length !== 19) process.exit(4);
 }
 
 try {

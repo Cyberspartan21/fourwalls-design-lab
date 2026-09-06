@@ -165,6 +165,17 @@ export default async function Konto({ params }: { params: Promise<{ locale: stri
           </>
         )}
       </div>
+
+      {/* Konto und Daten (P5.10 §9/§12): Export und Löschung — zwei Links,
+          nicht mehr. Die Erklärung, was dabei passiert, steht auf der
+          jeweiligen Seite selbst, nicht hier verdoppelt. */}
+      <div style={{ marginTop: 46, borderTop: "1px solid var(--linie)", paddingTop: 24 }}>
+        <h3 style={{ fontSize: ".95rem" }}>{t("kd_titel")}</h3>
+        <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+          <a className="knopf" href="/api/konto/export">{t("kd_exportLink")}</a>
+          <a className="knopf leise" href={`/${locale}/konto/loeschen`}>{t("kd_loeschenLink")}</a>
+        </div>
+      </div>
     </KontoRahmen>
   );
 }

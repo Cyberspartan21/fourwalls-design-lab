@@ -17,15 +17,17 @@ export function KontaktBlock({ kontakt, aendern, t, fehlt, datenschutzHref }:
       <div className="fld">
         <label htmlFor="al-name">{t.w_name}</label>
         <input className="feld" id="al-name" type="text" autoComplete="name" maxLength={120}
+          aria-invalid={fehlt("name") || undefined} aria-describedby={fehlt("name") ? "al-name-fehler" : undefined}
           value={kontakt.name} onChange={e => aendern({ name: e.target.value })} style={{ width: "100%" }} />
-        {fehlt("name") && <p className="fehler" role="alert">{t.al_nameFehler}</p>}
+        {fehlt("name") && <p className="fehler" role="alert" id="al-name-fehler">{t.al_nameFehler}</p>}
       </div>
 
       <div className="fld">
         <label htmlFor="al-email">{t.k_email}</label>
         <input className="feld" id="al-email" type="email" autoComplete="email" maxLength={200}
+          aria-invalid={fehlt("email") || undefined} aria-describedby={fehlt("email") ? "al-email-fehler" : undefined}
           value={kontakt.email} onChange={e => aendern({ email: e.target.value })} style={{ width: "100%" }} />
-        {fehlt("email") && <p className="fehler" role="alert">{t.al_emailFehler}</p>}
+        {fehlt("email") && <p className="fehler" role="alert" id="al-email-fehler">{t.al_emailFehler}</p>}
       </div>
 
       <div className="fld">

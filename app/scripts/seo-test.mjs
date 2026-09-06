@@ -28,7 +28,7 @@
    Exit 1 bei irgendeinem FEHLER, sonst 0 (WARTET bleibt Exit 0).
    ============================================================ */
 import postgres from "postgres";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -96,6 +96,48 @@ async function schrittWartet(titel, wartetAuf, fn) {
     ergebnisse.push({ nr, titel, status: "WARTET", detail: `wartet auf ${wartetAuf} — ${detail}` });
     console.log(`WARTET  ${String(nr).padStart(4)}  ${titel} — wartet auf ${wartetAuf}: ${detail}`);
     return null;
+  }
+}
+
+/* Für Befunde, die kein Fehler sind (P5.10 §31 v): die Prüfung selbst lief
+   sauber durch, aber ihr Ergebnis ist eine Beobachtung, kein Regressionsbefund
+   (z. B. eine NOINDEX-Seite ohne eigenes Disallow-Präfix — die noindex-Meta
+   schützt sie bereits). `fn` gibt entweder `{ detail }` (unauffällig, OK)
+   oder `{ hinweis }` (Befund, zählt nicht zum Exit-Code) zurück. Eine Ausnahme
+   bleibt ein echter FEHLER (z. B. robots.txt nicht erreichbar). */
+async function schrittHinweis(titel, fn) {
+  const nr = ++NR;
+  try {
+    const ergebnis = await fn();
+    if (ergebnis && ergebnis.hinweis) {
+      ergebnisse.push({ nr, titel, status: "HINWEIS", detail: ergebnis.hinweis });
+      console.log(`HINWEIS ${String(nr).padStart(4)}  ${titel} — ${ergebnis.hinweis}`);
+    } else {
+      ergebnisse.push({ nr, titel, status: "OK", detail: ergebnis?.detail ?? "ok" });
+      console.log(`OK      ${String(nr).padStart(4)}  ${titel}`);
+    }
+  } catch (e) {
+    const detail = e && e.message ? e.message : String(e);
+    ergebnisse.push({ nr, titel, status: "FEHLER", detail });
+    console.log(`FEHLER  ${String(nr).padStart(4)}  ${titel} — ${detail}`);
+  }
+}
+
+/* Für Prüfungen, die in dieser Umgebung (dev, :3007) grundsätzlich nicht
+   entscheidbar sind (P5.10 §31 vi: DEMO_INHALTE=aus lässt sich hier nicht
+   herstellen/prüfen) — `fn` liefert stattdessen einen Beleg (z. B. per grep
+   im Quelltext), dass die betroffene Stelle die richtige Weiche überhaupt
+   benutzt. Schlägt selbst dieser Beleg fehl, ist das ein echter FEHLER. */
+async function schrittUebersprungen(titel, fn) {
+  const nr = ++NR;
+  try {
+    const detail = (await fn()) || "ok";
+    ergebnisse.push({ nr, titel, status: "ÜBERSPRUNGEN", detail: `übersprungen (dev) — ${detail}` });
+    console.log(`ÜBERSPR ${String(nr).padStart(4)}  ${titel} — übersprungen (dev): ${detail}`);
+  } catch (e) {
+    const detail = e && e.message ? e.message : String(e);
+    ergebnisse.push({ nr, titel, status: "FEHLER", detail });
+    console.log(`FEHLER  ${String(nr).padStart(4)}  ${titel} — ${detail}`);
   }
 }
 
@@ -261,7 +303,8 @@ await schritt("c) 404 /de/gibt-es-nicht", async () => {
   assertTrue(r.status === 404, `status ${r.status} statt 404`);
   assertTrue(/<h1[^>]*>[^<]*Diese Seite gibt es nicht\.[^<]*<\/h1>/.test(r.text), "h1 „Diese Seite gibt es nicht.“ fehlt im initialen HTML");
   assertTrue(!r.text.includes("/Users/"), "HTML enthält „/Users/“ (Pfadleck)");
-  assertTrue(!r.text.includes("node_modules"), "HTML enthält „node_modules“ (Pfadleck)");
+  /* Ein echtes Pfadleck ist ein Dateisystempfad («/node_modules/»); Chunk-Namen des Dev-Servers («node_modules_next_dist_…») sind keins. */
+  assertTrue(!/["'\s(]\/(Users|home|opt|srv|root)\/[A-Za-z]/.test(r.text), "HTML enthält einen absoluten Dateisystempfad (Pfadleck)");
   return "404, h1 deutsch, kein Pfadleck";
 });
 await schritt("c) 404 /fr/nexiste-pas — globale Seite mit Sprachzeilen", async () => {
@@ -289,19 +332,32 @@ await schritt("d) /sitemap.xml — Status, XML, Umfang", async () => {
   if (OBJEKT) assertTrue(locs.some(l => l === `${BASIS}${objektPfad("de", OBJEKT)}`), "Objektseite fehlt in der Sitemap");
   if (ANBIETER_SLUG) assertTrue(locs.some(l => l === `${BASIS}${anbieterPfad("de", ANBIETER_SLUG)}`), "Anbieterseite fehlt in der Sitemap");
   assertTrue(locs.some(l => l === `${BASIS}/de/verkaufen`), "Service-Seite (verkaufen) fehlt in der Sitemap");
-  const verboten = ["/konto", "/intern", "/moderation", "/vorschau", "/anfrage", "/impressum"];
+  /* Pfadverankert: nur ganze Segmente direkt nach der Sprache zählen — ein Anbieter-Slug,
+     der zufällig «konto» enthält, ist kein Treffer. */
+  const verboten = [/\/[a-z]{2}\/(konto|intern|moderation|vorschau|inserieren|vergleich|einladung)(\/|$)/, /\/anfrage$/];
   for (const muster of verboten) {
-    const gefunden = locs.filter(l => l.includes(muster));
-    assertTrue(gefunden.length === 0, `verbotenes Muster "${muster}" in der Sitemap: ${gefunden[0]}`);
+    const gefunden = locs.filter(l => muster.test(new URL(l).pathname));
+    assertTrue(gefunden.length === 0, `verbotenes Muster ${muster} in der Sitemap: ${gefunden[0]}`);
   }
   assertTrue(zaehle("xhtml:link", r.text) > 0, "keine xhtml:link-Alternates gefunden");
+  /* Rechtsseiten: nur solange sie noindex tragen, dürfen sie nicht in der Sitemap stehen —
+     nach Freigabe (stand FREIGEGEBEN) gehören sie hinein. Konsistenz statt fester Liste. */
+  for (const seite of ["impressum", "datenschutz", "agb", "inseratsbedingungen", "anbieterbedingungen"]) {
+    const rs = await holen(`/de/${seite}`);
+    const robotsM = treffer('<meta name="robots" content="([^"]*)"', rs.text);
+    const noindex = !!robotsM && robotsM[1].includes("noindex");
+    const inSitemap = locs.some(l => new URL(l).pathname === `/de/${seite}`);
+    assertTrue(!(noindex && inSitemap), `Rechtsseite ${seite} ist noindex, steht aber in der Sitemap`);
+  }
   return `${locs.length} <loc>, XML ausgeglichen, keine verbotenen Pfade`;
 });
 
 /* ---------- e) /robots.txt ---------- */
+let ROBOTS_TEXT = "";
 await schritt("e) /robots.txt — Sitemap, Disallow", async () => {
   const r = await holen("/robots.txt");
   assertTrue(r.status === 200, `status ${r.status} statt 200`);
+  ROBOTS_TEXT = r.text;
   assertTrue(/Sitemap:/i.test(r.text), "„Sitemap:“ fehlt");
   assertTrue(/Disallow:\s*\/api\//.test(r.text), "Disallow für /api/ fehlt");
   for (const muster of ["konto", "intern", "moderation"]) {
@@ -358,11 +414,135 @@ await schritt("h) Startseite ohne fonts.googleapis.com/fonts.gstatic.com/cdnjs.c
   return "keine der drei externen Hosts gefunden";
 });
 
+/* ---------- i) kein Platzhalter-Host in Meta-URLs/Sitemap (P5.10 §31 i) ---------- */
+const VERBOTENE_HOSTS = ["example", "localhost:3000", "127.0.0.1"];
+function pruefeKeinePlatzhalterUrl(url, kontext) {
+  assertTrue(url.startsWith(BASIS), `${kontext}: beginnt nicht mit der Basis-URL: "${url}"`);
+  for (const verboten of VERBOTENE_HOSTS) {
+    assertTrue(!url.includes(verboten), `${kontext}: enthält Platzhalter-Host "${verboten}": "${url}"`);
+  }
+}
+const ALLE_INDEXIERBAR = [...OEFFENTLICHE_SEITEN, ...WISSEN_SEITEN];
+for (const seite of ALLE_INDEXIERBAR) {
+  await schritt(`i) kein Platzhalter-Host ${seite.pfad}`, async () => {
+    const html = HTML_CACHE.get(seite.pfad);
+    assertTrue(html !== undefined, "keine gespeicherte HTML für diese Seite (a) ist fehlgeschlagen");
+    const canon = treffer('<link rel="canonical" href="([^"]*)"', html)?.[1];
+    if (canon) pruefeKeinePlatzhalterUrl(canon, "canonical");
+    const ogUrl = treffer('<meta property="og:url" content="([^"]*)"', html)?.[1];
+    if (ogUrl) pruefeKeinePlatzhalterUrl(ogUrl, "og:url");
+    const hreflangHrefs = [...html.matchAll(/<link rel="alternate" hreflang="[^"]+" href="([^"]*)"/gi)].map(m => m[1]);
+    for (const href of hreflangHrefs) pruefeKeinePlatzhalterUrl(href, "hreflang");
+    return `canonical/og:url/${hreflangHrefs.length} hreflang ohne Platzhalter-Host`;
+  });
+}
+await schritt("i) kein Platzhalter-Host in der Sitemap", async () => {
+  assertTrue(!!SITEMAP_TEXT, "Sitemap-Text nicht vorhanden (Schritt d ist fehlgeschlagen)");
+  const locs = [...SITEMAP_TEXT.matchAll(/<loc>([^<]*)<\/loc>/g)].map(m => m[1]);
+  for (const loc of locs) pruefeKeinePlatzhalterUrl(loc, "sitemap loc");
+  return `${locs.length} <loc> ohne Platzhalter-Host`;
+});
+
+/* ---------- ii) keine rohen Übersetzungsschlüssel im sichtbaren Text (P5.10 §31 ii) ---------- */
+const SCHLUESSEL_MUSTER = /\b(nav|al|sv|ws|vt|in|og|k|o|w|m|p)_[A-Za-z]{3,}\b|\bnav\.[a-zA-Z]+\b/g;
+function sichtbarerText(html) {
+  const bodyM = /<body[^>]*>([\s\S]*)<\/body>/i.exec(html);
+  let bodyHtml = bodyM ? bodyM[1] : html;
+  bodyHtml = bodyHtml.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ");
+  return bodyHtml.replace(/<[^>]+>/g, " ");
+}
+for (const seite of ALLE_INDEXIERBAR) {
+  await schritt(`ii) keine rohen Übersetzungsschlüssel ${seite.pfad}`, async () => {
+    const html = HTML_CACHE.get(seite.pfad);
+    assertTrue(html !== undefined, "keine gespeicherte HTML für diese Seite (a) ist fehlgeschlagen");
+    const text = sichtbarerText(html);
+    const gefundeneSchluessel = [...new Set([...text.matchAll(SCHLUESSEL_MUSTER)].map(m => m[0]))];
+    assertTrue(gefundeneSchluessel.length === 0, `roh wirkende Übersetzungsschlüssel im sichtbaren Text: ${gefundeneSchluessel.join(", ")}`);
+    return "kein Übersetzungsschlüssel im sichtbaren Text gefunden";
+  });
+}
+
+/* ---------- iii) keine Demo-Identität in Vertrauens-Metadaten (P5.10 §31 iii) ---------- */
+await schritt("iii) Startseite ohne Organization-JSON-LD (Demo-Identität)", async () => {
+  const html = HTML_CACHE.get("/de") ?? (await holen("/de")).text;
+  assertTrue(!html.includes('"@type":"Organization"'), "Startseite enthält Organization im JSON-LD (Demo-Identität als Vertrauens-Metadatum) — config/company.ts hat kein bestätigtes Feld dafür");
+  return "kein Organization-JSON-LD auf der Startseite (WebSite ist erlaubt)";
+});
+
+/* ---------- iv) hreflang-Ziele antworten 200, ≤ 1 Redirect (P5.10 §31 iv) ---------- */
+async function holenAbsolut(url) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { redirect: "manual", signal: ctrl.signal });
+    return { status: res.status, location: res.headers.get("location") };
+  } catch (e) {
+    return { status: 0, location: null, fehler: String(e && e.message || e) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+async function pruefeHreflangZiele200(pfad, label) {
+  return schritt(`iv) hreflang-Ziele 200 — ${label}`, async () => {
+    const html = HTML_CACHE.get(pfad);
+    assertTrue(html !== undefined, `keine gespeicherte HTML für ${pfad}`);
+    const hreflangs = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]*)"/gi)].map(m => ({ lang: m[1], href: m[2] }));
+    assertTrue(hreflangs.length > 0, "keine hreflang-Ziele gefunden");
+    const ok = [];
+    for (const { lang, href } of hreflangs) {
+      let r = await holenAbsolut(href);
+      if (r.status >= 300 && r.status < 400 && r.location) {
+        const ziel = new URL(r.location, href).toString();
+        r = await holenAbsolut(ziel);
+      }
+      assertTrue(r.status === 200, `hreflang ${lang} (${href}) → Status ${r.status} statt 200`);
+      ok.push(`${lang}:200`);
+    }
+    return ok.join(", ");
+  });
+}
+await pruefeHreflangZiele200("/de", "Startseite");
+if (OBJEKT) await pruefeHreflangZiele200(objektPfad("de", OBJEKT), "Objektseite");
+if (ANBIETER_SLUG) await pruefeHreflangZiele200(anbieterPfad("de", ANBIETER_SLUG), "Anbieterseite");
+await pruefeHreflangZiele200("/de/verkaufen", "/de/verkaufen");
+
+/* ---------- v) robots.txt Disallow deckt jede NOINDEX-Seite ab (P5.10 §31 v) ----------
+   Kein Fehler, wenn eine NOINDEX-Seite ohne eigenes Disallow-Präfix bleibt —
+   die noindex-Meta schützt sie bereits (siehe robots.ts-Kommentar: die Liste
+   ist „Verteidigung in der Tiefe“, nicht die eigentliche Grenze). Das wird
+   als HINWEIS gemeldet, nicht als FEHLER. */
+function disallowMusterZuRegex(muster) {
+  const esc = muster.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
+  return new RegExp(`^${esc}`);
+}
+const DISALLOW_MUSTER = [...ROBOTS_TEXT.matchAll(/^Disallow:\s*(\S+)/gim)].map(m => m[1]);
+for (const pfad of NOINDEX_SEITEN) {
+  await schrittHinweis(`v) Disallow deckt ${pfad}`, async () => {
+    const gedeckt = DISALLOW_MUSTER.some(m => disallowMusterZuRegex(m).test(pfad));
+    if (gedeckt) return { detail: "von einem Disallow-Präfix gedeckt" };
+    const r = await holen(pfad);
+    const istLoginRedirect = (r.status === 307 || r.status === 302 || r.status === 301) && !!r.location && /anmelden|login/i.test(r.location);
+    if (istLoginRedirect) return { detail: `Login-Redirect (${r.location}), Disallow nicht nötig` };
+    return { hinweis: `kein Disallow-Präfix deckt "${pfad}" ab, und die Seite ist kein Login-Redirect (Status ${r.status}) — nur die noindex-Meta schützt sie` };
+  });
+}
+
+/* ---------- vi) Sitemap ohne demo- Slugs bei DEMO_INHALTE=aus (P5.10 §31 vi) ----------
+   In dev (DEMO_INHALTE ausserhalb production standardmässig „an“, siehe
+   server/env.ts:demoSichtbar()) nicht herstellbar/prüfbar — Beleg per grep,
+   dass app/sitemap.ts die richtige Weiche überhaupt benutzt. */
+await schrittUebersprungen("vi) Sitemap ohne demo- Slugs bei DEMO_INHALTE=aus", async () => {
+  const quelltext = readFileSync(join(APP_ROOT, "app", "sitemap.ts"), "utf8");
+  assertTrue(/demoSichtbar\s*\(/.test(quelltext), "app/sitemap.ts ruft demoSichtbar() nicht mehr auf — Beleg fehlt");
+  const zeile = quelltext.split("\n").find(z => /demoSichtbar\s*\(/.test(z))?.trim();
+  return `app/sitemap.ts verwendet demoSichtbar() (Beleg: "${zeile}") — Prüfung gegen echte demo- Slugs ist in dev nicht durchführbar`;
+});
+
 /* ---------- Zusammenfassung ---------- */
 function tabelle() {
   const w1 = 4;
   const w2 = Math.max(20, ...ergebnisse.map(e => e.titel.length));
-  const w3 = 7;
+  const w3 = Math.max(7, ...ergebnisse.map(e => e.status.length));
   const zeile = (a, b, c, d) => `${String(a).padStart(w1)}  ${String(b).padEnd(w2)}  ${String(c).padEnd(w3)}  ${d}`;
   console.log("\n" + zeile("Nr", "Schritt", "Status", "Detail"));
   console.log("-".repeat(w1 + w2 + w3 + 10));
@@ -372,8 +552,10 @@ tabelle();
 
 const fehlerAnzahl = ergebnisse.filter(e => e.status === "FEHLER").length;
 const wartetAnzahl = ergebnisse.filter(e => e.status === "WARTET").length;
+const hinweisAnzahl = ergebnisse.filter(e => e.status === "HINWEIS").length;
+const uebersprungenAnzahl = ergebnisse.filter(e => e.status === "ÜBERSPRUNGEN").length;
 const okAnzahl = ergebnisse.filter(e => e.status === "OK").length;
-console.log(`\n${ergebnisse.length} Schritte, ${fehlerAnzahl} FEHLER, ${wartetAnzahl} WARTET (WP3a/WP5), ${okAnzahl} OK`);
+console.log(`\n${ergebnisse.length} Schritte, ${fehlerAnzahl} FEHLER, ${wartetAnzahl} WARTET (WP3a/WP5), ${hinweisAnzahl} HINWEIS, ${uebersprungenAnzahl} ÜBERSPRUNGEN (dev), ${okAnzahl} OK`);
 
 if (fehlerAnzahl > 0) {
   console.log("\nFEHLER im Detail:");
@@ -382,6 +564,14 @@ if (fehlerAnzahl > 0) {
 if (wartetAnzahl > 0) {
   console.log("\nWARTET im Detail (kein Regressionsbefund dieses Auftrags):");
   for (const e of ergebnisse.filter(e => e.status === "WARTET")) console.log(`  Schritt ${e.nr} (${e.titel}): ${e.detail}`);
+}
+if (hinweisAnzahl > 0) {
+  console.log("\nHINWEIS im Detail (kein Fehler, kein Regressionsbefund):");
+  for (const e of ergebnisse.filter(e => e.status === "HINWEIS")) console.log(`  Schritt ${e.nr} (${e.titel}): ${e.detail}`);
+}
+if (uebersprungenAnzahl > 0) {
+  console.log("\nÜBERSPRUNGEN im Detail (in dieser Umgebung nicht entscheidbar):");
+  for (const e of ergebnisse.filter(e => e.status === "ÜBERSPRUNGEN")) console.log(`  Schritt ${e.nr} (${e.titel}): ${e.detail}`);
 }
 
 const varOrdner = join(APP_ROOT, "var");

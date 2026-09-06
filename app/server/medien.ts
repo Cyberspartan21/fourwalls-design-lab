@@ -188,12 +188,21 @@ export async function bildAusliefern(person: Person | null, assetId: string, bre
   if (!a) return null;
   const eigen = person && String(a.uploaded_by) === person.id;
   const moderation = person && darf(person.rolle, "REVIEW_LISTING") && (a.in_pruefung || a.oeffentlich);
-  if (!a.oeffentlich && !eigen && !moderation) return null;
 
   if (breite == null) {
+    /* Das Original ist Beweismittel für die Moderation und verlässt den
+       Speicher nie öffentlich (§20, siehe Kopfkommentar dieser Datei) —
+       anders als die Ableitungen unten entscheidet hier NICHT a.oeffentlich,
+       sondern ausschliesslich Eigentümerschaft oder Moderation. Ohne diese
+       Trennung lieferte GET /api/medien/:id (ohne w=) nach der
+       Veröffentlichung eines Inserats das volle Original an jede anonyme
+       Anfrage aus (P5.10 §14-Fund). */
+    if (!eigen && !moderation) return null;
     const bytes = await storage().lesen(String(a.storage_key));
     return bytes ? { bytes, typ: String(a.mime_type) } : null;
   }
+
+  if (!a.oeffentlich && !eigen && !moderation) return null;
 
   const fmt: "webp" | "jpeg" = format === "webp" ? "webp" : "jpeg";
   /* Die passendste Variante: zuerst die grösste, die noch <= breite ist;

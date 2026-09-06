@@ -163,7 +163,7 @@
 .poifilter button[aria-pressed="true"]{border-color:var(--licht);color:var(--licht)}
 .poifilter i{width:7px;height:7px;border-radius:999px;background:currentColor;display:inline-block}
 .poispalten{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,3vw,48px);margin-top:8px}
-.poi h4{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--licht);margin:18px 0 2px;font-weight:500}
+.poi h4,.poi .poititel{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--licht);margin:18px 0 2px;font-weight:500}
 .poi li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--linie);font-size:.82rem}
 .poi li span{color:var(--leise);white-space:nowrap;font-variant-numeric:tabular-nums}
 .lagefakt{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:.8rem;color:var(--leise);margin-top:20px;padding-top:14px;border-top:1px solid var(--linie)}
@@ -283,6 +283,8 @@
   .dabs{scroll-margin-top:100px}
   .sonne{grid-template-columns:1fr}
   .lagekarte{height:260px}
+  /* Platz für die fixierte CTA-Leiste, damit sie Formularfelder (Finanzierung) nicht überdeckt (P5.10 §28). */
+  #inhalt{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
   .mobilcta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:26;background:var(--glas);backdrop-filter:blur(16px);
     border-top:1px solid var(--linie);padding:10px var(--pad);gap:10px;align-items:center}
   .mobilcta .p{font-family:var(--d);font-size:1.1rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -300,7 +302,7 @@
   /* Merken/Vergleichen/Teilen werden zu Symbolknöpfen: bei drei vollen
      Textknöpfen plus Sprachwahl plus Schliessen lief die Kopfleiste bei
      390px über den Bildschirmrand hinaus (gemessen: 396px statt 390px). */
-  .dkopf .aktionen .knopf.ksym{padding:.4em;min-width:32px;display:inline-flex;align-items:center;justify-content:center}
+  .dkopf .aktionen .knopf.ksym{padding:.4em;min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center}
   .dkopf .aktionen .knopf.ksym .txt{display:none}
   .dkopf .aktionen .knopf.ksym .ic{display:inline-flex;width:16px;height:16px}
   .dkopf .aktionen .knopf.ksym .ic svg{width:100%;height:100%}

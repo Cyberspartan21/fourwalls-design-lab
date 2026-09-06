@@ -19,7 +19,7 @@
                                                   (Konten bleiben bestehen)
 
    Umgebung:
-     DATABASE_URL   Pflicht, verweigert in production
+     DATABASE_URL   Pflicht, verweigert in production ausser bei FW_DEMO_SEED_ERLAUBT=ja
      Basis-URL      process.argv[3] oder http://localhost:3007 (Kontenanlage
                     läuft über die echte HTTP-API, siehe server/auth.ts)
 
@@ -45,7 +45,10 @@ const ENTFERNEN = process.argv.includes("--entfernen");
 const BASIS = (process.argv.find(a => a.startsWith("http")) || "http://localhost:3007").replace(/\/$/, "");
 const TIMEOUT_MS = 60_000;
 
-if (process.env.APP_ENV === "production") { console.error("seed-profis läuft nicht in production."); process.exit(2); }
+if (process.env.APP_ENV === "production" && process.env.FW_DEMO_SEED_ERLAUBT !== "ja") {
+  console.error("seed-profis läuft nicht in production (setze FW_DEMO_SEED_ERLAUBT=ja, um das ausdrücklich zu erzwingen).");
+  process.exit(2);
+}
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) { console.error("DATABASE_URL fehlt (set -a; . ./.env.local; set +a)"); process.exit(2); }
 const sql = postgres(DATABASE_URL, { max: 4, onnotice: () => {} });
@@ -148,8 +151,8 @@ async function organisationAnlegen(o) {
   if (bestehend.length) return { id: bestehend[0].id, neu: false };
   const platzId = (await sql`SELECT id FROM place WHERE key = ${o.ort}`)[0]?.id ?? null;
   const row = await sql`
-    INSERT INTO organization (slug, kind, legal_name, display_name, city, postal_code, verification_state, locale, public_email, description, created_by)
-    VALUES (${o.slug}, ${o.kind}, ${o.legalName}, ${o.displayName}, ${o.city}, ${o.postalCode}, ${o.verificationState}, ${o.locale}, ${o.publicEmail}, ${o.description}, ${SEED})
+    INSERT INTO organization (slug, kind, legal_name, display_name, city, postal_code, verification_state, locale, public_email, description, created_by, is_demo)
+    VALUES (${o.slug}, ${o.kind}, ${o.legalName}, ${o.displayName}, ${o.city}, ${o.postalCode}, ${o.verificationState}, ${o.locale}, ${o.publicEmail}, ${o.description}, ${SEED}, true)
     RETURNING id`;
   return { id: row[0].id, neu: true, placeId: platzId };
 }

@@ -44,7 +44,7 @@ export const offeneFelder = () =>
     .map(([name, f]) => ({ feld: name, stand: f.stand, hinweis: f.hinweis ?? "" }));
 
 /* Produktionsregel: Solange diese Liste nicht leer ist, meldet
-   config/start-tor.ts (WP2) das Start-Tor als nicht bereit, und die
+   config/bereitschaft.ts (P5.10) das BUSINESS-Tor als nicht bereit, und die
    Rechtsseiten sowie robots.txt sperren die Indexierung in production
    (P5.9 Phase B, Entscheid 21/22). Nur die Feldnamen, keine Werte — die
    Werte selbst können Platzhalter sein und dürfen nicht als Beleg für

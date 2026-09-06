@@ -1,6 +1,6 @@
 import "server-only";
 import { sql } from "./db";
-import { env } from "./env";
+import { demoSichtbar } from "./env";
 import { getPlace, SCHWEIZ_BOX, type OrtEntitaet } from "./geo";
 import { alsMedia } from "@/services/storage";
 type MediaVariante = { storage_key: string; width: number; format: "jpeg" | "webp" | "avif" };
@@ -24,7 +24,7 @@ export { SuchanfrageSchema, anfrageAusParams, paramsAusAnfrage } from "@/domain/
 /* ---------- Die Suche ---------- */
 export async function suche(q: Suchanfrage, locale: Locale = "de"): Promise<Suchergebnis> {
   const t0 = Date.now();
-  const nurEcht = env().APP_ENV === "production";
+  const nurEcht = !demoSichtbar();
   const trans = TRANS_ZU_DB[q.trans];
 
   /* Geografie: Ausschnitt schlägt Umkreis schlägt Gebiet */

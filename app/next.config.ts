@@ -28,7 +28,7 @@ const config: NextConfig = {
         { key: "X-Content-Type-Options", value: "nosniff" },
         { key: "X-Frame-Options", value: "DENY" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-        { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
         { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
         /* Content-Security-Policy und Strict-Transport-Security setzt proxy.ts
            zur LAUFZEIT (lib/sicherheitskoepfe.ts): sie hängen von der Umgebung ab

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore, useMemo } from "react";
 import type { Locale } from "@/i18n";
 import { PFAD } from "@/i18n";
 import type { Treffer, Typ } from "@/domain/marktplatz";
@@ -47,7 +47,11 @@ function zeilen(w: Woerter, tx: VergleichTx, locale: Locale): Zeile[] {
 export function VergleichSeite({ locale, w, tx }: { locale: Locale; w: Woerter; tx: VergleichTx }) {
   /* Die Referenzliste kommt reaktiv aus dem Repository — kein eigener
      Ladeeffekt nötig, wie bei MerkKnopf/Kopf (useSyncExternalStore). */
-  const refs = useSyncExternalStore(abo, () => vergleich().alle(), () => LEER);
+  /* useSyncExternalStore verlangt einen stabilen Schnappschuss — alle() liefert
+     bei jedem Aufruf ein neues Array (Endlosschleife, P5.10-Befund). Deshalb
+     ein String-Schnappschuss und daraus die Liste. */
+  const refsSchluessel = useSyncExternalStore(abo, () => vergleich().alle().join("|"), () => "");
+  const refs = useMemo(() => (refsSchluessel ? refsSchluessel.split("|") : LEER), [refsSchluessel]);
   const [treffer, setTreffer] = useState<Treffer[]>([]);
   const [fertig, setFertig] = useState(false);
 

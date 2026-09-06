@@ -20,6 +20,17 @@ VALUES ('11111111-1111-1111-1111-111111111111', 'test@example.ch', 'Testperson',
 INSERT INTO app_user (id, email, display_name, platform_role)
 VALUES ('22222222-2222-2222-2222-222222222222', 'mod@example.ch', 'Moderation', 'moderator');
 
+-- Für die Zuweisungsgarantie (0022): eine Organisation, ein aktives Mitglied,
+-- eine Person, die dazu nicht gehört.
+INSERT INTO app_user (id, email, display_name, platform_role)
+VALUES ('77777777-7777-7777-7777-777777777777', 'team@example.ch', 'Team-Mitglied', 'user');
+INSERT INTO app_user (id, email, display_name, platform_role)
+VALUES ('88888888-8888-8888-8888-888888888888', 'fremd@example.ch', 'Fremde Person', 'user');
+INSERT INTO organization (id, slug, kind, legal_name, display_name)
+VALUES ('99999999-9999-9999-9999-999999999999', 'test-buero-zuerich', 'agency', 'Test Büro AG', 'Test Büro');
+INSERT INTO org_membership (organization_id, user_id, role, is_active)
+VALUES ('99999999-9999-9999-9999-999999999999', '77777777-7777-7777-7777-777777777777', 'agent', true);
+
 INSERT INTO place (id, key, kind, canton, name_de, name_fr, centroid)
 VALUES ('33333333-3333-3333-3333-333333333333', 'test-ort-zuerich', 'municipality', 'ZH', 'Zürich', 'Zurich',
         ST_SetSRID(ST_MakePoint(8.5417, 47.3769), 4326)::geography);
@@ -177,8 +188,61 @@ BEGIN
   ASSERT n = 1, format('Umkreissuche fand %s statt 1 eigenes Inserat (archiviertes darf nicht erscheinen)', n);
   RAISE NOTICE '✓ 16 Umkreissuche findet das Inserat über geom_public';
 
+  -- ===== 17. assigned_user_id nur aktives Mitglied der Herausgeber-Org (0022) =====
+  UPDATE listing SET published_by_org_id = '99999999-9999-9999-9999-999999999999'
+   WHERE id = '66666666-6666-6666-6666-666666666666';
+  BEGIN
+    UPDATE listing SET assigned_user_id = '88888888-8888-8888-8888-888888888888'
+     WHERE id = '66666666-6666-6666-6666-666666666666';
+    ASSERT false, 'Zuweisung an eine fremde Person wurde angenommen';
+  EXCEPTION WHEN check_violation THEN
+    NULL; -- erwartet, weiter zum positiven Fall
+  END;
+  UPDATE listing SET assigned_user_id = '77777777-7777-7777-7777-777777777777'
+   WHERE id = '66666666-6666-6666-6666-666666666666';
+  ASSERT (SELECT assigned_user_id FROM listing WHERE id = '66666666-6666-6666-6666-666666666666')
+           = '77777777-7777-7777-7777-777777777777',
+         'Zuweisung an ein aktives Mitglied wurde fälschlich abgelehnt';
+  RAISE NOTICE '✓ 17 assigned_user_id: Nicht-Mitglied wird abgelehnt, aktives Mitglied gelingt';
+
+  -- ===== 18. Anfrage nur zu einem veröffentlichten/reservierten Inserat (0022) =====
+  BEGIN
+    INSERT INTO inquiry (listing_id, sender_name, sender_email, message, kind, recipient_user_id)
+    VALUES ('55555555-5555-5555-5555-555555555555', 'Testperson', 'anfrage@example.ch', 'Test',
+            'listing_question', '11111111-1111-1111-1111-111111111111');
+    ASSERT false, 'Anfrage an ein archiviertes Inserat wurde angenommen';
+  EXCEPTION WHEN check_violation THEN
+    NULL; -- erwartet, weiter zum positiven Fall
+  END;
+  INSERT INTO inquiry (listing_id, sender_name, sender_email, message, kind, recipient_user_id)
+  VALUES ('66666666-6666-6666-6666-666666666666', 'Testperson', 'anfrage@example.ch', 'Test',
+          'listing_question', '11111111-1111-1111-1111-111111111111');
+  INSERT INTO inquiry (listing_id, sender_name, sender_email, message, kind)
+  VALUES (NULL, 'Testperson', 'anfrage@example.ch', 'Test', 'general');
+  RAISE NOTICE '✓ 18 Anfrage: nicht veröffentlichtes Inserat abgelehnt, veröffentlichtes und listing-loses gelingen';
+
+  -- ===== 19. service_lead.status folgt nur den Übergängen aus UEBERGAENGE (0022) =====
+  INSERT INTO service_lead (id, service, contact_name, contact_email)
+  VALUES ('11111111-2222-3333-4444-555555555555', 'sell', 'Testperson', 'lead@example.ch');
+  BEGIN
+    UPDATE service_lead SET status = 'qualified' WHERE id = '11111111-2222-3333-4444-555555555555';
+    ASSERT false, 'Sprung von new direkt auf qualified wurde zugelassen';
+  EXCEPTION WHEN check_violation THEN
+    NULL; -- erwartet, weiter zum regulären Weg
+  END;
+  UPDATE service_lead SET status = 'contacted' WHERE id = '11111111-2222-3333-4444-555555555555';
+  UPDATE service_lead SET status = 'qualified' WHERE id = '11111111-2222-3333-4444-555555555555';
+  UPDATE service_lead SET status = 'closed'    WHERE id = '11111111-2222-3333-4444-555555555555';
+  BEGIN
+    UPDATE service_lead SET status = 'new' WHERE id = '11111111-2222-3333-4444-555555555555';
+    ASSERT false, 'Ein geschlossenes Anliegen wurde wiedereröffnet';
+  EXCEPTION WHEN check_violation THEN
+    NULL; -- erwartet
+  END;
+  RAISE NOTICE '✓ 19 service_lead.status: kein Sprung new → qualified, closed ist Endstation, regulärer Weg gelingt';
+
   RAISE NOTICE '';
-  RAISE NOTICE '16 von 16 Zusagen geprüft.';
+  RAISE NOTICE '19 von 19 Zusagen geprüft.';
 END $$;
 
 ROLLBACK;   -- Die Prüfung hinterlässt nichts.

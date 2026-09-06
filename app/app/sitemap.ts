@@ -1,7 +1,7 @@
-import { rechtsseiteFreigegeben } from "@/config/start-tor";
+import { rechtsseiteFreigegeben } from "@/config/bereitschaft";
 import type { MetadataRoute } from "next";
 import { LOCALES, DEFAULT_LOCALE, PFAD, type Locale } from "@/i18n";
-import { env } from "@/server/env";
+import { env, demoSichtbar } from "@/server/env";
 import { sql } from "@/server/db";
 import { wissenEintraege } from "@/lib/seo";
 
@@ -19,9 +19,11 @@ import { wissenEintraege } from "@/lib/seo";
    Selbstverweis). Next.js' eigenes Beispiel (docs/.../sitemap.md) zeigt nur
    einen Eintrag je Ressource; hier bewusst einer je Sprache.
 
-   `is_demo`: dieselbe Regel wie das noindex der Objektseite
-   (app/[locale]/[bereich]/[art]/[slug]/page.tsx) — Demo-Inserate erscheinen
-   nur, wenn APP_ENV=development ist.
+   `is_demo`: das Demo-Inhalte-Tor (P5.10 §34/§35, server/env.ts demoSichtbar())
+   entscheidet, ob Demo-Inserate UND Demo-Organisationen in der Sitemap
+   erscheinen — unabhängig von APP_ENV. Das bestehende noindex der Objektseite
+   (app/[locale]/[bereich]/[art]/[slug]/page.tsx) bleibt eine eigene, engere
+   Regel (nur ausserhalb development) und wird hier nicht verändert.
 
    45'000-Grenze (Google: max. 50'000 URLs/Sitemap): mit vier Sprachen pro
    Ressource ist sie bei rund 11'250 Inseraten/Anbietern erreicht. Heute weit
@@ -62,7 +64,7 @@ function anbieterPfade(slug: string): Record<Locale, string> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const inDev = env().APP_ENV === "development";
+  const zeigeDemo = demoSichtbar();
   const eintraege: Eintrag[] = [];
 
   /* Startseite */
@@ -97,19 +99,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   /* Veröffentlichte Inserate — published und reserved (dieselben Status,
      die die Objektseite selbst ausliefert, findePubliziertesInserat()),
-     Demo-Bestand nur in development. */
+     Demo-Bestand nur, wenn das Demo-Inhalte-Tor offen ist. */
   const inserate = await sql`
     SELECT lp.public_ref, lp.slug, lp.transaction, lp.published_at
       FROM listing_public lp
-     WHERE (${inDev} = true OR lp.is_demo = false)`;
+     WHERE (${zeigeDemo} = true OR lp.is_demo = false)`;
   for (const z of inserate) {
     const pfade = objektPfade(String(z.public_ref), String(z.slug), String(z.transaction));
     eintraege.push(...mehrsprachig(pfade, z.published_at as Date));
   }
 
   /* Aktive Anbieter (nicht stillgelegt) — dieselbe Bedingung wie
-     server/anbieter.ts:anbieterProfil(). */
-  const anbieter = await sql`SELECT slug, updated_at FROM organization WHERE is_active AND archived_at IS NULL`;
+     server/anbieter.ts:anbieterProfil(), plus dasselbe Demo-Inhalte-Tor. */
+  const anbieter = await sql`
+    SELECT slug, updated_at FROM organization
+     WHERE is_active AND archived_at IS NULL AND (${zeigeDemo} = true OR is_demo = false)`;
   for (const z of anbieter) {
     eintraege.push(...mehrsprachig(anbieterPfade(String(z.slug)), z.updated_at as Date));
   }

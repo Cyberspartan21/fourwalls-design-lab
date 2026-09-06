@@ -48,7 +48,7 @@ export interface MailProvider {
 
 class DevMailProvider implements MailProvider {
   readonly name = "dev";
-  private readonly ordner = join(process.cwd(), "var", "mail");
+  private readonly ordner = env().MAIL_DEV_DIR ?? join(process.cwd(), "var", "mail");
 
   async senden(n: Nachricht) {
     const kennung = `dev-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;

@@ -58,7 +58,8 @@ export async function jsonLesen(req: NextRequest, maxBytes = 64 * 1024): Promise
 export function fehlerAntwort(e: unknown, wo: string): Response {
   const err = asAppError(e);
   /* Das Fehlerobjekt selbst ins Protokoll — nicht in ein Feld verpackt, sonst
-     steht dort «[object Object]» (P5.7-Befund). */
-  if (err.code === "INTERNAL") log.error(wo, e);
+     steht dort «[object Object]» (P5.7-Befund). Die ref verbindet diesen
+     Eintrag mit der Antwort, die der Browser sieht (§17/§42). */
+  if (err.code === "INTERNAL") log.error(wo, e, { ref: err.ref });
   return Response.json(err.toResponseBody(), { status: err.status });
 }

@@ -125,15 +125,19 @@ export function AnliegenFormular({ dienst, angemeldet, locale, t }: AnliegenForm
     return false;
   }
 
+  /* Prüft unabhängig von `zeigeMaengel` (das steuert nur, ob die
+     Fehlertexte schon angezeigt werden) — `fehltObjekt`/`fehltKontakt` allein
+     reichen hier nicht: direkt nach setZeigeMaengel(true) liest ein
+     synchroner Aufruf noch den alten React-Zustand, sonst würde der erste
+     Klick auf «Weiter» die Prüfung überspringen (P5.10-Befund). */
   function schrittGueltig(schritt: Schritt): boolean {
-    if (schritt === "objekt") return !fehltObjekt("ortId") && !fehltObjekt("typ");
-    if (schritt === "kontakt") return !fehltKontakt("name") && !fehltKontakt("email");
+    if (schritt === "objekt") return !!objekt.ortId && (!typPflichtig(dienst) || !!objekt.typ);
+    if (schritt === "kontakt") return kontakt.name.trim().length >= 2 && kontakt.email.includes("@");
     return true;
   }
 
   function weiter() {
-    setZeigeMaengel(true);
-    if (!schrittGueltig(S)) return;
+    if (!schrittGueltig(S)) { setZeigeMaengel(true); return; }
     setZeigeMaengel(false);
     setI(n => Math.min(schritte.length - 1, n + 1));
   }

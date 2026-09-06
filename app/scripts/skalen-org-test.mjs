@@ -98,7 +98,8 @@ async function organisationAufbauen(ts, n) {
       now() - (rn % 400) * interval '1 hour'
     FROM props`;
 
-  const listingIds = (await sql`SELECT id FROM listing WHERE published_by_org_id = ${orgId} ORDER BY random() LIMIT 200`).map(r => r.id);
+  /* Anfragen nur auf veröffentlichte Inserate — Migration 0022 (inquiry_listing_status_pruefen) verweigert Anfragen auf Entwürfe. */
+  const listingIds = (await sql`SELECT id FROM listing WHERE published_by_org_id = ${orgId} AND status IN ('published','reserved') ORDER BY random() LIMIT 200`).map(r => r.id);
   for (const lid of listingIds) {
     await sql`
       INSERT INTO inquiry (kind, listing_id, sender_name, sender_email, recipient_org_id, message)

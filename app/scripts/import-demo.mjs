@@ -21,7 +21,7 @@
    (ein Fehler → nichts importiert), validiert, mit Qualitätsbericht.
 
    Aufruf:  node scripts/import-demo.mjs [--bericht var/import-bericht.json]
-   Umgebung: DATABASE_URL (verweigert in production)
+   Umgebung: DATABASE_URL (verweigert in production ausser bei FW_DEMO_SEED_ERLAUBT=ja)
 
    ---------------------------------------------------------------
    ABBILDUNG (die Entscheide stehen hier, nicht versteckt im Code)
@@ -89,7 +89,10 @@ const MEDIEN = join(hier, "..", "public", "media");
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i > 0 ? process.argv[i + 1] : d; };
 const BERICHT = arg("--bericht", join(hier, "..", "var", "import-bericht.json"));
 
-if (process.env.APP_ENV === "production") { console.error("Der Demo-Importer läuft nicht in production."); process.exit(2); }
+if (process.env.APP_ENV === "production" && process.env.FW_DEMO_SEED_ERLAUBT !== "ja") {
+  console.error("Der Demo-Importer läuft nicht in production (setze FW_DEMO_SEED_ERLAUBT=ja, um das ausdrücklich zu erzwingen).");
+  process.exit(2);
+}
 const url = process.env.DATABASE_URL;
 const sql = url ? postgres(url, { max: 1, onnotice: () => {} }) : null;
 
@@ -269,8 +272,8 @@ async function main() {
       if (!orgId[name]) {
         const slug = "demo-" + slugify(name);
         const geprueft = synthetisch.some(x => x.publisher === name && x.verificationStatus === "verified");
-        const row = await sql`INSERT INTO organization (slug, kind, legal_name, display_name, email, verified_at, verified_by)
-          VALUES (${slug}, ${kind}, ${name + " (Demo)"}, ${name}, ${"kontakt@" + slug.slice(5) + ".example"}, ${geprueft ? sql`now()` : null}, ${geprueft ? SEED : null}) RETURNING id`;
+        const row = await sql`INSERT INTO organization (slug, kind, legal_name, display_name, email, verified_at, verified_by, is_demo)
+          VALUES (${slug}, ${kind}, ${name + " (Demo)"}, ${name}, ${"kontakt@" + slug.slice(5) + ".example"}, ${geprueft ? sql`now()` : null}, ${geprueft ? SEED : null}, true) RETURNING id`;
         orgId[name] = row[0].id;
         const arten = new Set(synthetisch.filter(x => x.publisher === name).map(x => x.listingSource));
         if (arten.size > 1) warn("anbieter-mehrere-quellen", `${name}: ${[...arten].join(",")}`);

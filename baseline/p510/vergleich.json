@@ -1,0 +1,147 @@
+{
+  "alt": "baseline/p59",
+  "neu": "baseline/p510",
+  "schwelle": 0.2,
+  "bericht": [
+    {
+      "datei": "404.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "bewertung.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "fuss.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "karte-abend.png",
+      "zustand": "abweichend",
+      "wert": 4.68
+    },
+    {
+      "datei": "karte.png",
+      "zustand": "abweichend",
+      "wert": 4.71
+    },
+    {
+      "datei": "m-404.png",
+      "zustand": "abweichend",
+      "wert": 1.7
+    },
+    {
+      "datei": "m-karte.png",
+      "zustand": "abweichend",
+      "wert": 13.98
+    },
+    {
+      "datei": "m-kopf-offen.png",
+      "zustand": "gleich",
+      "wert": 0.14
+    },
+    {
+      "datei": "m-objekt-exclusive-abend.png",
+      "zustand": "abweichend",
+      "wert": 16.34
+    },
+    {
+      "datei": "m-objekt-exclusive.png",
+      "zustand": "abweichend",
+      "wert": 17.29
+    },
+    {
+      "datei": "m-objekt.png",
+      "zustand": "abweichend",
+      "wert": 36.82
+    },
+    {
+      "datei": "m-start.png",
+      "zustand": "andere Masse",
+      "wert": "780x6980 vs 780x7006"
+    },
+    {
+      "datei": "m-suche.png",
+      "zustand": "abweichend",
+      "wert": 20.47
+    },
+    {
+      "datei": "m-verkaufen.png",
+      "zustand": "abweichend",
+      "wert": 7.38
+    },
+    {
+      "datei": "objekt-exclusive-abend.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "objekt-exclusive-fr.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "objekt-exclusive-it.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "objekt-exclusive.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "objekt-lage.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "objekt-standard.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "start-abend.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "start-fr.png",
+      "zustand": "gleich",
+      "wert": 0.01
+    },
+    {
+      "datei": "start.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "suche-abend.png",
+      "zustand": "abweichend",
+      "wert": 19.29
+    },
+    {
+      "datei": "suche-gefiltert.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "suche.png",
+      "zustand": "abweichend",
+      "wert": 19.31
+    },
+    {
+      "datei": "verkaufen.png",
+      "zustand": "gleich",
+      "wert": 0
+    },
+    {
+      "datei": "verwalten.png",
+      "zustand": "gleich",
+      "wert": 0
+    }
+  ]
+}

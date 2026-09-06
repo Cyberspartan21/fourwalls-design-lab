@@ -17,7 +17,15 @@ import type { Locale } from "@/i18n";
    Rein: keine Datenbank, keine Sitzung. Prüfbar in tests/entwurf.test.ts. */
 
 /* ---------- Was der Assistent sammelt ---------- */
-const text = (min: number, max: number) => z.string().trim().min(min).max(max);
+/* Steuerzeichen (inkl. Nullbyte \x00) haben in einem Textfeld nie eine
+   Bedeutung — und ein Nullbyte lässt Postgres eine ganze Anfrage mit
+   "invalid byte sequence for encoding UTF8: 0x00" abbrechen, was ohne diese
+   Bereinigung als 500 statt als 422 bei der Person ankäme (P5.10 §13-Fund:
+   PATCH /api/entwuerfe/:ref mit einem Nullbyte in `beschreibung` → 500). Tab und
+   Zeilenumbruch bleiben erhalten, alles andere unter 0x20 sowie DEL fällt weg —
+   dieselbe Haltung wie `glatt()` in server/anliegen.ts und server/inquiries.ts. */
+const STEUERZEICHEN = /[\x00-\x08\x0b-\x1f\x7f]/g;
+const freierText = (max: number) => z.string().trim().max(max).transform(v => v.replace(STEUERZEICHEN, ""));
 const zahl = (min: number, max: number) => z.coerce.number().min(min).max(max).nullable().optional().transform(v => v ?? null);
 
 export const EntwurfSchema = z.object({
@@ -29,8 +37,8 @@ export const EntwurfSchema = z.object({
   ortId: z.string().regex(/^ort-[a-z0-9-]{1,40}$/).nullable().optional().transform(v => v ?? null),
   /* Strasse und Nummer bleiben privat und unbestätigt: es gibt keinen
      Adressdienst, der sie prüfen könnte (§29). Sie verlassen den Server nie. */
-  strasse: z.string().trim().max(120).nullable().optional().transform(v => v ?? null),
-  hausnummer: z.string().trim().max(20).nullable().optional().transform(v => v ?? null),
+  strasse: freierText(120).nullable().optional().transform(v => v ?? null),
+  hausnummer: freierText(20).nullable().optional().transform(v => v ?? null),
   /* Wie genau die Lage öffentlich wird. «exakt» ist gesperrt, solange keine
      geprüfte Adresse vorliegt — wir behaupten keine Präzision, die wir nicht
      haben (§29/§30). Der öffentliche Punkt entsteht serverseitig. */
@@ -44,16 +52,16 @@ export const EntwurfSchema = z.object({
   nebenkosten: zahl(0, 100_000), kaution: zahl(0, 1_000_000),
   sofortVerfuegbar: z.boolean().default(false), verfuegbarAb: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().transform(v => v ?? null),
   /* 6 Text — in der Sprache, in der die Person schreibt (§55) */
-  titel: z.string().trim().max(70).nullable().optional().transform(v => v ?? null),
-  beschreibung: z.string().trim().max(4000).nullable().optional().transform(v => v ?? null),
+  titel: freierText(70).nullable().optional().transform(v => v ?? null),
+  beschreibung: freierText(4000).nullable().optional().transform(v => v ?? null),
   sprache: z.enum(["de", "fr", "it", "en"]).default("de"),
   /* 7 Merkmale und Bilder */
   merkmale: z.array(z.enum(FEATURES)).max(18).default([]),
   bilder: z.array(z.string().uuid()).max(20).default([]),
   /* 8 Kontakt */
-  name: z.string().trim().max(120).nullable().optional().transform(v => v ?? null),
-  email: z.string().trim().toLowerCase().max(200).nullable().optional().transform(v => v ?? null),
-  telefon: z.string().trim().max(40).nullable().optional().transform(v => v ?? null)
+  name: freierText(120).nullable().optional().transform(v => v ?? null),
+  email: z.string().trim().toLowerCase().max(200).transform(v => v.replace(STEUERZEICHEN, "")).nullable().optional().transform(v => v ?? null),
+  telefon: freierText(40).nullable().optional().transform(v => v ?? null)
 }).strict();
 
 export type Entwurf = z.infer<typeof EntwurfSchema>;

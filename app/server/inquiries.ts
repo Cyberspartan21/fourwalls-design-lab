@@ -32,6 +32,11 @@ export type Anfrage = z.infer<typeof AnfrageSchema>;
 
 /* Steuerzeichen und Zeilenumbrüche im Namen sind nie gewollt. */
 const glatt = (s: string) => s.replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim();
+/* Fuer `nachricht`: Zeilenumbrueche bleiben (mehrzeiliger Text ist gewollt),
+   aber ein Nullbyte laesst Postgres die ganze Anfrage mit "invalid byte
+   sequence for encoding UTF8: 0x00" abbrechen statt sie abzulehnen -- ohne
+   diese Bereinigung ein 500 statt eines 422 (P5.10 par.13-Fund). */
+const ohneSteuerzeichen = (s: string) => s.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "");
 
 export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; uaHash: string | null }, senderUserId: string | null = null): Promise<{ publicRef: string }> {
   const nurEcht = env().APP_ENV === "production";
@@ -93,7 +98,7 @@ export async function anfrageAnnehmen(a: Anfrage, herkunft: { ipHash: string; ua
       INSERT INTO inquiry (kind, listing_id, sender_user_id, sender_name, sender_email, sender_phone, recipient_user_id, recipient_org_id, message, wants_alert, source, ip_hash, user_agent_hash)
       VALUES (${a.art}, ${ins.id}, ${senderUserId}, ${glatt(a.name)}, ${a.email}, ${a.telefon ? glatt(a.telefon) : null},
               ${recipientUserId}, ${recipientOrgId},
-              ${a.nachricht.replace(/\r\n?/g, "\n")}, ${a.suchabo === true}, 'web', ${herkunft.ipHash}, ${herkunft.uaHash})
+              ${ohneSteuerzeichen(a.nachricht.replace(/\r\n?/g, "\n"))}, ${a.suchabo === true}, 'web', ${herkunft.ipHash}, ${herkunft.uaHash})
       RETURNING public_ref`;
     const ref = String(zeilen[0]?.public_ref);
 

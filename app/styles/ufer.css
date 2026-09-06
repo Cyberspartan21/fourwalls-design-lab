@@ -237,7 +237,12 @@ h1,h2,h3{text-wrap:balance}
 
 /* ---------- Formularelemente ---------- */
 .feld{background:var(--gr2);border:1px solid var(--linie2);border-radius:var(--r);padding:.6em .85em;font-size:.86rem;min-height:40px;color:var(--ink);transition:border-color .2s}
-.feld:focus{border-color:var(--licht);outline:0}
+.feld:focus{border-color:var(--licht)}
+/* :focus (statt nur :focus-visible) hier bewusst, damit auch Maus-Fokus die
+   Randfarbe bekommt — das outline:0 schwächte bisher die globale
+   :focus-visible-Regel (Zeile 76) für Tastaturnutzung; jetzt bekommt .feld
+   dieselbe sichtbare Kontur wie jedes andere Formularelement (P5.10 §29). */
+.feld:focus-visible{outline:2px solid var(--licht);outline-offset:2px}
 .feld::placeholder{color:var(--leise)}
 select.feld{padding-right:1.8em;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--leise) 50%),linear-gradient(135deg,var(--leise) 50%,transparent 50%);background-position:calc(100% - 14px) 55%,calc(100% - 9px) 55%;background-size:5px 5px;background-repeat:no-repeat}
 textarea.feld{min-height:110px;resize:vertical}
@@ -266,7 +271,9 @@ label.et{display:block;font-size:.62rem;letter-spacing:.18em;text-transform:uppe
   .kopf{padding:8px 12px;gap:8px}
   .kopf .fw{width:56px}
   .kopf .rechts{gap:5px}
-  .kopf .knopf{padding:.5em .6em;font-size:.58rem;letter-spacing:.06em;min-height:34px}
+  .kopf .knopf{padding:.5em .6em;font-size:.58rem;letter-spacing:.06em;min-height:40px}
+  /* Berührungsziele: mindestens 40 px hoch (P5.10 §28) — nur Mindesthöhe, keine Gestaltungsänderung. */
+  .knopf{min-height:40px}
   .kopf .rechts>a.knopf:not(.voll){display:none}
   .kopf .gt{padding:1px}.kopf .gt button{width:21px;height:21px}
   .burger{width:34px;height:34px;flex:0 0 auto}

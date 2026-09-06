@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { startTor } from "@/config/start-tor";
+import { bereitschaft } from "@/config/bereitschaft";
 
 /* Staging darf nirgends in einer Suche auftauchen — zusätzlich zum
    x-robots-tag aus proxy.ts (P5.5 §35). Ausserhalb von Staging: offen mit
@@ -22,17 +22,18 @@ export const dynamic = "force-dynamic";
    ein Muster ohne Endanker ist ein Präfix). */
 const DISALLOW = ["/api/", "/*/konto", "/*/intern", "/*/moderation", "/*/vorschau", "/*/inserieren", "/*/vergleich", "/*/einladung"];
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   if (process.env.APP_ENV === "staging") {
     return { rules: { userAgent: "*", disallow: "/" } };
   }
 
-  /* Produktion: Disallow: / (alles), solange das Start-Tor nicht bereit
-     ist — bestätigte Firmenangaben UND freigegebene Rechtsseiten fehlen
-     heute noch (config/start-tor.ts). /api/ready meldet dieselbe Prüfung. */
-  if (process.env.APP_ENV === "production" && !startTor().bereit) {
+  /* Produktion: Disallow: / (alles), solange das Start-Tor nicht offen ist —
+     alle vier Tore aus config/bereitschaft.ts (TECH/BUSINESS/LEGAL/INFRA)
+     müssen bereit sein, nicht nur bestätigte Firmenangaben und freigegebene
+     Rechtsseiten. /api/ready meldet dieselbe Prüfung unter `launch`. */
+  if (process.env.APP_ENV === "production" && !(await bereitschaft()).launchReady) {
     return { rules: { userAgent: "*", disallow: "/" }, sitemap: `${site}/sitemap.xml` };
   }
 

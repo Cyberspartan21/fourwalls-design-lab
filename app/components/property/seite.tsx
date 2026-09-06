@@ -96,7 +96,10 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks, angemelde
       ) : (
         <div className="dheld">
           <div className={`mosaik ${bilder.length === 1 ? "einzel" : bilder.length === 2 ? "zwei" : ""}`}>
-            {bilder.slice(0, 3).map((b, i) => <LichtKnopf key={b.key} tag="figure" wunsch={{ index: i }}><Bild m={b} sizes="(max-width:960px) 100vw, 60vw" eager={i === 0} alt={b.alt || `${L.title} ${i + 1}`} aspectRatio="3 / 2" /></LichtKnopf>)}
+            {/* .mosaik: 2fr/1fr-Raster, erste Kachel spannt beide Zeilen (≈66vw
+                Desktop), die anderen je 1fr (≈33vw); ab 960px 2 gleich breite
+                Spalten (≈50vw je Kachel), siehe styles/objekt.css (P5.10 §27). */}
+            {bilder.slice(0, 3).map((b, i) => <LichtKnopf key={b.key} tag="figure" wunsch={{ index: i }}><Bild m={b} sizes={i === 0 ? "(max-width:960px) 50vw, 66vw" : "(max-width:960px) 50vw, 33vw"} eager={i === 0} alt={b.alt || `${L.title} ${i + 1}`} aspectRatio="3 / 2" /></LichtKnopf>)}
           </div>
           <div className="medienleiste">
             <LichtKnopf wunsch={{ index: 0 }}>{bildLabel}</LichtKnopf>
@@ -162,8 +165,8 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks, angemelde
               <>
                 <p className="dtext">{lage.beschreibung}</p>
                 {lage.charakter && <p className="dtext" style={{ marginTop: 12 }}><i>{lage.charakter}</i></p>}
-                <div className="poispalten">{poiDa.map(([k, n]) => <div className="poi" data-liste={k} key={k}><h4>{n}</h4><ul>{poiListen[k]!.map((pp, i) => <li key={i}>{pp.name}<span>{pp.distanz ?? ""}{pp.zeit ? " · " + pp.zeit : ""}</span></li>)}</ul></div>)}</div>
-                {lage.fahrzeiten && <div className="poi" style={{ marginTop: 6 }}><h4>{t("o_fahrzeitenAuto")}</h4><ul style={{ columns: 2, columnGap: 36 }}>{lage.fahrzeiten.map((f, i) => <li key={i}>{f.ziel}<span>{f.zeit}</span></li>)}</ul></div>}
+                <div className="poispalten">{poiDa.map(([k, n]) => <div className="poi" data-liste={k} key={k}><h3 className="poititel">{n}</h3><ul>{poiListen[k]!.map((pp, i) => <li key={i}>{pp.name}<span>{pp.distanz ?? ""}{pp.zeit ? " · " + pp.zeit : ""}</span></li>)}</ul></div>)}</div>
+                {lage.fahrzeiten && <div className="poi" style={{ marginTop: 6 }}><h3 className="poititel">{t("o_fahrzeitenAuto")}</h3><ul style={{ columns: 2, columnGap: 36 }}>{lage.fahrzeiten.map((f, i) => <li key={i}>{f.ziel}<span>{f.zeit}</span></li>)}</ul></div>}
                 <div className="lagefakt">{lage.gemeinde && <span>{t("o_gemeindeWort")} <b>{lage.gemeinde}</b></span>}{lage.quartier && <span>{t("o_quartierWort")} <b>{lage.quartier}</b></span>}{lage.steuerfuss && <span>{t("o_steuerfussWort")} <b>{String(lage.steuerfuss)}</b></span>}</div>
               </>
             ) : <p className="dtext">{ort}, {t("o_kantonWort")} {KANTON[p.canton] ?? p.canton}. {t("o_genAdresseNachKontaktSatz")}</p>}

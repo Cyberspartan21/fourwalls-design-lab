@@ -1,5 +1,6 @@
 import "server-only";
 import { sql } from "./db";
+import { demoSichtbar } from "./env";
 import { alsMedia } from "@/services/storage";
 import { treffernachRefs } from "./favoriten";
 import type { Media } from "@/domain/listing";
@@ -9,7 +10,10 @@ import type { Treffer } from "@/domain/marktplatz";
 
    Nur Organisationen, die aktiv und nicht stillgelegt sind, haben ein
    Profil — alles andere ist NOT_FOUND (die Anbieterseite meldet 404, sie
-   verrät nie, dass eine stillgelegte Organisation einmal existierte).
+   verrät nie, dass eine stillgelegte Organisation einmal existierte). Bei
+   geschlossenem Demo-Inhalte-Tor (server/env.ts demoSichtbar(), P5.10
+   §34/§35) gilt dasselbe für Demo-Organisationen (organization.is_demo,
+   db/migrations/0020) und ihre Demo-Inserate.
 
    Absichtlich NIE ausgeliefert: email, phone, uid_che, legal_name (§10).
    public_email/public_phone sind eigene, bewusst öffentliche Spalten.
@@ -43,6 +47,7 @@ const HOECHSTZAHL_KARTEN = 48;
 
 export async function anbieterProfil(slug: string): Promise<AnbieterProfil | null> {
   if (!SLUG_RE.test(slug)) return null;
+  const zeigeDemo = demoSichtbar();
   const z = await sql`
     SELECT o.id, o.public_ref, o.slug, o.display_name, o.kind, o.description, o.website,
            o.public_email, o.public_phone, o.city, o.postal_code, o.locale, o.verification_state,
@@ -50,6 +55,7 @@ export async function anbieterProfil(slug: string): Promise<AnbieterProfil | nul
               FROM media_variant v WHERE v.asset_id = o.logo_asset_id) AS logo_varianten
       FROM organization o
      WHERE o.slug = ${slug} AND o.is_active AND o.archived_at IS NULL
+       AND (${zeigeDemo} = true OR o.is_demo = false)
      LIMIT 1`;
   const r = z[0];
   if (!r) return null;
@@ -57,6 +63,7 @@ export async function anbieterProfil(slug: string): Promise<AnbieterProfil | nul
   const refZeilen = await sql`
     SELECT lp.public_ref FROM listing_public lp
      WHERE lp.published_by_org_id = ${r.id as string}
+       AND (${zeigeDemo} = true OR lp.is_demo = false)
      ORDER BY lp.published_at DESC LIMIT ${HOECHSTZAHL_KARTEN}`;
   const refs = refZeilen.map(x => String(x.public_ref));
   const gefundene = await treffernachRefs(refs);
@@ -65,7 +72,10 @@ export async function anbieterProfil(slug: string): Promise<AnbieterProfil | nul
   const nachRef = new Map(gefundene.map(t => [t.id, t] as const));
   const aktiveInserate = refs.map(ref => nachRef.get(ref)).filter((t): t is Treffer => !!t);
 
-  const anzahlZeile = await sql`SELECT count(*)::int AS n FROM listing_public lp WHERE lp.published_by_org_id = ${r.id as string}`;
+  const anzahlZeile = await sql`
+    SELECT count(*)::int AS n FROM listing_public lp
+     WHERE lp.published_by_org_id = ${r.id as string}
+       AND (${zeigeDemo} = true OR lp.is_demo = false)`;
   const anzahlAktiv = Number(anzahlZeile[0]?.n ?? 0);
 
   const logoVarianten = r.logo_varianten as MediaVariante[] | null;

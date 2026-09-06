@@ -36,6 +36,12 @@ const sql = postgres(DATABASE_URL, { max: 2, onnotice: () => {} });
 const PASSWORT = "Mobil-" + randomBytes(12).toString("base64url");
 const EMAIL = `imstaff+${TS}@example.com`;
 
+/* Eigene x-forwarded-for-Adresse für dieses Skript (Ratenlimit ist je
+   Herkunft) — läuft in CI sequentiell mit anderen HTTP-Suiten gegen denselben
+   Server, deshalb eine eigene Adresse statt der gemeinsamen Standard-Herkunft. */
+const RUNSEED = Math.floor(Math.random() * 200) + 10;
+const XFF = `10.${RUNSEED}.1.31`;
+
 const ergebnisse = [];
 function assertTrue(bedingung, meldung) { if (!bedingung) throw new Error(meldung); }
 async function schritt(titel, fn) {
@@ -51,7 +57,7 @@ async function schritt(titel, fn) {
 }
 
 async function api(method, pfad, { body } = {}) {
-  const h = {}; let payload;
+  const h = { "x-forwarded-for": XFF }; let payload;
   if (body !== undefined) { h["content-type"] = "application/json"; payload = JSON.stringify(body); }
   const res = await fetch(BASIS + pfad, { method, headers: { ...h, origin: BASIS }, body: payload, redirect: "manual" });
   const text = await res.text();
@@ -118,7 +124,7 @@ try {
     assertTrue(!!mail, `keine Bestätigungsmail für ${EMAIL} über Mailquelle "${MAILQUELLE.name}" gefunden`);
     const treffer = mail.text.match(/https?:\/\/\S+/);
     assertTrue(!!treffer, "keine URL in der Bestätigungsmail gefunden");
-    const best = await fetch(treffer[0], { redirect: "manual" });
+    const best = await fetch(treffer[0], { redirect: "manual", headers: { "x-forwarded-for": XFF } });
     assertTrue(best.status === 302, `Bestätigung status=${best.status}`);
     const si = await api("POST", "/api/auth/sign-in/email", { body: { email: EMAIL, password: PASSWORT } });
     assertTrue(si.status === 200, `sign-in status=${si.status}`);

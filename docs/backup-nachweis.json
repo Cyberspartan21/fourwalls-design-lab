@@ -1,0 +1,86 @@
+{
+  "datum": "2026-09-06T18:15:14.264Z",
+  "db": {
+    "dumpBytes": 631957,
+    "tabellen": {
+      "listing": {
+        "original": 323,
+        "restore": 323
+      },
+      "organization": {
+        "original": 35,
+        "restore": 35
+      },
+      "app_user": {
+        "original": 284,
+        "restore": 284
+      },
+      "inquiry": {
+        "original": 40,
+        "restore": 40
+      },
+      "service_lead": {
+        "original": 0,
+        "restore": 0
+      },
+      "media_asset": {
+        "original": 52,
+        "restore": 52
+      },
+      "saved_search": {
+        "original": 7,
+        "restore": 7
+      },
+      "audit_log": {
+        "original": 3632,
+        "restore": 3632
+      },
+      "mail_outbox": {
+        "original": 1257,
+        "restore": 1257
+      },
+      "listing.published": {
+        "original": 288,
+        "restore": 288
+      },
+      "inquiry.md5(public_ref)": {
+        "original": "dc02dd2e11d3168ee0939f6b24c5fe1e",
+        "restore": "dc02dd2e11d3168ee0939f6b24c5fe1e"
+      },
+      "listing.md5(public_ref)": {
+        "original": "d57ccc0bd620749d2c41da585e1da781",
+        "restore": "d57ccc0bd620749d2c41da585e1da781"
+      },
+      "listing_public.md5(public_ref)": {
+        "original": "7624afc7b80e65bbcfdcf19430cb4a45",
+        "restore": "7624afc7b80e65bbcfdcf19430cb4a45"
+      },
+      "organization.md5(public_ref)": {
+        "original": "bc4d0a3899ddbea5907f02724996ecf7",
+        "restore": "bc4d0a3899ddbea5907f02724996ecf7"
+      },
+      "project.md5(public_ref)": {
+        "original": "d41d8cd98f00b204e9800998ecf8427e",
+        "restore": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "property.md5(public_ref)": {
+        "original": "13941aae3c33914905f099133cbf0bbe",
+        "restore": "13941aae3c33914905f099133cbf0bbe"
+      },
+      "service_lead.md5(public_ref)": {
+        "original": "d41d8cd98f00b204e9800998ecf8427e",
+        "restore": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "listing_public": {
+        "original": 306,
+        "restore": 306
+      }
+    },
+    "vergleich": "identisch"
+  },
+  "speicher": {
+    "objekte": 255,
+    "wiederhergestellt": true
+  },
+  "werkzeug": "scripts/katastrophen-test.mjs"
+}

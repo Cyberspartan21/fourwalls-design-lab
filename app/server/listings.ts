@@ -1,6 +1,6 @@
 import "server-only";
 import { sql } from "./db";
-import { env } from "./env";
+import { demoSichtbar } from "./env";
 import { alsMedia } from "@/services/storage";
 import type { Locale } from "@/i18n";
 import { uebersetzer } from "@/i18n";
@@ -12,7 +12,9 @@ import type { ListingDetail, Sections, Media, GeoPrecision, PropertyKind, Publis
    - Nur über die Sicht listing_public: sie enthält weder geom_exact noch
      Strasse. Was diese Datei nicht liest, kann sie nicht ausliefern.
    - Jeder Wert aus der Adresszeile ist ein Parameter, nie SQL-Text.
-   - In der Produktion werden Demo-Inserate nicht ausgeliefert. */
+   - Ist das Demo-Inhalte-Tor geschlossen (server/env.ts demoSichtbar(),
+     P5.10 §34/§35), werden Demo-Inserate nicht ausgeliefert — die Objektseite
+     meldet dafür 404, nicht 200 mit noindex. */
 
 const FEAT_KEYS: Record<PropertyKind, string> = {
   apartment: "w_typWohnung", house: "w_typHaus", villa: "w_typVilla", chalet: "w_typChalet",
@@ -23,7 +25,7 @@ const gueltigeRef = (s: string) => /^FWL-\d{4}-\d{6}$/.test(s);
 
 export async function findePubliziertesInserat(publicRef: string, locale: Locale): Promise<ListingDetail | null> {
   if (!gueltigeRef(publicRef)) return null;
-  const nurEcht = env().APP_ENV === "production";
+  const nurEcht = !demoSichtbar();
 
   const zeilen = await sql`
     SELECT lp.id, lp.public_ref, lp.slug, lp.transaction, lp.status, lp.is_demo,

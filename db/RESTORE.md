@@ -123,3 +123,87 @@ automatisiert aus, funktioniert für beide Sicherungsalter), analog zu
 cd app
 ./scripts/db-restore.sh /pfad/zur/sicherung.dump "postgresql://user:pass@host:port/db"
 ```
+
+## Sicherung erzeugen: `app/scripts/db-backup.sh` (P5.10 §20)
+
+```bash
+cd app
+./scripts/db-backup.sh var/backups/2026-09-06.dump "$DATABASE_URL"
+```
+
+Läuft mit lokal installiertem `pg_dump` direkt gegen `DATABASE_URL` (Staging/
+Produktion, CI-Runner mit Postgres-Client). Ist kein `pg_dump` installiert
+UND zeigt `DATABASE_URL` auf den lokalen Entwicklungscontainer (`localhost:
+55433` bzw. `127.0.0.1:55433` — dieser Entwicklungsrechner hat keine lokalen
+Postgres-Clientwerkzeuge), fällt das Skript auf
+`docker exec fw-dev-db pg_dump …` zurück — der einzige Container, den es
+anfasst (Projekt-Isolation, `docs/PROJECT-ISOLATION-RULE.md`).
+
+## Der vollständige Katastrophentest (P5.10 §20)
+
+`app/scripts/katastrophen-test.mjs` führt Sicherung, Wiederherstellung und
+Vergleich automatisiert und nummeriert für Datenbank UND Objektspeicher
+durch — geprüft, reproduzierbar grün:
+
+```bash
+cd app
+set -a; . ./.env.local; set +a
+S3_ENDPOINT=http://localhost:59000 S3_REGION=us-east-1 \
+S3_ACCESS_KEY_ID=fwdev S3_SECRET_ACCESS_KEY=fwdev-nur-lokal-0000 \
+S3_FORCE_PATH_STYLE=ja \
+S3_BUCKET_PRIVATE=fw-dev-privat S3_BUCKET_PUBLIC=fw-dev-oeffentlich \
+node scripts/katastrophen-test.mjs
+```
+
+Ablauf (18 nummerierte Schritte, siehe Kopfkommentar der Datei für Details):
+
+1. `docker exec fw-dev-db pg_dump -U fourwalls -Fc -d <db>` → `var/backups/<datum>.dump`
+   (dieser Rechner hat kein lokales `pg_dump`/`pg_restore`/`psql` — siehe
+   `scripts/db-backup.sh` oben; ein Host mit Postgres-Client bräuchte hier
+   keinen `docker exec`-Umweg).
+2. `CREATE DATABASE "fw_restore_test_<ts>" OWNER fourwalls` (Wartungsverbindung
+   auf die `postgres`-Datenbank desselben Clusters).
+3. Dump + `scripts/db-restore.sh` per `docker cp` in den Container kopiert,
+   dort ausgeführt gegen `postgresql://fourwalls:fourwalls_dev@localhost:5432/fw_restore_test_<ts>`
+   (Container-interner Port 5432, nicht der host-seitig veröffentlichte 55433).
+4. Zeilenzahlen von `listing`, `organization`, `app_user`, `inquiry`,
+   `service_lead`, `media_asset`, `saved_search`, `audit_log`, `mail_outbox`
+   — Original gegen Wiederherstellung.
+5. Summe: `count(*) FROM listing WHERE status = 'published'`.
+6. Prüfsumme: `md5(string_agg(public_ref, ',' ORDER BY public_ref))` über
+   jede Tabelle (und die Sicht `listing_public`), die eine `public_ref`-Spalte
+   trägt (per `information_schema.columns` ermittelt, nicht hartkodiert).
+7. `SELECT count(*) FROM listing_public` — die Sicht funktioniert nach dem
+   Restore identisch.
+8. `schema_migration`-Namen — Original und Wiederherstellung tragen exakt
+   dieselben Migrationen.
+9. `DROP DATABASE IF EXISTS "fw_restore_test_<ts>"`.
+10. Ein Testobjekt (`restore-test/<ts>.txt`) in `S3_BUCKET_PUBLIC` hochladen.
+11.–12. Beide Behälter (`S3_BUCKET_PRIVATE`, `S3_BUCKET_PUBLIC`) vollständig
+    nach `var/backups/s3-<ts>/{privat,oeffentlich}/` gesichert
+    (`scripts/speicher-backup.mjs`, Funktion `sichern()`) — bei diesem
+    Bestand (~11 MB, ~250 Objekte) ohne Einschränkung auf ein Präfix; erst ab
+    etwa 500 MB wäre laut Auftrag nur `pub/` + `orig/` eines Testinserats zu
+    sichern.
+13. Wegwerf-Behälter `fw-restore-test-<ts>` anlegen (kleingeschriebener
+    Zeitstempel — S3-Behälternamen erlauben keine Grossbuchstaben).
+14. Beide Sicherungen mit den Präfixen `privat/` bzw. `oeffentlich/` in den
+    Wegwerf-Behälter hochgeladen (`wiederherstellen()`).
+15. Jedes wiederhergestellte Objekt gegen das Original verglichen: Existenz,
+    Grösse, ETag (`vergleichen()`, per `HeadObjectCommand`).
+16. Das Testobjekt aus dem ECHTEN Behälter gelöscht — ein erneuter Abruf
+    liefert `NoSuchKey`.
+17. Das Testobjekt aus der lokalen Sicherung (nicht aus dem Wegwerf-Behälter)
+    zurück in den echten Behälter geschrieben — der Abruf gelingt wieder,
+    Inhalt identisch.
+18. Aufräumen: Wegwerf-Behälter geleert und gelöscht, Testobjekt im echten
+    Behälter entfernt.
+
+Ergebnis: `docs/backup-nachweis.json` (maschinenlesbar) und
+`var/backups/bericht-<ts>.md` (lesbar). Nach einem vollständigen Lauf bleiben
+weder eine `fw_restore_test_*`-Datenbank noch ein `fw-restore-test-*`-Behälter
+zurück — geprüft per `SELECT datname FROM pg_database WHERE datname LIKE
+'fw_restore_test%'` (leer) und Behälterlisting (nur die beiden echten
+Behälter). Die lokale Sicherung selbst (`var/backups/<datum>.dump`,
+`var/backups/s3-<ts>/`) bleibt als Nachweis liegen — `var/` ist ausserhalb
+der Versionskontrolle (`.gitignore`).

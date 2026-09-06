@@ -11,13 +11,17 @@ const GEPRUEFT_SICHTBAR = (AUSSAGEN.identitaetGeprueft.stand as string) === "bes
    Reine Komponente ohne Server-Abhängigkeit: die Seite rendert sie, «Weitere
    anzeigen» im Browser ebenso. Die Bildadressen kommen fertig aus dem
    Suchtreffer (Speicheranbieter, serverseitig). */
-export function Karte({ l, w, locale, href, aktiv = false, onMouseEnter, onMouseLeave, onClick }: { l: Treffer; w: Woerter; locale: Locale; href: string; aktiv?: boolean; onMouseEnter?: () => void; onMouseLeave?: () => void; onClick?: () => void }) {
+export function Karte({ l, w, locale, href, aktiv = false, eager = false, onMouseEnter, onMouseLeave, onClick }: { l: Treffer; w: Woerter; locale: Locale; href: string; aktiv?: boolean; eager?: boolean; onMouseEnter?: () => void; onMouseLeave?: () => void; onClick?: () => void }) {
   const belegt = !verfuegbarFrei(l.availability.art);
   const va = l.availability.art;
   const m2 = proM2(l);
   const f = [l.rooms ? `${l.rooms} ${w.o_ziKurz}` : null, l.livingArea ? `${l.livingArea} m²` : (l.plotArea ? `${l.plotArea} m² ${w.k_landWort}` : null), typLabel(w, l.propertyType)].filter(Boolean) as string[];
   const set = (s: { width: number; url: string }[]) => s.map(x => `${x.url} ${x.width}w`).join(", ");
-  const sizes = "(max-width:700px) 100vw, (max-width:1200px) 50vw, 25vw";
+  /* .gitter ist ein auto-fill-Raster (minmax(296px,1fr)) — die Spaltenzahl
+     wechselt fliessend zwischen 1 (mobil) und rund 5 (sehr breit). Diese
+     Stufen nähern die real gemessenen Spaltenbreiten an (P5.10 §27-Audit):
+     ~50vw bei 2 Spalten, ~33vw bei 3 Spalten, ~20vw ab ~1700px (4–5 Spalten). */
+  const sizes = "(max-width:700px) 100vw, (max-width:1100px) 50vw, (max-width:1700px) 33vw, 20vw";
   const klein = l.bild?.jpeg.find(x => x.width === 480)?.url;
   const mitte = l.bild?.jpeg.find(x => x.width === 960)?.url;
   const preis = preisText(w, l);
@@ -31,7 +35,8 @@ export function Karte({ l, w, locale, href, aktiv = false, onMouseEnter, onMouse
         {l.bild && (
           <picture>
             <source type="image/webp" srcSet={set(l.bild.webp)} sizes={sizes} />
-            <img src={mitte} srcSet={set(l.bild.jpeg)} sizes={sizes} alt={l.title} loading="lazy" decoding="async" style={{ aspectRatio: "3 / 2" }} />
+            <img src={mitte} srcSet={set(l.bild.jpeg)} sizes={sizes} alt={l.title} style={{ aspectRatio: "3 / 2" }}
+              {...(eager ? { loading: "eager" as const, fetchPriority: "high" as const } : { loading: "lazy" as const, decoding: "async" as const })} />
           </picture>
         )}
       </div>

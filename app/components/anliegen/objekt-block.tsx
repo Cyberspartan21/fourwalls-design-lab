@@ -56,7 +56,8 @@ export function ObjektBlock({ dienst, objekt, aendern, t, locale, fehlt }:
         <input className="feld" id="al-ort" type="text" autoComplete="off" value={text} style={{ width: "100%" }}
           onChange={e => suchen(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter" && liste[0]) { e.preventDefault(); waehle(liste[0]); } }}
-          aria-describedby="al-ort-status" />
+          aria-invalid={fehlt("ortId") || undefined}
+          aria-describedby={fehlt("ortId") ? "al-ort-status al-ort-fehler" : "al-ort-status"} />
         {liste.length > 0 && (
           <div className="vorschlaege an" style={{ position: "absolute", left: 0, right: 0, zIndex: 60 }}>
             {liste.map(v => (
@@ -69,19 +70,20 @@ export function ObjektBlock({ dienst, objekt, aendern, t, locale, fehlt }:
         <p className="hin" id="al-ort-status" style={{ color: objekt.ortId ? "var(--licht)" : "var(--leise)", fontSize: ".8rem", marginTop: 6 }}>
           {objekt.ortId ? `${t.w_erkannt} ${objekt.ortLabel}` : t.w_ortSuchen}
         </p>
-        {fehlt("ortId") && <p className="fehler" role="alert">{t.w_ortFehler}</p>}
+        {fehlt("ortId") && <p className="fehler" role="alert" id="al-ort-fehler">{t.w_ortFehler}</p>}
       </div>
 
       <div className="fld" id="al-typ" style={{ marginTop: 22 }}>
-        <label>{t.w_typ}</label>
-        <div className="grosswahl dreier">
+        <label id="al-typ-label">{t.w_typ}</label>
+        <div className="grosswahl dreier" role="group" aria-labelledby="al-typ-label"
+          aria-describedby={typPflichtig(dienst) && fehlt("typ") ? "al-typ-fehler" : undefined}>
           {TYPEN.map(k => (
             <button key={k} type="button" aria-pressed={objekt.typ === k} onClick={() => aendern({ typ: k })}>
               <b style={{ fontFamily: "var(--t)", fontSize: ".95rem" }}>{t["w_typ_" + k]}</b>
             </button>
           ))}
         </div>
-        {typPflichtig(dienst) && fehlt("typ") && <p className="fehler" role="alert">{t.al_typFehler}</p>}
+        {typPflichtig(dienst) && fehlt("typ") && <p className="fehler" role="alert" id="al-typ-fehler">{t.al_typFehler}</p>}
       </div>
 
       <details className="fld" style={{ marginTop: 22 }}>

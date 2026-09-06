@@ -22,11 +22,26 @@
 # SERVICE_LEAD_INBOX bleibt in CI ungesetzt: server/env.ts verlangt es nur in
 # staging/production, in test fällt es auf MAIL_DEV_SINK zurück.
 #
+# P5.10 §19/§43/§45 (CI-Master-Gate): Der Job "pruefen" deckt Kernkette und
+# Kundenerlebnis ab; ein zweiter Job "haertung" — mit eigenem Dienstcontainer,
+# eigener Migration/Seed/Build/Start — deckt Sicherheits-Fuzzing, Autorisierung,
+# Wissen/Mobil/A11y und den Katastrophentest ab. Getrennt, weil die Kette in
+# einem einzigen Job das 45-Minuten-Budget sprengen würde (siehe docs/CI.md
+# für die Dauer-Schätzung je Schritt). "image" baut erst, wenn BEIDE grün sind.
+# Neue Schritte, deren Skript aus einer parallelen Spur noch nicht existiert,
+# laufen nur mit `if: hashFiles(...) != ''` — kein roter Job wegen eines
+# Skripts, das gerade erst entsteht.
+#
+# Jede HTTP-Prüfsuite nutzt eine eigene x-forwarded-for-Herkunft (siehe
+# scripts/lib/… und die einzelnen Skripte) — die Ratenbegrenzung ist je
+# Herkunft, und beide Jobs laufen sequentielle Suiten gegen denselben Server.
+#
 # Auslöseregeln (P5.5 §86–§88):
-#   - push/pull_request auf app/** oder db/**: "pruefen" und "migrationstor"
-#     laufen immer — sie brauchen nichts ausserhalb dieses Repos.
+#   - push/pull_request auf app/** oder db/**: "pruefen", "haertung" und
+#     "migrationstor" laufen immer — sie brauchen nichts ausserhalb dieses Repos.
 #   - "image" (Docker-Abbild bauen, kein Push) läuft zusätzlich nur bei einem
-#     push auf main — dort existiert ein geprüfter Stand.
+#     push auf main — dort existiert ein geprüfter Stand — und erst nach
+#     "pruefen" und "haertung".
 #   - "deploy-staging" läuft AUSSCHLIESSLICH über einen manuellen
 #     workflow_dispatch mit dem Eingabewert image_tag, und nur nach
 #     Genehmigung im GitHub-Environment "staging". Kein push- oder
@@ -82,7 +97,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      - name: Migrationen von null + 16 Schema-Zusagen
+      - name: Migrationen von null + 19 Schema-Zusagen
         run: node scripts/migrate.mjs && node scripts/migrate.mjs --test
       - name: Seed (Entwicklungsbestand) lädt
         run: node scripts/migrate.mjs --seed
@@ -137,6 +152,11 @@ jobs:
       - name: Skalentest der Anliegen-Übersicht (nur N=1000, Zeitgründe)
         run: node scripts/skalen-anliegen-test.mjs 1000
 
+      # P5.10 §9–§12 — Kontolöschung: Anonymisierung statt Löschung, Aufräumabfragen.
+      - name: Kontolöschung
+        if: hashFiles('app/scripts/kontoloeschung-test.mjs') != ''
+        run: node scripts/kontoloeschung-test.mjs http://localhost:3007
+
       # P5.9 Phase B, Workstream H (P0: Regressionsabdeckung für Startseite,
       # 404 und Service-Seiten in CI). scripts/seo-test.mjs prüft nur per
       # fetch (kein Browser) — Titel/Meta/H1/Canonical/hreflang/OpenGraph/
@@ -147,6 +167,93 @@ jobs:
       # siehe Kopfkommentar der Datei.
       - name: SEO und Index-Verhalten
         run: node scripts/seo-test.mjs http://localhost:3007
+
+      # P5.10 §43 — Sicherheits-/Antwort-Header und Fehlerseiten (H8).
+      - name: Antwort-Header (Sicherheit, Caching)
+        if: hashFiles('app/scripts/header-test.mjs') != ''
+        run: node scripts/header-test.mjs http://localhost:3007
+      - name: Fehlerseiten (404/500, keine Stacktrace-Lecks)
+        if: hashFiles('app/scripts/fehler-test.mjs') != ''
+        run: node scripts/fehler-test.mjs http://localhost:3007
+
+  # P5.10 §19/§43 — Härtung: Sicherheits-Fuzzing, Autorisierungs-Matrix,
+  # Wissen/Mobil/A11y, Sichtprüfung, Katastrophentest. Eigener Job (eigener
+  # Dienstcontainer, eigene Migration/Seed/Build/Start), damit "pruefen"
+  # unter dem 45-Minuten-Budget bleibt (siehe docs/CI.md).
+  haertung:
+    runs-on: ubuntu-latest
+    services:
+      postgis:
+        image: postgis/postgis:16-3.4
+        env: { POSTGRES_USER: fourwalls, POSTGRES_PASSWORD: fourwalls_ci, POSTGRES_DB: fourwalls }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U fourwalls" --health-interval 5s --health-timeout 5s --health-retries 20
+    defaults: { run: { working-directory: app } }
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://fourwalls:fourwalls_ci@localhost:5432/fourwalls
+      NEXT_PUBLIC_SITE_URL: http://localhost:3007
+      STORAGE_PROVIDER: local
+      MAIL_PROVIDER: dev
+      MAIL_FROM: noreply@fourwalls.example
+      MAIL_DEV_SINK: dev-sink@fourwalls.example
+      APP_SECRET: ci-only-nicht-geheim-0000000000000000
+      FW_TEST_MOD_EMAIL: ci-moderation@fourwalls.example
+      FW_TEST_MOD_PASSWORT: ci-only-nicht-geheim-moderation-0000
+      ALERT_INTERVAL_MS: "5000"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - run: npm ci
+      - name: Migrationen von null + 19 Schema-Zusagen
+        run: node scripts/migrate.mjs && node scripts/migrate.mjs --test
+      - name: Seed (Entwicklungsbestand) lädt
+        run: node scripts/migrate.mjs --seed
+      - run: npm run build
+      - name: Anwendung starten
+        run: |
+          npx next start -p 3007 &
+          for i in $(seq 1 60); do curl -sf http://localhost:3007/api/health && break; sleep 2; done
+      # scripts/mobil-reisen-test.mjs meldet sich als alpha-owner an
+      # (var/profis.local.json) — braucht dieselbe Seed-Organisation wie im
+      # Job "pruefen".
+      - name: Seed professioneller Anbieter (Alpha/Seewind/Nordlicht)
+        run: node scripts/seed-profis.mjs http://localhost:3007
+
+      # P5.10 §19 (H3a) — Auth-Härtung, Eingabe-Fuzzing, Upload-Angriffe.
+      - name: Auth-Härtung (Sitzungen, CSRF, Aufzählung, Ratenlimit)
+        if: hashFiles('app/scripts/auth-haertung-test.mjs') != ''
+        run: node scripts/auth-haertung-test.mjs http://localhost:3007
+      - name: Eingabe-Fuzzing (Validierung, Injektion, Grenzwerte)
+        if: hashFiles('app/scripts/eingabe-fuzz-test.mjs') != ''
+        run: node scripts/eingabe-fuzz-test.mjs http://localhost:3007
+      - name: Upload-Angriffe (Dateityp, Grösse, Inhalt)
+        if: hashFiles('app/scripts/upload-angriff-test.mjs') != ''
+        run: node scripts/upload-angriff-test.mjs http://localhost:3007
+
+      # P5.10 §19 (H3b) — Autorisierungs-Master-Matrix, finale Sicherheitsrunde.
+      - name: Autorisierungs-Master-Matrix (§8)
+        if: hashFiles('app/scripts/autorisierung-matrix-test.mjs') != ''
+        run: node scripts/autorisierung-matrix-test.mjs http://localhost:3007
+      - name: Finale Sicherheitsrunde
+        if: hashFiles('app/scripts/final-sicherheit-test.mjs') != ''
+        run: node scripts/final-sicherheit-test.mjs http://localhost:3007
+
+      # P5.10 §19 (H8) — Wissen, mobile Kundenreisen, Basis-A11y. Mobil-Reisen
+      # und A11y brauchen Chrome (CHROME_BIN) — ubuntu-latest hat
+      # google-chrome vorinstalliert (dasselbe Muster wie tools/baseline.mjs
+      # bei der Sichtprüfung unten).
+      - name: Wissen (/wissen-Seiten, Inhalt und Struktur)
+        if: hashFiles('app/scripts/wissen-test.mjs') != ''
+        run: node scripts/wissen-test.mjs http://localhost:3007
+      - name: Mobile Kundenreisen (390 px, CDP)
+        if: hashFiles('app/scripts/mobil-reisen-test.mjs') != ''
+        run: CHROME_BIN=$(which google-chrome) node scripts/mobil-reisen-test.mjs http://localhost:3007
+      - name: Basis-A11y (Formulare, Struktur, Fokus)
+        if: hashFiles('app/scripts/a11y-test.mjs') != ''
+        run: CHROME_BIN=$(which google-chrome) node scripts/a11y-test.mjs http://localhost:3007
 
       # tools/baseline.mjs (Repo-Wurzel, nicht app/) nimmt dieselben
       # UFER-Zustände wie lokal auf; CHROME_BIN zeigt auf das auf
@@ -170,10 +277,27 @@ jobs:
           path: /tmp/sicht
           retention-days: 7
 
+      # P5.10 §20/§43 — Katastrophentest: Backup/Restore beweisen, ohne
+      # fw-dev-db-Container und ohne MinIO. FW_KATASTROPHE_DB_MODUS=direkt
+      # nutzt pg_dump/pg_restore/psql direkt gegen den Dienstcontainer (statt
+      # `docker exec fw-dev-db`); FW_KATASTROPHE_SPEICHER=aus lässt den
+      # Objektspeicherteil (Schritte 10–18) aus, weil STORAGE_PROVIDER=local
+      # hier kein S3/MinIO bereitstellt — nur der Datenbankteil (Schritte 1–9)
+      # läuft. Siehe Kopfkommentar von scripts/katastrophen-test.mjs.
+      - name: Postgres-Client installieren (pg_dump/pg_restore/psql für den Katastrophentest)
+        if: hashFiles('app/scripts/katastrophen-test.mjs') != ''
+        run: sudo apt-get update && sudo apt-get install --yes postgresql-client
+      - name: Katastrophentest (Backup/Restore, nur Datenbankteil)
+        if: hashFiles('app/scripts/katastrophen-test.mjs') != ''
+        env:
+          FW_KATASTROPHE_DB_MODUS: direkt
+          FW_KATASTROPHE_SPEICHER: aus
+        run: node scripts/katastrophen-test.mjs
+
   # Migrationstor (P5.5 §37): eine frische Datenbank, Migrationen von null,
-  # die 16 Schema-Zusagen — und ein zweiter Lauf, der beweisen muss, dass
-  # nichts mehr zu tun ist. Getrennt von "pruefen", weil hier NICHT geseedet
-  # und NICHT gebaut wird — reine Migrationsprüfung.
+  # die 19 Schema-Zusagen — und ein zweiter Lauf, der beweisen muss, dass
+  # nichts mehr zu tun ist. Getrennt von "pruefen"/"haertung", weil hier NICHT
+  # geseedet und NICHT gebaut wird — reine Migrationsprüfung.
   migrationstor:
     runs-on: ubuntu-latest
     services:
@@ -193,7 +317,7 @@ jobs:
       - run: npm ci
       - name: Migrationen von null
         run: node scripts/migrate.mjs
-      - name: 16 Schema-Zusagen
+      - name: 19 Schema-Zusagen
         run: node scripts/migrate.mjs --test
       - name: Zweiter Lauf muss "Schema aktuell" melden — kein Migrationstor ohne Beweis
         run: |
@@ -203,9 +327,11 @@ jobs:
 
   # Docker-Abbild bauen, ohne es zu veröffentlichen (P5.5 §44). Nur auf main:
   # dort ist bereits geprüft, dass Lint/Typen/Tests/Migrationen/Build/
-  # Lieferkette/Sicherheit grün sind (Job "pruefen" auf demselben Ereignis).
+  # Lieferkette/Sicherheit/Härtung grün sind ("pruefen" und "haertung" auf
+  # demselben Ereignis — "needs" macht daraus ein echtes Gate).
   image:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [pruefen, haertung]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

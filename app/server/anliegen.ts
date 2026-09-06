@@ -24,6 +24,12 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /* Steuerzeichen und Zeilenumbrüche in Namen/Telefonnummern sind nie gewollt. */
 const glatt = (s: string) => s.replace(/[\x00-\x1f\x7f]+/g, " ").replace(/\s+/g, " ").trim();
+/* Fuer `objekt.nachricht`: Zeilenumbrueche bleiben (mehrzeiliger Text ist
+   gewollt), aber ein Nullbyte laesst Postgres die ganze Anfrage mit
+   "invalid byte sequence for encoding UTF8: 0x00" abbrechen statt sie
+   abzulehnen -- ohne diese Bereinigung ein 500 statt eines 422
+   (P5.10 par.13-Fund). */
+const ohneSteuerzeichen = (s: string) => s.replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, "");
 
 /* Kurze Faktenzeile für die interne Meldung — kein Dokument, keine Tabelle,
    nur was ein erstes Gespräch vorbereitet (§11/§43). */
@@ -100,7 +106,7 @@ export async function anliegenAnnehmen(eingabe: unknown, herkunft: { ipHash: str
         ${listingId}, ${placeKey}, ${propertyKind}, ${a.objekt?.zimmer ?? null}, ${a.objekt?.flaeche ?? null}, ${a.objekt?.grundstueck ?? null},
         ${a.objekt?.baujahr ?? null}, ${a.objekt?.einheiten ?? null}, ${a.objekt?.zustand ?? null}, ${a.objekt?.belegung ?? null}, ${a.objekt?.zeitpunkt ?? null},
         ${a.objekt?.bereitsInseriert ?? null}, ${a.objekt?.andererMakler ?? null}, ${a.objekt?.leistungen ?? []},
-        ${a.objekt?.nachricht ? a.objekt.nachricht.replace(/\r\n?/g, "\n") : null},
+        ${a.objekt?.nachricht ? ohneSteuerzeichen(a.objekt.nachricht.replace(/\r\n?/g, "\n")) : null},
         ${a.herkunft.seite}, ${a.herkunft.kampagne ?? null}, ${herkunft.ipHash}, ${herkunft.uaHash}
       )
       RETURNING id, public_ref`;

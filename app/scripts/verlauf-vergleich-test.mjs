@@ -38,6 +38,12 @@ const EMAIL = testadresse("vlvg", TS);
 const PASSWORT = "Lauf-" + randomBytes(12).toString("base64url");
 const MAILQUELLE = mailquelle();
 
+/* Eigene x-forwarded-for-Adresse für dieses Skript (Ratenlimit ist je
+   Herkunft) — läuft in CI sequentiell mit anderen HTTP-Suiten gegen denselben
+   Server, deshalb eine eigene Adresse statt der gemeinsamen Standard-Herkunft. */
+const RUNSEED = Math.floor(Math.random() * 200) + 10;
+const XFF = `10.${RUNSEED}.1.41`;
+
 const LOCALES_PFAD = { de: { immobilien: "immobilien", kaufen: "kaufen", mieten: "mieten" } };
 
 const ergebnisse = [];
@@ -60,7 +66,7 @@ async function api(method, pfad, { cookie, origin, body, headers = {} } = {}) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const h = { ...headers };
+    const h = { "x-forwarded-for": XFF, ...headers };
     if (cookie) h["cookie"] = cookie;
     if (origin !== undefined) h["origin"] = origin;
     let payload;
@@ -79,7 +85,7 @@ async function holenHtml(pfad, { cookie } = {}) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const h = {};
+    const h = { "x-forwarded-for": XFF };
     if (cookie) h["cookie"] = cookie;
     const res = await fetch(BASIS + pfad, { headers: h, redirect: "manual", signal: ctrl.signal });
     const text = await res.text().catch(() => "");
@@ -97,7 +103,7 @@ async function bestaetigeMail(email) {
   if (!mail) throw new Error(`Keine Mail für ${email} über Mailquelle "${MAILQUELLE.name}" gefunden (30 s gewartet)`);
   const treffer = mail.text.match(/https?:\/\/\S+/);
   if (!treffer) throw new Error(`Keine URL in der Mail an ${email} gefunden`);
-  const res = await fetch(treffer[0], { redirect: "manual" });
+  const res = await fetch(treffer[0], { redirect: "manual", headers: { "x-forwarded-for": XFF } });
   return res.status;
 }
 

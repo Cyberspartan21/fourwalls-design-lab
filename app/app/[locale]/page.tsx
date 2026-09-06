@@ -97,7 +97,7 @@ export default async function Start({ params }: { params: Promise<{ locale: stri
         {exklusiv.treffer.length > 0 && (
           <section aria-label={w.exclusive}>
             <h2 style={{ fontFamily: "var(--d)", fontWeight: 300, fontSize: "1.5rem", margin: "0 0 14px" }}>{w.exclusive}</h2>
-            <div className="gitter">{exklusiv.treffer.map(l => <Karte key={l.id} l={l} w={w} locale={locale} href={objektPfad(locale, p, l)} />)}</div>
+            <div className="gitter">{exklusiv.treffer.map((l, i) => <Karte key={l.id} l={l} w={w} locale={locale} href={objektPfad(locale, p, l)} eager={i === 0} />)}</div>
           </section>
         )}
         <section aria-label={t("nav.fuerEigentuemer")} style={{ marginTop: 56 }}>

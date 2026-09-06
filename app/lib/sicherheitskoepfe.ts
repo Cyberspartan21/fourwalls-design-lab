@@ -32,16 +32,45 @@ const OPENFREEMAP = "https://tiles.openfreemap.org";
 
 function imgSrc(): string[] { const u = speicherUrsprung(); return ["'self'", "data:", "blob:", SWISSTOPO, OPENFREEMAP, ...(u ? [u] : [])]; }
 
+/* ---------- Nonce-Prüfung (P5.10 §16) — Ergebnis: bewusst NICHT eingeführt ----------
+   Next 16 unterstützt CSP-Nonces (proxy.ts erzeugt ihn, setzt ihn in den
+   Content-Security-Policy-Header UND in x-nonce; Next liest ihn zur
+   Serverzeit aus dem CSP-Header zurück und hängt ihn an eigene Skripte —
+   siehe node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md).
+   Die Dokumentation selbst nennt aber die Voraussetzung: "all pages must be
+   dynamically rendered" — statische Optimierung, ISR und PPR sind mit
+   Nonce-CSP unvereinbar, weil ein Nonce nur pro Anfrage frisch erzeugt und
+   in eine dynamisch gerenderte Antwort geschrieben werden kann.
+
+   Diese Anwendung setzt genau auf das Gegenteil: die öffentlichen Marktplatz-
+   und Objektseiten sind für Suchmaschinen und Auslieferung als statischer
+   bzw. cachefähiger Inhalt gebaut (P5.9-Phase B, SEO-Suite). Nonces
+   einzuführen hiesse, diese Seiten auf dynamisches Rendern umzustellen —
+   das ist eine Architekturentscheidung mit Leistungs- und SEO-Folgen weit
+   über die Kopfzeilen hinaus, nicht eine reine Sicherheitshärtung. Darum
+   bleibt es bei 'unsafe-inline' in script-src, mit Begründung hier statt
+   stillschweigend: siehe Bericht, Abschnitt „CSP-Entscheid“.
+
+   style-src 'unsafe-inline' ist aus demselben Grund wie zuvor nötig, aber
+   aus einem eigenen Grund: `style={{...}}` in JSX erzeugt ein HTML-
+   Style-ATTRIBUT (style="..."), kein <style>-Element. CSP Level 3 kennt
+   dafür style-src-attr getrennt von style-src-elem — ist style-src-attr
+   nicht gesetzt, fällt es auf style-src zurück, und dessen 'unsafe-inline'
+   ist der einzige Weg, Inline-Style-Attribute ohne Hash je Attributwert
+   zuzulassen (ein Nonce wirkt NICHT auf style="…", nur auf <style nonce>).
+   Diese Anwendung nutzt style="…" durchgehend (u. a. berechnete
+   Kartenfarben, Layout-Feinheiten in vielen Komponenten) — ohne
+   'unsafe-inline' bräche das grossflächig. */
 export function csp(): string { return [
   `default-src 'self'`,
   /* Next rendert die RSC-Nutzlast serverseitig in Inline-<script>-Elemente
-     ohne src; ohne Nonce-Infrastruktur (die dieses Projekt nicht hat) lässt
-     sich das nicht ohne 'unsafe-inline' erlauben. Geprüft am Produktionsbau
-     (npm run build; next start -p 3009): das ausgelieferte HTML enthält
-     Inline-<script>-Blöcke ohne src. Bewusste, dokumentierte Einschränkung —
-     kein 'unsafe-eval'. */
+     ohne src; ohne Nonce-Infrastruktur (siehe Block oben — bewusst nicht
+     eingeführt) lässt sich das nicht ohne 'unsafe-inline' erlauben. Geprüft
+     am Produktionsbau (npm run build; next start -p 3009): das ausgelieferte
+     HTML enthält Inline-<script>-Blöcke ohne src. Bewusste, dokumentierte
+     Einschränkung — kein 'unsafe-eval'. */
   `script-src 'self' 'unsafe-inline'`,
-  /* Die Anwendung nutzt Inline-Styles (u. a. berechnete Kartenfarben). */
+  /* Inline-Style-ATTRIBUTE (style="…"), nicht <style>-Elemente — siehe Block oben. */
   `style-src 'self' 'unsafe-inline'`,
   `font-src 'self'`,
   `img-src ${imgSrc().join(" ")}`,
@@ -52,7 +81,10 @@ export function csp(): string { return [
   `frame-ancestors 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,
-  `object-src 'none'`
+  `object-src 'none'`,
+  /* Nur dort sinnvoll, wo HTTPS tatsächlich gilt — in der Entwicklung (http://localhost)
+     würde die Anweisung den Server selbst auf https umzuschreiben versuchen. */
+  ...(process.env.APP_ENV === "production" ? [`upgrade-insecure-requests`] : [])
 ].join("; "); }
 
 

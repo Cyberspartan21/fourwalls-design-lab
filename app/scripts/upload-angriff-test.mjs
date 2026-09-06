@@ -472,8 +472,11 @@ try {
     if (!STORAGE_S3) {
       const pubPfad = join(APP_ROOT, "public", variante.storage_key);
       assertTrue(existsSync(pubPfad), `Öffentliche Datei sollte jetzt existieren: ${pubPfad}`);
-      const direkt = await fetch(BASIS + "/" + variante.storage_key);
-      assertGleich(direkt.status, 200, "direkter Abruf der öffentlichen Datei");
+      /* Der lokale Speicher-Provider ist Entwicklungsstand: `next start` liefert
+         Dateien, die erst zur Laufzeit unter public/ entstehen, nicht zuverlässig
+         aus (in Produktion ist local per Umgebungsschutz ausgeschlossen, dort
+         zeigt die Umleitung auf den Objektspeicher). Deshalb hier nur die Datei
+         auf der Platte und die Umleitung prüfen — kein Direktabruf. */
     }
     const ueberRoute = await get(`/api/medien/${bildIdA}?w=480&f=webp`, {});
     assertGleich(ueberRoute.status, 302, "Route leitet zur öffentlichen Adresse um");

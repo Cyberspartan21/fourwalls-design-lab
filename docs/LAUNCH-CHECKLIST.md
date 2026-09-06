@@ -1,20 +1,20 @@
 # FOURWALLS — Launch-Checkliste
 
-Automatisch erzeugt von `scripts/launch-checkliste.mjs` am 2026-09-06T18:17:24.303Z. Nicht von Hand bearbeiten —
+Automatisch erzeugt von `scripts/launch-checkliste.mjs` am 2026-09-06T20:30:43.010Z. Nicht von Hand bearbeiten —
 die eine Quelle der Wahrheit ist `config/bereitschaft.ts` (P5.10 §3/§4).
 
 **launchReady: NEIN** — wahr nur, wenn TECH, BUSINESS, LEGAL und INFRA alle bereit sind.
 
-## TECH — nicht bereit
+## TECH — bereit
 
 | ID | Titel | Status | Blocker | Beleg |
 |---|---|---|---|---|
-| `migrationen` | Datenbankmigrationen aktuell | ✗ fehlt | ja | 20/21 Migrationen angewendet |
+| `migrationen` | Datenbankmigrationen aktuell | ✓ ok | ja | 22/22 Migrationen angewendet |
 | `umgebung` | Umgebungsschema gültig | ✓ ok | ja | Umgebungsschema gültig |
 | `outbox` | Outbox-Arbeiter aktiv | ✓ ok | ja | instrumentation.ts registriert den Outbox-Arbeiter |
 | `speicher` | Speicher-Provider konfiguriert | ✓ ok | ja | Objektspeicher: lokal (Entwicklung) |
 | `sitemap_robots` | Sitemap/robots vorhanden | ✓ ok | ja | robots.ts und sitemap.ts vorhanden |
-| `ci_suites` | CI-Testsuiten vorhanden | ✓ ok | ja | 24 Integrationsskripte, 19 Unit-Testdateien |
+| `ci_suites` | CI-Testsuiten vorhanden | ✓ ok | ja | 35 Integrationsskripte, 22 Unit-Testdateien |
 
 ## BUSINESS — nicht bereit
 
@@ -60,5 +60,5 @@ die eine Quelle der Wahrheit ist `config/bereitschaft.ts` (P5.10 §3/§4).
 | `mail` | Mailversand produktionsreif | ✗ fehlt | ja | Mailversand: Entwicklungssenke. |
 | `speicher_infra` | Objektspeicher produktionsreif | ✗ fehlt | ja | Objektspeicher: lokal oder kein externer Endpunkt. |
 | `datenbank` | Datenbank produktionsreif | ✗ fehlt | ja | Datenbank ist eine lokale Adresse. |
-| `backup` | Backup-Nachweis vorhanden | ✗ fehlt | ja | Kein Backup-Nachweis vorhanden. |
+| `backup` | Backup-Nachweis vorhanden | ✓ ok | ja | Backup-Nachweis vorhanden und aktuell (<30 Tage). |
 | `domain_dns_https` | Domain/DNS/HTTPS geprüft | ✗ fehlt | ja | Kein Nachweis geprüft (kein Netzaufruf im Bereitschaftscheck). |

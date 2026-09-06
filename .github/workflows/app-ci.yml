@@ -96,11 +96,13 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm test
       - name: Migrationen von null + 19 Schema-Zusagen
         run: node scripts/migrate.mjs && node scripts/migrate.mjs --test
       - name: Seed (Entwicklungsbestand) lädt
         run: node scripts/migrate.mjs --seed
+      # Unit-Tests erst nach Migrationen und Seed: die DB-gebundenen Tests (Outbox,
+      # Übergänge, DB-Garantien) brauchen das Schema (P5.10-Befund, Lauf 34058205656).
+      - run: npm test
       - run: npm run build
       # Die Reise- und Sicherheitsprüfungen brauchen einen laufenden Server.
       # Sie sind schnell (rund eine Minute) und decken genau das ab, was bei

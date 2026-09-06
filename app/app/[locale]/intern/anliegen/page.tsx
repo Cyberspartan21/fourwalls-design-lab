@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { istLocale, DEFAULT_LOCALE, uebersetzer, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
@@ -5,6 +6,7 @@ import { leadListe, type LeadFilter } from "@/server/anliegen";
 import { DIENSTE, DIENST_LABEL, type Dienst } from "@/domain/anliegen";
 import { darf } from "@/domain/rechte";
 import { InternRahmen } from "@/components/intern/intern-rahmen";
+import { NOINDEX } from "@/lib/seo";
 
 /* Die Übersicht der Anliegen von Eigentümerinnen an FOURWALLS (P5.8 §24–§27,
    §80) — serverseitig gefiltert und geblättert über Query-Parameter. Tabelle
@@ -13,6 +15,13 @@ import { InternRahmen } from "@/components/intern/intern-rahmen";
    Organisations-Detail). Kein CRM: keine Notizen, keine Aufgaben, kein
    Scoring — nur, was hier ohnehin ansteht. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (interner Bereich, P5.9 Phase B). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("in_titelListe") };
+}
 
 const STATUS_WERTE = ["new", "contacted", "qualified", "closed", "declined"] as const;
 const LOCALE_WERTE = ["de", "fr", "it", "en"] as const;

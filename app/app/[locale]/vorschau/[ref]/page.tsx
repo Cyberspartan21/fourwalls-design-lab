@@ -9,10 +9,19 @@ import { ObjektSeite } from "@/components/property/seite";
 import { woerter, mitMerkmalen } from "@/components/marktplatz/labels";
 import { sql } from "@/server/db";
 import { asAppError } from "@/lib/errors";
+import { NOINDEX } from "@/lib/seo";
 
 /* Vorschau — geschützt, nie öffentlich (§36/§37). */
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { robots: { index: false, follow: false } };
+
+/* NOINDEX war bereits gesetzt (statisch, ohne Titel) — jetzt über die
+   gemeinsame Konstante (lib/seo.ts) und mit Titel (P5.9 Phase B). Locale-
+   abhängig, deshalb generateMetadata statt eines statischen Exports. */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; ref: string }> }): Promise<Metadata> {
+  const { locale: roh, ref } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: `${uebersetzer(locale)("v_titel")} · ${ref.toUpperCase()}` };
+}
 
 export default async function Vorschau({ params }: { params: Promise<{ locale: string; ref: string }> }) {
   const { locale: roh, ref } = await params;

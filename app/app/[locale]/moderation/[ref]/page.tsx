@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { istLocale, DEFAULT_LOCALE, uebersetzer, LOCALES, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
@@ -7,9 +8,17 @@ import { darf, istEigentuemer } from "@/domain/rechte";
 import { Kopf } from "@/components/site/kopf";
 import { ModerationsAktionen } from "@/components/moderation/aktionen";
 import { asAppError } from "@/lib/errors";
+import { NOINDEX } from "@/lib/seo";
 
 /* Ein Fall: was eingereicht wurde, wer es war, was fehlt — und die Entscheide. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Moderation, P5.9 Phase B) — Titel ohne erneuten fallLesen()-Aufruf. */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; ref: string }> }): Promise<Metadata> {
+  const { locale: roh, ref } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: `${uebersetzer(locale)("m_titel")} · ${ref.toUpperCase()}` };
+}
 
 export default async function Fall({ params }: { params: Promise<{ locale: string; ref: string }> }) {
   const { locale: roh, ref } = await params;
@@ -31,7 +40,7 @@ export default async function Fall({ params }: { params: Promise<{ locale: strin
     return (
       <>
         <Kopf locale={locale} sprachLinks={sprachLinks} />
-        <main className="wiz an" style={{ maxWidth: 1100 }}>
+        <main id="inhalt" className="wiz an" style={{ maxWidth: 1100 }}>
           <span className="schrittz">{t("m_titel")} · {f.publicRef} · {t("st_" + f.status)}</span>
           <h2>{f.daten.titel ?? f.publicRef}</h2>
 

@@ -14,9 +14,12 @@
    Der Abendmodus ist ein echt umgerechneter Stil, kein Helligkeitsfilter:
    die Farben jedes Layers werden in die UFER-Nachtpalette überführt.
    ============================================================ */
+/* MapLibre GL (npm-Abhängigkeit, BSD-3-Clause, Version 5.6.0 wie zuvor über
+   cdnjs) wird erst geladen, wenn die Karte gebraucht wird — dieses Modul
+   selbst kommt bereits nur per dynamischem import() (karten-ansicht.tsx) in
+   den Browser, das Stylesheet landet also im selben, getrennten Bündel. */
+import "maplibre-gl/dist/maplibre-gl.css";
 export const UKARTE = (function () {
-  const CDN_JS  = "https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.6.0/maplibre-gl.js";
-  const CDN_CSS = "https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.6.0/maplibre-gl.css";
   /* Quellenangaben stehen an der Karte, nicht im Impressum: swisstopo verlangt
      die Nennung der Quelle, OpenStreetMap die Nennung der Mitwirkenden. */
   const STILE = {
@@ -39,15 +42,9 @@ export const UKARTE = (function () {
   /* ---------- MapLibre erst laden, wenn die Karte gebraucht wird ---------- */
   function laden() {
     if (ladeVersprechen) return ladeVersprechen;
-    ladeVersprechen = new Promise((ok, nein) => {
-      const css = document.createElement("link");
-      css.rel = "stylesheet"; css.href = CDN_CSS; document.head.appendChild(css);
-      const js = document.createElement("script");
-      js.src = CDN_JS; js.async = true;
-      js.onload = () => { geladen = true; ok(window.maplibregl); };
-      js.onerror = () => nein(new Error("MapLibre konnte nicht geladen werden"));
-      document.head.appendChild(js);
-    });
+    ladeVersprechen = import("maplibre-gl")
+      .then((mod) => { geladen = true; return mod.default || mod; })
+      .catch(() => { throw new Error("MapLibre konnte nicht geladen werden"); });
     return ladeVersprechen;
   }
 
@@ -169,7 +166,7 @@ export const UKARTE = (function () {
       attributionControl:false, dragRotate:false, pitchWithRotate:false, touchZoomRotate:true
     });
     karte.touchZoomRotate.disableRotation();
-    karte.addControl(new gl.AttributionControl({ compact:true }), "bottom-right");
+    karte.addControl(new gl.AttributionControl({ compact:true, customAttribution:stilQuelle().attribution }), "bottom-right");
     karte.addControl(new gl.NavigationControl({ showCompass:false, visualizePitch:false }), "top-right");
 
     /* Warten, bis der Stil geparst ist — nicht, bis jede Kachel da ist.
@@ -442,7 +439,7 @@ export const UKARTE = (function () {
     /* Eine eingebettete Karte darf das Scrollen der Seite nicht abfangen:
        gezoomt wird über die Knöpfe, den Doppelklick oder zwei Finger. */
     k.scrollZoom.disable();
-    k.addControl(new gl.AttributionControl({ compact:true }), "bottom-right");
+    k.addControl(new gl.AttributionControl({ compact:true, customAttribution:stilQuelle().attribution }), "bottom-right");
     k.addControl(new gl.NavigationControl({ showCompass:false, visualizePitch:false }), "top-right");
     await new Promise(ok => {
       let fertig = false; const los = () => { if (!fertig) { fertig = true; ok(); } };

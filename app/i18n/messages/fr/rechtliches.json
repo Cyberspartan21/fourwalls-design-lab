@@ -1,0 +1,18 @@
+{
+  "re_eyebrow": "Informations légales",
+  "re_statusEntwurf": "Ce texte est un projet en cours d'examen juridique. Il n'est pas encore contraignant.",
+  "re_impressum_beschreibung": "Indications concernant l'exploitante de ce site — projet, soumis à examen juridique.",
+  "re_datenschutz_beschreibung": "Comment Fourwalls traite vos données — projet, soumis à examen juridique.",
+  "re_agb_beschreibung": "Conditions générales de Fourwalls — projet, soumis à examen juridique.",
+  "re_inseratsbedingungen_beschreibung": "Conditions de création et de publication des annonces — projet, soumis à examen juridique.",
+  "re_anbieterbedingungen_beschreibung": "Conditions pour les prestataires professionnels — projet, soumis à examen juridique.",
+  "re_feld_firma": "Raison sociale",
+  "re_feld_rechtsform": "Forme juridique",
+  "re_feld_uid": "Numéro au registre du commerce (IDE)",
+  "re_feld_adresse": "Adresse",
+  "re_feld_telefon": "Téléphone",
+  "re_feld_email": "E-mail",
+  "re_feld_bestaetigt": "Confirmé",
+  "re_feld_platzhalter": "Indication pas encore confirmée",
+  "re_feld_offen": "à compléter"
+}

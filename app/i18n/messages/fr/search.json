@@ -64,5 +64,9 @@
   "aboHinweisAnon": "Nous vous envoyons un e-mail de confirmation à cette adresse. Vous ne recevrez des notifications qu'après confirmation.",
   "aboHinweisKonto": "Votre alerte est active immédiatement — l'adresse de votre compte est déjà confirmée.",
   "suchaboFehler": "Cela n'a pas fonctionné. Veuillez réessayer plus tard.",
-  "aehnlicheKeine": "Il n'y a actuellement aucun bien comparable."
+  "aehnlicheKeine": "Il n'y a actuellement aucun bien comparable.",
+  "seo_kaufen_beschreibung": "Appartements, maisons et terrains à vendre dans toute la Suisse. Recherche par lieu, prix, surface et nombre de pièces, avec carte et alerte e-mail.",
+  "seo_mieten_beschreibung": "Appartements et maisons à louer dans toute la Suisse. Recherche par lieu, prix, surface et nombre de pièces, avec carte et alerte e-mail.",
+  "seo_titelMitOrt": "{art} à {ort}",
+  "seo_titelOhneOrt": "{art}"
 }

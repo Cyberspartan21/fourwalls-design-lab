@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { LOCALES, PFAD, istLocale, uebersetzer, type Locale } from "@/i18n";
 import { env } from "@/server/env";
+import { seoMeta, jsonLd } from "@/lib/seo";
 import { anbieterProfil, type AnbieterProfil } from "@/server/anbieter";
 import { woerter } from "@/components/marktplatz/labels";
 import { Karte, objektPfad } from "@/components/marktplatz/karte";
 import { Kopf } from "@/components/site/kopf";
+import { AUSSAGEN } from "@/config/policy";
 import an_de from "@/i18n/messages/de/anbieter.json";
 import an_fr from "@/i18n/messages/fr/anbieter.json";
 import an_it from "@/i18n/messages/it/anbieter.json";
@@ -66,17 +68,14 @@ async function laden(params: Promise<Params>, wort: string) {
 }
 
 export async function generateAnbieterMetadata(params: Promise<Params>, wort: string): Promise<Metadata> {
-  const { locale, profil, kanonisch } = await laden(params, wort);
-  const site = env().NEXT_PUBLIC_SITE_URL;
+  const { locale, profil } = await laden(params, wort);
   const beschreibung = profil.description
     ? (profil.description.length > 158 ? profil.description.slice(0, 155).replace(/\s+\S*$/, "") + "…" : profil.description)
-    : undefined;
-  return {
-    title: `${profil.displayName} — Fourwalls`,
-    description: beschreibung,
-    alternates: { canonical: site + kanonisch, languages: Object.fromEntries(LOCALES.map(l => [l, site + pfadAnbieter(l, profil.slug)])) }
-    /* Kein robots-Eintrag: Anbieterseiten sind öffentlich und indexierbar. */
-  };
+    : profil.displayName;
+  const pfade = Object.fromEntries(LOCALES.map(l => [l, pfadAnbieter(l, profil.slug)])) as Record<Locale, string>;
+  /* Kein robots-Eintrag: Anbieterseiten sind öffentlich und indexierbar
+     (seoMeta() indexiert per Voreinstellung). */
+  return seoMeta({ locale, pfade, titel: profil.displayName, beschreibung, ogTyp: "website" });
 }
 
 export async function AnbieterSeiteRoute({ params, wort }: { params: Promise<Params>; wort: string }) {
@@ -90,11 +89,25 @@ export async function AnbieterSeiteRoute({ params, wort }: { params: Promise<Par
   const sprachLinks = Object.fromEntries(LOCALES.map(l => [l, pfadAnbieter(l, profil.slug)])) as Record<Locale, string>;
   const artKey = ART_LABEL[profil.kind];
   const ort = [profil.postalCode, profil.city].filter(Boolean).join(" ");
+  const site = env().NEXT_PUBLIC_SITE_URL;
+
+  /* Organisation: nur, was diese Seite tatsächlich zeigt — kein Bewertungs-,
+     kein RealEstateAgent-Markup, keine Zahl, die hier nicht steht (§Auftrag). */
+  const ld: Record<string, unknown> = {
+    "@context": "https://schema.org", "@type": "Organization",
+    name: profil.displayName, url: site + kanonisch,
+    ...(profil.logo?.sources.jpeg[0]?.url ? { logo: site + profil.logo.sources.jpeg[0].url } : {}),
+    ...(ort ? { address: { "@type": "PostalAddress", postalCode: profil.postalCode ?? undefined, addressLocality: profil.city ?? undefined, addressCountry: "CH" } } : {}),
+    ...(profil.publicPhone ? { telephone: profil.publicPhone } : {}),
+    ...(profil.publicEmail ? { email: profil.publicEmail } : {})
+  };
 
   return (
     <>
+      {/* eslint-disable-next-line react/no-danger -- JSON.stringify mit maskiertem «<» (lib/seo.ts jsonLd()); das übliche, sichere Muster für JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an" style={{ maxWidth: 980 }}>
+      <main id="inhalt" className="wiz an" style={{ maxWidth: 980 }}>
         {/* Logo: die kleinste WebP-Ableitung, JPEG als Rückfall — Adressen kommen
             aus dem Speicheranbieter (pub/), nie aus einem Upload-Pfad (§44). */}
         {profil.logo && profil.logo.sources.jpeg[0] && (
@@ -104,10 +117,16 @@ export async function AnbieterSeiteRoute({ params, wort }: { params: Promise<Par
               style={{ width: 96, height: 96, objectFit: "contain", display: "block", marginBottom: 14 }} />
           </picture>
         )}
-        <h2>
+        {/* h1 statt h2: einzige Hauptüberschrift der Seite (P5.9 Phase B).
+           styles/portal.css stylt `.wiz h2` per Tag-Selektor, nicht `.wiz h1`
+           (styles/*.css liegen ausserhalb dieses Auftrags) — die bisherige
+           Optik (Petrona, Gewicht 300, gleiche Grösse) bleibt hier deshalb
+           inline erhalten, statt eine neue globale Regel zu ergänzen. Inhalt
+           inkl. der «verifiziert»-Zeile unverändert (WP1-Zeile, siehe Auftrag). */}
+        <h1 style={{ fontFamily: "var(--d)", fontWeight: 300, fontSize: "clamp(1.5rem,3vw,2.3rem)", marginTop: 8, letterSpacing: "-.015em" }}>
           {profil.displayName}
-          {profil.verificationState === "verified" && <span className="q"> · {w.geprueft}</span>}
-        </h2>
+          {(AUSSAGEN.identitaetGeprueft.stand as string) === "bestaetigt" && profil.verificationState === "verified" && <span className="q"> · {w.geprueft}</span>}
+        </h1>
         {artKey && <p style={{ color: "var(--leise)" }}>{t(artKey)}</p>}
         {ort && <p>{ort}</p>}
         {profil.website && (

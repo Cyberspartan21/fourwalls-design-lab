@@ -1,12 +1,22 @@
+import type { Metadata } from "next";
 import { istLocale, uebersetzer, DEFAULT_LOCALE, LOCALES, PFAD, type Locale } from "@/i18n";
 import { woerter } from "@/components/marktplatz/labels";
 import { Kopf } from "@/components/site/kopf";
 import { VergleichSeite } from "@/components/vergleich-seite";
+import { NOINDEX } from "@/lib/seo";
 
 /* Vergleich — öffentlich, ohne Konto. Die Referenzen liegen im Browser
    (components/vergleich.ts); diese Seite ist nur der Rahmen, die eigentliche
    Auflösung übernimmt die Client-Komponente über /api/vergleich (P5.6 §34). */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Vergleich, P5.9 Phase B) — die Referenzliste lebt im Browser,
+   dieselbe Adresse zeigt je nach Gerät anderen Inhalt. */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("vg_titel") };
+}
 
 export default async function Vergleich({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: roh } = await params;
@@ -19,7 +29,7 @@ export default async function Vergleich({ params }: { params: Promise<{ locale: 
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an" style={{ maxWidth: 1100 }}>
+      <main id="inhalt" className="wiz an" style={{ maxWidth: 1100 }}>
         <h2>{titel}</h2>
         <VergleichSeite
           locale={locale}

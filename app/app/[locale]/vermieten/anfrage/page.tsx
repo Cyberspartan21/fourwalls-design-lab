@@ -4,6 +4,7 @@ import { sitzung } from "@/server/sitzung";
 import { Kopf } from "@/components/site/kopf";
 import { AnliegenFormular } from "@/components/anliegen/anliegen-formular";
 import { anliegenTexte } from "@/components/anliegen/texte";
+import { NOINDEX } from "@/lib/seo";
 
 /* Vermietung anfragen — Dienst "let". Objekt→Situation→Kontakt→Prüfen. */
 export const dynamic = "force-dynamic";
@@ -14,7 +15,9 @@ function localeAus(roh: string): Locale { return istLocale(roh) ? roh : DEFAULT_
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const locale = localeAus((await params).locale);
   const t = uebersetzer(locale);
-  return { title: t("al_meta_let_titel"), description: t("al_meta_let_beschreibung") };
+  /* Formularseite (Entscheid 26): NOINDEX, kein Canonical/hreflang — die
+     Landeseite /vermieten ist das Suchziel, nicht dieses Formular. */
+  return { ...NOINDEX, title: t("al_meta_let_titel") };
 }
 
 export default async function VermietenAnfrage({ params }: { params: Promise<Params> }) {
@@ -27,7 +30,7 @@ export default async function VermietenAnfrage({ params }: { params: Promise<Par
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an">
+      <main id="inhalt" className="wiz an">
         <p className="hin" style={{ color: "var(--leise)" }}>{t("al_let_lead")}</p>
         <AnliegenFormular dienst="let" angemeldet={s !== null} locale={locale} t={anliegenTexte(t)} />
       </main>

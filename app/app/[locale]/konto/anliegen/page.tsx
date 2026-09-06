@@ -1,14 +1,23 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { istLocale, uebersetzer, DEFAULT_LOCALE, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
 import { meineAnliegen } from "@/server/anliegen";
 import { KontoRahmen } from "../kopfzeile";
+import { NOINDEX } from "@/lib/seo";
 
 /* Meine Anliegen — was eine angemeldete Person über die fünf
    Anliegen-Formulare (Verkauf, Vermietung, Bewertung, Verwaltung, Beratung)
    selbst eingereicht hat. Zeigt nur, was `service_lead.status` wirklich
    hergibt, in kundentauglichen Worten — kein erfundener Zwischenstand. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Konto, P5.9 Phase B). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("al_titel") };
+}
 
 export default async function MeineAnliegenSeite({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: roh } = await params;

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { istLocale, uebersetzer, DEFAULT_LOCALE, PFAD, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
 import { listeFavoriten, treffernachRefs } from "@/server/favoriten";
@@ -5,6 +6,14 @@ import { woerter } from "@/components/marktplatz/labels";
 import { KontoRahmen } from "../kopfzeile";
 import { FavoritenInit } from "@/components/konto/favoriten-init";
 import { FavoritenListe } from "@/components/konto/favoriten-liste";
+import { NOINDEX } from "@/lib/seo";
+
+/* NOINDEX (Merkliste, P5.9 Phase B). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("fv_titel") };
+}
 
 /* Meine Merkliste — geräteübergreifend, sobald ein Konto besteht.
 

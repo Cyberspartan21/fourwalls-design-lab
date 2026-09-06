@@ -33,8 +33,8 @@ export function KontoRahmen({ locale, titel, lead, breit = false, nav = false, a
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an" style={breit ? { maxWidth: 980 } : undefined}>
-        <h2>{titel}</h2>
+      <main id="inhalt" className="wiz an" style={breit ? { maxWidth: 980 } : undefined}>
+        <h1 className="titel">{titel}</h1>
         {lead && <p style={{ color: "var(--leise)", marginTop: 10, maxWidth: "56ch" }}>{lead}</p>}
         {nav && (
           <nav style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>

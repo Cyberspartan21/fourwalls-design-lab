@@ -1,0 +1,20 @@
+{
+  "ws_wissenWort": "Guida",
+  "ws_uebersichtLead": "Risposte alle domande che sorgono davvero prima di un acquisto, una vendita, una locazione o un affitto — brevi, concrete, senza pubblicità.",
+  "ws_absicht_verkaufen": "Vendere",
+  "ws_absicht_bewerten": "Valutazione",
+  "ws_absicht_mieten": "Affittare",
+  "ws_absicht_vermieten": "Affittare",
+  "ws_absicht_verwalten": "Amministrazione",
+  "ws_absicht_wissen": "Guida",
+  "ws_aktualisiert": "Aggiornato il {datum}",
+  "ws_quellen": "Fonti",
+  "ws_verwandteBeitraege": "Articoli correlati",
+  "ws_cta_verkaufen_mitFw": "Vendere con Fourwalls",
+  "ws_cta_verkaufen_bewertung": "Richiedere una valutazione senza impegno",
+  "ws_cta_bewerten": "Richiedere una valutazione senza impegno",
+  "ws_cta_mieten": "Cercare un oggetto in affitto",
+  "ws_cta_vermieten": "Incaricare la ricerca di inquilini",
+  "ws_cta_verwalten": "Richiedere un'amministrazione",
+  "ws_cta_wissen": "Saperne di più su Fourwalls"
+}

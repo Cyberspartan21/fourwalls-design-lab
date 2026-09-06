@@ -35,6 +35,10 @@ export function Galerie({ bilder, kategorien, katLabel, titel, medien, tx, zeige
   }, [licht, sprung]);
 
   const teil = bilder.map((b, i) => ({ b, i })).filter(x => kat === "alle" || x.b.category === kat);
+  /* .gal .g0..g5 haben je eigenes aspect-ratio (styles/objekt.css) — dieselbe
+     Reihenfolge hier, damit das <img> selbst das Verhältnis kennt (P5.9
+     Entscheid 23 §4), auch wenn die Zellenklasse es schon absichert. */
+  const G_RATIO = ["16 / 10", "4 / 5", "1 / 1", "16 / 9", "3 / 2", "3 / 2"];
   const gross = (m: Media) => m.sources.jpeg.find(s => s.width === 1600)?.url ?? m.sources.jpeg[m.sources.jpeg.length - 1]?.url;
   const klein = (m: Media) => m.sources.jpeg.find(s => s.width === 480)?.url ?? m.sources.jpeg[0]?.url;
 
@@ -59,7 +63,7 @@ export function Galerie({ bilder, kategorien, katLabel, titel, medien, tx, zeige
           <div className="gal" id="galGitter">
             {teil.map((x, n) => (
               <figure key={x.i} className={`g${n % 6}`} data-li={x.i} onClick={() => { setLkat("alle"); setLicht({ index: x.i }); }}>
-                <Bild m={x.b} sizes="(max-width:960px) 100vw, 50vw" alt={x.b.alt || titel} />
+                <Bild m={x.b} sizes="(max-width:960px) 100vw, 50vw" alt={x.b.alt || titel} aspectRatio={G_RATIO[n % 6]} />
                 {x.b.alt && <figcaption>{x.b.alt}</figcaption>}
               </figure>
             ))}
@@ -89,12 +93,12 @@ export function Galerie({ bilder, kategorien, katLabel, titel, medien, tx, zeige
             </div>
             <div className="lb">
               <button className="pf l" id="lichtL" aria-label={tx.o_vorherigesBild} onClick={() => sprung(-1)}>‹</button>
-              <img id="lichtImg" src={gross(b)} alt={b.alt || titel} />
+              <img id="lichtImg" src={gross(b)} alt={b.alt || titel} style={{ aspectRatio: "3 / 2" }} />
               <button className="pf r" id="lichtR" aria-label={tx.o_naechstesBild} onClick={() => sprung(1)}>›</button>
             </div>
             <div className="bu" id="lichtBu">{b.alt}</div>
             <div className="lf" id="lichtF">
-              {liste.map(n => <button key={n} data-j={n} aria-current={n === aktIndex} aria-label={`${tx.o_bildWort} ${n + 1}`} onClick={() => setLicht({ index: n })}><img src={klein(bilder[n]!)} alt="" loading="lazy" /></button>)}
+              {liste.map(n => <button key={n} data-j={n} aria-current={n === aktIndex} aria-label={`${tx.o_bildWort} ${n + 1}`} onClick={() => setLicht({ index: n })}><img src={klein(bilder[n]!)} alt="" loading="lazy" style={{ aspectRatio: "3 / 2" }} /></button>)}
             </div>
           </>
         )}

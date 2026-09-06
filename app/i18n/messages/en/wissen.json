@@ -1,0 +1,20 @@
+{
+  "ws_wissenWort": "Knowledge",
+  "ws_uebersichtLead": "Answers to the questions that actually come up before a purchase, a sale, a rental or a letting — short, concrete, no advertising.",
+  "ws_absicht_verkaufen": "Sell",
+  "ws_absicht_bewerten": "Valuation",
+  "ws_absicht_mieten": "Rent",
+  "ws_absicht_vermieten": "Let",
+  "ws_absicht_verwalten": "Manage",
+  "ws_absicht_wissen": "Knowledge",
+  "ws_aktualisiert": "Updated on {datum}",
+  "ws_quellen": "Sources",
+  "ws_verwandteBeitraege": "Related articles",
+  "ws_cta_verkaufen_mitFw": "Sell with Fourwalls",
+  "ws_cta_verkaufen_bewertung": "Request a no-obligation valuation",
+  "ws_cta_bewerten": "Request a no-obligation valuation",
+  "ws_cta_mieten": "Search rental properties",
+  "ws_cta_vermieten": "Ask Fourwalls to find tenants",
+  "ws_cta_verwalten": "Request management",
+  "ws_cta_wissen": "Learn more about Fourwalls"
+}

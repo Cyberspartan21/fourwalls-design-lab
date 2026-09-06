@@ -168,12 +168,12 @@
   "o_unterhMonat": "Manutenzione e spese accessorie / mese",
   "o_vergroessern": "Ingrandire",
   "o_verkleinern": "Rimpicciolire",
-  "o_vertrittNicht": "Fourwalls non rappresenta questo immobile",
+  "o_vertrittNicht": "Questo immobile non è commercializzato da Fourwalls",
   "o_video": "Video",
   "o_videoProd": "In produzione qui verrà riprodotto il video come stream HLS, senza autoplay audio.",
   "o_vollbild": "Schermo intero",
   "o_vorherigesBild": "Immagine precedente",
-  "o_wirVertreten": "Fourwalls rappresenta la parte venditrice.",
+  "o_wirVertreten": "Vendita con Fourwalls",
   "o_ziKurz": "loc.",
   "o_zinsmodell": "Modello di tasso",
   "o_zinsMonat": "Interessi / mese",
@@ -194,5 +194,10 @@
   "verkauft": "Venduto",
   "vermietet": "Affittato",
   "verwaltung": "Amministrazione",
-  "o_angenommenPrefix": "Richiesta ricevuta —"
+  "o_angenommenPrefix": "Richiesta ricevuta —",
+  "o_datenschutzHin": "I vostri dati vengono trasmessi alla parte che offre l'immobile e a Fourwalls per l'elaborazione della richiesta.",
+  "o_datenschutzLink": "Privacy",
+  "o_eigentuemer_titel": "È proprietaria o proprietario?",
+  "o_eigentuemer_verkaufen": "Vuole vendere un oggetto simile? Vendere con Fourwalls",
+  "o_eigentuemer_bewertung": "Richiedere una valutazione senza impegno"
 }

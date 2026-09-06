@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { istLocale, DEFAULT_LOCALE, uebersetzer, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
@@ -8,11 +9,21 @@ import { asAppError } from "@/lib/errors";
 import { InternRahmen } from "@/components/intern/intern-rahmen";
 import { LeadAktionen } from "@/components/intern/lead-aktionen";
 import { ZuweisenAuswahl } from "@/components/intern/zuweisen-auswahl";
+import { NOINDEX } from "@/lib/seo";
 
 /* Ein Anliegen: Kontakt, Objektkontext, Situation, Herkunft, Wunschtermin —
    Status-Wechsel und Zuweisung als Aktionen, Prüfspur am Ende (P5.8 §24–§30).
    Kein CRM: keine Notizen, keine Aufgaben, kein Scoring. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (interner Bereich, P5.9 Phase B) — Titel ohne erneuten
+   leadLesen()-Aufruf: Referenz aus dem Pfad reicht für einen sinnvollen,
+   nicht indexierten Titel. */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; ref: string }> }): Promise<Metadata> {
+  const { locale: roh, ref } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: `${uebersetzer(locale)("in_eyebrow")} · ${ref.toUpperCase()}` };
+}
 
 export default async function InternAnliegenDetailSeite({ params }: { params: Promise<{ locale: string; ref: string }> }) {
   const { locale: roh, ref } = await params;

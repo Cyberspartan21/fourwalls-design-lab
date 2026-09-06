@@ -1,0 +1,18 @@
+{
+  "re_eyebrow": "Rechtliches",
+  "re_statusEntwurf": "Dieser Text ist ein Entwurf und liegt zur rechtlichen Prüfung vor. Er ist noch nicht verbindlich.",
+  "re_impressum_beschreibung": "Angaben zur Anbieterin dieser Website — Entwurf, zur rechtlichen Prüfung vorgelegt.",
+  "re_datenschutz_beschreibung": "Wie Fourwalls mit Ihren Daten umgeht — Entwurf, zur rechtlichen Prüfung vorgelegt.",
+  "re_agb_beschreibung": "Allgemeine Geschäftsbedingungen von Fourwalls — Entwurf, zur rechtlichen Prüfung vorgelegt.",
+  "re_inseratsbedingungen_beschreibung": "Bedingungen für das Erstellen und Veröffentlichen von Inseraten — Entwurf, zur rechtlichen Prüfung vorgelegt.",
+  "re_anbieterbedingungen_beschreibung": "Bedingungen für professionelle Anbieterinnen und Anbieter — Entwurf, zur rechtlichen Prüfung vorgelegt.",
+  "re_feld_firma": "Firma",
+  "re_feld_rechtsform": "Rechtsform",
+  "re_feld_uid": "Handelsregisternummer (UID)",
+  "re_feld_adresse": "Adresse",
+  "re_feld_telefon": "Telefon",
+  "re_feld_email": "E-Mail",
+  "re_feld_bestaetigt": "Bestätigt",
+  "re_feld_platzhalter": "Angabe noch nicht bestätigt",
+  "re_feld_offen": "wird ergänzt"
+}

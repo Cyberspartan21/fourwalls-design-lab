@@ -25,8 +25,8 @@
 .mehrfilter{position:relative}
 .filterfeld{position:absolute;right:0;top:calc(100% + 8px);width:min(460px,92vw);background:var(--gr2);border:1px solid var(--linie);border-radius:var(--r);padding:18px;z-index:80;display:none;box-shadow:0 26px 70px rgba(0,0,0,.4)}
 .filterfeld.an{display:block;animation:tafelAuf .3s var(--ease)}
-.filterfeld h4{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin:14px 0 8px;font-weight:500}
-.filterfeld h4:first-child{margin-top:0}
+.filterfeld .fkt{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--leise);margin:14px 0 8px;font-weight:500}
+.filterfeld .fkt:first-child{margin-top:0}
 .filterfeld input[type="number"]{width:100%}
 .chipwahl{display:flex;flex-wrap:wrap;gap:6px}
 .chipwahl button{border:1px solid var(--linie2);border-radius:var(--r);padding:.4em .7em;font-size:.7rem;color:var(--leise);min-height:32px}
@@ -126,6 +126,7 @@
 .wiz .fort i.voll{background:var(--licht)}
 .wiz .schrittz{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leise)}
 .wiz h2{font-family:var(--d);font-weight:300;font-size:clamp(1.5rem,3vw,2.3rem);margin-top:8px;letter-spacing:-.015em}
+.wiz h1.titel{font-family:var(--d);font-weight:300;font-size:clamp(1.5rem,3vw,2.3rem);margin-top:8px;letter-spacing:-.015em}
 .wiz .fld{margin-top:18px}
 .wiz label{display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--leise);margin-bottom:7px}
 .wiz input[type="text"],.wiz input[type="number"],.wiz input[type="email"],.wiz input[type="password"],.wiz input[type="date"],.wiz textarea,.wiz select{width:100%;background:var(--gr2);border:1px solid var(--linie2);border-radius:var(--r);padding:.72em .9em;font-size:.9rem;min-height:44px}
@@ -304,3 +305,17 @@
   .karte .lauf{padding:10px 0 14px}
   .dtitel .preiszeile{flex-direction:column;gap:6px}
 }
+
+/* ---------- Rechtstext-Fliesstext (P5.9 Phase B) ----------
+   Minimaler Zusatz, erlaubt trotz eingefrorenem UFER: der globale Reset
+   nullt Abstände auf h1–h3/p/ul (siehe ufer.css `:where(...)`), reiner
+   Fliesstext (Rechtsseiten, Vertrauensseite) braucht dafür etwas Luft. Keine
+   neuen Farben, keine neue Typografie — nur Abstand. */
+.rechtstext h1{font-family:var(--d);font-weight:300;font-size:clamp(1.8rem,3.4vw,2.6rem);letter-spacing:-.015em;margin-top:10px}
+.rechtstext h2{font-family:var(--d);font-weight:300;font-size:clamp(1.2rem,2.2vw,1.6rem);margin-top:34px}
+.rechtstext h3{font-size:1rem;font-weight:600;margin-top:22px}
+.rechtstext p{margin-top:12px;color:var(--leise);line-height:1.7;max-width:66ch}
+.rechtstext ul{margin-top:10px;padding-left:1.2em;list-style:disc;color:var(--leise);max-width:66ch}
+.rechtstext li{margin-top:4px}
+.rechtstext strong{color:var(--ink);font-weight:600}
+.rechtstext a{text-decoration:underline;text-underline-offset:2px}

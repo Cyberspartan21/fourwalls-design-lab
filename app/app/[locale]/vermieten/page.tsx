@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { istLocale, DEFAULT_LOCALE, LOCALES, type Locale } from "@/i18n";
 import { Kopf } from "@/components/site/kopf";
+import { seoMeta } from "@/lib/seo";
 import de from "@/i18n/messages/de/service.json";
 import fr from "@/i18n/messages/fr/service.json";
 import it from "@/i18n/messages/it/service.json";
@@ -18,7 +19,8 @@ function localeAus(roh: string): Locale { return istLocale(roh) ? roh : DEFAULT_
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const locale = localeAus((await params).locale);
-  return { title: `${sv(locale, "sv_vmTitel")} — Fourwalls`, description: sv(locale, "sv_vmLead") };
+  const pfade = Object.fromEntries(LOCALES.map(l => [l, `/${l}/vermieten`])) as Record<Locale, string>;
+  return seoMeta({ locale, pfade, titel: sv(locale, "sv_vmTitel"), beschreibung: sv(locale, "sv_vmLead"), ogTyp: "website" });
 }
 
 export default async function Vermieten({ params }: { params: Promise<Params> }) {
@@ -30,16 +32,17 @@ export default async function Vermieten({ params }: { params: Promise<Params> })
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} aktuell="verkaufen" />
-      <main className="wiz an" style={{ maxWidth: 780 }}>
-        <h2>{t("sv_vmTitel")}</h2>
+      <main id="inhalt" className="wiz an" style={{ maxWidth: 780 }}>
+        <h1 className="titel">{t("sv_vmTitel")}</h1>
         <p style={{ color: "var(--leise)", marginTop: 10, maxWidth: "56ch" }}>{t("sv_vmLead")}</p>
+        <p style={{ color: "var(--leise)", marginTop: 6, maxWidth: "56ch" }}>{t("sv_vmErstHinweis")}</p>
 
         <p style={{ marginTop: 32 }}>
           <a className="knopf voll" href={`/${locale}/vermieten/anfrage`}>{t("sv_ctaAnfrage")}</a>
         </p>
 
         <section style={{ marginTop: 40, paddingTop: 24, borderTop: "1px solid var(--linie)" }}>
-          <h3 style={{ fontSize: ".95rem", fontWeight: 500 }}>{t("sv_vmAbgrenzungTitel")}</h3>
+          <h2 style={{ fontSize: ".95rem", fontWeight: 500 }}>{t("sv_vmAbgrenzungTitel")}</h2>
           <p style={{ marginTop: 8, color: "var(--leise)" }}>{t("sv_vmAbgrenzungText")} <a href={`/${locale}/verwalten`}>{t("sv_vmAbgrenzungLink")}</a></p>
         </section>
       </main>

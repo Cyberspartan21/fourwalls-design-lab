@@ -21,6 +21,8 @@ import de_org from "./messages/de/org.json";
 import de_anliegen from "./messages/de/anliegen.json";
 import de_service from "./messages/de/service.json";
 import de_intern from "./messages/de/intern.json";
+import de_rechtliches from "./messages/de/rechtliches.json";
+import de_vertrauen from "./messages/de/vertrauen.json";
 import fr_common from "./messages/fr/common.json";
 import fr_navigation from "./messages/fr/navigation.json";
 import fr_search from "./messages/fr/search.json";
@@ -37,6 +39,8 @@ import fr_org from "./messages/fr/org.json";
 import fr_anliegen from "./messages/fr/anliegen.json";
 import fr_service from "./messages/fr/service.json";
 import fr_intern from "./messages/fr/intern.json";
+import fr_rechtliches from "./messages/fr/rechtliches.json";
+import fr_vertrauen from "./messages/fr/vertrauen.json";
 import it_common from "./messages/it/common.json";
 import it_navigation from "./messages/it/navigation.json";
 import it_search from "./messages/it/search.json";
@@ -53,6 +57,8 @@ import it_org from "./messages/it/org.json";
 import it_anliegen from "./messages/it/anliegen.json";
 import it_service from "./messages/it/service.json";
 import it_intern from "./messages/it/intern.json";
+import it_rechtliches from "./messages/it/rechtliches.json";
+import it_vertrauen from "./messages/it/vertrauen.json";
 import en_common from "./messages/en/common.json";
 import en_navigation from "./messages/en/navigation.json";
 import en_search from "./messages/en/search.json";
@@ -69,6 +75,8 @@ import en_org from "./messages/en/org.json";
 import en_anliegen from "./messages/en/anliegen.json";
 import en_service from "./messages/en/service.json";
 import en_intern from "./messages/en/intern.json";
+import en_rechtliches from "./messages/en/rechtliches.json";
+import en_vertrauen from "./messages/en/vertrauen.json";
 
 export const LOCALES = ["de", "fr", "it", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -79,10 +87,10 @@ export const istLocale = (s: string): s is Locale => (LOCALES as readonly string
 type Katalog = Record<string, string>;
 
 const KATALOGE: Record<Locale, Katalog> = {
-  de: { ...de_common, ...de_navigation, ...de_search, ...de_property, ...de_listing, ...de_account, ...de_konto, ...de_favoriten, ...de_verlauf, ...de_vergleich, ...de_anfragen, ...de_anbieter, ...de_org, ...de_anliegen, ...de_service, ...de_intern },
-  fr: { ...fr_common, ...fr_navigation, ...fr_search, ...fr_property, ...fr_listing, ...fr_account, ...fr_konto, ...fr_favoriten, ...fr_verlauf, ...fr_vergleich, ...fr_anfragen, ...fr_anbieter, ...fr_org, ...fr_anliegen, ...fr_service, ...fr_intern },
-  it: { ...it_common, ...it_navigation, ...it_search, ...it_property, ...it_listing, ...it_account, ...it_konto, ...it_favoriten, ...it_verlauf, ...it_vergleich, ...it_anfragen, ...it_anbieter, ...it_org, ...it_anliegen, ...it_service, ...it_intern },
-  en: { ...en_common, ...en_navigation, ...en_search, ...en_property, ...en_listing, ...en_account, ...en_konto, ...en_favoriten, ...en_verlauf, ...en_vergleich, ...en_anfragen, ...en_anbieter, ...en_org, ...en_anliegen, ...en_service, ...en_intern }
+  de: { ...de_common, ...de_navigation, ...de_search, ...de_property, ...de_listing, ...de_account, ...de_konto, ...de_favoriten, ...de_verlauf, ...de_vergleich, ...de_anfragen, ...de_anbieter, ...de_org, ...de_anliegen, ...de_service, ...de_intern, ...de_rechtliches, ...de_vertrauen },
+  fr: { ...fr_common, ...fr_navigation, ...fr_search, ...fr_property, ...fr_listing, ...fr_account, ...fr_konto, ...fr_favoriten, ...fr_verlauf, ...fr_vergleich, ...fr_anfragen, ...fr_anbieter, ...fr_org, ...fr_anliegen, ...fr_service, ...fr_intern, ...fr_rechtliches, ...fr_vertrauen },
+  it: { ...it_common, ...it_navigation, ...it_search, ...it_property, ...it_listing, ...it_account, ...it_konto, ...it_favoriten, ...it_verlauf, ...it_vergleich, ...it_anfragen, ...it_anbieter, ...it_org, ...it_anliegen, ...it_service, ...it_intern, ...it_rechtliches, ...it_vertrauen },
+  en: { ...en_common, ...en_navigation, ...en_search, ...en_property, ...en_listing, ...en_account, ...en_konto, ...en_favoriten, ...en_verlauf, ...en_vergleich, ...en_anfragen, ...en_anbieter, ...en_org, ...en_anliegen, ...en_service, ...en_intern, ...en_rechtliches, ...en_vertrauen }
 };
 
 /* Übersetzer für eine Sprache. Unbekannter Schlüssel → Deutsch → Schlüssel

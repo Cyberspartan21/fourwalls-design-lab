@@ -6,6 +6,39 @@
    Prinzip: OBERFLÄCHE · TIEFE · SPIEGELUNG · ÖFFNUNG · RAUM · LICHT
    ============================================================ */
 
+/* ---------- Selbst gehostete Schriften (P5.9 Entscheid 23) ----------
+   Petrona (variabel, wght 100..900, Achse wird per font-weight-Angabe im
+   CSS begrenzt) und Manrope (variabel, wght 100..900), je SIL Open Font
+   License 1.1 — siehe public/fonts/LICENSE-Petrona.txt und
+   LICENSE-Manrope.txt. Nur das Subset "latin": es deckt sowohl "œ"
+   (U+0152/U+0153) als auch "ß" (U+00DF) ab, die de/fr/it-Texte brauchen
+   kein latin-ext-Zeichen (geprüft gegen die Unicode-Ranges der
+   Fontsource-Pakete @fontsource-variable/petrona und -manrope). */
+@font-face{
+  font-family:'Petrona';
+  font-style:normal;
+  font-display:swap;
+  font-weight:100 900;
+  src:url('/fonts/petrona-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Petrona';
+  font-style:italic;
+  font-display:swap;
+  font-weight:100 900;
+  src:url('/fonts/petrona-latin-wght-italic.woff2') format('woff2-variations');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Manrope';
+  font-style:normal;
+  font-display:swap;
+  font-weight:100 900;
+  src:url('/fonts/manrope-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
 :root{
   /* Dunkel = Blaue Stunde am Wasser (Grundstimmung der Marke) */
   --gr:#0B121B; --gr2:#111B27; --gr3:#182433; --gr4:#22303F;
@@ -213,8 +246,13 @@ label.et{display:block;font-size:.62rem;letter-spacing:.18em;text-transform:uppe
 /* ---------- Hilfsklassen ---------- */
 .nurmobil{display:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* Skip-Link «Zum Inhalt»: erstes fokussierbares Element im body, visuell
+   versteckt bis zum Fokus (Tastatur), damit Screenreader- und
+   Tastaturnutzung Kopf/Navigation überspringen kann. */
+.skip{position:fixed;top:-80px;left:12px;z-index:500;background:var(--gr);color:var(--licht);border:1px solid var(--linie2);border-radius:var(--r);padding:.62em 1.05em;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;transition:top .2s}
+.skip:focus{top:12px}
 @media(max-width:960px){
-  .kopf nav.haupt,.sprache{display:none}
+  .kopf nav.haupt,.kopf .sprache{display:none}
   .burger{display:grid}
   .wege{grid-template-columns:1fr 1fr}
   .wege a{border-bottom:1px solid var(--linie)}

@@ -4,6 +4,7 @@ import { sitzung } from "@/server/sitzung";
 import { Kopf } from "@/components/site/kopf";
 import { AnliegenFormular } from "@/components/anliegen/anliegen-formular";
 import { anliegenTexte } from "@/components/anliegen/texte";
+import { seoMeta } from "@/lib/seo";
 
 /* Bewertung anfragen — Dienst "valuation". Objekt→Kontakt→Prüfen, davor ein
    kurzer Erklärtext: was wir brauchen, was danach passiert, was am Ende
@@ -18,7 +19,8 @@ function localeAus(roh: string): Locale { return istLocale(roh) ? roh : DEFAULT_
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const locale = localeAus((await params).locale);
   const t = uebersetzer(locale);
-  return { title: t("al_meta_valuation_titel"), description: t("al_meta_valuation_beschreibung") };
+  const pfade = Object.fromEntries(LOCALES.map(l => [l, `/${l}/bewertung`])) as Record<Locale, string>;
+  return seoMeta({ locale, pfade, titel: t("al_meta_valuation_titel"), beschreibung: t("al_meta_valuation_beschreibung"), ogTyp: "website" });
 }
 
 export default async function Bewertung({ params }: { params: Promise<Params> }) {
@@ -31,20 +33,21 @@ export default async function Bewertung({ params }: { params: Promise<Params> })
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an">
+      <main id="inhalt" className="wiz an">
+        <h1 className="titel">{t("al_meta_valuation_titel")}</h1>
         <p className="hin" style={{ color: "var(--leise)" }}>{t("al_valuation_lead")}</p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 16, margin: "20px 0 30px" }}>
           <div>
-            <h3 style={{ fontSize: ".85rem", fontWeight: 500 }}>{t("al_valuation_brauchenTitel")}</h3>
+            <h2 style={{ fontSize: ".85rem", fontWeight: 500 }}>{t("al_valuation_brauchenTitel")}</h2>
             <p style={{ color: "var(--leise)", fontSize: ".85rem", marginTop: 6 }}>{t("al_valuation_brauchenText")}</p>
           </div>
           <div>
-            <h3 style={{ fontSize: ".85rem", fontWeight: 500 }}>{t("al_valuation_danachTitel")}</h3>
+            <h2 style={{ fontSize: ".85rem", fontWeight: 500 }}>{t("al_valuation_danachTitel")}</h2>
             <p style={{ color: "var(--leise)", fontSize: ".85rem", marginTop: 6 }}>{t("al_valuation_danachText")}</p>
           </div>
           <div>
-            <h3 style={{ fontSize: ".85rem", fontWeight: 500 }}>{t("al_valuation_erhaltenTitel")}</h3>
+            <h2 style={{ fontSize: ".85rem", fontWeight: 500 }}>{t("al_valuation_erhaltenTitel")}</h2>
             <p style={{ color: "var(--leise)", fontSize: ".85rem", marginTop: 6 }}>{t("al_valuation_erhaltenText")}</p>
           </div>
         </div>

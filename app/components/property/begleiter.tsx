@@ -1,14 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import type { Publisher } from "@/domain/listing";
+import { AUSSAGEN } from "@/config/policy";
 
 /* Kontaktkarte mit Anfrageformular. Der Erfolg heisst genau das, was er ist:
    «Anfrage angenommen» — die Anwendung hat sie gespeichert und dem Versand
    übergeben. Scheitert das, sagt die Karte es. */
 type Antwort = { angenommen: true; publicRef: string } | { error: { code: string; message: string; fields?: Record<string, string[]> } };
 
-export function Begleiter({ publicRef, quelle, quelleLabel, schritte, suffix, tx }:
-  { publicRef: string; quelle: Publisher; quelleLabel: string; schritte: string[]; suffix: "" | "M"; tx: Record<string, string> }) {
+export function Begleiter({ publicRef, quelle, quelleLabel, schritte, suffix, tx, locale }:
+  { publicRef: string; quelle: Publisher; quelleLabel: string; schritte: string[]; suffix: "" | "M"; tx: Record<string, string>; locale: string }) {
+  /* «geprüft» erscheint öffentlich nur, wenn die Geschäftsaussage bestätigt ist (Entscheid 17, 2026-09-06: entfernt). */
+  const geprueftSichtbar = quelle.orgVerified && (AUSSAGEN.identitaetGeprueft.stand as string) === "bestaetigt";
   const [offen, setOffen] = useState(false);
   const [art, setArt] = useState<"viewing_request" | "listing_question">("viewing_request");
   const [name, setName] = useState(""); const [mail, setMail] = useState("");
@@ -51,10 +54,10 @@ export function Begleiter({ publicRef, quelle, quelleLabel, schritte, suffix, tx
   return (
     <div className="begleiter">
       <div className="wer">{wir ? <span className="mark"></span> : <span className="av">{(quelle.personName ?? quelle.orgName ?? "?").split(" ").map(x => x[0]).join("").slice(0, 2)}</span>}
-        <div><b>{person}</b><span>{quelle.orgName && quelle.personName ? quelle.orgName : quelleLabel}{quelle.orgVerified ? " · " + tx.geprueft : ""}</span></div></div>
+        <div><b>{person}</b><span>{quelle.orgName && quelle.personName ? quelle.orgName : quelleLabel}{geprueftSichtbar ? " · " + tx.geprueft : ""}</span></div></div>
       <div className="vertrauen">{wir
         ? <><b>{tx.o_wirVertreten}</b> {tx.o_anfrageGehtAn} {quelle.personName ? person : tx.o_unserTeam}, {tx.o_nichtAnDritte}</>
-        : <>{tx.o_inseriertVon} <b>{quelleLabel}</b>. {tx.o_anfrageDirekt} {tx.o_vertrittNicht}{quelle.orgVerified ? tx.o_hatGeprueft : ""}.</>}</div>
+        : <>{tx.o_inseriertVon} <b>{quelleLabel}</b>. {tx.o_anfrageDirekt} {tx.o_vertrittNicht}{geprueftSichtbar ? tx.o_hatGeprueft : ""}.</>}</div>
       <div className="cta">
         <button className="knopf voll" onClick={() => { setOffen(true); setArt("viewing_request"); }}>{tx.anfrage}</button>
         <button className="knopf" onClick={() => { setOffen(true); setArt("listing_question"); setText(tx.o_nachrichtFrage ?? ""); }}>{tx.o_frageStellen}</button>
@@ -69,6 +72,9 @@ export function Begleiter({ publicRef, quelle, quelleLabel, schritte, suffix, tx
         <input className="ht" type="text" name="firma" tabIndex={-1} autoComplete="off" aria-hidden="true" defaultValue="" />
         <textarea aria-label={tx.nachricht ?? "Nachricht"} id={`dfText${suffix}`} value={text} onChange={e => setText(e.target.value)} maxLength={2000} />
         <label className="ab"><input type="checkbox" checked={abo} onChange={e => setAbo(e.target.checked)} /> {tx.o_aehnlicheSuchabo}</label>
+        <p className="hin" style={{ color: "var(--leise)", fontSize: ".78rem", marginTop: 10 }}>
+          {tx.o_datenschutzHin} <a href={`/${locale}/datenschutz`}>{tx.o_datenschutzLink}</a>
+        </p>
         <button className="knopf voll" id={`dfSenden${suffix}`} style={{ width: "100%", opacity: status === "ok" || status === "sendet" ? .5 : 1 }} disabled={status === "ok" || status === "sendet"} onClick={senden}>{status === "sendet" ? "…" : tx.o_anfrageSenden}</button>
         {fehler && <p className="fehler" role="alert">{fehler}</p>}
         <p className={`ok ${status === "ok" ? "an" : ""}`} id={`dfOk${suffix}`}>{tx.o_angenommenPrefix} {person} {tx.o_gesendetAn}</p>

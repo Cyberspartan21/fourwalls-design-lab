@@ -250,7 +250,7 @@ export function AnliegenFormular({ dienst, angemeldet, locale, t }: AnliegenForm
       {S === "kontakt" && (
         <>
           {dienst === "owner_consultation" && <SituationBlock dienst={dienst} objekt={objekt} aendern={aendernObjekt} t={t} />}
-          <KontaktBlock kontakt={kontakt} aendern={aendernKontakt} t={t} fehlt={fehltKontakt} datenschutzHref={`/${locale}`} />
+          <KontaktBlock kontakt={kontakt} aendern={aendernKontakt} t={t} fehlt={fehltKontakt} datenschutzHref={`/${locale}/datenschutz`} />
           <input ref={honigtopf} type="text" name="firma" tabIndex={-1} autoComplete="off" aria-hidden="true" defaultValue=""
             style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }} />
         </>

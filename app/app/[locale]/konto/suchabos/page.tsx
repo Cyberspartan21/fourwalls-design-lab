@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { istLocale, uebersetzer, DEFAULT_LOCALE, PFAD, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
 import { meineSuchen } from "@/server/gespeicherteSuchen";
+import { NOINDEX } from "@/lib/seo";
 import { SuchanfrageSchema, paramsAusAnfrage } from "@/domain/suchurl";
 import type { Suchanfrage } from "@/domain/marktplatz";
 import { woerter, typLabel, chfText, type Woerter } from "@/components/marktplatz/labels";
@@ -14,6 +16,13 @@ import { SuchaboZeile } from "@/components/konto/suchabo-zeile";
    Anonyme Suchabos verwaltet ausschliesslich der Abmeldelink in jeder Mail —
    dafür braucht es keine Oberfläche hier. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Suchabos, P5.9 Phase B). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("k_gespeicherteSuchen") };
+}
 
 function einfacheZusammenfassung(w: Woerter, a: Suchanfrage): string {
   return [

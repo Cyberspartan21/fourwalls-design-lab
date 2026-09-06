@@ -137,6 +137,39 @@ jobs:
       - name: Skalentest der Anliegen-Übersicht (nur N=1000, Zeitgründe)
         run: node scripts/skalen-anliegen-test.mjs 1000
 
+      # P5.9 Phase B, Workstream H (P0: Regressionsabdeckung für Startseite,
+      # 404 und Service-Seiten in CI). scripts/seo-test.mjs prüft nur per
+      # fetch (kein Browser) — Titel/Meta/H1/Canonical/hreflang/OpenGraph/
+      # html-lang/robots, NOINDEX-Seiten, /sitemap.xml, /robots.txt, JSON-LD
+      # und einen Behauptungs-Wächter. Prüfungen, die von WP3a (404-SSR-Fix)
+      # oder WP5 (/wissen-Seiten) abhängen, laufen mit, melden sich bei
+      # Fehlschlag aber als WARTET statt FEHLER (kein Exit-Code-Einfluss) —
+      # siehe Kopfkommentar der Datei.
+      - name: SEO und Index-Verhalten
+        run: node scripts/seo-test.mjs http://localhost:3007
+
+      # tools/baseline.mjs (Repo-Wurzel, nicht app/) nimmt dieselben
+      # UFER-Zustände wie lokal auf; CHROME_BIN zeigt auf das auf
+      # ubuntu-latest vorinstallierte Google Chrome statt des macOS-Pfads
+      # (tools/baseline.mjs Standard). Kein Pixelvergleich in CI — der ist
+      # nicht deterministisch über Betriebssysteme hinweg (andere
+      # Schriftglättung/GPU-Pfad) und bleibt lokal (docs/REGRESSION.md).
+      # tools/sichtpruefung.mjs prüft stattdessen rein rechnerisch, ob jedes
+      # Bild plausibel ist (Grösse, Masse, Farbvielfalt) — genau das hätte
+      # den "blatt"-Fehler aus P5.8 (leere Seite) erkannt.
+      - name: Sichtprüfung der Regressionszustände
+        working-directory: ${{ github.workspace }}
+        run: |
+          CHROME_BIN=$(which google-chrome) node tools/baseline.mjs http://localhost:3007 /tmp/sicht --app
+          node tools/sichtpruefung.mjs /tmp/sicht
+      - name: Screenshots als Artefakt hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sichtpruefung-screenshots
+          path: /tmp/sicht
+          retention-days: 7
+
   # Migrationstor (P5.5 §37): eine frische Datenbank, Migrationen von null,
   # die 16 Schema-Zusagen — und ein zweiter Lauf, der beweisen muss, dass
   # nichts mehr zu tun ist. Getrennt von "pruefen", weil hier NICHT geseedet

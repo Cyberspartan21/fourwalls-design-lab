@@ -16,9 +16,9 @@ export function InternRahmen({ locale, titel, lead, sprachPfad, children }:
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an" style={{ maxWidth: 1100 }}>
+      <main id="inhalt" className="wiz an" style={{ maxWidth: 1100 }}>
         <span className="schrittz">{t("in_eyebrow")}</span>
-        <h2>{titel}</h2>
+        <h1 className="titel">{titel}</h1>
         {lead && <p style={{ color: "var(--leise)", marginTop: 10, maxWidth: "60ch" }}>{lead}</p>}
         <div style={{ marginTop: 14 }}>
           <a className="knopf leise" href={`/${locale}/konto`}>{t("in_zurueckZuKonto")}</a>

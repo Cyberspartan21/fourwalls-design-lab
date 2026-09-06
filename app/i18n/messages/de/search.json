@@ -64,5 +64,9 @@
   "aboHinweisAnon": "Wir schicken Ihnen eine Bestätigungsmail an diese Adresse. Erst nach der Bestätigung erhalten Sie Benachrichtigungen.",
   "aboHinweisKonto": "Ihr Suchabo ist sofort aktiv — Ihre Kontoadresse ist bereits bestätigt.",
   "suchaboFehler": "Das hat nicht geklappt. Bitte versuchen Sie es später erneut.",
-  "aehnlicheKeine": "Zurzeit gibt es kein vergleichbares Inserat."
+  "aehnlicheKeine": "Zurzeit gibt es kein vergleichbares Inserat.",
+  "seo_kaufen_beschreibung": "Wohnungen, Häuser und Grundstücke zum Kauf in der ganzen Schweiz. Suchen nach Ort, Preis, Fläche und Zimmern, mit Karte und Suchabo.",
+  "seo_mieten_beschreibung": "Wohnungen und Häuser zur Miete in der ganzen Schweiz. Suchen nach Ort, Preis, Fläche und Zimmern, mit Karte und Suchabo.",
+  "seo_titelMitOrt": "{art} in {ort}",
+  "seo_titelOhneOrt": "{art}"
 }

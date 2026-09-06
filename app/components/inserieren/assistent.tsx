@@ -159,6 +159,12 @@ export function Assistent({ locale, t, start, anmeldenHref, kontoHref }: Assiste
       <SchrittInhalt schritt={S} daten={daten} aendern={aendern} t={t} locale={locale}
         maengel={zeigeMaengel ? fehltHier.map(m => m.feld) : []} angemeldet={angemeldet} alleMaengel={maengel} />
 
+      {S === "pruefen" && (
+        <p className="hin" style={{ color: "var(--leise)", fontSize: ".82rem", marginTop: 18 }}>
+          {t.w_inseratsbedingungenHin} <a href={`/${locale}/inseratsbedingungen`}>{t.w_inseratsbedingungenLink}</a>
+        </p>
+      )}
+
       {/* Steuerung */}
       <div style={{ display: "flex", gap: 10, marginTop: 28, alignItems: "center", flexWrap: "wrap" }}>
         <button className="knopf" style={{ visibility: i === 0 ? "hidden" : "visible" }} onClick={() => setI(n => Math.max(0, n - 1))}>{t.w_zurueck}</button>

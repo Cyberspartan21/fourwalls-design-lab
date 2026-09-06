@@ -42,6 +42,8 @@
   "og_feld_ort": "City (optional)",
   "og_feld_beschreibung": "Description (optional)",
   "og_anlegenKnopf": "Create organization",
+  "og_anbieterbedingungenHin": "By creating this, you accept the",
+  "og_anbieterbedingungenLink": "provider terms",
 
   "og_uebersichtTitel": "Overview",
   "og_kachelOffeneAnfragen": "Open inquiries",

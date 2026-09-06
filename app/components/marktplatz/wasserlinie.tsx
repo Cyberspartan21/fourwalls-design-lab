@@ -109,22 +109,41 @@ export function Wasserlinie({ q, ort, w, locale, basis, seiteVon, ansichtKarte, 
         <button className="knopf mfilter" id="mFilterAuf" onClick={() => { setEntwurf(F); setOffen(o => !o); }}><span>{w.filter}</span> <span className="zaehl" id="filterZahlM">{aktiv}</span></button>
         <button className="knopf" id="filterAuf" onClick={() => { setEntwurf(F); setOffen(o => !o); }}><span>{w.mehrFilter}</span> <span className="zaehl" id="filterZahl">{aktiv}</span></button>
         <div className={`filterfeld${offen ? " an" : ""}`} id="filterFeld" role="dialog" aria-label={w.mehrFilter}>
-          <h4>{w.preisChf}</h4>
-          <div className="fzwei"><input className="feld" type="number" id="fPMin" placeholder="von" min={0} step={10000} value={E.pMin ?? ""} onChange={e => set({ pMin: e.target.value ? Number(e.target.value) : null })} /><input className="feld" type="number" id="fPMax" placeholder="bis" min={0} step={10000} value={E.pMax ?? ""} onChange={e => set({ pMax: e.target.value ? Number(e.target.value) : null })} /></div>
-          <h4>{w.flaecheFilter}</h4>
-          <div className="fzwei"><input className="feld" type="number" id="fFl" placeholder="von" min={0} step={10} value={E.flMin ?? ""} onChange={e => set({ flMin: e.target.value ? Number(e.target.value) : null })} /><input className="feld" type="number" id="fFlMax" placeholder="bis" min={0} step={10} value={E.flMax ?? ""} onChange={e => set({ flMax: e.target.value ? Number(e.target.value) : null })} /></div>
-          <h4>{w.zimmerFilter}</h4>
+          <p className="fkt">{w.preisChf}</p>
+          <div className="fzwei">
+            <label className="sr" htmlFor="fPMin">{w.preisVon}</label>
+            <input className="feld" type="number" id="fPMin" placeholder="von" min={0} step={10000} value={E.pMin ?? ""} onChange={e => set({ pMin: e.target.value ? Number(e.target.value) : null })} />
+            <label className="sr" htmlFor="fPMax">{w.preisBis}</label>
+            <input className="feld" type="number" id="fPMax" placeholder="bis" min={0} step={10000} value={E.pMax ?? ""} onChange={e => set({ pMax: e.target.value ? Number(e.target.value) : null })} />
+          </div>
+          <p className="fkt">{w.flaecheFilter}</p>
+          <div className="fzwei">
+            <label className="sr" htmlFor="fFl">{w.flaecheVon}</label>
+            <input className="feld" type="number" id="fFl" placeholder="von" min={0} step={10} value={E.flMin ?? ""} onChange={e => set({ flMin: e.target.value ? Number(e.target.value) : null })} />
+            <label className="sr" htmlFor="fFlMax">{w.flaecheBis}</label>
+            <input className="feld" type="number" id="fFlMax" placeholder="bis" min={0} step={10} value={E.flMax ?? ""} onChange={e => set({ flMax: e.target.value ? Number(e.target.value) : null })} />
+          </div>
+          <p className="fkt">{w.zimmerFilter}</p>
           <div className="fzwei">
             <select className="feld" id="fZiMin" aria-label="Zimmer von" value={E.ziMin != null ? String(E.ziMin) : ""} onChange={e => set({ ziMin: e.target.value ? Number(e.target.value) : null })}>{zi.map(z => <option key={z} value={z}>{z ? z + "+" : w.zimmerAb}</option>)}</select>
             <select className="feld" id="fZiMax" aria-label="Zimmer bis" value={E.ziMax != null ? String(E.ziMax) : ""} onChange={e => set({ ziMax: e.target.value ? Number(e.target.value) : null })}>{zi.map(z => <option key={z} value={z}>{z ? "≤ " + z : w.zimmerBis}</option>)}</select>
           </div>
-          <div id="fGrundBox" hidden={!hatGrundstueck(E.typ)}><h4>{w.grundFilter}</h4><input className="feld" type="number" id="fGr" placeholder="z.B. 500" min={0} step={50} value={E.grMin ?? ""} onChange={e => set({ grMin: e.target.value ? Number(e.target.value) : null })} /></div>
-          <h4>{w.baujahr}</h4>
-          <div className="fzwei"><input className="feld" type="number" id="fBjV" placeholder="von" min={1800} max={2030} value={E.bjVon ?? ""} onChange={e => set({ bjVon: e.target.value ? Number(e.target.value) : null })} /><input className="feld" type="number" id="fBjB" placeholder="bis" min={1800} max={2030} value={E.bjBis ?? ""} onChange={e => set({ bjBis: e.target.value ? Number(e.target.value) : null })} /></div>
-          <div id="fEtageBox" hidden={!!E.typ && !hatEtage(E.typ)}><h4>{w.etage}</h4><div className="chipwahl" id="fEtage">{(["eg", "nichteg", "ab2", "dach"] as Etage[]).map(v => <button key={v} data-et={v} aria-pressed={E.etage === v} onClick={() => set({ etage: E.etage === v ? "" : v })}>{w[{ eg: "eg", nichteg: "nichtEg", ab2: "ab2", dach: "dachgeschoss" }[v as "eg"]]}</button>)}</div></div>
-          <h4>{w.verfuegbar}</h4><div className="chipwahl" id="fVerf">{(["sofort", "3mt"] as Verf[]).map(v => <button key={v} data-vf={v} aria-pressed={E.verf === v} onClick={() => set({ verf: E.verf === v ? "" : v })}>{v === "sofort" ? w.sofort : w.in3Mt}</button>)}</div>
-          <h4>{w.anbieter}</h4><div className="chipwahl" id="fQuelle">{QUELLEN.map(k => <button key={k} data-q={k} aria-pressed={E.quelle === k} onClick={() => set({ quelle: E.quelle === k ? "" : k as Quelle })}>{quelleFilterLabel(w, k)}</button>)}</div>
-          <h4>{w.ausstattung}</h4><div className="chipwahl" id="fFeat">{FEATURES.map(f => <button key={f} data-f={f} aria-pressed={E.feat.includes(f)} onClick={() => set({ feat: E.feat.includes(f) ? E.feat.filter(x => x !== f) : [...E.feat, f as Feature] })}>{featLabel(w, f)}</button>)}</div>
+          <div id="fGrundBox" hidden={!hatGrundstueck(E.typ)}>
+            <p className="fkt">{w.grundFilter}</p>
+            <label className="sr" htmlFor="fGr">{w.grundVon}</label>
+            <input className="feld" type="number" id="fGr" placeholder="z.B. 500" min={0} step={50} value={E.grMin ?? ""} onChange={e => set({ grMin: e.target.value ? Number(e.target.value) : null })} />
+          </div>
+          <p className="fkt">{w.baujahr}</p>
+          <div className="fzwei">
+            <label className="sr" htmlFor="fBjV">{w.baujahrVon}</label>
+            <input className="feld" type="number" id="fBjV" placeholder="von" min={1800} max={2030} value={E.bjVon ?? ""} onChange={e => set({ bjVon: e.target.value ? Number(e.target.value) : null })} />
+            <label className="sr" htmlFor="fBjB">{w.baujahrBis}</label>
+            <input className="feld" type="number" id="fBjB" placeholder="bis" min={1800} max={2030} value={E.bjBis ?? ""} onChange={e => set({ bjBis: e.target.value ? Number(e.target.value) : null })} />
+          </div>
+          <div id="fEtageBox" hidden={!!E.typ && !hatEtage(E.typ)}><p className="fkt">{w.etage}</p><div className="chipwahl" id="fEtage">{(["eg", "nichteg", "ab2", "dach"] as Etage[]).map(v => <button key={v} data-et={v} aria-pressed={E.etage === v} onClick={() => set({ etage: E.etage === v ? "" : v })}>{w[{ eg: "eg", nichteg: "nichtEg", ab2: "ab2", dach: "dachgeschoss" }[v as "eg"]]}</button>)}</div></div>
+          <p className="fkt">{w.verfuegbar}</p><div className="chipwahl" id="fVerf">{(["sofort", "3mt"] as Verf[]).map(v => <button key={v} data-vf={v} aria-pressed={E.verf === v} onClick={() => set({ verf: E.verf === v ? "" : v })}>{v === "sofort" ? w.sofort : w.in3Mt}</button>)}</div>
+          <p className="fkt">{w.anbieter}</p><div className="chipwahl" id="fQuelle">{QUELLEN.map(k => <button key={k} data-q={k} aria-pressed={E.quelle === k} onClick={() => set({ quelle: E.quelle === k ? "" : k as Quelle })}>{quelleFilterLabel(w, k)}</button>)}</div>
+          <p className="fkt">{w.ausstattung}</p><div className="chipwahl" id="fFeat">{FEATURES.map(f => <button key={f} data-f={f} aria-pressed={E.feat.includes(f)} onClick={() => set({ feat: E.feat.includes(f) ? E.feat.filter(x => x !== f) : [...E.feat, f as Feature] })}>{featLabel(w, f)}</button>)}</div>
           <label className="fschalter"><input type="checkbox" id="fAlle" checked={!E.nurFrei} onChange={e => set({ nurFrei: !e.target.checked })} /> <span>{w.statusZeigen}</span></label>
           <div className="aktionen">
             <button className="knopf" id="filterReset" onClick={() => { const r = { ...LEER, trans: F.trans, ort: F.ort, sort: F.sort }; setEntwurf(r); setOffen(false); geh(r); }}>{w.zuruecksetzen}</button>

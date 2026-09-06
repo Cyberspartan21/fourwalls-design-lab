@@ -1,12 +1,21 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { istLocale, DEFAULT_LOCALE, uebersetzer, LOCALES, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
 import { warteschlange } from "@/server/moderation";
 import { darf } from "@/domain/rechte";
 import { Kopf } from "@/components/site/kopf";
+import { NOINDEX } from "@/lib/seo";
 
 /* Die Warteschlange — was liegt zur Prüfung an, Ältestes zuerst. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Moderation, P5.9 Phase B). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("m_titel") };
+}
 
 export default async function Moderation({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: roh } = await params;
@@ -21,7 +30,7 @@ export default async function Moderation({ params }: { params: Promise<{ locale:
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an" style={{ maxWidth: 1100 }}>
+      <main id="inhalt" className="wiz an" style={{ maxWidth: 1100 }}>
         <span className="schrittz">{t("m_titel")}</span>
         <h2>{t("m_warteschlange")}</h2>
         {liste.length === 0 ? (

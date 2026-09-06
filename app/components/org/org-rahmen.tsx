@@ -28,11 +28,11 @@ export function OrgRahmen({ locale, org, meine, children }: {
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an" style={{ maxWidth: 980 }}>
+      <main id="inhalt" className="wiz an" style={{ maxWidth: 980 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
           <div>
             <span className="schrittz">{t("og_art_" + org.kind)} · {zustandText}</span>
-            <h2>{org.displayName}</h2>
+            <h1 className="titel">{org.displayName}</h1>
           </div>
           <OrgUmschalter locale={locale} aktivSlug={org.slug} label={t("og_umschalterLabel")}
             organisationen={meine.map(m => ({ slug: m.org.slug, displayName: m.org.displayName }))} />

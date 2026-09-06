@@ -42,6 +42,8 @@
   "og_feld_ort": "Località (facoltativo)",
   "og_feld_beschreibung": "Descrizione (facoltativo)",
   "og_anlegenKnopf": "Creare l'organizzazione",
+  "og_anbieterbedingungenHin": "Con la creazione si applicano le",
+  "og_anbieterbedingungenLink": "condizioni per i fornitori",
 
   "og_uebersichtTitel": "Panoramica",
   "og_kachelOffeneAnfragen": "Richieste aperte",

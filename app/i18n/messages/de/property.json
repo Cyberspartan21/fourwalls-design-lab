@@ -168,12 +168,12 @@
   "o_unterhMonat": "Unterhalt und Nebenkosten / Monat",
   "o_vergroessern": "Vergrössern",
   "o_verkleinern": "Verkleinern",
-  "o_vertrittNicht": "Fourwalls vertritt dieses Objekt nicht",
+  "o_vertrittNicht": "Dieses Objekt wird nicht von Fourwalls vermarktet",
   "o_video": "Video",
   "o_videoProd": "In Produktion läuft hier der Film als HLS-Stream, ohne Ton-Autoplay.",
   "o_vollbild": "Vollbild",
   "o_vorherigesBild": "Vorheriges Bild",
-  "o_wirVertreten": "Fourwalls vertritt die Verkäuferschaft.",
+  "o_wirVertreten": "Verkauf mit Fourwalls",
   "o_ziKurz": "Zi.",
   "o_zinsmodell": "Zinsmodell",
   "o_zinsMonat": "Zins / Monat",
@@ -194,5 +194,10 @@
   "verkauft": "Verkauft",
   "vermietet": "Vermietet",
   "verwaltung": "Verwaltung",
-  "o_angenommenPrefix": "Anfrage angenommen —"
+  "o_angenommenPrefix": "Anfrage angenommen —",
+  "o_datenschutzHin": "Ihre Angaben gehen an die anbietende Partei und an Fourwalls zur Bearbeitung der Anfrage.",
+  "o_datenschutzLink": "Datenschutz",
+  "o_eigentuemer_titel": "Eigentümerin oder Eigentümer?",
+  "o_eigentuemer_verkaufen": "Ähnliches Objekt verkaufen? Mit Fourwalls verkaufen",
+  "o_eigentuemer_bewertung": "Unverbindliche Einschätzung anfragen"
 }

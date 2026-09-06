@@ -104,7 +104,11 @@ export async function findePubliziertesInserat(publicRef: string, locale: Locale
     priceOnRequest: Boolean(z.price_on_request),
     availableFrom: z.available_from ? String(z.available_from) : null,
     availableImmediately: Boolean(z.available_immediately),
-    publishedAt: String(z.published_at),
+    /* postgres.js liefert timestamptz als Date-Objekt; String(Date) ist
+       "Www Mon DD YYYY …" (nicht ISO, kein Jahr am Anfang) — datePosted im
+       JSON-LD der Objektseite braucht ein echtes ISO-Datum (siehe
+       scripts/marktplatz-test.mjs, das genau diesen Fehler beschreibt). */
+    publishedAt: z.published_at instanceof Date ? z.published_at.toISOString().slice(0, 10) : String(z.published_at ?? ""),
     geo: z.lng == null || z.lat == null ? null
       : { lng: Number(z.lng), lat: Number(z.lat), precision: z.geo_precision as GeoPrecision, radiusM: Number(z.geo_radius_m) },
     property: {

@@ -84,7 +84,11 @@ export async function suche(q: Suchanfrage, locale: Locale = "de"): Promise<Such
     "zimmer": sql`lp.rooms DESC NULLS LAST, lp.public_ref`,
     "m2": sql`(CASE WHEN lp.transaction = 'sale' AND NOT lp.price_on_request AND lp.property_kind IN ('apartment','house','villa','chalet') THEN lp.price_per_m2 END) ASC NULLS LAST, lp.public_ref`,
     "empfohlen": sql`${vollstaendigkeit} DESC, lp.published_at DESC, lp.public_ref`,
-    /* «Neuste»: höchstens drei Exclusive oben — sichtbar begrenzt, Demo-Regel (policy.ts: exclusivePlatzierung) */
+    /* «Neuste»: höchstens drei Fourwalls-Exclusive-Objekte oben, sichtbar begrenzt und als
+       Fourwalls Exclusive gekennzeichnet (components/marktplatz/karte.tsx). Bestätigte
+       Geschäftsregel seit 2026-09-06, siehe config/policy.ts (exclusivePlatzierung,
+       keinBezahltesRanking) und ../../docs/marktplatz-reihenfolge.md. Jede Änderung an
+       dieser Reihenfolge ist eine Policy-Entscheidung, kein reiner Code-Fix. */
     "neu": sql`(CASE WHEN ${exklusiv} AND row_number() OVER (PARTITION BY ${exklusiv} ORDER BY lp.published_at DESC, lp.public_ref) <= 3 THEN 0 ELSE 1 END), lp.published_at DESC, lp.public_ref DESC`
   } as Record<string, ReturnType<typeof sql>>)[q.sort] ?? sql`lp.published_at DESC, lp.public_ref DESC`;
 

@@ -42,3 +42,11 @@ export const offeneFelder = () =>
   (Object.entries(firma) as [FeldName, Feld<unknown>][])
     .filter(([, f]) => f.stand !== "bestaetigt")
     .map(([name, f]) => ({ feld: name, stand: f.stand, hinweis: f.hinweis ?? "" }));
+
+/* Produktionsregel: Solange diese Liste nicht leer ist, meldet
+   config/start-tor.ts (WP2) das Start-Tor als nicht bereit, und die
+   Rechtsseiten sowie robots.txt sperren die Indexierung in production
+   (P5.9 Phase B, Entscheid 21/22). Nur die Feldnamen, keine Werte — die
+   Werte selbst können Platzhalter sein und dürfen nicht als Beleg für
+   „bereit" gelesen werden. */
+export const FEHLENDE_FIRMENANGABEN = (): FeldName[] => offeneFelder().map(f => f.feld);

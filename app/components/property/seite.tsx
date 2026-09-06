@@ -17,6 +17,7 @@ import { Begleiter } from "./begleiter";
 import { LichtKnopf, AnfrageKnopf, AnkerLink } from "./knoepfe";
 import { VerlaufEintragen } from "./verlauf-eintragen";
 import { VerlaufListe } from "@/components/verlauf-liste";
+import { AUSSAGEN } from "@/config/policy";
 
 /* Die Objektseite — Server-Markup mit denselben Klassen wie objekt.js.
    Übersicht zuerst, Tiefe auf Abruf. Abschnitte ohne Inhalt entstehen nicht
@@ -71,21 +72,21 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks, angemelde
   const schritte = s.naechsteSchritte ?? [t("o_naechsteBesichtigung"), t("o_naechsteFrage"), t("o_naechsteFinanzierung")];
   const bildLabel = d.abschnitte.find(a => a.id === "bilder")?.klein ?? `${bilder.length} ${bilder.length === 1 ? t("bild1") : t("bildN")}`;
   const zurueck = `/${locale}/${PFAD[locale].immobilien}/${L.transaction === "rent" ? PFAD[locale].mieten : PFAD[locale].kaufen}`;
-  const begleiterTx = keys(t, ["geprueft", "o_wirVertreten", "o_anfrageGehtAn", "o_unserTeam", "o_nichtAnDritte", "o_inseriertVon", "o_anfrageDirekt", "o_vertrittNicht", "o_hatGeprueft", "anfrage", "o_frageStellen", "o_name", "o_nachrichtStandard", "o_nachrichtFrage", "o_aehnlicheSuchabo", "o_anfrageSenden", "o_angenommenPrefix", "o_gesendetAn", "melden", "o_gemeldetDanke"]);
-  const begleiter = (suffix: "" | "M") => <Begleiter publicRef={L.publicRef} quelle={L.publisher} quelleLabel={quelleLabel} schritte={schritte} suffix={suffix} tx={begleiterTx} />;
+  const begleiterTx = keys(t, ["geprueft", "o_wirVertreten", "o_anfrageGehtAn", "o_unserTeam", "o_nichtAnDritte", "o_inseriertVon", "o_anfrageDirekt", "o_vertrittNicht", "o_hatGeprueft", "anfrage", "o_frageStellen", "o_name", "o_nachrichtStandard", "o_nachrichtFrage", "o_aehnlicheSuchabo", "o_anfrageSenden", "o_angenommenPrefix", "o_gesendetAn", "melden", "o_gemeldetDanke", "o_datenschutzHin", "o_datenschutzLink"]);
+  const begleiter = (suffix: "" | "M") => <Begleiter publicRef={L.publicRef} quelle={L.publisher} quelleLabel={quelleLabel} schritte={schritte} suffix={suffix} tx={begleiterTx} locale={locale} />;
 
 
   return (
-    <div className="detail seite an" id="detail">
+    <div className="detail seite an" id="inhalt">
       {!angemeldet && <VerlaufEintragen publicRef={L.publicRef} />}
       <Kopf publicRef={L.publicRef} quelle={quelleLabel} titel={L.title} exklusiv={istEx} wirVertreten={wir} zurueck={zurueck} sprachLinks={sprachLinks} locale={locale}
         tx={{ merken: t("merken"), gemerkt: t("gemerktOk"), teilen: t("teilen"), kopiert: t("o_linkKopiert"), schliessen: t("schliessen"), vergleichen: t("vg_vergleichen"), imVergleich: t("vg_imVergleich"), vergleichVoll: t("vg_voll") }} />
 
       {istEx && b0 ? (
         <div className="dheld premiere" id="premiere">
-          <div className="voll"><Bild m={b0} sizes="100vw" eager alt={b0.alt || L.title} /></div>
+          <div className="voll"><Bild m={b0} sizes="100vw" eager alt={b0.alt || L.title} aspectRatio="3 / 2" /></div>
           <div className="flor"></div>
-          <Blende><div className="fenster" id="exFenster"><div className="medien"><img src={b0.sources.jpeg.find(x => x.width === 960)?.url} alt="" /></div><div className="lichtzug"></div></div></Blende>
+          <Blende><div className="fenster" id="exFenster"><div className="medien"><img src={b0.sources.jpeg.find(x => x.width === 960)?.url} alt="" style={{ aspectRatio: "432 / 317" }} /></div><div className="lichtzug"></div></div></Blende>
           <div className="txt">
             <div className="kick">{t("exclusive")} · {ort}</div>
             <h1>{L.title}</h1>
@@ -95,7 +96,7 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks, angemelde
       ) : (
         <div className="dheld">
           <div className={`mosaik ${bilder.length === 1 ? "einzel" : bilder.length === 2 ? "zwei" : ""}`}>
-            {bilder.slice(0, 3).map((b, i) => <LichtKnopf key={b.key} tag="figure" wunsch={{ index: i }}><Bild m={b} sizes="(max-width:960px) 100vw, 60vw" eager={i === 0} alt={b.alt || `${L.title} ${i + 1}`} /></LichtKnopf>)}
+            {bilder.slice(0, 3).map((b, i) => <LichtKnopf key={b.key} tag="figure" wunsch={{ index: i }}><Bild m={b} sizes="(max-width:960px) 100vw, 60vw" eager={i === 0} alt={b.alt || `${L.title} ${i + 1}`} aspectRatio="3 / 2" /></LichtKnopf>)}
           </div>
           <div className="medienleiste">
             <LichtKnopf wunsch={{ index: 0 }}>{bildLabel}</LichtKnopf>
@@ -103,7 +104,7 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks, angemelde
             {med.tour360 && <LichtKnopf wunsch={{ medium: "360" }}>360°</LichtKnopf>}
             {L.floorplans.length > 0 && <AnkerLink id="grundrisse" className="knopf-anker">{t("o_grundrisseBtn")}</AnkerLink>}
           </div>
-          {L.publisher.orgVerified && !wir && <span className="quellband">{t("o_geprueft2")}</span>}
+          {(AUSSAGEN.identitaetGeprueft.stand as string) === "bestaetigt" && L.publisher.orgVerified && !wir && <span className="quellband">{t("o_geprueft2")}</span>}
         </div>
       )}
 
@@ -198,6 +199,16 @@ export function ObjektSeite({ d, t, locale, aehnliche, w, sprachLinks, angemelde
               <VerlaufListe treffer={zuletzt} w={w} locale={locale} />
             </section>
           )}
+
+          {/* Ruhiger Hinweis am Ende des Inhalts, für Eigentümerinnen und
+              Eigentümer ähnlicher Objekte (P5.9 Phase B, Entscheid 24,
+              Punkt 5) — kein neues CSS, dieselbe .hinweisbox wie auf den
+              Rechtsseiten. */}
+          <div className="hinweisbox" style={{ marginTop: 24 }}>
+            <p><b>{t("o_eigentuemer_titel")}</b></p>
+            <p style={{ marginTop: 6 }}><a href={`/${locale}/verkaufen`}>{t("o_eigentuemer_verkaufen")}</a></p>
+            <p style={{ marginTop: 6 }}><a href={`/${locale}/bewertung`}>{t("o_eigentuemer_bewertung")}</a></p>
+          </div>
         </div>
         <aside className="dseite">{begleiter("")}</aside>
       </div>

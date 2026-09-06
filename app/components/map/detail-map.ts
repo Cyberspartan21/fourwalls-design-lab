@@ -5,33 +5,29 @@
    Schlüssel im Browser. Der Abendmodus ist ein umgerechneter Stil. Gezeigt
    wird ausschliesslich, was hereingegeben wird: die öffentliche Lage. */
 
-const CDN_JS  = "https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.6.0/maplibre-gl.js";
-const CDN_CSS = "https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.6.0/maplibre-gl.css";
+/* P5.9 Entscheid 23: MapLibre wird wie in ukarte.js aus dem npm-Paket
+   geladen (dynamischer Import, eigenes Bündel), nicht mehr von einer CDN —
+   die CSP erlaubt cdnjs nicht mehr. */
+import "maplibre-gl/dist/maplibre-gl.css";
 const STILE = {
   swisstopo: "https://vectortiles.geo.admin.ch/styles/ch.swisstopo.lightbasemap.vt/style.json",
   offen: "https://tiles.openfreemap.org/styles/positron"
 };
 
-/* Minimaler Typausschnitt — die Bibliothek kommt zur Laufzeit von der CDN. */
+/* Minimaler Typausschnitt — die Bibliothek wird erst bei Bedarf importiert. */
 interface GlMap {
   addSource(id: string, s: unknown): void; addLayer(l: unknown, before?: string): void; addControl(c: unknown, pos?: string): void;
   once(ev: string, cb: () => void): void; loaded(): boolean; resize(): void; remove(): void;
   touchZoomRotate: { disableRotation(): void }; scrollZoom: { disable(): void };
 }
 interface Gl { Map: new (o: unknown) => GlMap; AttributionControl: new (o: unknown) => unknown; NavigationControl: new (o: unknown) => unknown }
-declare global { interface Window { maplibregl?: Gl } }
 
 let ladeVersprechen: Promise<Gl> | null = null;
 function laden(): Promise<Gl> {
   if (ladeVersprechen) return ladeVersprechen;
-  ladeVersprechen = new Promise((ok, nein) => {
-    if (window.maplibregl) return ok(window.maplibregl);
-    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = CDN_CSS; document.head.appendChild(css);
-    const js = document.createElement("script"); js.src = CDN_JS; js.async = true;
-    js.onload = () => window.maplibregl ? ok(window.maplibregl) : nein(new Error("MapLibre fehlt"));
-    js.onerror = () => nein(new Error("MapLibre konnte nicht geladen werden"));
-    document.head.appendChild(js);
-  });
+  ladeVersprechen = import("maplibre-gl")
+    .then(mod => ((mod as unknown as { default?: Gl }).default ?? (mod as unknown as Gl)))
+    .catch(() => { throw new Error("MapLibre konnte nicht geladen werden"); });
   return ladeVersprechen;
 }
 
@@ -80,8 +76,12 @@ function stilFuerAbend(stil: Stil): Stil {
 export async function detailKarte(behaelter: HTMLElement, opt: { lat: number; lng: number; genauigkeitM: number; dunkel: boolean }): Promise<GlMap> {
   const gl = await laden();
   let stil: Stil;
+  let attribution = '© <a href="https://www.swisstopo.admin.ch/" target="_blank" rel="noopener">swisstopo</a>';
   try { const r = await fetch(STILE.swisstopo); if (!r.ok) throw new Error(String(r.status)); stil = await r.json(); }
-  catch { stil = await (await fetch(STILE.offen)).json(); }
+  catch {
+    stil = await (await fetch(STILE.offen)).json();
+    attribution = '© <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap-Mitwirkende</a>';
+  }
   if (opt.dunkel) stil = stilFuerAbend(stil);
 
   const genau = opt.genauigkeitM;
@@ -90,7 +90,7 @@ export async function detailKarte(behaelter: HTMLElement, opt: { lat: number; ln
     attributionControl: false, dragRotate: false, pitchWithRotate: false });
   k.touchZoomRotate.disableRotation();
   k.scrollZoom.disable();
-  k.addControl(new gl.AttributionControl({ compact: true }), "bottom-right");
+  k.addControl(new gl.AttributionControl({ compact: true, customAttribution: attribution }), "bottom-right");
   k.addControl(new gl.NavigationControl({ showCompass: false, visualizePitch: false }), "top-right");
   await new Promise<void>(ok => { let f = false; const los = () => { if (!f) { f = true; ok(); } }; k.once("style.load", los); k.once("load", los); setTimeout(los, 8000); });
   k.resize();

@@ -15,6 +15,12 @@ const config: NextConfig = {
   images: { unoptimized: true },
   /* Container-Bild ohne node_modules — nur der abhängigkeitsfreie Server (P5.5 §44). */
   output: "standalone",
+  experimental: {
+    /* app/global-not-found.tsx: liefert für Pfade, die GAR KEINER Route
+       entsprechen, serverseitig gerenderten Inhalt mit Status 404 (siehe
+       Kopfkommentar dort). */
+    globalNotFound: true
+  },
   async headers() {
     return [{
       source: "/:path*",

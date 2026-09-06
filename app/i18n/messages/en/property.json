@@ -168,12 +168,12 @@
   "o_unterhMonat": "Maintenance and running costs / month",
   "o_vergroessern": "Zoom in",
   "o_verkleinern": "Zoom out",
-  "o_vertrittNicht": "Fourwalls does not represent this property",
+  "o_vertrittNicht": "This property is not marketed by Fourwalls",
   "o_video": "Video",
   "o_videoProd": "In production, the film streams here via HLS, with no autoplaying sound.",
   "o_vollbild": "Fullscreen",
   "o_vorherigesBild": "Previous image",
-  "o_wirVertreten": "Fourwalls represents the seller.",
+  "o_wirVertreten": "Selling with Fourwalls",
   "o_ziKurz": "rm",
   "o_zinsmodell": "Interest rate model",
   "o_zinsMonat": "Interest / month",
@@ -194,5 +194,10 @@
   "verkauft": "Sold",
   "vermietet": "Let",
   "verwaltung": "Management",
-  "o_angenommenPrefix": "Request received —"
+  "o_angenommenPrefix": "Request received —",
+  "o_datenschutzHin": "Your details go to the party offering the property and to Fourwalls to handle the enquiry.",
+  "o_datenschutzLink": "Privacy",
+  "o_eigentuemer_titel": "Are you an owner?",
+  "o_eigentuemer_verkaufen": "Selling a similar property? Sell with Fourwalls",
+  "o_eigentuemer_bewertung": "Request a no-obligation valuation"
 }

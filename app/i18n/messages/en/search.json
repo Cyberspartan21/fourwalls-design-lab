@@ -64,5 +64,9 @@
   "aboHinweisAnon": "We'll send a confirmation e-mail to this address. You'll only receive notifications after you confirm it.",
   "aboHinweisKonto": "Your alert is active right away — your account address is already confirmed.",
   "suchaboFehler": "That didn't work. Please try again later.",
-  "aehnlicheKeine": "There is currently no comparable listing."
+  "aehnlicheKeine": "There is currently no comparable listing.",
+  "seo_kaufen_beschreibung": "Apartments, houses and land for sale across Switzerland. Search by location, price, floor area and number of rooms, with map and saved-search alerts.",
+  "seo_mieten_beschreibung": "Apartments and houses for rent across Switzerland. Search by location, price, floor area and number of rooms, with map and saved-search alerts.",
+  "seo_titelMitOrt": "{art} in {ort}",
+  "seo_titelOhneOrt": "{art}"
 }

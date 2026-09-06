@@ -3,6 +3,9 @@ import type { Treffer } from "@/domain/marktplatz";
 import { verfuegbarFrei } from "@/domain/marktplatz";
 import { preisText, quelleLabel, typLabel, verfuegbarLabel, proM2, fmtIn, type Woerter } from "./labels";
 import { MerkKnopf, VergleichKnopf } from "./merk-knopf";
+import { AUSSAGEN } from "@/config/policy";
+
+const GEPRUEFT_SICHTBAR = (AUSSAGEN.identitaetGeprueft.stand as string) === "bestaetigt";
 
 /* Ergebniskarte — dieselben Klassen wie kartenHTML() im Prototyp.
    Reine Komponente ohne Server-Abhängigkeit: die Seite rendert sie, «Weitere
@@ -28,17 +31,19 @@ export function Karte({ l, w, locale, href, aktiv = false, onMouseEnter, onMouse
         {l.bild && (
           <picture>
             <source type="image/webp" srcSet={set(l.bild.webp)} sizes={sizes} />
-            <img src={mitte} srcSet={set(l.bild.jpeg)} sizes={sizes} alt={l.title} loading="lazy" decoding="async" />
+            <img src={mitte} srcSet={set(l.bild.jpeg)} sizes={sizes} alt={l.title} loading="lazy" decoding="async" style={{ aspectRatio: "3 / 2" }} />
           </picture>
         )}
       </div>
-      <div className="refl" aria-hidden="true">{klein && <img src={klein} alt="" loading="lazy" decoding="async" />}</div>
+      {/* .karte .refl img hat width:100%/height:auto (Spiegelung, oben abgeschnitten) — dieselbe
+          Aufnahme wie oben, daher dieselbe Seitenverhältnis-Angabe (P5.9 Entscheid 23 §4). */}
+      <div className="refl" aria-hidden="true">{klein && <img src={klein} alt="" loading="lazy" decoding="async" style={{ aspectRatio: "3 / 2" }} />}</div>
       <a className="oeffnen" href={href} aria-label={`${l.title}, ${preis}, ${l.city}`}></a>
       <div className="lauf">
         <div className="preis">{preis}{l.transactionType === "rent" ? <small>{w.nk}</small> : m2 ? <small>{fmtIn(m2)} {w.proM2}</small> : null}</div>
         <div className="tit">{l.title}</div>
         <div className="ort">{l.postalCode} {l.city} · {l.canton}</div>
-        <div className="fakten">{f.map((x, i) => <span key={i}>{x}</span>)}<span className="q">{quelleLabel(w, l)}{l.verificationStatus === "verified" && l.listingSource !== "fourwalls" ? " · " + w.geprueft : ""}</span></div>
+        <div className="fakten">{f.map((x, i) => <span key={i}>{x}</span>)}<span className="q">{quelleLabel(w, l)}{GEPRUEFT_SICHTBAR && l.verificationStatus === "verified" && l.listingSource !== "fourwalls" ? " · " + w.geprueft : ""}</span></div>
       </div>
     </article>
   );

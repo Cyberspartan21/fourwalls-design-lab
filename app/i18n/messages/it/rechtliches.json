@@ -1,0 +1,18 @@
+{
+  "re_eyebrow": "Informazioni legali",
+  "re_statusEntwurf": "Questo testo è una bozza in fase di verifica legale. Non è ancora vincolante.",
+  "re_impressum_beschreibung": "Indicazioni sulla gestrice di questo sito — bozza, sottoposta a verifica legale.",
+  "re_datenschutz_beschreibung": "Come Fourwalls tratta i vostri dati — bozza, sottoposta a verifica legale.",
+  "re_agb_beschreibung": "Condizioni generali di Fourwalls — bozza, sottoposta a verifica legale.",
+  "re_inseratsbedingungen_beschreibung": "Condizioni per la creazione e la pubblicazione di annunci — bozza, sottoposta a verifica legale.",
+  "re_anbieterbedingungen_beschreibung": "Condizioni per fornitori professionali — bozza, sottoposta a verifica legale.",
+  "re_feld_firma": "Ragione sociale",
+  "re_feld_rechtsform": "Forma giuridica",
+  "re_feld_uid": "Numero di registro di commercio (IDI)",
+  "re_feld_adresse": "Indirizzo",
+  "re_feld_telefon": "Telefono",
+  "re_feld_email": "E-mail",
+  "re_feld_bestaetigt": "Confermato",
+  "re_feld_platzhalter": "Indicazione non ancora confermata",
+  "re_feld_offen": "da completare"
+}

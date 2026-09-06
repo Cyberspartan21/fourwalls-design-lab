@@ -3,6 +3,7 @@ import { istLocale, DEFAULT_LOCALE, LOCALES, type Locale } from "@/i18n";
 import { Kopf } from "@/components/site/kopf";
 import { firma, feld } from "@/config/company";
 import { zusage } from "@/config/policy";
+import { seoMeta } from "@/lib/seo";
 import de from "@/i18n/messages/de/service.json";
 import fr from "@/i18n/messages/fr/service.json";
 import it from "@/i18n/messages/it/service.json";
@@ -31,7 +32,8 @@ function localeAus(roh: string): Locale { return istLocale(roh) ? roh : DEFAULT_
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const locale = localeAus((await params).locale);
-  return { title: `${sv(locale, "sv_vkTitel")} — Fourwalls`, description: sv(locale, "sv_vkLead") };
+  const pfade = Object.fromEntries(LOCALES.map(l => [l, `/${l}/verkaufen`])) as Record<Locale, string>;
+  return seoMeta({ locale, pfade, titel: sv(locale, "sv_vkTitel"), beschreibung: sv(locale, "sv_vkLead"), ogTyp: "website" });
 }
 
 export default async function Verkaufen({ params }: { params: Promise<Params> }) {
@@ -45,12 +47,12 @@ export default async function Verkaufen({ params }: { params: Promise<Params> })
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} aktuell="verkaufen" />
-      <main className="wiz an" style={{ maxWidth: 780 }}>
-        <h2>{t("sv_vkTitel")}</h2>
+      <main id="inhalt" className="wiz an" style={{ maxWidth: 780 }}>
+        <h1 className="titel">{t("sv_vkTitel")}</h1>
         <p style={{ color: "var(--leise)", marginTop: 10, maxWidth: "56ch" }}>{t("sv_vkLead")}</p>
 
         <section style={{ marginTop: 32 }}>
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 500 }}>{t("sv_vkTunTitel")}</h3>
+          <h2 style={{ fontSize: "1.05rem", fontWeight: 500 }}>{t("sv_vkTunTitel")}</h2>
           <ul style={{ marginTop: 12, paddingLeft: 18, display: "grid", gap: 8 }}>
             <li>{t("sv_vkTun1")}</li>
             <li>{t("sv_vkTun2")}</li>
@@ -61,7 +63,7 @@ export default async function Verkaufen({ params }: { params: Promise<Params> })
         </section>
 
         <section style={{ marginTop: 32 }}>
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 500 }}>{t("sv_vkProzessTitel")}</h3>
+          <h2 style={{ fontSize: "1.05rem", fontWeight: 500 }}>{t("sv_vkProzessTitel")}</h2>
           <ol style={{ marginTop: 12, paddingLeft: 18, display: "grid", gap: 12 }}>
             {[1, 2, 3, 4, 5].map(n => (
               <li key={n}><b>{t(`sv_vkSchritt${n}Titel`)}</b><br /><span style={{ color: "var(--leise)" }}>{t(`sv_vkSchritt${n}Text`)}</span></li>
@@ -70,7 +72,7 @@ export default async function Verkaufen({ params }: { params: Promise<Params> })
         </section>
 
         <section style={{ marginTop: 32 }}>
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 500 }}>{t("sv_vkErwartenTitel")}</h3>
+          <h2 style={{ fontSize: "1.05rem", fontWeight: 500 }}>{t("sv_vkErwartenTitel")}</h2>
           <p style={{ marginTop: 10, color: "var(--leise)" }}>{t("sv_vkErwartenText")}</p>
           {honorar && <p style={{ marginTop: 10 }}>{honorar}</p>}
         </section>
@@ -80,12 +82,12 @@ export default async function Verkaufen({ params }: { params: Promise<Params> })
         </p>
 
         <section style={{ marginTop: 40, paddingTop: 24, borderTop: "1px solid var(--linie)" }}>
-          <h3 style={{ fontSize: ".95rem", fontWeight: 500 }}>{t("sv_vkAbgrenzungTitel")}</h3>
+          <h2 style={{ fontSize: ".95rem", fontWeight: 500 }}>{t("sv_vkAbgrenzungTitel")}</h2>
           <p style={{ marginTop: 8, color: "var(--leise)" }}>{t("sv_vkAbgrenzungText")} <a href={`/${locale}/inserieren`}>{t("sv_vkAbgrenzungLink")}</a></p>
         </section>
 
         <section style={{ marginTop: 40, paddingTop: 24, borderTop: "1px solid var(--linie)" }}>
-          <h3 style={{ fontSize: ".95rem", fontWeight: 500 }}>{t("sv_vkVertrauenTitel")}</h3>
+          <h2 style={{ fontSize: ".95rem", fontWeight: 500 }}>{t("sv_vkVertrauenTitel")}</h2>
           <p style={{ marginTop: 8, color: "var(--leise)" }}>
             {t("sv_vkHerausgeber")} {feld("strasse", "")} · {feld("plzOrt", "")}{platzhalter ? ` (${t("sv_vkPlatzhalterHinweis")})` : ""}
           </p>

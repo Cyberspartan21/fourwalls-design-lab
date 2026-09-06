@@ -42,6 +42,8 @@
   "og_feld_ort": "Ort (optional)",
   "og_feld_beschreibung": "Beschreibung (optional)",
   "og_anlegenKnopf": "Organisation anlegen",
+  "og_anbieterbedingungenHin": "Mit dem Anlegen gelten die",
+  "og_anbieterbedingungenLink": "Anbieterbedingungen",
 
   "og_uebersichtTitel": "Übersicht",
   "og_kachelOffeneAnfragen": "Offene Anfragen",

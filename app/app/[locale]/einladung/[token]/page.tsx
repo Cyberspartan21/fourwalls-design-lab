@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { istLocale, uebersetzer, DEFAULT_LOCALE, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
@@ -5,11 +6,21 @@ import { einladungLesen } from "@/server/einladungen";
 import { asAppError } from "@/lib/errors";
 import { KontoRahmen } from "../../konto/kopfzeile";
 import { EinladungAnnehmenKnopf } from "@/components/org/einladung-annehmen";
+import { NOINDEX } from "@/lib/seo";
 
 /* Die Einladungsseite (P5.7 §9) — öffentlich lesbar (nur Name, Rolle,
    maskierte Adresse, Zustand — nie mehr, §15), das Annehmen selbst
    verlangt eine Sitzung. Token nie protokollieren. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Auth-/Einladungsfluss, P5.9 Phase B) — Titel ohne erneuten
+   Token-Aufruf (einladungLesen im Seitenkörper reicht, Token nie
+   protokollieren). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("og_einladungTitel") };
+}
 
 export default async function EinladungSeite({ params }: { params: Promise<{ locale: string; token: string }> }) {
   const { locale: roh, token } = await params;

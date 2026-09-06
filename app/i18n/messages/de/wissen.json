@@ -1,0 +1,20 @@
+{
+  "ws_wissenWort": "Wissen",
+  "ws_uebersichtLead": "Antworten auf Fragen, die vor einem Kauf, Verkauf, einer Miete oder einer Vermietung tatsächlich auftauchen — kurz, konkret, ohne Werbung.",
+  "ws_absicht_verkaufen": "Verkaufen",
+  "ws_absicht_bewerten": "Einschätzung",
+  "ws_absicht_mieten": "Mieten",
+  "ws_absicht_vermieten": "Vermieten",
+  "ws_absicht_verwalten": "Verwalten",
+  "ws_absicht_wissen": "Wissen",
+  "ws_aktualisiert": "Aktualisiert am {datum}",
+  "ws_quellen": "Quellen",
+  "ws_verwandteBeitraege": "Verwandte Beiträge",
+  "ws_cta_verkaufen_mitFw": "Mit Fourwalls verkaufen",
+  "ws_cta_verkaufen_bewertung": "Unverbindliche Einschätzung anfragen",
+  "ws_cta_bewerten": "Unverbindliche Einschätzung anfragen",
+  "ws_cta_mieten": "Mietobjekte suchen",
+  "ws_cta_vermieten": "Mietersuche beauftragen",
+  "ws_cta_verwalten": "Verwaltung anfragen",
+  "ws_cta_wissen": "Mehr über Fourwalls erfahren"
+}

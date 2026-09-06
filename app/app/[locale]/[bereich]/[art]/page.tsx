@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { LOCALES, PFAD, istLocale, uebersetzer, type Locale } from "@/i18n";
-import { env } from "@/server/env";
 import { sql } from "@/server/db";
+import { seoMeta } from "@/lib/seo";
 import { suche, anfrageAusParams, paramsAusAnfrage } from "@/server/search";
 import { getPlace } from "@/server/geo";
 import { sitzung } from "@/server/sitzung";
@@ -40,15 +40,13 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
   const { locale, bereich, art } = await params; if (!istLocale(locale)) return {};
   const trans = bereichPruefen(locale, bereich, art); if (!trans) return {};
   const q = anfrageAusParams(await searchParams, trans);
-  const t = uebersetzer(locale); const site = env().NEXT_PUBLIC_SITE_URL;
+  const t = uebersetzer(locale);
   const ort = q.ort ? await getPlace(q.ort, locale) : null;
-  const titel = `${t(trans === "rent" ? "mieten" : "kaufen")}${ort ? " · " + ort.label : ""} — Fourwalls`;
-  const kanon = site + basisPfad(locale, trans) + nurOrt(q);
-  return {
-    title: titel, description: t(trans === "rent" ? "nav.nMieten" : "nav.nKaufen") === "nav.nMieten" ? undefined : t(trans === "rent" ? "nav.nMieten" : "nav.nKaufen"),
-    alternates: { canonical: kanon, languages: Object.fromEntries(LOCALES.map(l => [l, site + basisPfad(l, trans) + nurOrt(q)])) },
-    robots: hatFilter(q) ? { index: false, follow: true } : undefined
-  };
+  const art_ = t(trans === "rent" ? "mieten" : "kaufen");
+  const titel = ort ? t("seo_titelMitOrt").replace("{art}", art_).replace("{ort}", ort.label) : t("seo_titelOhneOrt").replace("{art}", art_);
+  const beschreibung = t(trans === "rent" ? "seo_mieten_beschreibung" : "seo_kaufen_beschreibung");
+  const pfade = Object.fromEntries(LOCALES.map(l => [l, basisPfad(l, trans) + nurOrt(q)])) as Record<Locale, string>;
+  return seoMeta({ locale, pfade, titel, beschreibung, robots: hatFilter(q) ? { index: false, follow: true } : undefined });
 }
 
 export default async function Suche({ params, searchParams }: { params: Promise<Params>; searchParams: Promise<Query> }) {
@@ -72,7 +70,13 @@ export default async function Suche({ params, searchParams }: { params: Promise<
   const s = await sitzung();
   const titel = (trans === "rent" ? w.mieten : w.kaufen) + (antwort.geo.label ? " · " + antwort.geo.label + (q.umkreisKm ? ` + ${q.umkreisKm} ${w.km}` : "") : "");
   const zusammenfassung = [ort?.label, trans === "rent" ? w.mieten : w.kaufen, q.typ ? typLabel(w, q.typ) : "", q.ziMin ? `${q.ziMin}+ ${w.o_ziKurz}` : "", q.pMax ? "≤ " + chfText(q.pMax) : ""].filter(Boolean).join(" · ");
-  const sprachLinks = Object.fromEntries(LOCALES.map(l => { const p = paramsAusAnfrage({ ...q, seite: 1 }); return [l, basisPfad(l, trans) + (p.toString() ? "?" + p.toString() : "")]; })) as Record<Locale, string>;
+  /* Sprachlinks folgen derselben Regel wie Canonical/hreflang (generateMetadata
+     oben): mit weiteren Filtern nur der Ort, sonst die volle Suche. */
+  const sprachLinks = Object.fromEntries(LOCALES.map(l => {
+    if (hatFilter(q)) return [l, basisPfad(l, trans) + nurOrt(q)];
+    const p = paramsAusAnfrage({ ...q, seite: 1 });
+    return [l, basisPfad(l, trans) + (p.toString() ? "?" + p.toString() : "")];
+  })) as Record<Locale, string>;
 
   /* Nullzustand: Wege mit echten Zahlen — dieselbe Suche, gezählt */
   let wege: ReturnType<typeof wegeBauen> = [];
@@ -96,8 +100,8 @@ export default async function Suche({ params, searchParams }: { params: Promise<
 
   return (
     <>
-      <Kopf locale={locale} aktuell="immobilien" sprachLinks={sprachLinks} />
-      <main className="portal">
+      <Kopf locale={locale} aktuell="immobilien" sprachLinks={sprachLinks} bereich={trans === "rent" ? "mieten" : "kaufen"} />
+      <main id="inhalt" className="portal">
         {q.modus === "map" ? (
           <section className="ansicht an" id="a-karte">
             <KartenAnsicht q={q} initial={antwort} w={w} locale={locale} pfad={pfad} basis={basis} />

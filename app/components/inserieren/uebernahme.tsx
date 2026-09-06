@@ -29,7 +29,7 @@ export function VorabUebernahme({ locale }: { locale: Locale }) {
   }, [locale, router]);
 
   return (
-    <main className="wiz an">
+    <main id="inhalt" className="wiz an">
       <p aria-live="polite" style={{ color: "var(--leise)" }}>{fehler ?? "…"}</p>
     </main>
   );

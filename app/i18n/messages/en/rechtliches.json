@@ -1,0 +1,18 @@
+{
+  "re_eyebrow": "Legal",
+  "re_statusEntwurf": "This text is a draft undergoing legal review. It is not yet binding.",
+  "re_impressum_beschreibung": "Details about the operator of this website — draft, undergoing legal review.",
+  "re_datenschutz_beschreibung": "How Fourwalls handles your data — draft, undergoing legal review.",
+  "re_agb_beschreibung": "Fourwalls terms and conditions — draft, undergoing legal review.",
+  "re_inseratsbedingungen_beschreibung": "Terms for creating and publishing listings — draft, undergoing legal review.",
+  "re_anbieterbedingungen_beschreibung": "Terms for professional providers — draft, undergoing legal review.",
+  "re_feld_firma": "Company name",
+  "re_feld_rechtsform": "Legal form",
+  "re_feld_uid": "Commercial register number (UID)",
+  "re_feld_adresse": "Address",
+  "re_feld_telefon": "Phone",
+  "re_feld_email": "Email",
+  "re_feld_bestaetigt": "Confirmed",
+  "re_feld_platzhalter": "Not yet confirmed",
+  "re_feld_offen": "to be added"
+}

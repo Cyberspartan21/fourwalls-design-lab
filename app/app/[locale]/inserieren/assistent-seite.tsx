@@ -21,6 +21,7 @@ export async function AssistentSeite({ locale, start }:
     "w_gewaehlteBilder", "w_meineBilder", "w_titelbild", "w_bereit", "w_bereitText", "w_absicht", "w_preis", "w_typ", "w_bilderZahl",
     "w_speichern", "w_gespeichert", "w_speichert", "w_nichtGespeichert", "w_speicherFehler", "w_konflikt", "w_neuLaden",
     "w_einreichen", "w_eingereichtTitel", "w_eingereichtText", "w_fehltNoch", "w_anmeldenNoetig", "w_anmeldenNoetigText",
+    "w_inseratsbedingungenHin", "w_inseratsbedingungenLink",
     "w_rueckmeldung", "k_email", "k_meineInserate", "ausstattung", "verfuegbar", "sofort", "abDatum", "aufAnfrage"];
   const texte: Record<string, string> = {};
   for (const k of schluessel) texte[k] = t(k);
@@ -35,7 +36,7 @@ export async function AssistentSeite({ locale, start }:
   return (
     <>
       <Kopf locale={locale} sprachLinks={sprachLinks} />
-      <main className="wiz an">
+      <main id="inhalt" className="wiz an">
         <Assistent locale={locale} t={texte} start={start}
           anmeldenHref={`/${locale}/konto/anmelden?weiter=${encodeURIComponent(weiterZiel)}`}
           kontoHref={`/${locale}/konto`} />

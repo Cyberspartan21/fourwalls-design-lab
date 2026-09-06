@@ -14,7 +14,7 @@
 
    P5.9 Phase A §6: Startseite, 404-Seite und Service-Landeseiten (verkaufen,
    bewertung, verwalten) sind jetzt eigene --app-Zustände, dazu das geöffnete
-   mobile Menü (kopf-mobil-offen) und die Fusszeile (fuss). Die Fehlerseite
+   mobile Menü (m-kopf-offen) und die Fusszeile (fuss). Die Fehlerseite
    (app/[locale]/error.tsx) hat bewusst KEINEN eigenen Zustand: es gibt keine
    deterministische, nebenwirkungsfreie öffentliche Auslösung dafür (keine
    eigens dafür erfundene Fehler-Route in der Anwendung) — das wäre reine
@@ -29,7 +29,10 @@ import { rmSync } from "node:fs";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+/* CHROME_BIN erlaubt einen anderen Chrome-Pfad als den macOS-Standard —
+   nötig für GitHub Actions ubuntu-latest, wo Google Chrome unter `google-chrome`
+   liegt (Pfad per `which google-chrome`), nicht unter dem macOS-Bündelpfad. */
+const CHROME = process.env.CHROME_BIN || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const argv = process.argv.slice(2);
 /* --app: Zustände der Next-Anwendung (P5.2) statt des Prototyps. Modus und
    Sprache stehen dort in der Adresse (?mode=, /fr/…), nicht in JS-Aufrufen. */
@@ -110,7 +113,7 @@ const ZUSTAENDE_APP = [
   { name:"m-verkaufen",      pfad:`de/verkaufen`,   breite:390, hoehe:844, mobil:true },
   { name:"bewertung",        pfad:`de/bewertung`,   breite:1440, hoehe:900 },
   { name:"verwalten",        pfad:`de/verwalten`,   breite:1440, hoehe:900 },
-  { name:"kopf-mobil-offen", pfad:`de`,              breite:390, hoehe:844, mobil:true, menue:true },
+  { name:"m-kopf-offen", pfad:`de`,              breite:390, hoehe:844, mobil:true, menue:true },
   { name:"fuss",             pfad:`de`,              breite:1440, hoehe:900, scrollEnde:true }
 ];
 

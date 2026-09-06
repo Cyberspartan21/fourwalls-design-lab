@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { istLocale, uebersetzer, DEFAULT_LOCALE, PFAD, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
@@ -12,6 +13,7 @@ import { meineAnliegen } from "@/server/anliegen";
 import { listeFavoriten } from "@/server/favoriten";
 import { meineSuchen } from "@/server/gespeicherteSuchen";
 import { meineOrganisationen } from "@/server/org-kontext";
+import { NOINDEX } from "@/lib/seo";
 
 /* Meine Inserate — die Liste, aus der jede weitere Handlung startet.
 
@@ -20,6 +22,13 @@ import { meineOrganisationen } from "@/server/org-kontext";
    Browser, wie in P5.3; ihre Übernahme ins Konto gehört zu einer späteren
    Phase. */
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Konto, P5.9 Phase B). */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("k_meineInserate") };
+}
 
 const AMPEL: Record<string, string> = {
   draft: "var(--leise)", submitted: "var(--licht)", in_review: "var(--licht)",

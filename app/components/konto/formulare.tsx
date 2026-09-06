@@ -64,7 +64,8 @@ export function AnmeldeFormular({ t, weiter, registrierenHref, passwortHref }: {
   );
 }
 
-export function RegistrierFormular({ t, weiter, anmeldenHref }: { t: Texte; weiter: string; anmeldenHref: string }) {
+export function RegistrierFormular({ t, weiter, anmeldenHref, agbHref, datenschutzHref }:
+  { t: Texte; weiter: string; anmeldenHref: string; agbHref: string; datenschutzHref: string }) {
   const router = useRouter();
   const [name, setName] = useState(""); const [email, setEmail] = useState(""); const [passwort, setPasswort] = useState("");
   const [fehler, setFehler] = useState<string | null>(null); const [laeuft, setLaeuft] = useState(false);
@@ -100,6 +101,9 @@ export function RegistrierFormular({ t, weiter, anmeldenHref }: { t: Texte; weit
         <p className="hin" id="rePwHin" style={{ color: "var(--leise)", fontSize: ".78rem", marginTop: 6 }}>{t.k_mindestens}</p>
       </div>
       <Fehler text={fehler} />
+      <p className="hin" style={{ marginTop: 18, color: "var(--leise)", fontSize: ".8rem" }}>
+        {t.k_agbDatenschutzHin} <a href={agbHref}>{t.k_agbLink}</a> {t.k_und} <a href={datenschutzHref}>{t.k_datenschutzLink}</a>
+      </p>
       <div style={{ marginTop: 20 }}>
         <button className="knopf voll gross" type="submit" disabled={laeuft}>{laeuft ? "…" : t.k_registrieren}</button>
       </div>

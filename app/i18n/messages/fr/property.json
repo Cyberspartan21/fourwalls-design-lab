@@ -168,12 +168,12 @@
   "o_unterhMonat": "Entretien et charges / mois",
   "o_vergroessern": "Agrandir",
   "o_verkleinern": "Réduire",
-  "o_vertrittNicht": "Fourwalls ne représente pas ce bien",
+  "o_vertrittNicht": "Ce bien n'est pas commercialisé par Fourwalls",
   "o_video": "Vidéo",
   "o_videoProd": "En production, le film sera diffusé ici en flux HLS, sans lecture automatique du son.",
   "o_vollbild": "Plein écran",
   "o_vorherigesBild": "Image précédente",
-  "o_wirVertreten": "Fourwalls représente la partie venderesse.",
+  "o_wirVertreten": "Vente avec Fourwalls",
   "o_ziKurz": "p.",
   "o_zinsmodell": "Modèle de taux",
   "o_zinsMonat": "Intérêts / mois",
@@ -194,5 +194,10 @@
   "verkauft": "Vendu",
   "vermietet": "Loué",
   "verwaltung": "Gérance",
-  "o_angenommenPrefix": "Demande enregistrée —"
+  "o_angenommenPrefix": "Demande enregistrée —",
+  "o_datenschutzHin": "Vos indications sont transmises à la partie qui propose le bien et à Fourwalls pour le traitement de la demande.",
+  "o_datenschutzLink": "Confidentialité",
+  "o_eigentuemer_titel": "Vous êtes propriétaire ?",
+  "o_eigentuemer_verkaufen": "Vendre un bien similaire ? Vendre avec Fourwalls",
+  "o_eigentuemer_bewertung": "Demander une estimation sans engagement"
 }

@@ -1,12 +1,21 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { istLocale, DEFAULT_LOCALE, type Locale } from "@/i18n";
+import { istLocale, DEFAULT_LOCALE, uebersetzer, type Locale } from "@/i18n";
 import { sitzung } from "@/server/sitzung";
 import { entwurfLesen, type EntwurfZeile } from "@/server/entwuerfe";
 import { AssistentSeite } from "../assistent-seite";
 import { asAppError } from "@/lib/errors";
 import type { Person } from "@/domain/rechte";
+import { NOINDEX } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+/* NOINDEX (Auth-Fluss, P5.9 Phase B) — gleicher Titel wie der Einstieg. */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; ref: string }> }): Promise<Metadata> {
+  const { locale: roh } = await params;
+  const locale: Locale = istLocale(roh) ? roh : DEFAULT_LOCALE;
+  return { ...NOINDEX, title: uebersetzer(locale)("nav.inserieren") };
+}
 
 /* Laden und Rechteentscheid getrennt vom Markup: ein Fehler beim Laden ist
    eine Antwort (404), kein abgefangener Renderfehler. */

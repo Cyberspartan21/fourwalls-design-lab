@@ -110,6 +110,9 @@ export function OrganisationAnlegenFormular({ t, locale }: { t: Texte; locale: L
         <textarea className="feld" id="ogDescription" maxLength={2000} value={description} onChange={e => setDescription(e.target.value)} />
       </div>
       {fehler && <p className="fehler an" role="alert" style={{ color: "var(--warn)", fontSize: ".82rem", marginTop: 10 }}>{fehler}</p>}
+      <p className="hin" style={{ color: "var(--leise)", fontSize: ".8rem", marginTop: 18 }}>
+        {t.og_anbieterbedingungenHin} <a href={`/${locale}/anbieterbedingungen`}>{t.og_anbieterbedingungenLink}</a>
+      </p>
       <div style={{ marginTop: 20 }}>
         <button className="knopf voll gross" type="submit" disabled={laeuft}>{laeuft ? "…" : t.og_anlegenKnopf}</button>
       </div>

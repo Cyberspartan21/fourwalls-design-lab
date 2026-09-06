@@ -1,0 +1,20 @@
+{
+  "ws_wissenWort": "Guide",
+  "ws_uebersichtLead": "Des réponses aux questions qui se posent réellement avant un achat, une vente, une location ou une mise en location — courtes, concrètes, sans publicité.",
+  "ws_absicht_verkaufen": "Vendre",
+  "ws_absicht_bewerten": "Estimation",
+  "ws_absicht_mieten": "Louer",
+  "ws_absicht_vermieten": "Mettre en location",
+  "ws_absicht_verwalten": "Gérance",
+  "ws_absicht_wissen": "Guide",
+  "ws_aktualisiert": "Mis à jour le {datum}",
+  "ws_quellen": "Sources",
+  "ws_verwandteBeitraege": "Articles liés",
+  "ws_cta_verkaufen_mitFw": "Vendre avec Fourwalls",
+  "ws_cta_verkaufen_bewertung": "Demander une estimation sans engagement",
+  "ws_cta_bewerten": "Demander une estimation sans engagement",
+  "ws_cta_mieten": "Chercher un bien à louer",
+  "ws_cta_vermieten": "Mandater la recherche de locataires",
+  "ws_cta_verwalten": "Demander une gérance",
+  "ws_cta_wissen": "En savoir plus sur Fourwalls"
+}

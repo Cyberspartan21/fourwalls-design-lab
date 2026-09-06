@@ -42,6 +42,8 @@
   "og_feld_ort": "Localité (facultatif)",
   "og_feld_beschreibung": "Description (facultatif)",
   "og_anlegenKnopf": "Créer l'organisation",
+  "og_anbieterbedingungenHin": "En créant l'organisation, vous acceptez les",
+  "og_anbieterbedingungenLink": "conditions pour les prestataires",
 
   "og_uebersichtTitel": "Aperçu",
   "og_kachelOffeneAnfragen": "Demandes ouvertes",

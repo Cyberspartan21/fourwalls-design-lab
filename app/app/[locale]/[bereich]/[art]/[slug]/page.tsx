@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { LOCALES, PFAD, istLocale, uebersetzer, type Locale } from "@/i18n";
 import { env } from "@/server/env";
+import { jsonLd } from "@/lib/seo";
 import { findePubliziertesInserat, typLabel } from "@/server/listings";
 import { baueDossier } from "@/domain/dossier";
 import { ObjektSeite } from "@/components/property/seite";
@@ -51,9 +52,14 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const story = d.sections.story?.absaetze[0] ?? d.description ?? d.tagline ?? "";
   const beschreibung = (d.tagline ? d.tagline + " " : "") + story;
   return {
-    title: `${d.title} · ${d.property.postalCode} ${d.property.city} — Fourwalls`,
+    /* `absolute` statt eines einfachen Strings: diese Seite hängt "— Fourwalls"
+       hier bereits selbst an (mit Ort dahinter) — das layout-weite title.template
+       (app/[locale]/layout.tsx, P5.9 Phase B) hängt sonst ein zweites Mal an.
+       Ausserhalb des JSON-LD-Auftrags dieser Datei, aber ohne diese eine
+       Zeile stünde "— Fourwalls" doppelt im <title> (siehe Bericht). */
+    title: { absolute: `${d.title} · ${d.property.postalCode} ${d.property.city} — Fourwalls` },
     description: beschreibung.length > 158 ? beschreibung.slice(0, 155).replace(/\s+\S*$/, "") + "…" : beschreibung,
-    alternates: { canonical: site + kanonisch, languages: Object.fromEntries(LOCALES.map(l => [l, site + pfad(l, d)])) },
+    alternates: { canonical: site + kanonisch, languages: { ...Object.fromEntries(LOCALES.map(l => [l, site + pfad(l, d)])), "x-default": site + pfad("de", d) } },
     robots: d.isDemo && env().APP_ENV !== "development" ? { index: false } : undefined,
     openGraph: { title: d.title, description: d.tagline ?? undefined, url: site + kanonisch, images: d.images[0]?.sources.jpeg.find(s => s.width === 1600)?.url ? [site + d.images[0].sources.jpeg.find(s => s.width === 1600)!.url] : [] },
     other: { "fw:typ": typLabel(d.property.kind, locale), "fw:demo": String(d.isDemo), "fw:t": t("exclusive") }
@@ -89,12 +95,10 @@ export default async function Seite({ params }: { params: Promise<Params> }) {
     ...(d.priceChf && !d.priceOnRequest ? { offers: { "@type": "Offer", price: d.priceChf / 100, priceCurrency: "CHF" } } : {}),
     about: { "@type": d.property.kind === "apartment" ? "Apartment" : "House", address: { "@type": "PostalAddress", postalCode: d.property.postalCode, addressLocality: d.property.city, addressRegion: d.property.canton, addressCountry: "CH" } }
   };
-  const ldText = JSON.stringify(ld).replace(/</g, "\\u003c");
-
   return (
     <>
-      {/* eslint-disable-next-line react/no-danger -- JSON.stringify mit maskiertem «<»; das übliche, sichere Muster für JSON-LD */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldText }} />
+      {/* eslint-disable-next-line react/no-danger -- JSON.stringify mit maskiertem «<» (lib/seo.ts jsonLd()); das übliche, sichere Muster für JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
       {favoritenRefs && <FavoritenInit refs={favoritenRefs} />}
       <ObjektSeite d={dossier} t={t} locale={locale} aehnliche={aehn} w={w} sprachLinks={sprachLinks} angemeldet={!!person} zuletzt={zuletzt} />
     </>

@@ -90,9 +90,9 @@ window.FWD = {
     "medien": {
       "bilder": [
         {
-          "key": "lakeside-villa-1",
-          "text": "Südfassade mit auskragendem Obergeschoss über dem See",
-          "kat": "aussen"
+          "key": "fw-see-spiegel-1",
+          "text": "Blick über den See auf die bewaldeten Bergflanken, Wolken spiegeln sich im ruhigen Wasser",
+          "kat": "lage"
         },
         {
           "key": "fw-see-terrasse-1",

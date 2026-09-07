@@ -48,10 +48,13 @@
 .premiere .flor{position:absolute;left:0;right:0;bottom:0;top:38%;z-index:3;
   background:linear-gradient(to top,rgba(7,12,18,.92),rgba(7,12,18,.45) 42%,rgba(7,12,18,0))}
 .premiere .txt{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 var(--pad) clamp(22px,3vw,40px)}
-.premiere .kick{color:var(--licht2);margin-bottom:12px}
+/* Kontrast lokal, nicht flächig: auf hellen Heldenbildern (Wasser, Himmel) trägt
+   der Verlauf allein die kleine Versalzeile nicht — gemessen 3.7:1 bei 390 px.
+   Ein enger Schatten hebt sie, ohne das Bild milchig zu machen. */
+.premiere .kick{color:var(--licht2);margin-bottom:12px;text-shadow:0 1px 14px rgba(7,12,18,.9),0 0 3px rgba(7,12,18,.55)}
 .premiere h1{font-family:var(--d);font-weight:200;font-size:clamp(2.1rem,5.2vw,4.4rem);line-height:1;letter-spacing:-.025em;max-width:16ch;
   text-shadow:0 2px 40px rgba(7,12,18,.7)}
-.premiere .tag{margin-top:12px;font-family:var(--d);font-style:italic;font-size:clamp(.95rem,1.4vw,1.2rem);color:rgba(238,241,242,.85);max-width:46ch}
+.premiere .tag{margin-top:12px;font-family:var(--d);font-style:italic;font-size:clamp(.95rem,1.4vw,1.2rem);color:rgba(238,241,242,.85);max-width:46ch;text-shadow:0 1px 18px rgba(7,12,18,.75)}
 
 /* ---------- Titelzeile: Preis und Eckdaten sofort ---------- */
 .dtitel.kompakt{padding-top:clamp(14px,1.8vw,22px)}
@@ -273,6 +276,9 @@
   .mosaik figure:first-child{grid-column:span 2;grid-row:auto}
   .mosaik.einzel figure:first-child{grid-column:auto}
   .premiere{height:min(56svh,500px);min-height:340px}
+  /* Kürzerer Held: derselbe Verlauf muss früher ansetzen, sonst steht die
+     Versalzeile bei hellen Bildern auf zu wenig Grund (gemessen 3.7:1). */
+  .premiere .flor{top:24%}
   .dtitel .oben{grid-template-columns:1fr}
   .dtitel .preisblock{text-align:left}
   .eck .quelle{margin-left:0;margin-top:6px}

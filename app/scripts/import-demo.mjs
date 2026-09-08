@@ -365,7 +365,7 @@ async function main() {
       const prop = await sql`INSERT INTO property (public_ref, kind, postal_code, city, canton, place_id, geom_exact, geo_precision, geo_radius_m, rooms, living_area_m2, usable_area_m2, plot_area_m2, volume_m3, bedrooms, bathrooms, floor, floors_total, built_year, ceiling_height_m)
         VALUES (${refP}, ${kind}, ${p.postalCode}, ${p.city}, ${p.canton}, ${ortsId ? placeId[ortsId] : null},
                 ST_SetSRID(ST_MakePoint(${p.lng}, ${p.lat}), 4326)::geography, ${prz}, ${radius},
-                ${p.rooms ?? null}, ${p.livingArea ?? null}, ${seehaus ? 331 : null}, ${p.plotArea ?? null}, ${seehaus ? 1240 : null}, ${p.bedrooms ?? null}, ${p.bathrooms ?? null}, ${p.floor ?? null}, ${seehaus ? 2 : null}, ${p.yearBuilt ?? null}, ${seehaus ? 2.6 : null}) RETURNING id`;
+                ${p.rooms ?? null}, ${p.livingArea ?? null}, ${seehaus ? 331 : null}, ${p.plotArea ?? null}, ${seehaus ? 1240 : null}, ${p.bedrooms ?? null}, ${p.bathrooms ?? null}, ${p.floor ?? null}, ${seehaus ? 2 : null}, ${p.yearBuilt ?? null}, ${seehaus ? 3.1 : null}) RETURNING id`;
       const pid = prop[0].id;
       for (const f of new Set(p.features || [])) await sql`INSERT INTO property_feature (property_id, feature_key) VALUES (${pid}, ${f}) ON CONFLICT DO NOTHING`;
       const kontakt = brokerId[p.broker] ?? LENA;

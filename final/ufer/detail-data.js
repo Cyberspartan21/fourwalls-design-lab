@@ -17,15 +17,15 @@ window.FWD = {
     "story": {
       "titel": "Ein Haus, das dem Licht folgt",
       "absaetze": [
-        "Das Seehaus wurde 2019 von einem Zürcher Architekturbüro als privater Rückzugsort über dem Walensee realisiert. Zwei auskragende Geschosse aus Sichtbeton schieben sich über den Hang, raumhohes Glas öffnet den Wohnbereich nach Süden zum Wasser. Die Bauherrschaft legte Wert auf reduzierte Materialität: Beton, Eiche und Naturstein, ohne zusätzliche Dekoration. Entstanden ist ein Haus, das sich der Landschaft unterordnet, statt sie zu dominieren.",
-        "Der Grundriss folgt der Tagesroutine der Bewohner: Küche und Essbereich liegen im Osten und fangen die Morgensonne, der Wohnraum mit freistehendem Cheminéeofen orientiert sich zum See, das Hauptschlafzimmer mit Ankleide besetzt das gesamte südliche Ende des Obergeschosses. Drei weitere Zimmer und zwei Bäder ergänzen das Raumprogramm. Ein Arbeitszimmer im Erdgeschoss lässt sich bei Bedarf als Gästezimmer nutzen.",
-        "Die Umgebung bleibt bewusst zurückhaltend: Wiese, acht Obstbäume, ein öffentlicher Badeplatz drei Gehminuten entfernt. Technisch ist das Haus auf Langfristigkeit ausgelegt – Erdsonden-Wärmepumpe, 12 kWp Photovoltaik mit Speicher und KNX-Gebäudesteuerung sorgen trotz grosszügiger Verglasung für tiefe Betriebskosten. Seit dem Bezug 2019 wurde das Haus durchgehend gepflegt, nie vermietet und nie umgebaut."
+        "Das Seehaus steht seit 1912 unmittelbar am Ufer: gemauerter Sockel aus Bruchstein, verputzte Fassaden, ein geschweiftes Walmdach, das die Dachräume mitnutzt. Zum Wasser hin liegt die Terrasse auf der alten Seemauer, daneben das gedeckte Bootshaus, das zum Grundstück gehört. 2019 hat ein Zürcher Architekturbüro das Haus kernsaniert und nach Süden um einen Wohnpavillon erweitert: ein auskragendes Geschoss aus Sichtbeton, raumhohes Glas zum Wasser. Alt und neu bleiben unterscheidbar, statt sich anzugleichen.",
+        "Der Grundriss folgt der Tagesroutine der Bewohner: Küche und Essbereich liegen im Osten und fangen die Morgensonne, der Wohnraum mit offenem Cheminée orientiert sich zum See, das Hauptschlafzimmer mit Ankleide besetzt das gesamte südliche Ende des Obergeschosses. Drei weitere Zimmer und zwei Bäder ergänzen das Raumprogramm. Ein Arbeitszimmer im Erdgeschoss lässt sich bei Bedarf als Gästezimmer nutzen.",
+        "Die Umgebung bleibt bewusst zurückhaltend: Rasen bis an die Seemauer, acht alte Obstbäume, ein öffentlicher Badeplatz drei Gehminuten entfernt. Technisch ist das Haus auf Langfristigkeit ausgelegt – Erdsonden-Wärmepumpe, 12 kWp Photovoltaik mit Speicher und KNX-Gebäudesteuerung halten die Betriebskosten trotz des Bauvolumens tief. Seit der Erneuerung 2019 wurde das Haus durchgehend gepflegt, nie vermietet und nicht erneut umgebaut."
       ]
     },
     "highlights": [
-      "Eigener Seeanstoss mit Bootssteg und Badeplatz",
+      "Eigener Seeanstoss mit gedecktem Bootshaus und Steg",
       "Unverbaubarer Blick über den Walensee auf die Churfirsten",
-      "Architektur 2019, Minergie-zertifiziert",
+      "Villa von 1912, 2019 kernsaniert und zum See erweitert",
       "Terrasse und Wohnräume nach Süd-West",
       "Erdsonden-Wärmepumpe mit 12 kWp Photovoltaik und Speicher",
       "Doppelgarage mit zwei Wallboxen"
@@ -37,19 +37,19 @@ window.FWD = {
       "zimmer": 5.5,
       "schlafzimmer": 4,
       "badezimmer": 3,
-      "baujahr": 2019,
+      "baujahr": 1912,
       "geschosse": 2,
-      "raumhoehe": 2.6,
+      "raumhoehe": 3.1,
       "verfuegbar": "Nach Vereinbarung",
       "kubatur": 1240,
       "preis": 5480000,
       "preisM2": 18960
     },
     "gebaeude": {
-      "bauweise": "Kompaktbau in Sichtbeton und Stahl, zweigeschossig zum See auskragend",
-      "dach": "Flachdach, extensiv begrünt, Attika-Aufbau für Haustechnik",
-      "fenster": "Pfosten-Riegel-Verglasung, 3-fach isolierverglast, Sonnenschutzglas Süd",
-      "zustand": "Neuwertig, durchgehend gepflegt seit Bezug 2019",
+      "bauweise": "Massivbau von 1912, Sockel in Bruchstein, verputztes Mauerwerk; 2019 kernsaniert und nach Süden um einen Wohnpavillon in Sichtbeton und Stahl erweitert",
+      "dach": "Geschweiftes Walmdach mit Biberschwanzdeckung, 2019 neu eingedeckt; Flachdach über dem Wohnpavillon, extensiv begrünt",
+      "fenster": "Holz-Metall-Fenster von 2019 in der historischen Teilung; Pfosten-Riegel-Verglasung im Wohnpavillon, durchgehend 3-fach isolierverglast",
+      "zustand": "Neuwertig seit der Kernsanierung 2019, Gebäudehülle und Dach instand gestellt",
       "ausrichtung": "Hauptfassade Süd-West zum See, Schlafräume Ost",
       "volumen": 1240
     },
@@ -76,8 +76,8 @@ window.FWD = {
     "aussen": {
       "balkon": "Keine Balkone (Terrassen übernehmen diese Funktion)",
       "terrasse": "68 m² gedeckte Seeterrasse plus 40 m² Sonnendeck",
-      "garten": "1'120 m² Umschwung, Wiese, acht Obstbäume, Badeplatz 3 Gehminuten entfernt",
-      "pool": "Kein eigener Pool (öffentlicher Seezugang fussläufig)",
+      "garten": "1'120 m² Umschwung, Rasen bis an die Seemauer, acht alte Obstbäume",
+      "pool": "Kein eigener Pool (eigener Seeanstoss mit Badeplatz an der Seemauer)",
       "aussicht": "Freie Sicht auf Walensee und Churfirsten",
       "privatsphaere": "Keine direkte Einsicht von Nachbargrundstücken, Bepflanzung als natürlicher Sichtschutz"
     },
@@ -90,9 +90,9 @@ window.FWD = {
     "medien": {
       "bilder": [
         {
-          "key": "fw-see-spiegel-1",
-          "text": "Blick über den See auf die bewaldeten Bergflanken, Wolken spiegeln sich im ruhigen Wasser",
-          "kat": "lage"
+          "key": "fw-seevilla-1",
+          "text": "Seeseite mit dem gedeckten Bootshaus, Terrasse auf der alten Seemauer",
+          "kat": "aussen"
         },
         {
           "key": "fw-see-terrasse-1",
@@ -101,12 +101,12 @@ window.FWD = {
         },
         {
           "key": "fw-see-wohnen-2",
-          "text": "Wohnraum mit raumhoher Verglasung nach Süden",
+          "text": "Wohnpavillon mit raumhoher Verglasung nach Süden",
           "kat": "wohnen"
         },
         {
           "key": "fw-see-wohnen-1",
-          "text": "Essbereich, Eichenboden, Sichtbetondecke",
+          "text": "Essbereich im Wohnpavillon, Eichenboden, Sichtbetondecke",
           "kat": "wohnen"
         },
         {
@@ -146,7 +146,7 @@ window.FWD = {
         },
         {
           "key": "lakeside-villa-2",
-          "text": "Haus und Spiegelung in der Abendstimmung",
+          "text": "Der Wohnpavillon von 2019 am Abend, gespiegelt im See",
           "kat": "aussen"
         },
         {
@@ -470,7 +470,7 @@ window.FWD = {
     "faq": [
       {
         "frage": "Ist der Seezugang privat?",
-        "antwort": "Nein, der öffentliche Badeplatz liegt rund drei Gehminuten entfernt; ein eigener Bootssteg besteht nicht."
+        "antwort": "Ja. Zum Grundstück gehören eigener Seeanstoss, ein gedecktes Bootshaus und ein Steg; das öffentliche Strandbad liegt zusätzlich rund drei Gehminuten entfernt."
       },
       {
         "frage": "Wie ist die Erschliessung im Winter?",
@@ -540,7 +540,7 @@ window.FWD = {
       "badezimmer": 2,
       "baujahr": 1926,
       "renovation": 2018,
-      "geschosse": 2,
+      "geschosse": 3,
       "raumhoehe": 2.4,
       "verfuegbar": "Nach Vereinbarung",
       "kubatur": 780,

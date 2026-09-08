@@ -37,7 +37,7 @@ export function Fuss({ locale }: { locale: Locale }) {
         <div><b>{t("nav.wissen")}</b><a href={`${start}/wissen`}>{w.alle}</a><a href={`${start}/wissen/wohnung-mieten-bewerbung`}>{w.mieten}</a><a href={`${start}/wissen/immobilienverwaltung-leistungen`}>{w.verwalten}</a><a href={`${start}/wissen/datenschutz-und-anfragen`}>{w.datenschutz}</a></div>
         <div><b>{feld("firmierung", "Fourwalls AG")}</b><span>{feld("strasse", "")} · {feld("plzOrt", "")}</span><span>{feld("telefon", "")}</span><span>{feld("email", "")}</span><span>{staedte.join(" · ")}</span></div>
       </div>
-      <div className="fein"><a href={`${start}/impressum`}>{t("fuss_impressum")}</a> · <a href={`${start}/datenschutz`}>{t("fuss_datenschutz")}</a> · <a href={`${start}/agb`}>{t("fuss_agb")}</a> · <a href={`${start}/ueber-fourwalls`}>{t("fuss_ueberFourwalls")}</a></div>
+      <div className="fein"><a href={`${start}/impressum`}>{t("fuss_impressum")}</a> · <a href={`${start}/datenschutz`}>{t("fuss_datenschutz")}</a> · <a href={`${start}/agb`}>{t("fuss_agb")}</a> · <a href={`${start}/ueber-fourwalls`}>{t("fuss_ueberFourwalls")}</a> · <a href={`${start}/bildnachweis`}>{t("fuss_bildnachweis")}</a></div>
       <div className="fein"><span>Entwicklungsstand mit fiktiven Objekt- und Firmendaten · © 2026 Fourwalls</span><span>Kontaktangaben sind Platzhalter</span></div>
     </footer>
   );

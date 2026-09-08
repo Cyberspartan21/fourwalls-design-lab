@@ -67,27 +67,27 @@ window.FW = (function () {
     {
       id: "FW-2026-001", slug: "seehaus-walensee", status: "active", transactionType: "buy", propertyType: "house",
       title: { de: "Seehaus Walensee", en: "Seehaus Walensee", fr: "Seehaus Walensee", it: "Seehaus Walensee" },
-      tagline: { de: "Beton, Glas und ein See, der die Wände färbt.", en: "Concrete, glass, and a lake that colours the walls.", fr: "Béton, verre et un lac qui teinte les murs.", it: "Cemento, vetro e un lago che colora le pareti." },
+      tagline: { de: "Eine Villa von 1912, ein Bootshaus und ein See, der die Wände färbt.", en: "A 1912 villa, its own boathouse, and a lake that colours the walls.", fr: "Une villa de 1912, sa remise à bateaux et un lac qui teinte les murs.", it: "Una villa del 1912, la sua rimessa per barche e un lago che colora le pareti." },
       street: "Seestrasse 41", postalCode: "8883", city: "Quarten", canton: "SG", country: "CH", lat: 47.1132, lng: 9.2151,
       price: 5480000, priceOnRequest: false, rooms: 5.5, bedrooms: 4, bathrooms: 3, livingArea: 289, plotArea: 1120,
-      yearBuilt: 2019, floor: null, parking: 3,
+      yearBuilt: 1912, yearRenovated: 2019, floor: null, parking: 3,
       blurb: {
-        de: "Ein stilles Haus über dem Walensee: zwei auskragende Geschosse, raumhohes Glas gegen Süden, Sichtbeton, Eiche und ein Garten, der direkt in den Abend übergeht.",
-        en: "A quiet house above Lake Walen: two cantilevered floors, full-height glazing to the south, exposed concrete, oak, and a garden that runs straight into the evening.",
-        fr: "Une maison silencieuse au-dessus du lac de Walenstadt : deux niveaux en porte-à-faux, vitrages toute hauteur au sud, béton apparent et chêne.",
-        it: "Una casa silenziosa sopra il lago di Walenstadt: due piani a sbalzo, vetrate a tutta altezza verso sud, cemento a vista e rovere."
+        de: "Eine Villa von 1912 unmittelbar am Walensee, 2019 kernsaniert und nach Süden um einen Wohnpavillon aus Sichtbeton und Glas erweitert. Eigenes Bootshaus, Terrasse auf der alten Seemauer.",
+        en: "A 1912 villa on the shore of Lake Walen, fully renewed in 2019 and extended to the south with a living pavilion of exposed concrete and glass. Its own boathouse, a terrace on the old lake wall.",
+        fr: "Une villa de 1912 au bord du lac de Walenstadt, entièrement rénovée en 2019 et prolongée au sud par un pavillon en béton apparent et verre. Remise à bateaux privée, terrasse sur l'ancien mur du lac.",
+        it: "Una villa del 1912 in riva al lago di Walenstadt, risanata nel 2019 e ampliata a sud con un padiglione in cemento a vista e vetro. Rimessa per barche propria, terrazza sull'antico muro del lago."
       },
       description: {
-        de: "Das Seehaus wurde 2019 von einem Zürcher Architekturbüro als privater Rückzugsort gebaut. Der Grundriss folgt dem Licht: Küche und Essbereich öffnen sich nach Osten zur Morgensonne, der Wohnraum mit Cheminée liegt gegen den See, das Hauptschlafzimmer mit Ankleide und Bad besetzt das gesamte Obergeschoss-Südende. Materialien: geschliffener Sichtbeton, Eichenparkett, Naturstein in den Bädern. Die Umgebung bleibt bewusst zurückhaltend – Wiese, acht Obstbäume, ein Badeplatz am Ufer in drei Gehminuten. Technik: Wärmepumpe mit Erdsonde, PV-Anlage 12 kWp, E-Ladestationen, Minergie-zertifiziert.",
-        en: "Seehaus was built in 2019 by a Zurich practice as a private retreat. The plan follows the light: kitchen and dining open east to the morning sun, the living room with fireplace faces the lake, and the main bedroom with dressing room and bath occupies the entire southern end upstairs. Materials: polished exposed concrete, oak parquet, natural stone bathrooms. The grounds stay deliberately quiet – meadow, eight fruit trees, a swimming spot three minutes on foot. Ground-source heat pump, 12 kWp PV, EV charging, Minergie-certified.",
-        fr: "Construite en 2019 par un bureau zurichois comme refuge privé, la maison suit la lumière : cuisine et salle à manger ouvertes à l'est, séjour avec cheminée face au lac, chambre principale avec dressing occupant tout le sud de l'étage. Béton poli, parquet en chêne, pierre naturelle. Pompe à chaleur géothermique, photovoltaïque 12 kWp, certification Minergie.",
-        it: "Costruita nel 2019 da uno studio zurighese come rifugio privato, la casa segue la luce: cucina e pranzo aperti a est, soggiorno con camino verso il lago, camera principale con cabina armadio su tutto il lato sud del piano superiore. Cemento levigato, parquet di rovere, pietra naturale. Pompa di calore geotermica, fotovoltaico 12 kWp, certificazione Minergie."
+        de: "Das Seehaus wurde 1912 unmittelbar am Ufer gebaut; 2019 hat es ein Zürcher Architekturbüro kernsaniert und nach Süden um einen Wohnpavillon erweitert. Der Grundriss folgt dem Licht: Küche und Essbereich öffnen sich nach Osten zur Morgensonne, der Wohnraum mit Cheminée liegt gegen den See, das Hauptschlafzimmer mit Ankleide und Bad besetzt das gesamte Obergeschoss-Südende. Materialien: geschliffener Sichtbeton, Eichenparkett, Naturstein in den Bädern. Die Umgebung bleibt bewusst zurückhaltend – Rasen bis an die Seemauer, acht alte Obstbäume, eigenes Bootshaus, ein Badeplatz in drei Gehminuten. Technik: Wärmepumpe mit Erdsonde, PV-Anlage 12 kWp, E-Ladestationen, Minergie-zertifiziert.",
+        en: "Seehaus was built on the shore in 1912; in 2019 a Zurich practice renewed it completely and extended it south with a living pavilion. The plan follows the light: kitchen and dining open east to the morning sun, the living room with fireplace faces the lake, and the main bedroom with dressing room and bath occupies the entire southern end upstairs. Materials: polished exposed concrete, oak parquet, natural stone bathrooms. The grounds stay deliberately quiet – lawn to the old lake wall, eight mature fruit trees, its own boathouse, a swimming spot three minutes on foot. Ground-source heat pump, 12 kWp PV, EV charging, Minergie-certified.",
+        fr: "Bâtie au bord de l'eau en 1912, la maison a été entièrement rénovée en 2019 par un bureau zurichois et prolongée au sud par un pavillon. Le plan suit la lumière : cuisine et salle à manger ouvertes à l'est, séjour avec cheminée face au lac, chambre principale avec dressing occupant tout le sud de l'étage. Béton poli, parquet en chêne, pierre naturelle. Pompe à chaleur géothermique, photovoltaïque 12 kWp, certification Minergie.",
+        it: "Costruita in riva al lago nel 1912, la casa è stata risanata nel 2019 da uno studio zurighese e ampliata a sud con un padiglione. La pianta segue la luce: cucina e pranzo aperti a est, soggiorno con camino verso il lago, camera principale con cabina armadio su tutto il lato sud del piano superiore. Cemento levigato, parquet di rovere, pietra naturale. Pompa di calore geotermica, fotovoltaico 12 kWp, certificazione Minergie."
       },
       highlights: {
-        de: ["Unverbaubarer Seeblick", "Architektur 2019, Minergie", "1'120 m² Umschwung", "3 Min. zum Badeplatz"],
-        en: ["Unobstructable lake view", "2019 architecture, Minergie", "1,120 m² grounds", "3 min to swimming spot"],
-        fr: ["Vue lac imprenable", "Architecture 2019, Minergie", "1 120 m² de terrain", "Baignade à 3 min"],
-        it: ["Vista lago non edificabile", "Architettura 2019, Minergie", "1'120 m² di terreno", "Riva a 3 minuti"]
+        de: ["Eigenes Bootshaus am See", "Villa 1912, kernsaniert 2019", "1'120 m² Umschwung", "3 Min. zum Badeplatz"],
+        en: ["Own boathouse on the lake", "1912 villa, renewed 2019", "1,120 m² grounds", "3 min to swimming spot"],
+        fr: ["Remise à bateaux privée", "Villa 1912, rénovée en 2019", "1 120 m² de terrain", "Baignade à 3 min"],
+        it: ["Rimessa per barche propria", "Villa 1912, risanata nel 2019", "1'120 m² di terreno", "Riva a 3 minuti"]
       },
       features: ["lakeview", "mountainview", "fireplace", "parquet", "floorheating", "minergie", "garage", "terrace", "garden", "evcharging"],
       images: ["lakeside-villa-1", "lakeside-villa-2", "penthouse-2", "kitchen-1", "interior-bright-1"], heroMedia: "lakeside-villa-1",

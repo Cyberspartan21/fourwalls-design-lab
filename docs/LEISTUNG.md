@@ -150,22 +150,35 @@ schwanken kaum).
 
 | Seite | Gerät | Requests | Bytes gesamt | TTFB | DCL | Load | LCP (Element) | CLS | MapLibre |
 |---|---|---|---|---|---|---|---|---|---|
-| Start | desktop | 23 | 542 KB | 41 ms | 147 ms | 203 ms | 204 ms (IMG) | 0.0000 | nein |
-| Start | mobil | 20 | 520 KB | 43 ms | 92 ms | 186 ms | 132 ms (IMG) | 0.0000 | nein |
-| Kaufen-Suche | desktop | 44 | 1027 KB | 68 ms | 99 ms | 208 ms | 196 ms (IMG) | 0.0000 | nein |
-| Kaufen-Suche | mobil | 26 | 752 KB | 40 ms | 71 ms | 144 ms | 140 ms (IMG) | 0.0000 | nein |
-| Objekt Exclusive | desktop | 25 | 626 KB | 216 ms | 247 ms | 399 ms | 368 ms (IMG) | 0.0000 | nein |
-| Objekt Exclusive | mobil | 22 | 598 KB | 127 ms | 441 ms | 484 ms | 288 ms (IMG) | 0.0000 | nein |
-| Objekt Standard | desktop | 17 | 423 KB | 86 ms | 138 ms | 213 ms | 160 ms (IMG) | 0.0000 | nein |
-| Objekt Standard | mobil | 17 | 407 KB | 41 ms | 85 ms | 135 ms | 100 ms (IMG) | 0.0000 | nein |
-| Karte | desktop | 39 | 1014 KB | 153 ms | 237 ms | 334 ms | 532 ms (P) | 0.0000 | **ja** |
-| Karte | mobil | 22 | 694 KB | 152 ms | 263 ms | 420 ms | 600 ms (P) | 0.0000 | **ja** |
-| Verkaufen | desktop | 14 | 379 KB | 11 ms | 33 ms | 96 ms | 68 ms (P) | 0.0000 | nein |
-| Verkaufen | mobil | 14 | 379 KB | 19 ms | 53 ms | 98 ms | 88 ms (LI) | 0.0000 | nein |
-| Wissen-Beitrag | desktop | 14 | 382 KB | 25 ms | 61 ms | 108 ms | 72 ms (P) | 0.0000 | nein |
-| Wissen-Beitrag | mobil | 14 | 382 KB | 23 ms | 146 ms | 147 ms | 92 ms (P) | 0.0000 | nein |
-| Anbieterseite | desktop | 26 | 586 KB | 78 ms | 184 ms | 187 ms | 184 ms (IMG) | 0.0000 | nein |
-| Anbieterseite | mobil | 22 | 614 KB | 42 ms | 184 ms | 185 ms | 172 ms (IMG) | 0.0000 | nein |
+| Start | desktop | 24 | 604 KB | 82 ms | 137 ms | 210 ms | 204 ms (IMG) | 0.0000 | nein |
+| Start | mobil | 21 | 656 KB | 28 ms | 55 ms | 135 ms | 112 ms (IMG) | 0.0000 | nein |
+| Kaufen-Suche | desktop | 35 | 753 KB | 141 ms | 190 ms | 255 ms | 244 ms (IMG) | 0.0000 | nein |
+| Kaufen-Suche | mobil | 25 | 759 KB | 37 ms | 99 ms | 141 ms | 148 ms (IMG) | 0.0000 | nein |
+| Objekt Exclusive | desktop | 25 | 987 KB | 171 ms | 294 ms | 346 ms | 336 ms (IMG) | 0.0000 | nein |
+| Objekt Exclusive | mobil | 22 | 814 KB | 57 ms | 161 ms | 204 ms | 176 ms (IMG) | 0.0000 | nein |
+| Objekt Standard | desktop | 17 | 426 KB | 61 ms | 89 ms | 148 ms | 124 ms (IMG) | 0.0000 | nein |
+| Objekt Standard | mobil | 17 | 410 KB | 69 ms | 94 ms | 165 ms | 128 ms (IMG) | 0.0000 | nein |
+| Karte | desktop | 34 | 893 KB | 72 ms | 99 ms | 169 ms | 360 ms (P) | 0.0000 | nein |
+| Karte | mobil | 22 | 699 KB | 69 ms | 101 ms | 152 ms | 344 ms (P) | 0.0000 | nein |
+| Verkaufen | desktop | 15 | 384 KB | 11 ms | 42 ms | 87 ms | 60 ms (P) | 0.0000 | nein |
+| Verkaufen | mobil | 15 | 384 KB | 14 ms | 44 ms | 93 ms | 84 ms (LI) | 0.0000 | nein |
+| Wissen-Beitrag | desktop | 15 | 386 KB | 54 ms | 75 ms | 130 ms | 108 ms (P) | 0.0000 | nein |
+| Wissen-Beitrag | mobil | 15 | 386 KB | 10 ms | 37 ms | 95 ms | 64 ms (P) | 0.0000 | nein |
+| Anbieterseite | desktop | 27 | 590 KB | 63 ms | 90 ms | 165 ms | 156 ms (IMG) | 0.0000 | nein |
+| Anbieterseite | mobil | 23 | 618 KB | 31 ms | 68 ms | 117 ms | 112 ms (IMG) | 0.0000 | nein |
+
+**Neu gemessen am 8. September 2026**, nachdem das Heldenbild des
+Exclusive-Mandats durch eine echte Fotografie ersetzt wurde. Die Objektseite
+Exclusive ist dadurch schwerer geworden: 987 KB statt 626 KB auf dem Desktop,
+814 KB statt 598 KB mobil. Ursache ist das Bild selbst — dichtes Laubwerk
+komprimiert schlechter als ein generiertes Bild mit weichen Flächen
+(1440 px: 254 KB WebP statt 152 KB), und das Monogramm-Fenster lädt zusätzlich
+die 960-px-Fassung. Der LCP hat sich trotzdem nicht verschlechtert (336 ms
+statt 368 ms Desktop, 176 ms statt 288 ms mobil), weil das Bild weiterhin
+`eager` geladen wird und die Serverzeiten tiefer liegen. Die Karte zeigt in
+diesem Lauf MapLibre = nein, weil die Kartenkacheln beim Messfenster noch
+nicht angefordert waren; die Werte der Kartenseite sind deshalb nicht mit dem
+Lauf vom 6. September vergleichbar.
 
 **Bewertung LCP**: alle Werte liegen lokal deutlich unter der 2.5-s-Schwelle
 (schlechtester Wert: Karte/Mobil 600 ms). **Das ist ausdrücklich kein Beweis

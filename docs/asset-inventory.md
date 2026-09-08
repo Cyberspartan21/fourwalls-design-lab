@@ -82,6 +82,36 @@ Namensnennung: `.bildnachweis` unten rechts im Helden, aus dem Feld
 `nachweis` der jeweiligen Bildwelt — bei den generierten Bildwelten 1 und 2
 entfällt die Zeile.
 
+### Nachtrag: moderne Bauten statt Altbauten (2026-09-08)
+
+Der Auftraggeber hat die vier Vorschläge 3 bis 6 abgelehnt: zu alt, keine
+Schlösser und keine Chalets, sondern normale moderne Häuser oder Bauten.
+
+Ergebnis der Nachsuche: **Im frei lizenzierten Bestand gibt es keine
+Aufnahme moderner Schweizer Wohnarchitektur am Wasser.** Geprüft wurden
+Wikimedia Commons mit rund 60 Suchbegriffen (Zürichsee, Thunersee, Zugersee,
+Vierwaldstättersee, Bodensee, Lago di Lugano, Lac Léman; dazu Neubau,
+Wohnüberbauung, Seeufer, moderne Architektur) und Openverse, das anonyme
+Zugriffe nach wenigen Abfragen drosselt (HTTP 429). Freie
+Architekturfotografie dokumentiert Denkmäler, öffentliche Bauten und
+Infrastruktur; private Neubauten werden praktisch nie unter freier Lizenz
+veröffentlicht.
+
+Moderne Bauten direkt am Wasser gibt es frei lizenziert nur im Ausland, vor
+allem in niederländischen und dänischen Hafenquartieren:
+
+| Nr. | Datei | Motiv | Fotograf | Lizenz |
+|---|---|---|---|---|
+| 7 | `ufer-achtvillas-*` | Acht Villas, Amsterdam IJburg — moderne Wohnhäuser mit Glasfronten, Schilf und Wasser davor | Fred Romero | CC BY 2.0 |
+| 8 | `ufer-sluseholmen-*` | Sluseholmen, Kopenhagen — moderne Wohnbauten am Kanal mit Hausbooten | Thomas Dahlstrøm Nielsen | CC BY-SA 4.0 |
+
+Nummer 7 erfüllt die Bedingungen des Helden am besten (Wasserband unten,
+Himmel oben rechts, moderne Wohnhäuser), ist aber erkennbar niederländisch:
+flaches Land, keine Berge. Damit steht ein Zielkonflikt zur Entscheidung an,
+den nur der Auftraggeber auflösen kann: echtes Foto und modern, aber nicht
+Schweiz — oder Schweiz und modern, aber generiert — oder die Regel der
+Kostenfreiheit für ein gekauftes Stockfoto lockern.
+
 ### Was das Bild hier leisten muss
 
 Drei Bedingungen, die den Kreis der brauchbaren Fotos stark einschränken und

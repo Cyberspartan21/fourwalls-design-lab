@@ -60,7 +60,45 @@ Eindruck entsteht, gilt:
 - Es ist ein Demo-Asset, kein Inseratsbild. Ein echtes Mandat braucht eine
   Aufnahme des tatsächlich vermarkteten Objekts.
 
-### Warum kein moderner Neubau
+## Heldenbild der Startseite — vier Vorschläge (2026-09-08)
+
+Der Auftraggeber will auch auf der Startseite des UFER-Prototyps
+(`final/ufer/index.html`) ein echtes Foto mit Wasser davor statt des
+generierten Bildes mit Pool. Umschaltbar über `?bild=1..6`; 1 und 2 sind die
+bisherigen generierten Bildwelten, 3 bis 6 die Vorschläge.
+
+| Nr. | Datei | Motiv | Fotograf | Lizenz | Wasseranteil |
+|---|---|---|---|---|---|
+| 3 | `ufer-faulensee-*` | Faulensee am Thunersee, ruhige Wasserfläche | JoachimKohler-HB | CC BY-SA 4.0 | 26 % |
+| 4 | `ufer-merligen-*` | Merligen am Thunersee, türkises Wasser mit Bojen | JoachimKohler-HB | CC BY-SA 4.0 | 18 % |
+| 5 | `ufer-hilterfingen-*` | Hilterfingen, Hotel Bellevue und Kirche | JoachimKohler-HB | CC BY-SA 4.0 | 11 % |
+| 6 | `ufer-oberhofen-*` | Schloss Oberhofen im Thunersee | JoachimKohler-HB | CC BY-SA 4.0 | Wasser rechts und unten |
+
+Alle vier über [Wikimedia Commons](https://commons.wikimedia.org/), Bearbeitung
+jeweils 16:9-Ausschnitt für den Desktop und 3:4 für mobil, Grössen
+480/960/1600/1920 sowie m-480/m-960 als JPEG und WebP, EXIF entfernt, keine
+Farbmanipulation. Die Bearbeitungen stehen unter derselben Lizenz.
+Namensnennung: `.bildnachweis` unten rechts im Helden, aus dem Feld
+`nachweis` der jeweiligen Bildwelt — bei den generierten Bildwelten 1 und 2
+entfällt die Zeile.
+
+### Was das Bild hier leisten muss
+
+Drei Bedingungen, die den Kreis der brauchbaren Fotos stark einschränken und
+erklären, warum die naheliegenden Aufnahmen von Seevillen ausgeschieden sind:
+
+1. **Sauberes Wasserband unten.** Der WebGL-Shader bewegt alles unterhalb von
+   `wl`. Liegt dort noch Ufer, wackelt das Ufer mit. `wl` je Bild gemessen
+   über den Einbruch der Zeilentextur (Wasser ist glatt).
+2. **Ruhige, helle Fläche oben rechts.** Dort steht die Schlagzeile im
+   Tagmodus in Dunkelblau (`#0F1B2A`). Der Kommentar im Quelltext sagt es
+   bereits: «das Haus steht links am Ufer, Himmel und Berge rechts tragen die
+   Schrift».
+3. **Weite statt Nähe.** Teleaufnahmen einzelner Villen vom Boot aus füllen
+   das Bild mit Fassade; die Schrift steht dann auf dem Haus. Verworfen wurden
+   deshalb Aufnahmen aus Wollishofen, Erlenbach, Gunten und Iseltwald.
+
+### Warum kein moderner Neubau (betrifft das Heldenbild der Objektseite)
 
 Das Inserat beschrieb ursprünglich einen Sichtbetonbau von 2019. Eine Suche
 über Wikimedia Commons und Openverse (CC0, CC BY, CC BY-SA; fünf Runden,

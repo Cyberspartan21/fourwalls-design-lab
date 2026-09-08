@@ -64,6 +64,9 @@
 .ufer .fakt{position:absolute;z-index:3;left:var(--pad);top:clamp(96px,16vh,164px);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;
   opacity:.85;display:flex;flex-direction:column;gap:6px;font-weight:500;text-shadow:0 1px 12px rgba(255,255,255,.8)}
 [data-mode="dunkel"] .ufer .fakt{text-shadow:0 1px 12px rgba(7,12,18,.8);opacity:.75;font-weight:400}
+.ufer .bildnachweis{position:absolute;z-index:3;right:var(--pad);bottom:clamp(46px,7.5vh,78px);font-size:.55rem;letter-spacing:.14em;
+  text-transform:uppercase;text-align:right;opacity:.5;max-width:min(52vw,560px)}
+[data-mode="dunkel"] .ufer .bildnachweis{text-shadow:0 1px 12px rgba(7,12,18,.8);opacity:.6}
 .ufer .hinweis{position:absolute;z-index:3;right:var(--pad);bottom:clamp(22px,4vh,44px);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;
   opacity:0;transition:opacity 1s ease 2s;pointer-events:none;font-weight:500;text-shadow:0 1px 10px rgba(255,255,255,.8)}
 .ufer.lebt .hinweis{opacity:.6}
@@ -277,12 +280,25 @@
     it:["Qui comincia<br>la <em>bella</em> vita.","Comprare, affittare, vendere, amministrare — in tutta la Svizzera"],
     en:["This is where<br>the <em>good</em> life starts.","Buy, rent, sell, manage — across Switzerland"]
   };
-  /* Zwei Bildwelten, umschaltbar per ?bild=1|2 — beide Sommertag am See */
+  /* Bildwelten, umschaltbar per ?bild=1..6.
+     1 und 2 sind generierte Bilder, 3 bis 6 echte Fotografien von Schweizer
+     Seeufern (Vorschläge zur Auswahl, Nachweis in docs/asset-inventory.md).
+     wl = Anteil der Bildhöhe oberhalb der Wasserlinie; darunter arbeitet der
+     Shader. cx = object-position, damit das Haus links und der helle Teil
+     rechts unter der Schrift bleibt. */
   const BILDER = {
     "1":{ key:"ufer-tag",  wl:.593, alt:"Modernes Haus am Schweizer See an einem Sommernachmittag, im Wasser gespiegelt", cx:"46% 50%" },
-    "2":{ key:"ufer-tag2", wl:.556, alt:"Haus am See im Sommerlicht, die Fassade spiegelt sich im türkisfarbenen Wasser", cx:"52% 50%" }
+    "2":{ key:"ufer-tag2", wl:.556, alt:"Haus am See im Sommerlicht, die Fassade spiegelt sich im türkisfarbenen Wasser", cx:"52% 50%" },
+    "3":{ key:"ufer-faulensee",    wl:.737, alt:"Dorf am Hang über dem Thunersee, davor die ruhige Wasserfläche", cx:"45% 50%",
+          nachweis:"Faulensee am Thunersee · Foto JoachimKohler-HB · CC BY-SA 4.0 · Wikimedia Commons" },
+    "4":{ key:"ufer-merligen",     wl:.819, alt:"Häuser am Thunersee, im türkisfarbenen Wasser gespiegelt", cx:"45% 50%",
+          nachweis:"Merligen am Thunersee · Foto JoachimKohler-HB · CC BY-SA 4.0 · Wikimedia Commons" },
+    "5":{ key:"ufer-hilterfingen", wl:.885, alt:"Häuser und Kirche am Ufer des Thunersees, türkisfarbenes Wasser davor", cx:"42% 50%",
+          nachweis:"Hilterfingen am Thunersee · Foto JoachimKohler-HB · CC BY-SA 4.0 · Wikimedia Commons" },
+    "6":{ key:"ufer-oberhofen",    wl:.680, alt:"Schloss Oberhofen im Thunersee, türkisfarbenes Wasser und Wolkenhimmel", cx:"48% 50%",
+          nachweis:"Schloss Oberhofen am Thunersee · Foto JoachimKohler-HB · CC BY-SA 4.0 · Wikimedia Commons" }
   };
-  const BW = BILDER[qs.get("bild") === "2" ? "2" : "1"];
+  const BW = BILDER[qs.get("bild")] || BILDER["1"];
   function sprachen(){
     const h = HERO_T[FWP.lang] || HERO_T.de; $("heroH").innerHTML = h[0]; $("heroU").textContent = h[1];
     document.querySelectorAll("[data-u]").forEach(e => e.textContent = UFER.u(e.dataset.u));
@@ -318,6 +334,12 @@
     bildEl.alt = BW.alt;
   }
   bildEl.style.objectPosition = BW.cx;
+  /* CC BY-SA verlangt die Namensnennung sichtbar dort, wo das Bild erscheint.
+     Bei den generierten Bildwelten (1, 2) entfällt sie. */
+  if (BW.nachweis){
+    const n = document.createElement("div"); n.className = "bildnachweis"; n.textContent = BW.nachweis;
+    hero.appendChild(n);
+  }
   const WL = BW.wl;
   hero.style.setProperty("--wl", (WL*100) + "%");
   const sparsam = matchMedia("(prefers-reduced-motion:reduce)").matches;

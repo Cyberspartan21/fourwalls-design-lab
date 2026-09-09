@@ -112,6 +112,43 @@ den nur der Auftraggeber auflösen kann: echtes Foto und modern, aber nicht
 Schweiz — oder Schweiz und modern, aber generiert — oder die Regel der
 Kostenfreiheit für ein gekauftes Stockfoto lockern.
 
+### Nachtrag 2: moderne, gehobene Bauten (2026-09-09)
+
+Rückmeldung: Richtung Amsterdam/Kopenhagen falsch, das ursprüngliche
+generierte Bild gefällt besser; gesucht sind moderne Bauten, gehoben und
+speziell. Vier weitere Vorschläge liegen als Bildwelt 9 bis 12 bereit:
+
+| Nr. | Datei | Motiv | Fotograf | Lizenz |
+|---|---|---|---|---|
+| 9 | `ufer-island-*` | Seljavallalaug, Island — weisser moderner Baukörper im Bergtal, Becken davor | Michael James | CC0 |
+| 10 | `ufer-pool-*` | Infinity-Pool, der in die Bucht übergeht | Cosmic Timetraveler | CC0 |
+| 11 | `ufer-miragalli-*` | Villa Miragalli — Infinity-Pool über dem Meer | Bruno Acampora | CC BY-SA 3.0 |
+| 12 | `ufer-falling-*` | Fallingwater — Sichtbeton über dem Wasserfall | Joshua G Chang | CC BY-SA 4.0 |
+
+Damit ist der freie Bestand ausgeschöpft. Geprüft wurden in rund zwanzig
+Durchgängen: Wikimedia Commons (Volltext und Unsplash-Importe, ~120
+Suchbegriffe), Openverse (drosselt anonyme Zugriffe), Unsplash direkt
+(Bot-Prüfung sperrt automatisierte Zugriffe).
+
+**Befund:** Gehobene, moderne Architekturfotografie am Wasser ist
+kommerziell wertvoll und wird deshalb praktisch nie unter freier Lizenz
+veröffentlicht. Was frei vorliegt, ist entweder Denkmalpflege (historische
+Villen, Schlösser), Infrastruktur (Häfen, Bäder), Landschaft ohne Gebäude
+oder Architektur-Ikonen als Museum (Fallingwater, Farnsworth House).
+
+**Drei Wege, die zum Referenzbild führen:**
+
+1. Beim generierten Bild bleiben. Es ist die einzige Aufnahme, die moderne
+   Villa, Alpensee und gehobene Anmutung zugleich zeigt.
+2. Ein Stockfoto lizenzieren (Getty, Adobe Stock, Stocksy; erfahrungsgemäss
+   100 bis 500 Franken). Das hebt die Regel der Kostenfreiheit auf und ist
+   eine Entscheidung des Auftraggebers.
+3. Kostenlos, aber mit einem Handgriff des Auftraggebers: Unsplash und
+   Pexels führen genau diese Motive unter einer Lizenz, die auch
+   kommerzielle Nutzung ohne Namensnennung erlaubt. Die Bot-Prüfung der
+   Seiten sperrt automatisierte Zugriffe, nicht menschliche. Ein Link genügt,
+   die Einbindung dauert Minuten.
+
 ### Was das Bild hier leisten muss
 
 Drei Bedingungen, die den Kreis der brauchbaren Fotos stark einschränken und

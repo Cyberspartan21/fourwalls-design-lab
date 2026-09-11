@@ -149,6 +149,38 @@ oder Architektur-Ikonen als Museum (Fallingwater, Farnsworth House).
    Seiten sperrt automatisierte Zugriffe, nicht menschliche. Ein Link genügt,
    die Einbindung dauert Minuten.
 
+### Nachtrag 3: Pexels — endlich moderne, gehobene Motive (2026-09-11)
+
+Rückmeldung: Keines der bisherigen passt, gesucht sind moderne Bauten,
+gehoben und speziell, mit Wasser davor.
+
+Neue Quelle: **Pexels**. Deren Lizenz erlaubt kommerzielle Nutzung ohne
+Namensnennung. Die Website sperrt zwar Skripte (curl → HTTP 403), der
+In-App-Browser kommt aber durch; die Bilddateien selbst liefert
+`images.pexels.com` anschliessend auch per curl bis 2600 px Breite. Damit ist
+der Bestand erschlossen, der auf Wikimedia Commons fehlt: aktuelle
+Architektur- und Immobilienfotografie.
+
+| Nr. | Datei | Motiv | Pexels-ID |
+|---|---|---|---|
+| 13 | `ufer-villa-tag-*` | Moderne Villa mit grossem Pool, Tag | 27626186 |
+| 14 | `ufer-villa-abend-*` | Dieselbe Villa in der Abenddämmerung | 27626185 |
+| 15 | `ufer-poolberg-*` | Infinity-Pool auf Terrasse, bewaldete Berge | 5499258 |
+| 16 | `ufer-seepool-*` | Haus links, Pool davor, See und Berge rechts | 36025719 |
+| 17 | `ufer-seepool2-*` | Infinity-Pool einer Villa über dem See | 36025721 |
+| 18 | `ufer-steg-*` | Moderne Terrasse über dem Wasser, Abenddämmerung | 25190129 |
+
+Bearbeitung je 16:9 für den Desktop und 3:4 für mobil, Grössen
+480/960/1600/1920 sowie m-480/m-960 als JPEG und WebP, EXIF entfernt.
+Kein Feld `nachweis` — die Pexels-Lizenz verlangt keine Namensnennung; die
+Herkunft steht hier.
+
+**Empfehlung: Nummer 16.** Als einziges erfüllt es alle drei Bedingungen des
+Helden gleichzeitig — Haus links, breites Wasserband unten für den Shader,
+ruhiger heller Himmel oben rechts für die Schlagzeile. 13 und 14 sind die
+gehobensten Bilder, aber die Villa füllt die ganze Breite; die Schlagzeile
+steht dort auf der Glasfassade.
+
 ### Was das Bild hier leisten muss
 
 Drei Bedingungen, die den Kreis der brauchbaren Fotos stark einschränken und

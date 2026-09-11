@@ -309,14 +309,18 @@
           nachweis:"Villa Miragalli · Foto Bruno Acampora · CC BY-SA 3.0 · Wikimedia Commons" },
     "12":{ key:"ufer-falling",  wl:.860, alt:"Moderner Sichtbetonbau mit auskragenden Geschossen über dem Wasserfall", cx:"50% 50%",
           nachweis:"Fallingwater, Frank Lloyd Wright · Foto Joshua G Chang · CC BY-SA 4.0 · Wikimedia Commons" },
-    /* 13 bis 16: Pexels-Lizenz — kommerzielle Nutzung erlaubt, Namensnennung
-       nicht verlangt; deshalb kein Feld `nachweis`. Quelle in docs/asset-inventory.md. */
-    "13":{ key:"ufer-villa-tag",   wl:.550, alt:"Moderne Villa mit grossem Pool davor, Berghang dahinter", cx:"8% 50%" },
-    "14":{ key:"ufer-villa-abend", wl:.550, alt:"Moderne Villa mit Pool in der Abenddämmerung, warm beleuchtete Räume", cx:"8% 50%" },
-    "15":{ key:"ufer-poolberg",    wl:.450, alt:"Infinity-Pool auf einer Terrasse, dahinter bewaldete Berge", cx:"48% 50%" },
-    "16":{ key:"ufer-seepool",     wl:.620, alt:"Infinity-Pool über dem See, Liegen und Palmen, Berge am anderen Ufer", cx:"48% 50%" },
-    "17":{ key:"ufer-seepool2",    wl:.600, alt:"Infinity-Pool einer Villa über dem See, Berge am anderen Ufer", cx:"30% 50%" },
-    "18":{ key:"ufer-steg",        wl:.560, alt:"Moderne Terrasse über dem Wasser in der Abenddämmerung", cx:"60% 50%" }
+    /* 13 bis 15: Pexels-Lizenz — kommerzielle Nutzung erlaubt, Namensnennung
+       nicht verlangt; Herkunft in docs/asset-inventory.md.
+
+       wl ist gemessen, nicht geschätzt: `node tools/wasserlinie.mjs --anteil
+       0.985 <bild>` sucht die höchste Linie, unterhalb derer JEDE Bildzeile
+       zu mindestens 98,5 % aus Wasser besteht. Der Shader bewegt alles
+       darunter über die ganze Breite — läge dort noch Terrasse, Steg, Rasen
+       oder Fels, würde das mitwackeln. Bildwelten ohne durchgehendes
+       Wasserband sind deshalb ausgeschieden, egal wie schön sie sind. */
+    "13":{ key:"ufer-villa-tag",  wl:.747, alt:"Moderne Villa mit grossem Pool davor, Berghang dahinter", cx:"8% 50%" },
+    "14":{ key:"ufer-poolvilla",  wl:.778, alt:"Langgezogene moderne Villa mit Infinity-Pool über die ganze Fassade", cx:"45% 50%" },
+    "15":{ key:"ufer-spiegel",    wl:.764, alt:"Moderne Wohnbauten am See, im ruhigen Wasser gespiegelt", cx:"50% 50%" }
   };
   const BW = BILDER[qs.get("bild")] || BILDER["1"];
   function sprachen(){

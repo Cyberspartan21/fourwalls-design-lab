@@ -149,37 +149,47 @@ oder Architektur-Ikonen als Museum (Fallingwater, Farnsworth House).
    Seiten sperrt automatisierte Zugriffe, nicht menschliche. Ein Link genügt,
    die Einbindung dauert Minuten.
 
-### Nachtrag 3: Pexels — endlich moderne, gehobene Motive (2026-09-11)
+### Nachtrag 3: Pexels und die gemessene Wasserlinie (2026-09-11)
 
-Rückmeldung: Keines der bisherigen passt, gesucht sind moderne Bauten,
-gehoben und speziell, mit Wasser davor.
+Neue Quelle **Pexels** — deren Lizenz erlaubt kommerzielle Nutzung ohne
+Namensnennung. Die Website sperrt Skripte (curl → HTTP 403), der
+In-App-Browser kommt durch; die Bilddateien liefert `images.pexels.com`
+anschliessend auch per curl bis 2600 px. Damit ist der Bestand erschlossen,
+der auf Wikimedia Commons fehlt: aktuelle Architektur- und
+Immobilienfotografie.
 
-Neue Quelle: **Pexels**. Deren Lizenz erlaubt kommerzielle Nutzung ohne
-Namensnennung. Die Website sperrt zwar Skripte (curl → HTTP 403), der
-In-App-Browser kommt aber durch; die Bilddateien selbst liefert
-`images.pexels.com` anschliessend auch per curl bis 2600 px Breite. Damit ist
-der Bestand erschlossen, der auf Wikimedia Commons fehlt: aktuelle
-Architektur- und Immobilienfotografie.
+**Die harte Bedingung, die vorher unterschätzt wurde.** Der Shader teilt das
+Bild mit EINER waagrechten Linie `uWL` und bewegt alles darunter, über die
+ganze Breite. Ein Bild taugt nur, wenn unterhalb einer Linie ausschliesslich
+Wasser liegt. Terrasse, Steg, Rasen oder Fels in der unteren Bildhälfte
+wackeln sonst mit — beim ersten Durchgang genau der Mangel, den der
+Auftraggeber bemängelt hat.
 
-| Nr. | Datei | Motiv | Pexels-ID |
-|---|---|---|---|
-| 13 | `ufer-villa-tag-*` | Moderne Villa mit grossem Pool, Tag | 27626186 |
-| 14 | `ufer-villa-abend-*` | Dieselbe Villa in der Abenddämmerung | 27626185 |
-| 15 | `ufer-poolberg-*` | Infinity-Pool auf Terrasse, bewaldete Berge | 5499258 |
-| 16 | `ufer-seepool-*` | Haus links, Pool davor, See und Berge rechts | 36025719 |
-| 17 | `ufer-seepool2-*` | Infinity-Pool einer Villa über dem See | 36025721 |
-| 18 | `ufer-steg-*` | Moderne Terrasse über dem Wasser, Abenddämmerung | 25190129 |
+Neu deshalb `tools/wasserlinie.mjs`: sucht die höchste Linie, unterhalb derer
+jede Bildzeile zu mindestens 98,5 % aus Wasser besteht, und legt auf Wunsch
+eine Kontrollaufnahme mit rot eingefärbtem Bewegungsbereich ab. Von 100
+geprüften Pexels-Aufnahmen bestehen drei die Prüfung mit einem Wasserband
+von mindestens 20 % und hellem Grund für die Schlagzeile:
+
+| Nr. | Datei | Motiv | Pexels-ID | wl | Wasserband |
+|---|---|---|---|---|---|
+| 13 | `ufer-villa-tag-*` | Moderne Villa mit grossem Pool | 27626186 | 0.747 | 25 % |
+| 14 | `ufer-poolvilla-*` | Langgezogene Villa, Infinity-Pool über die ganze Fassade | 12715491 | 0.778 | 22 % |
+| 15 | `ufer-spiegel-*` | Moderne Wohnbauten am See, im Wasser gespiegelt | 30433829 | 0.764 | 24 % |
+
+Ausgeschieden, obwohl gestalterisch stark: Terrassen- und Stegaufnahmen
+(Seepool, Steg, Poolberg, Oberhofen) — unter jeder waagrechten Linie liegt
+dort noch Stein oder Holz. Ebenso die Abendfassung derselben Villa
+(Pexels 27626185): beleuchtete Deckkante und Pflanztrog reichen bis an den
+unteren Bildrand.
 
 Bearbeitung je 16:9 für den Desktop und 3:4 für mobil, Grössen
-480/960/1600/1920 sowie m-480/m-960 als JPEG und WebP, EXIF entfernt.
-Kein Feld `nachweis` — die Pexels-Lizenz verlangt keine Namensnennung; die
-Herkunft steht hier.
+480/960/1600/1920 sowie m-480/m-960 als JPEG und WebP, EXIF entfernt, unten
+verankert zugeschnitten, damit die Wasserfläche vollständig erhalten bleibt.
 
-**Empfehlung: Nummer 16.** Als einziges erfüllt es alle drei Bedingungen des
-Helden gleichzeitig — Haus links, breites Wasserband unten für den Shader,
-ruhiger heller Himmel oben rechts für die Schlagzeile. 13 und 14 sind die
-gehobensten Bilder, aber die Villa füllt die ganze Breite; die Schlagzeile
-steht dort auf der Glasfassade.
+**Empfehlung: Nummer 14.** Der Pool füllt die untere Bildhälfte über die
+ganze Breite, die Bewegungslinie liegt exakt auf der Poolkante, und die
+Schlagzeile steht auf weisser Dachfläche und Himmel.
 
 ### Was das Bild hier leisten muss
 
